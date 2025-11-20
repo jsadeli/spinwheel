@@ -185,6 +185,7 @@
         const isSpinningRef = useRef(false);
         const itemsRef = useRef(items);
         const velocityRef = useRef(0);
+        const winnerRef = useRef(null);
 
         // Sync items ref for the animation loop
         useEffect(() => {
@@ -195,6 +196,11 @@
         useEffect(() => {
           isSpinningRef.current = isSpinning;
         }, [isSpinning]);
+
+        // Sync winner ref
+        useEffect(() => {
+          winnerRef.current = winner;
+        }, [winner]);
 
         const colors = [
           "#FF6B6B",
@@ -233,8 +239,13 @@
             const currentItems = itemsRef.current;
 
             // --- Idle Spin Logic ---
-            // Only increment small rotation if NOT in active spin mode
-            if (!isSpinningRef.current && currentItems.length > 0 && velocityRef.current === 0) {
+            // Only increment small rotation if NOT in active spin mode AND no winner is being displayed
+            if (
+              !isSpinningRef.current &&
+              currentItems.length > 0 &&
+              velocityRef.current === 0 &&
+              !winnerRef.current
+            ) {
               rotationRef.current = (rotationRef.current + 0.002) % (2 * Math.PI);
             }
 
