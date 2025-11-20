@@ -156,6 +156,12 @@
       </Icon>
     );
 
+    const CheckIcon = (props) => (
+      <Icon {...props}>
+        <polyline points="20 6 9 17 4 12" />
+      </Icon>
+    );
+
     // Confetti Logic
     const fireConfetti = () => {
       const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
@@ -205,6 +211,7 @@
       const [winner, setWinner] = useState(null);
       const [soundEnabled, setSoundEnabled] = useState(true);
       const [theme, setTheme] = useState('auto'); // 'auto', 'light', 'dark'
+      const [showThemeMenu, setShowThemeMenu] = useState(false);
 
       // Refs for animation loop
       const canvasRef = useRef(null);
@@ -214,6 +221,7 @@
       const velocityRef = useRef(0);
       const winnerRef = useRef(null);
       const isDarkModeRef = useRef(false);
+      const themeMenuRef = useRef(null);
 
       // Audio Refs
       const audioCtxRef = useRef(null);
@@ -258,11 +266,18 @@
         isDarkModeRef.current = isDark;
       }, [theme]);
 
-      const toggleTheme = () => {
-        if (theme === 'auto') setTheme('light');
-        else if (theme === 'light') setTheme('dark');
-        else setTheme('auto');
-      };
+      // Click outside to close dropdown
+      useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (themeMenuRef.current && !themeMenuRef.current.contains(event.target)) {
+                setShowThemeMenu(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+      }, []);
 
       const getThemeIcon = () => {
         if (theme === 'auto') return <MonitorIcon size={24} />;
@@ -529,8 +544,8 @@
       return (
         <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex flex-col font-sans text-gray-800 dark:text-gray-100 transition-colors duration-300">
 
-          {/* Header */}
-          <header className="bg-white dark:bg-gray-800 shadow-sm p-4 flex justify-between items-center z-10 border-b dark:border-gray-700 transition-colors duration-300">
+          {/* Header - Fixed z-index to allow dropdown to be visible */}
+          <header className="bg-white dark:bg-gray-800 shadow-sm p-4 flex justify-between items-center z-50 border-b dark:border-gray-700 transition-colors duration-300">
             <div className="flex items-center space-x-2">
               <div className="bg-indigo-600 text-white p-2 rounded-lg">
                 <SettingsIcon size={24} />
@@ -538,13 +553,49 @@
               <h1 className="text-xl md:text-2xl font-bold text-indigo-900 dark:text-indigo-400">SpinWheel</h1>
             </div>
             <div className="flex items-center space-x-2">
-              <button
-                onClick={toggleTheme}
-                className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition text-gray-600 dark:text-gray-300"
-                title={`Theme: ${theme}`}
-              >
-                {getThemeIcon()}
-              </button>
+
+              {/* Theme Dropdown */}
+              <div className="relative" ref={themeMenuRef}>
+                <button
+                  onClick={() => setShowThemeMenu(!showThemeMenu)}
+                  className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition text-gray-600 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400"
+                  title="Theme Settings"
+                >
+                  {getThemeIcon()}
+                </button>
+
+                {showThemeMenu && (
+                  <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 z-50 overflow-hidden animate-[fade-in_0.2s_ease-out]">
+                    <div className="py-1">
+                      <button
+                        onClick={() => {setTheme('auto'); setShowThemeMenu(false)}}
+                        className={`flex items-center w-full px-4 py-2 text-sm text-left ${theme === 'auto' ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
+                      >
+                        <span className="mr-3"><MonitorIcon size={16} /></span>
+                        Auto
+                        {theme === 'auto' && <span className="ml-auto"><CheckIcon size={16} /></span>}
+                      </button>
+                      <button
+                        onClick={() => {setTheme('light'); setShowThemeMenu(false)}}
+                        className={`flex items-center w-full px-4 py-2 text-sm text-left ${theme === 'light' ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
+                      >
+                        <span className="mr-3"><SunIcon size={16} /></span>
+                        Light
+                        {theme === 'light' && <span className="ml-auto"><CheckIcon size={16} /></span>}
+                      </button>
+                      <button
+                        onClick={() => {setTheme('dark'); setShowThemeMenu(false)}}
+                        className={`flex items-center w-full px-4 py-2 text-sm text-left ${theme === 'dark' ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
+                      >
+                        <span className="mr-3"><MoonIcon size={16} /></span>
+                        Dark
+                        {theme === 'dark' && <span className="ml-auto"><CheckIcon size={16} /></span>}
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+
               <button
                 onClick={() => setSoundEnabled(!soundEnabled)}
                 className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition text-gray-600 dark:text-gray-300"
