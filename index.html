@@ -5,8 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SpinWheel - Customizable Picker Wheel</title>
 
-  <!-- Tailwind CSS -->
+  <!-- Tailwind CSS with Dark Mode Config -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+    }
+  </script>
 
   <!-- React & ReactDOM -->
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
@@ -23,20 +28,27 @@
     }
     body {
       overflow-x: hidden;
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
     /* Scrollbar styling for the text area */
     textarea::-webkit-scrollbar {
       width: 8px;
     }
     textarea::-webkit-scrollbar-track {
-      background: #f1f1f1;
+      background: transparent;
     }
     textarea::-webkit-scrollbar-thumb {
-      background: #888;
+      background: #cbd5e1;
       border-radius: 4px;
     }
+    .dark textarea::-webkit-scrollbar-thumb {
+      background: #475569;
+    }
     textarea::-webkit-scrollbar-thumb:hover {
-      background: #555;
+      background: #94a3b8;
+    }
+    .dark textarea::-webkit-scrollbar-thumb:hover {
+      background: #64748b;
     }
   </style>
 </head>
@@ -116,6 +128,34 @@
       </Icon>
     );
 
+    const SunIcon = (props) => (
+      <Icon {...props}>
+        <circle cx="12" cy="12" r="5" />
+        <line x1="12" y1="1" x2="12" y2="3" />
+        <line x1="12" y1="21" x2="12" y2="23" />
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+        <line x1="1" y1="12" x2="3" y2="12" />
+        <line x1="21" y1="12" x2="23" y2="12" />
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+      </Icon>
+    );
+
+    const MoonIcon = (props) => (
+      <Icon {...props}>
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+      </Icon>
+    );
+
+    const MonitorIcon = (props) => (
+      <Icon {...props}>
+        <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+        <line x1="8" y1="21" x2="16" y2="21" />
+        <line x1="12" y1="17" x2="12" y2="21" />
+      </Icon>
+    );
+
     // Confetti Logic
     const fireConfetti = () => {
       const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
@@ -164,6 +204,7 @@
       const [isSpinning, setIsSpinning] = useState(false);
       const [winner, setWinner] = useState(null);
       const [soundEnabled, setSoundEnabled] = useState(true);
+      const [theme, setTheme] = useState('auto'); // 'auto', 'light', 'dark'
 
       // Refs for animation loop
       const canvasRef = useRef(null);
@@ -172,6 +213,7 @@
       const itemsRef = useRef(items);
       const velocityRef = useRef(0);
       const winnerRef = useRef(null);
+      const isDarkModeRef = useRef(false);
 
       // Audio Refs
       const audioCtxRef = useRef(null);
@@ -191,6 +233,42 @@
       useEffect(() => {
         winnerRef.current = winner;
       }, [winner]);
+
+      // Theme Logic
+      useEffect(() => {
+        const root = window.document.documentElement;
+        const checkSystemTheme = () => window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+        let isDark = false;
+
+        if (theme === 'dark') {
+          isDark = true;
+        } else if (theme === 'light') {
+          isDark = false;
+        } else {
+          isDark = checkSystemTheme();
+        }
+
+        if (isDark) {
+          root.classList.add('dark');
+        } else {
+          root.classList.remove('dark');
+        }
+
+        isDarkModeRef.current = isDark;
+      }, [theme]);
+
+      const toggleTheme = () => {
+        if (theme === 'auto') setTheme('light');
+        else if (theme === 'light') setTheme('dark');
+        else setTheme('auto');
+      };
+
+      const getThemeIcon = () => {
+        if (theme === 'auto') return <MonitorIcon size={24} />;
+        if (theme === 'light') return <SunIcon size={24} />;
+        return <MoonIcon size={24} />;
+      };
 
       // --- AUDIO LOGIC ---
       const initAudio = () => {
@@ -279,6 +357,7 @@
           const centerY = height / 2;
           const radius = Math.min(width, height) / 2 - 10;
           const currentItems = itemsRef.current;
+          const isDark = isDarkModeRef.current;
 
           // --- Idle Spin Logic ---
           // Only increment small rotation if NOT in active spin mode AND no winner is being displayed
@@ -295,13 +374,13 @@
             // Empty State
             ctx.beginPath();
             ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
-            ctx.fillStyle = '#f0f0f0';
+            ctx.fillStyle = isDark ? '#334155' : '#f0f0f0';
             ctx.fill();
-            ctx.strokeStyle = '#ddd';
+            ctx.strokeStyle = isDark ? '#475569' : '#ddd';
             ctx.lineWidth = 2;
             ctx.stroke();
 
-            ctx.fillStyle = '#888';
+            ctx.fillStyle = isDark ? '#94a3b8' : '#888';
             ctx.font = '20px sans-serif';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
@@ -328,7 +407,7 @@
               ctx.translate(centerX, centerY);
               ctx.rotate(startAngle + sliceAngle / 2);
               ctx.textAlign = "right";
-              ctx.fillStyle = "#fff";
+              ctx.fillStyle = "#fff"; // Always white on colored segments
               ctx.font = currentItems.length > 12 ? "bold 14px Arial" : "bold 18px Arial";
               ctx.fillText(item.substring(0, 18) + (item.length > 18 ? '...' : ''), radius - 20, 5);
               ctx.restore();
@@ -337,7 +416,7 @@
             // Hub
             ctx.beginPath();
             ctx.arc(centerX, centerY, 30, 0, 2 * Math.PI);
-            ctx.fillStyle = 'white';
+            ctx.fillStyle = isDark ? '#1e293b' : 'white'; // Dark Slate 800 vs White
             ctx.fill();
             ctx.strokeStyle = '#333';
             ctx.lineWidth = 4;
@@ -448,23 +527,32 @@
       };
 
       return (
-        <div className="min-h-screen bg-gray-100 flex flex-col font-sans text-gray-800">
+        <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex flex-col font-sans text-gray-800 dark:text-gray-100 transition-colors duration-300">
 
           {/* Header */}
-          <header className="bg-white shadow-sm p-4 flex justify-between items-center z-10">
+          <header className="bg-white dark:bg-gray-800 shadow-sm p-4 flex justify-between items-center z-10 border-b dark:border-gray-700 transition-colors duration-300">
             <div className="flex items-center space-x-2">
               <div className="bg-indigo-600 text-white p-2 rounded-lg">
                 <SettingsIcon size={24} />
               </div>
-              <h1 className="text-xl md:text-2xl font-bold text-indigo-900">SpinWheel</h1>
+              <h1 className="text-xl md:text-2xl font-bold text-indigo-900 dark:text-indigo-400">SpinWheel</h1>
             </div>
-            <button
-              onClick={() => setSoundEnabled(!soundEnabled)}
-              className="p-2 rounded-full hover:bg-gray-100 transition"
-              title={soundEnabled ? "Mute Sound" : "Enable Sound"}
-            >
-              {soundEnabled ? <Volume2Icon size={24} /> : <VolumeXIcon size={24} />}
-            </button>
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={toggleTheme}
+                className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition text-gray-600 dark:text-gray-300"
+                title={`Theme: ${theme}`}
+              >
+                {getThemeIcon()}
+              </button>
+              <button
+                onClick={() => setSoundEnabled(!soundEnabled)}
+                className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition text-gray-600 dark:text-gray-300"
+                title={soundEnabled ? "Mute Sound" : "Enable Sound"}
+              >
+                {soundEnabled ? <Volume2Icon size={24} /> : <VolumeXIcon size={24} />}
+              </button>
+            </div>
           </header>
 
           <main className="flex-grow flex flex-col md:flex-row overflow-hidden">
@@ -490,8 +578,8 @@
                   onClick={spinWheel}
                   disabled={isSpinning || items.length === 0}
                   className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2
-                      w-20 h-20 rounded-full bg-white border-4 border-indigo-600 shadow-lg
-                      flex items-center justify-center text-indigo-700 font-black text-xl tracking-wider
+                      w-20 h-20 rounded-full bg-white dark:bg-gray-800 border-4 border-indigo-600 dark:border-indigo-400 shadow-lg
+                      flex items-center justify-center text-indigo-700 dark:text-indigo-400 font-black text-xl tracking-wider
                       hover:scale-105 active:scale-95 transition-all z-30
                       ${isSpinning ? 'opacity-50 cursor-not-allowed' : 'animate-pulse'}`}
                 >
@@ -501,36 +589,36 @@
             </div>
 
             {/* Right Panel: Controls */}
-            <div className="w-full md:w-96 bg-white border-l border-gray-200 flex flex-col h-[50vh] md:h-auto z-10 shadow-xl md:shadow-none">
-              <div className="p-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
-                <h2 className="font-bold text-gray-700 flex items-center">
+            <div className="w-full md:w-96 bg-white dark:bg-gray-800 border-l border-gray-200 dark:border-gray-700 flex flex-col h-[50vh] md:h-auto z-10 shadow-xl md:shadow-none transition-colors duration-300">
+              <div className="p-4 bg-gray-50 dark:bg-gray-900/50 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                <h2 className="font-bold text-gray-700 dark:text-gray-200 flex items-center">
                   <SettingsIcon className="w-4 h-4 mr-2"/> Inputs
                 </h2>
-                <span className="text-xs bg-indigo-100 text-indigo-800 px-2 py-1 rounded-full font-medium">
+                <span className="text-xs bg-indigo-100 dark:bg-indigo-900/50 text-indigo-800 dark:text-indigo-300 px-2 py-1 rounded-full font-medium">
                   {items.length} Items
                 </span>
               </div>
 
               <div className="flex-grow p-4 overflow-hidden flex flex-col">
-                <label className="text-sm text-gray-500 mb-2 block">Enter text (one item per line):</label>
+                <label className="text-sm text-gray-500 dark:text-gray-400 mb-2 block">Enter text (one item per line):</label>
                 <textarea
                   value={inputText}
                   onChange={(e) => setInputText(e.target.value)}
-                  className="flex-grow w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none font-mono text-sm shadow-inner bg-gray-50"
+                  className="flex-grow w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none font-mono text-sm shadow-inner bg-gray-50 dark:bg-gray-700 dark:text-gray-100 transition-colors"
                   placeholder="Enter items here..."
                 />
               </div>
 
-              <div className="p-4 border-t border-gray-200 grid grid-cols-2 gap-3 bg-gray-50">
+              <div className="p-4 border-t border-gray-200 dark:border-gray-700 grid grid-cols-2 gap-3 bg-gray-50 dark:bg-gray-900/50">
                 <button
                   onClick={handleShuffle}
-                  className="flex items-center justify-center px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-700 font-medium transition shadow-sm"
+                  className="flex items-center justify-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 font-medium transition shadow-sm"
                 >
                   <ShuffleIcon className="w-4 h-4 mr-2" /> Shuffle
                 </button>
                 <button
                   onClick={handleClear}
-                  className="flex items-center justify-center px-4 py-2 bg-white border border-red-200 text-red-600 rounded-lg hover:bg-red-50 font-medium transition shadow-sm"
+                  className="flex items-center justify-center px-4 py-2 bg-white dark:bg-gray-800 border border-red-200 dark:border-red-900/50 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 font-medium transition shadow-sm"
                 >
                   <Trash2Icon className="w-4 h-4 mr-2" /> Clear
                 </button>
@@ -541,22 +629,22 @@
           {/* Winner Modal */}
           {winner && (
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 backdrop-blur-sm animate-in fade-in duration-300">
-              <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center transform scale-100 animate-in zoom-in-95 duration-300 relative overflow-hidden">
+              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center transform scale-100 animate-in zoom-in-95 duration-300 relative overflow-hidden border dark:border-gray-700">
                 <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
 
-                <div className="mx-auto w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mb-4 text-yellow-600">
+                <div className="mx-auto w-16 h-16 bg-yellow-100 dark:bg-yellow-900/30 rounded-full flex items-center justify-center mb-4 text-yellow-600 dark:text-yellow-500">
                   <TrophyIcon size={32} />
                 </div>
 
-                <h3 className="text-gray-500 uppercase tracking-widest text-sm font-bold mb-2">We have a winner!</h3>
-                <div className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 mb-8 break-words">
+                <h3 className="text-gray-500 dark:text-gray-400 uppercase tracking-widest text-sm font-bold mb-2">We have a winner!</h3>
+                <div className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 mb-8 break-words">
                   {winner}
                 </div>
 
                 <div className="grid grid-cols-1 gap-3">
                   <button
                     onClick={() => setWinner(null)}
-                    className="w-full py-3 bg-gray-900 text-white rounded-xl font-bold hover:bg-gray-800 transition shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                    className="w-full py-3 bg-gray-900 dark:bg-gray-700 text-white rounded-xl font-bold hover:bg-gray-800 dark:hover:bg-gray-600 transition shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                   >
                     Close
                   </button>
@@ -567,7 +655,7 @@
                       setInputText(newItems.join('\n'));
                       setWinner(null);
                     }}
-                    className="w-full py-3 bg-white border-2 border-gray-200 text-gray-600 rounded-xl font-bold hover:border-red-200 hover:text-red-500 hover:bg-red-50 transition"
+                    className="w-full py-3 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 rounded-xl font-bold hover:border-red-200 dark:hover:border-red-800 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition"
                   >
                     Remove & Spin Again
                   </button>
