@@ -465,12 +465,23 @@
         lastTickRef.current = rotationRef.current;
 
         // Physics variables
-        velocityRef.current = Math.random() * 0.2 + 0.5; // Initial speed: 0.5 - 0.7 radians/frame
-        const friction = 0.993; // Friction coefficient to slow down the wheel
+        velocityRef.current = Math.random() * 0.2 + 0.5;
+        const baseFriction = 0.993; // Friction reference for 60fps
+        let lastTime = performance.now();
 
         const animateSpin = (currentTime) => {
-          // Apply friction to reduce velocity
-          velocityRef.current *= friction;
+          // Calculate time difference (Delta Time)
+          const dt = currentTime - lastTime;
+          lastTime = currentTime;
+
+          // Normalize to 60fps (approx 16.67ms per frame)
+          // If the device lags (e.g. 30fps), frameRatio will be ~2.0
+          // If the device is fast (120fps), frameRatio will be ~0.5
+          const frameRatio = dt / 16.67;
+
+          // Apply friction scaled by time
+          // Math.pow allows us to apply the friction 'frameRatio' times
+          velocityRef.current *= Math.pow(baseFriction, frameRatio);
 
           // "Grinding" effect at low speeds
           if (velocityRef.current < 0.05 && velocityRef.current > 0.001) {
@@ -478,16 +489,15 @@
             rotationRef.current += wobble;
           }
 
-          // Update rotation
-          rotationRef.current += velocityRef.current;
+          // Update rotation based on time passed
+          rotationRef.current += velocityRef.current * frameRatio;
 
           // --- TICK SOUND LOGIC ---
           // Check if we passed a segment boundary
           // Angle of a single slice
           const sliceAngle = (2 * Math.PI) / itemsRef.current.length;
 
-          // Calculate "total segments passed" since start (normalized is tricky with infinite rotation)
-          // Easier: Compare the integer part of (Rotation / SliceAngle)
+          // Calculate "total segments passed" since start
           const currentStep = Math.floor(rotationRef.current / sliceAngle);
           const lastStep = Math.floor(lastTickRef.current / sliceAngle);
 
