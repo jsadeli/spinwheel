@@ -228,6 +228,7 @@
       const winnerRef = useRef(null);
       const isDarkModeRef = useRef(false);
       const themeMenuRef = useRef(null);
+      const spinFrameRef = useRef(null); // Capture requestAnimationFrame ID
 
       // Audio Refs
       const audioCtxRef = useRef(null);
@@ -515,7 +516,7 @@
 
           // Continue animation if velocity is still significant
           if (velocityRef.current > 0.0005) {
-            requestAnimationFrame(animateSpin);
+            spinFrameRef.current = requestAnimationFrame(animateSpin);
           } else {
             // Animation complete
             velocityRef.current = 0;
@@ -524,7 +525,16 @@
           }
         };
 
-        requestAnimationFrame(animateSpin);
+        spinFrameRef.current = requestAnimationFrame(animateSpin);
+      };
+
+      const handleStopSpin = () => {
+        if (spinFrameRef.current) {
+            cancelAnimationFrame(spinFrameRef.current);
+            spinFrameRef.current = null;
+        }
+        setIsSpinning(false);
+        velocityRef.current = 0;
       };
 
       const calculateWinner = (finalRotation) => {
@@ -653,15 +663,18 @@
 
                 {/* Center Spin Button Overlay */}
                 <button
-                  onClick={spinWheel}
-                  disabled={isSpinning || items.length === 0}
+                  onClick={isSpinning ? handleStopSpin : spinWheel}
+                  disabled={items.length === 0}
                   className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2
-                      w-20 h-20 rounded-full bg-white dark:bg-gray-800 border-4 border-indigo-600 dark:border-indigo-400 shadow-lg
-                      flex items-center justify-center text-indigo-700 dark:text-indigo-400 font-black text-xl tracking-wider
+                      w-20 h-20 rounded-full bg-white dark:bg-gray-800 border-4 shadow-lg
+                      flex items-center justify-center font-black text-xl tracking-wider
                       hover:scale-105 active:scale-95 transition-all z-30
-                      ${isSpinning ? 'opacity-50 cursor-not-allowed' : 'animate-pulse'}`}
+                      ${isSpinning
+                        ? 'border-red-500 dark:border-red-400 text-red-600 dark:text-red-400'
+                        : 'border-indigo-600 dark:border-indigo-400 text-indigo-700 dark:text-indigo-400 animate-pulse'}
+                      ${items.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
-                  SPIN
+                  {isSpinning ? "STOP" : "SPIN"}
                 </button>
               </div>
             </div>
