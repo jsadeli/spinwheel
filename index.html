@@ -320,7 +320,7 @@
 
           // Physics variables
           velocityRef.current = Math.random() * 0.2 + 0.5; // Initial speed: 0.5 - 0.7 radians/frame
-          const friction = 0.985; // Friction coefficient to slow down the wheel
+          const friction = 0.993; // Friction coefficient to slow down the wheel (increased for longer spin)
           let lastTime = performance.now();
 
           const animateSpin = (currentTime) => {
