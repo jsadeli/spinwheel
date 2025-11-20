@@ -53,7 +53,7 @@
     <script type="text/babel">
       const { useState, useEffect, useRef } = React;
 
-      // --- Inline Icons to avoid CDN issues ---
+      // --- Inline Icons ---
       const Icon = ({ children, size = 24, className = "" }) => (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -178,12 +178,23 @@
         const [isSpinning, setIsSpinning] = useState(false);
         const [winner, setWinner] = useState(null);
         const [soundEnabled, setSoundEnabled] = useState(true);
-        const [rotation, setRotation] = useState(0);
 
+        // Refs for animation loop
         const canvasRef = useRef(null);
-        const spinAudioRef = useRef(null);
+        const rotationRef = useRef(0);
+        const isSpinningRef = useRef(false);
+        const itemsRef = useRef(items);
 
-        // Colors for the wheel segments
+        // Sync items ref for the animation loop
+        useEffect(() => {
+          itemsRef.current = items;
+        }, [items]);
+
+        // Sync spinning ref
+        useEffect(() => {
+          isSpinningRef.current = isSpinning;
+        }, [isSpinning]);
+
         const colors = [
           "#FF6B6B",
           "#4ECDC4",
@@ -199,87 +210,106 @@
           "#E056FD",
         ];
 
-        // Sync textarea with items state
+        // Update items from text area
         useEffect(() => {
           const list = inputText.split("\n").filter((item) => item.trim() !== "");
           setItems(list);
         }, [inputText]);
 
-        // Draw the wheel
+        // MAIN RENDER LOOP
         useEffect(() => {
           const canvas = canvasRef.current;
           if (!canvas) return;
-
           const ctx = canvas.getContext("2d");
-          const width = canvas.width;
-          const height = canvas.height;
-          const centerX = width / 2;
-          const centerY = height / 2;
-          const radius = Math.min(width, height) / 2 - 10;
+          let animationFrameId;
 
-          ctx.clearRect(0, 0, width, height);
+          const render = () => {
+            const width = canvas.width;
+            const height = canvas.height;
+            const centerX = width / 2;
+            const centerY = height / 2;
+            const radius = Math.min(width, height) / 2 - 10;
+            const currentItems = itemsRef.current;
 
-          if (items.length === 0) {
-            // Draw empty wheel placeholder
-            ctx.beginPath();
-            ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
-            ctx.fillStyle = "#f0f0f0";
-            ctx.fill();
-            ctx.strokeStyle = "#ddd";
-            ctx.lineWidth = 2;
-            ctx.stroke();
+            // --- Idle Spin Logic ---
+            // Only increment small rotation if NOT in active spin mode
+            if (!isSpinningRef.current && currentItems.length > 0) {
+              rotationRef.current = (rotationRef.current + 0.002) % (2 * Math.PI);
+            }
 
-            ctx.fillStyle = "#888";
-            ctx.font = "20px sans-serif";
-            ctx.textAlign = "center";
-            ctx.textBaseline = "middle";
-            ctx.fillText("Add items to spin!", centerX, centerY);
-            return;
-          }
+            // --- Drawing ---
+            ctx.clearRect(0, 0, width, height);
 
-          const sliceAngle = (2 * Math.PI) / items.length;
+            if (currentItems.length === 0) {
+              // Empty State
+              ctx.beginPath();
+              ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+              ctx.fillStyle = "#f0f0f0";
+              ctx.fill();
+              ctx.strokeStyle = "#ddd";
+              ctx.lineWidth = 2;
+              ctx.stroke();
 
-          // Draw segments
-          items.forEach((item, index) => {
-            const startAngle = index * sliceAngle + rotation;
-            const endAngle = (index + 1) * sliceAngle + rotation;
+              ctx.fillStyle = "#888";
+              ctx.font = "20px sans-serif";
+              ctx.textAlign = "center";
+              ctx.textBaseline = "middle";
+              ctx.fillText("Add items to spin!", centerX, centerY);
+            } else {
+              // Draw Wheel
+              const sliceAngle = (2 * Math.PI) / currentItems.length;
 
-            ctx.beginPath();
-            ctx.moveTo(centerX, centerY);
-            ctx.arc(centerX, centerY, radius, startAngle, endAngle);
-            ctx.closePath();
+              currentItems.forEach((item, index) => {
+                const startAngle = index * sliceAngle + rotationRef.current;
+                const endAngle = (index + 1) * sliceAngle + rotationRef.current;
 
-            ctx.fillStyle = colors[index % colors.length];
-            ctx.fill();
-            ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+                ctx.closePath();
 
-            // Draw text
-            ctx.save();
-            ctx.translate(centerX, centerY);
-            ctx.rotate(startAngle + sliceAngle / 2);
-            ctx.textAlign = "right";
-            ctx.fillStyle = "#fff";
-            ctx.font = items.length > 12 ? "bold 14px Arial" : "bold 18px Arial";
-            ctx.fillText(item.substring(0, 18) + (item.length > 18 ? "..." : ""), radius - 20, 5);
-            ctx.restore();
-          });
+                ctx.fillStyle = colors[index % colors.length];
+                ctx.fill();
+                ctx.stroke();
 
-          // Draw center circle (the hub)
-          ctx.beginPath();
-          ctx.arc(centerX, centerY, 30, 0, 2 * Math.PI);
-          ctx.fillStyle = "white";
-          ctx.fill();
-          ctx.strokeStyle = "#333";
-          ctx.lineWidth = 4;
-          ctx.stroke();
+                // Draw text
+                ctx.save();
+                ctx.translate(centerX, centerY);
+                ctx.rotate(startAngle + sliceAngle / 2);
+                ctx.textAlign = "right";
+                ctx.fillStyle = "#fff";
+                ctx.font = currentItems.length > 12 ? "bold 14px Arial" : "bold 18px Arial";
+                ctx.fillText(
+                  item.substring(0, 18) + (item.length > 18 ? "..." : ""),
+                  radius - 20,
+                  5
+                );
+                ctx.restore();
+              });
 
-          // Draw outer border
-          ctx.beginPath();
-          ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
-          ctx.strokeStyle = "#333";
-          ctx.lineWidth = 5;
-          ctx.stroke();
-        }, [items, rotation, colors]);
+              // Hub
+              ctx.beginPath();
+              ctx.arc(centerX, centerY, 30, 0, 2 * Math.PI);
+              ctx.fillStyle = "white";
+              ctx.fill();
+              ctx.strokeStyle = "#333";
+              ctx.lineWidth = 4;
+              ctx.stroke();
+
+              // Border
+              ctx.beginPath();
+              ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+              ctx.strokeStyle = "#333";
+              ctx.lineWidth = 5;
+              ctx.stroke();
+            }
+
+            animationFrameId = requestAnimationFrame(render);
+          };
+
+          render();
+          return () => cancelAnimationFrame(animationFrameId);
+        }, []); // Runs once on mount, subsequent updates handled by refs
 
         const spinWheel = () => {
           if (isSpinning || items.length === 0) return;
@@ -288,12 +318,12 @@
           setWinner(null);
 
           const spinDuration = 4000; // ms
-          const startRotation = rotation;
+          const startRotation = rotationRef.current;
           // Random rotations (min 5 full spins + random segment)
           const totalRotation = startRotation + Math.PI * 2 * 5 + Math.random() * Math.PI * 2;
           const startTime = performance.now();
 
-          const animate = (currentTime) => {
+          const animateSpin = (currentTime) => {
             const elapsed = currentTime - startTime;
 
             if (elapsed < spinDuration) {
@@ -301,18 +331,18 @@
               let t = elapsed / spinDuration;
               const easeOut = --t * t * t + 1;
 
-              const currentRotation = startRotation + (totalRotation - startRotation) * easeOut;
-              setRotation(currentRotation);
-              requestAnimationFrame(animate);
+              // Directly update ref
+              rotationRef.current = startRotation + (totalRotation - startRotation) * easeOut;
+              requestAnimationFrame(animateSpin);
             } else {
               // Animation complete
-              setRotation(totalRotation);
+              rotationRef.current = totalRotation;
               setIsSpinning(false);
               calculateWinner(totalRotation);
             }
           };
 
-          requestAnimationFrame(animate);
+          requestAnimationFrame(animateSpin);
         };
 
         const calculateWinner = (finalRotation) => {
