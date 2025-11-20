@@ -173,6 +173,10 @@
       const velocityRef = useRef(0);
       const winnerRef = useRef(null);
 
+      // Audio Refs
+      const audioCtxRef = useRef(null);
+      const lastTickRef = useRef(0);
+
       // Sync items ref for the animation loop
       useEffect(() => {
         itemsRef.current = items;
@@ -187,6 +191,67 @@
       useEffect(() => {
         winnerRef.current = winner;
       }, [winner]);
+
+      // --- AUDIO LOGIC ---
+      const initAudio = () => {
+        if (!audioCtxRef.current) {
+          audioCtxRef.current = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtxRef.current.state === 'suspended') {
+          audioCtxRef.current.resume();
+        }
+      };
+
+      const playTickSound = () => {
+        if (!soundEnabled || !audioCtxRef.current) return;
+        const ctx = audioCtxRef.current;
+
+        // Create oscillator for a short "wood block" click
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = 'triangle';
+        // Pitch glides down slightly for a punchier sound
+        osc.frequency.setValueAtTime(800, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(300, ctx.currentTime + 0.05);
+
+        gain.gain.setValueAtTime(0.3, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.05);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start();
+        osc.stop(ctx.currentTime + 0.05);
+      };
+
+      const playWinSound = () => {
+        if (!soundEnabled || !audioCtxRef.current) return;
+        const ctx = audioCtxRef.current;
+
+        // C Major Arpeggio (C5, E5, G5, C6)
+        const notes = [523.25, 659.25, 783.99, 1046.50];
+
+        notes.forEach((freq, i) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          const startTime = ctx.currentTime + (i * 0.08);
+          const duration = 0.4;
+
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, startTime);
+
+          gain.gain.setValueAtTime(0, startTime);
+          gain.gain.linearRampToValueAtTime(0.2, startTime + 0.05);
+          gain.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
+
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+
+          osc.start(startTime);
+          osc.stop(startTime + duration);
+        });
+      };
 
       const colors = [
         '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4',
@@ -219,6 +284,8 @@
           // Only increment small rotation if NOT in active spin mode AND no winner is being displayed
           if (!isSpinningRef.current && currentItems.length > 0 && velocityRef.current === 0 && !winnerRef.current) {
             rotationRef.current = (rotationRef.current + 0.002) % (2 * Math.PI);
+            // Update lastTickRef so we don't play sounds during idle spin if we switch modes
+            lastTickRef.current = rotationRef.current;
           }
 
           // --- Drawing ---
@@ -294,34 +361,53 @@
       const spinWheel = () => {
         if (isSpinning || items.length === 0) return;
 
+        // Initialize audio on user interaction
+        initAudio();
+
         setIsSpinning(true);
         setWinner(null);
+
+        // Reset tracking for ticks
+        lastTickRef.current = rotationRef.current;
 
         // Physics variables
         velocityRef.current = Math.random() * 0.2 + 0.5; // Initial speed: 0.5 - 0.7 radians/frame
         const friction = 0.993; // Friction coefficient to slow down the wheel
-        let lastTime = performance.now();
 
         const animateSpin = (currentTime) => {
           // Apply friction to reduce velocity
           velocityRef.current *= friction;
 
           // "Grinding" effect at low speeds
-          // As velocity gets low, add a small, opposing force that oscillates
           if (velocityRef.current < 0.05 && velocityRef.current > 0.001) {
-            // The wobble intensity depends on current velocity
             const wobble = Math.sin(currentTime / 50) * (velocityRef.current * 0.5);
             rotationRef.current += wobble;
           }
 
-          // Update rotation based on current velocity
+          // Update rotation
           rotationRef.current += velocityRef.current;
+
+          // --- TICK SOUND LOGIC ---
+          // Check if we passed a segment boundary
+          // Angle of a single slice
+          const sliceAngle = (2 * Math.PI) / itemsRef.current.length;
+
+          // Calculate "total segments passed" since start (normalized is tricky with infinite rotation)
+          // Easier: Compare the integer part of (Rotation / SliceAngle)
+          const currentStep = Math.floor(rotationRef.current / sliceAngle);
+          const lastStep = Math.floor(lastTickRef.current / sliceAngle);
+
+          if (currentStep !== lastStep) {
+             playTickSound();
+          }
+          lastTickRef.current = rotationRef.current;
+          // ------------------------
 
           // Continue animation if velocity is still significant
           if (velocityRef.current > 0.0005) {
             requestAnimationFrame(animateSpin);
           } else {
-            // Animation complete, wheel has stopped
+            // Animation complete
             velocityRef.current = 0;
             setIsSpinning(false);
             calculateWinner(rotationRef.current);
@@ -343,8 +429,9 @@
         const winItem = items[winningIndex];
 
         setWinner(winItem);
+
         if (soundEnabled) {
-           // Sound effect logic would go here
+           playWinSound();
         }
         fireConfetti();
       };
