@@ -1,2 +1,3 @@
-# spin-wheel
+# Spin Wheel
+
 Vibe coding a Spin Wheel app into existence...
