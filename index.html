@@ -565,32 +565,49 @@
       const spinWheel = () => {
         if (isSpinning || items.length === 0) return;
 
+        // Initialize audio on user interaction
         initAudio();
 
         setIsSpinning(true);
         setWinner(null);
 
+        // Reset tracking for ticks
         lastTickRef.current = rotationRef.current;
 
-        velocityRef.current = Math.random() * 0.2 + 0.5;
-        const baseFriction = 0.993;
+        // Physics variables
+        velocityRef.current = Math.random() * 0.2 + 0.5; // Random initial speed
+
+        // Dynamically calculate friction to force exactly 10 seconds duration
+        // Formula: friction = (v_final / v_initial)^(1 / total_frames)
+        const duration = 10000; // 10 seconds
+        const stopThreshold = 0.0001; // Lower threshold for a smoother stop
+        const totalFrames = duration / 16.667; // approx 600 frames at 60fps
+        const baseFriction = Math.pow(stopThreshold / velocityRef.current, 1 / totalFrames);
+
         let lastTime = performance.now();
 
         const animateSpin = (currentTime) => {
+          // Calculate time difference (Delta Time)
           const dt = currentTime - lastTime;
           lastTime = currentTime;
 
+          // Normalize to 60fps (approx 16.67ms per frame)
           const frameRatio = dt / 16.67;
 
+          // Apply friction scaled by time
           velocityRef.current *= Math.pow(baseFriction, frameRatio);
 
+          // "Grinding" effect at low speeds
           if (velocityRef.current < 0.05 && velocityRef.current > 0.001) {
             const wobble = Math.sin(currentTime / 50) * (velocityRef.current * 0.5);
             rotationRef.current += wobble;
           }
 
+          // Update rotation based on time passed
           rotationRef.current += velocityRef.current * frameRatio;
 
+          // --- TICK SOUND LOGIC ---
+          // Check if we passed a segment boundary
           const sliceAngle = (2 * Math.PI) / itemsRef.current.length;
           const currentStep = Math.floor(rotationRef.current / sliceAngle);
           const lastStep = Math.floor(lastTickRef.current / sliceAngle);
@@ -599,10 +616,13 @@
              playTickSound();
           }
           lastTickRef.current = rotationRef.current;
+          // ------------------------
 
-          if (velocityRef.current > 0.0005) {
+          // Continue animation if velocity is above threshold
+          if (velocityRef.current > stopThreshold) {
             spinFrameRef.current = requestAnimationFrame(animateSpin);
           } else {
+            // Animation complete
             velocityRef.current = 0;
             setIsSpinning(false);
             calculateWinner(rotationRef.current);
