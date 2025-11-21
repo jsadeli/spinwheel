@@ -78,6 +78,20 @@
       </Icon>
     );
 
+    const SlidersIcon = (props) => (
+      <Icon {...props}>
+        <line x1="4" y1="21" x2="4" y2="14" />
+        <line x1="4" y1="10" x2="4" y2="3" />
+        <line x1="12" y1="21" x2="12" y2="12" />
+        <line x1="12" y1="8" x2="12" y2="3" />
+        <line x1="20" y1="21" x2="20" y2="16" />
+        <line x1="20" y1="12" x2="20" y2="3" />
+        <line x1="1" y1="14" x2="7" y2="14" />
+        <line x1="9" y1="8" x2="15" y2="8" />
+        <line x1="17" y1="16" x2="23" y2="16" />
+      </Icon>
+    );
+
     const Volume2Icon = (props) => (
       <Icon {...props}>
         <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
@@ -203,6 +217,21 @@
       </Icon>
     );
 
+    const ZapIcon = (props) => (
+        <Icon {...props}>
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+        </Icon>
+    );
+
+    const HourglassIcon = (props) => (
+        <Icon {...props}>
+            <path d="M5 22h14" />
+            <path d="M5 2h14" />
+            <path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22" />
+            <path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2" />
+        </Icon>
+    );
+
     // Confetti Logic
     const fireConfetti = () => {
       const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
@@ -254,11 +283,13 @@
       const [theme, setTheme] = useState('auto'); // 'auto', 'light', 'dark'
       const [showThemeMenu, setShowThemeMenu] = useState(false);
       const [showShareMenu, setShowShareMenu] = useState(false);
+      const [showSettingsMenu, setShowSettingsMenu] = useState(false);
       const [shareUrl, setShareUrl] = useState('');
       const [history, setHistory] = useState([]);
       const [activeTab, setActiveTab] = useState('inputs'); // 'inputs' or 'history'
       const [hideLabels, setHideLabels] = useState(false);
       const [isCopied, setIsCopied] = useState(false);
+      const [spinDuration, setSpinDuration] = useState(10000);
 
       // Refs for animation loop
       const canvasRef = useRef(null);
@@ -270,6 +301,7 @@
       const isDarkModeRef = useRef(false);
       const themeMenuRef = useRef(null);
       const shareMenuRef = useRef(null);
+      const settingsMenuRef = useRef(null);
       const spinFrameRef = useRef(null); // Capture requestAnimationFrame ID
       const hideLabelsRef = useRef(false);
       const pointerRef = useRef(null); // Ref for the arrow pointer
@@ -348,6 +380,9 @@
             }
             if (shareMenuRef.current && !shareMenuRef.current.contains(event.target)) {
                 setShowShareMenu(false);
+            }
+            if (settingsMenuRef.current && !settingsMenuRef.current.contains(event.target)) {
+                setShowSettingsMenu(false);
             }
         };
         document.addEventListener("mousedown", handleClickOutside);
@@ -568,35 +603,16 @@
 
           // --- Pointer Animation Logic ---
           if (pointerRef.current) {
-             // Calculate the "phase" of the pins relative to the pointer (at 0 degrees/Right)
-             // Pointer is at 0 radians. Wheel spins clockwise (angle increases).
-             // Pin angle = (i * spacing + rotation).
-             // We want to know when a pin passes 0.
-             // Effectively: (rotation % spacing).
              const pinSpacing = (2 * Math.PI) / NUM_PINS;
              const pinPhase = (rotationRef.current % pinSpacing) / pinSpacing;
-             // pinPhase goes 0 -> 1 as a pin moves past the pointer.
 
              let pointerAngle = 0;
-             // Simulate interaction:
-             // As pin approaches (0.8 -> 1.0), pointer lifts up.
-             // As pin passes (0.0 -> 0.2), pointer snaps down.
-
-             // Adjust phase so hit happens at boundary
-             // Let's say pin hits at phase 0.9, pushes till 1.0/0.0, then snaps.
-
              if (pinPhase > 0.85) {
-                 // Pushing up (Counter-clockwise rotation for pointer)
-                 // Map 0.85->1.0 to 0 -> -20 degrees
                  pointerAngle = (pinPhase - 0.85) / 0.15 * -25;
              } else {
-                 // Snapping back (Elastic bounce)
-                 // Decay from -25 back to 0
-                 // Simple decay: angle = -25 * e^(-10 * phase)
                  pointerAngle = -25 * Math.exp(-15 * pinPhase);
              }
 
-             // Apply rotation to the pointer div
              pointerRef.current.style.transform = `rotate(${pointerAngle}deg)`;
           }
 
@@ -619,8 +635,8 @@
 
         velocityRef.current = Math.random() * 0.2 + 0.5; // Random initial speed
 
-        // Dynamically calculate friction to force exactly 10 seconds duration
-        const duration = 10000; // 10 seconds
+        // Dynamically calculate friction to force exactly the duration
+        const duration = spinDuration; // Use state variable
         const stopThreshold = 0.0001;
         const totalFrames = duration / 16.667;
         const baseFriction = Math.pow(stopThreshold / velocityRef.current, 1 / totalFrames);
@@ -638,11 +654,9 @@
           rotationRef.current += velocityRef.current * frameRatio;
 
           // --- TICK SOUND LOGIC ---
-          // Check if we passed a pin (segment boundary for pins)
           const NUM_PINS = 30;
           const pinSpacing = (2 * Math.PI) / NUM_PINS;
 
-          // We trigger sound when pinPhase wraps around (hits 0)
           const currentStep = Math.floor(rotationRef.current / pinSpacing);
           const lastStep = Math.floor(lastTickRef.current / pinSpacing);
 
@@ -781,6 +795,51 @@
               >
                 {soundEnabled ? <Volume2Icon size={24} /> : <VolumeXIcon size={24} />}
               </button>
+
+              {/* Settings Menu */}
+              <div className="relative" ref={settingsMenuRef}>
+                <button
+                  onClick={() => setShowSettingsMenu(!showSettingsMenu)}
+                  className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition text-gray-600 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400"
+                  title="Spin Settings"
+                >
+                  <SlidersIcon size={24} />
+                </button>
+
+                {showSettingsMenu && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 z-50 overflow-hidden animate-[fade-in_0.2s_ease-out]">
+                    <div className="p-2 border-b border-gray-100 dark:border-gray-700">
+                        <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Spin Duration</span>
+                    </div>
+                    <div className="py-1">
+                      <button
+                        onClick={() => {setSpinDuration(5000); setShowSettingsMenu(false)}}
+                        className={`flex items-center w-full px-4 py-2 text-sm text-left ${spinDuration === 5000 ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
+                      >
+                        <span className="mr-3"><ZapIcon size={16} /></span>
+                        Quick (5s)
+                        {spinDuration === 5000 && <span className="ml-auto"><CheckIcon size={16} /></span>}
+                      </button>
+                      <button
+                        onClick={() => {setSpinDuration(10000); setShowSettingsMenu(false)}}
+                        className={`flex items-center w-full px-4 py-2 text-sm text-left ${spinDuration === 10000 ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
+                      >
+                        <span className="mr-3"><ClockIcon size={16} /></span>
+                        Normal (10s)
+                        {spinDuration === 10000 && <span className="ml-auto"><CheckIcon size={16} /></span>}
+                      </button>
+                      <button
+                        onClick={() => {setSpinDuration(20000); setShowSettingsMenu(false)}}
+                        className={`flex items-center w-full px-4 py-2 text-sm text-left ${spinDuration === 20000 ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
+                      >
+                        <span className="mr-3"><HourglassIcon size={16} /></span>
+                        Long (20s)
+                        {spinDuration === 20000 && <span className="ml-auto"><CheckIcon size={16} /></span>}
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
 
               {/* Share Menu */}
               <div className="relative" ref={shareMenuRef}>
