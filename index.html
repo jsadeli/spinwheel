@@ -263,6 +263,7 @@
       const [history, setHistory] = useState([]);
       const [activeTab, setActiveTab] = useState('inputs'); // 'inputs' or 'history'
       const [hideLabels, setHideLabels] = useState(false);
+      const [isCopied, setIsCopied] = useState(false);
 
       // Refs for animation loop
       const canvasRef = useRef(null);
@@ -381,8 +382,8 @@
 
       const copyToClipboard = () => {
         navigator.clipboard.writeText(shareUrl).then(() => {
-          // Visual feedback could be added here
-          alert("Copied to clipboard!");
+          setIsCopied(true);
+          setTimeout(() => setIsCopied(false), 2000);
         });
       };
 
@@ -752,10 +753,10 @@
                       />
                       <button
                         onClick={copyToClipboard}
-                        className="p-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded transition flex items-center justify-center"
-                        title="Copy to Clipboard"
+                        className={`p-2 rounded transition flex items-center justify-center ${isCopied ? 'bg-green-500 hover:bg-green-600 text-white' : 'bg-indigo-600 hover:bg-indigo-700 text-white'}`}
+                        title={isCopied ? "Copied!" : "Copy to Clipboard"}
                       >
-                        <CopyIcon size={18} />
+                        {isCopied ? <CheckIcon size={18} /> : <CopyIcon size={18} />}
                       </button>
                     </div>
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
