@@ -20,6 +20,7 @@ Screenshot:
 - **Single Page Application**: No server required, runs entirely in your browser
 - **Easy to Use**: Simple and intuitive interface
 - **Lightweight**: Built with vanilla HTML, CSS, and JavaScript
+- and many more...
 
 ## Usage
 
