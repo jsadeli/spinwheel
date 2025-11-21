@@ -377,10 +377,12 @@
         if (!soundEnabled || !audioCtxRef.current) return;
         const ctx = audioCtxRef.current;
 
+        // Create oscillator for a short "wood block" click
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
 
         osc.type = 'triangle';
+        // Pitch glides down slightly for a punchier sound
         osc.frequency.setValueAtTime(800, ctx.currentTime);
         osc.frequency.exponentialRampToValueAtTime(300, ctx.currentTime + 0.05);
 
@@ -397,28 +399,34 @@
       const playWinSound = () => {
         if (!soundEnabled || !audioCtxRef.current) return;
         const ctx = audioCtxRef.current;
+        const now = ctx.currentTime;
 
-        const notes = [523.25, 659.25, 783.99, 1046.50];
+        // Helper for playing a tone
+        const playTone = (freq, start, dur, type = 'triangle', vol = 0.1) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = type;
+            osc.frequency.value = freq;
+            gain.gain.setValueAtTime(0, start);
+            gain.gain.linearRampToValueAtTime(vol, start + 0.05);
+            gain.gain.exponentialRampToValueAtTime(0.001, start + dur);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(start);
+            osc.stop(start + dur);
+        };
 
-        notes.forEach((freq, i) => {
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-          const startTime = ctx.currentTime + (i * 0.08);
-          const duration = 0.4;
+        // A major fanfare sequence (C Major)
+        // Fast run up
+        playTone(523.25, now + 0.0, 0.3, 'square', 0.1); // C5
+        playTone(659.25, now + 0.1, 0.3, 'square', 0.1); // E5
+        playTone(783.99, now + 0.2, 0.3, 'square', 0.1); // G5
 
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(freq, startTime);
-
-          gain.gain.setValueAtTime(0, startTime);
-          gain.gain.linearRampToValueAtTime(0.2, startTime + 0.05);
-          gain.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
-
-          osc.connect(gain);
-          gain.connect(ctx.destination);
-
-          osc.start(startTime);
-          osc.stop(startTime + duration);
-        });
+        // The "Ta-Da" finale (Chord)
+        playTone(523.25, now + 0.3, 1.5, 'triangle', 0.15); // C5
+        playTone(659.25, now + 0.3, 1.5, 'triangle', 0.15); // E5
+        playTone(783.99, now + 0.3, 1.5, 'triangle', 0.15); // G5
+        playTone(1046.50, now + 0.3, 2.0, 'sawtooth', 0.1); // C6 (Top Note, sharper)
       };
 
       const colors = [
