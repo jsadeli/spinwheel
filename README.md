@@ -39,10 +39,10 @@ You can customize the probability of each item winning by assigning a weight.
 Example:
 
 ```text
-Pizza: 5
-Burger: 1
-Sushi: 1
-Salad: 1
+Pizza:5
+Burger :1
+Sushi:  1
+Salad  :  1
 ```
 
 - Total Weight: `5 + 1 + 1 + 1 = 8`
