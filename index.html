@@ -481,12 +481,39 @@
         "Pizza", "Burger", "Sushi", "Tacos", "Salad", "Pasta", "Steak", "Ramen"
       ];
 
+      // Helper to parse text into objects { text, weight }
+      const parseItems = (text) => {
+        return text.split('\n')
+          .filter(line => line.trim() !== '')
+          .map(line => {
+            // Check for "Text: Number" pattern
+            // CHANGED: Added \s* to allow spaces between colon and number (e.g. "Pizza: 10")
+            const match = line.match(/^(.*):\s*(\d+)$/);
+            if (match) {
+              const weight = parseInt(match[2], 10);
+              if (!isNaN(weight) && weight > 0) {
+                return { text: match[1].trim(), weight: weight, original: line.trim() };
+              }
+            }
+            return { text: line.trim(), weight: 1, original: line.trim() };
+          });
+      };
+
+      // Helper to convert item objects back to string for text area
+      const itemsToString = (itemsArray) => {
+        return itemsArray.map(i => {
+            // If the current parsed text + weight matches the original input format, preserve it
+            // Otherwise reconstruct it
+            return i.weight > 1 ? `${i.text}: ${i.weight}` : i.text;
+        }).join('\n');
+      };
+
       // Load states from localStorage or defaults
       const [inputText, setInputText] = useState(() => loadState('spinWheel_inputs', defaultItems.join('\n')));
-      const [items, setItems] = useState(() => {
-          const text = loadState('spinWheel_inputs', defaultItems.join('\n'));
-          return text.split('\n').filter(item => item.trim() !== '');
-      });
+
+      // Items is now an array of objects: { text: string, weight: number }
+      const [items, setItems] = useState(() => parseItems(loadState('spinWheel_inputs', defaultItems.join('\n'))));
+
       const [history, setHistory] = useState(() => {
           const storedHistory = loadState('spinWheel_history', []);
           // Rehydrate timestamp strings back to Date objects
@@ -585,9 +612,9 @@
 
       // Sync items ref for the animation loop & Update Items State
       useEffect(() => {
-        const list = inputText.split('\n').filter(item => item.trim() !== '');
-        setItems(list);
-        itemsRef.current = list;
+        const parsed = parseItems(inputText);
+        setItems(parsed);
+        itemsRef.current = parsed;
       }, [inputText]);
 
       // Sync spinning ref
@@ -789,12 +816,18 @@
             ctx.textBaseline = 'middle';
             ctx.fillText('Add items to spin!', centerX, centerY);
           } else {
-            // Draw Wheel
-            const sliceAngle = (2 * Math.PI) / currentItems.length;
+            // Calculate Total Weight
+            const totalWeight = currentItems.reduce((sum, item) => sum + item.weight, 0);
+
+            // Draw Wheel Slices
+            let currentAngle = rotationRef.current;
 
             currentItems.forEach((item, index) => {
-              const startAngle = index * sliceAngle + rotationRef.current;
-              const endAngle = (index + 1) * sliceAngle + rotationRef.current;
+              // Calculate slice size based on weight
+              const sliceAngle = (item.weight / totalWeight) * (2 * Math.PI);
+
+              const startAngle = currentAngle;
+              const endAngle = currentAngle + sliceAngle;
 
               ctx.beginPath();
               ctx.moveTo(centerX, centerY);
@@ -808,15 +841,19 @@
               // Draw text
               ctx.save();
               ctx.translate(centerX, centerY);
+              // Rotate to center of the weighted slice
               ctx.rotate(startAngle + sliceAngle / 2);
               ctx.textAlign = "right";
               ctx.fillStyle = "#fff";
               ctx.font = currentItems.length > 12 ? "bold 14px Arial" : "bold 18px Arial";
 
-              const displayText = shouldHide ? "?" : (item.substring(0, 18) + (item.length > 18 ? '...' : ''));
+              const displayText = shouldHide ? "?" : (item.text.substring(0, 18) + (item.text.length > 18 ? '...' : ''));
 
               ctx.fillText(displayText, radius - 20, 5);
               ctx.restore();
+
+              // Advance angle for next item
+              currentAngle += sliceAngle;
             });
 
             // Hub
@@ -939,13 +976,33 @@
 
       const calculateWinner = (finalRotation) => {
         const normalizedRotation = finalRotation % (2 * Math.PI);
-        const sliceAngle = (2 * Math.PI) / items.length;
 
+        // Weighted Winner Calculation
+        // 1. Calculate effective angle (Right side is 0, moves counter-clockwise relative to rotation)
         let effectiveAngle = (2 * Math.PI - normalizedRotation) % (2 * Math.PI);
         if (effectiveAngle < 0) effectiveAngle += 2 * Math.PI;
 
-        const winningIndex = Math.floor(effectiveAngle / sliceAngle);
-        const winItem = items[winningIndex];
+        // 2. Calculate total weight
+        const currentItems = itemsRef.current;
+        const totalWeight = currentItems.reduce((sum, item) => sum + item.weight, 0);
+
+        // 3. Iterate to find which slice encompasses the effectiveAngle
+        let accumulatedAngle = 0;
+        let winItem = null;
+
+        for (let i = 0; i < currentItems.length; i++) {
+            const item = currentItems[i];
+            const sliceAngle = (item.weight / totalWeight) * (2 * Math.PI);
+
+            if (effectiveAngle >= accumulatedAngle && effectiveAngle < accumulatedAngle + sliceAngle) {
+                winItem = item.text;
+                break;
+            }
+            accumulatedAngle += sliceAngle;
+        }
+
+        // Fallback (should mostly not happen unless float precision error)
+        if (!winItem && currentItems.length > 0) winItem = currentItems[currentItems.length - 1].text;
 
         setWinner(winItem);
 
@@ -967,7 +1024,7 @@
 
       const handleShuffle = () => {
         const shuffled = [...items].sort(() => Math.random() - 0.5);
-        setInputText(shuffled.join('\n'));
+        setInputText(itemsToString(shuffled));
       };
 
       const handleClear = () => {
@@ -1300,8 +1357,8 @@
                   <button
                     onClick={() => {
                       // Remove winner logic
-                      const newItems = items.filter(i => i !== winner);
-                      setInputText(newItems.join('\n'));
+                      const newItems = items.filter(i => i.text !== winner);
+                      setInputText(itemsToString(newItems));
                       setWinner(null);
                     }}
                     className="w-full py-3 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 rounded-xl font-bold hover:border-red-200 dark:hover:border-red-800 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition"
