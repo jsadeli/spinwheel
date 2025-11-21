@@ -272,24 +272,50 @@
       }, 4000);
     };
 
+    // Helper function to load state from localStorage
+    const loadState = (key, defaultValue) => {
+        if (typeof window === 'undefined') return defaultValue;
+        try {
+            const stored = localStorage.getItem(key);
+            return stored !== null ? JSON.parse(stored) : defaultValue;
+        } catch (e) {
+            console.error(`Failed to load ${key} from localStorage`, e);
+            return defaultValue;
+        }
+    };
+
     const App = () => {
-      const [items, setItems] = useState([
+      const defaultItems = [
         "Pizza", "Burger", "Sushi", "Tacos", "Salad", "Pasta", "Steak", "Ramen"
-      ]);
-      const [inputText, setInputText] = useState(items.join('\n'));
+      ];
+
+      // Load states from localStorage or defaults
+      const [inputText, setInputText] = useState(() => loadState('spinWheel_inputs', defaultItems.join('\n')));
+      const [items, setItems] = useState(() => {
+          const text = loadState('spinWheel_inputs', defaultItems.join('\n'));
+          return text.split('\n').filter(item => item.trim() !== '');
+      });
+      const [history, setHistory] = useState(() => {
+          const storedHistory = loadState('spinWheel_history', []);
+          // Rehydrate timestamp strings back to Date objects
+          return storedHistory.map(item => ({
+              ...item,
+              timestamp: new Date(item.timestamp)
+          }));
+      });
+      const [soundEnabled, setSoundEnabled] = useState(() => loadState('spinWheel_sound', true));
+      const [theme, setTheme] = useState(() => loadState('spinWheel_theme', 'auto'));
+      const [spinDuration, setSpinDuration] = useState(() => loadState('spinWheel_duration', 10000));
+      const [hideLabels, setHideLabels] = useState(() => loadState('spinWheel_hideLabels', false));
+
       const [isSpinning, setIsSpinning] = useState(false);
       const [winner, setWinner] = useState(null);
-      const [soundEnabled, setSoundEnabled] = useState(true);
-      const [theme, setTheme] = useState('auto'); // 'auto', 'light', 'dark'
       const [showThemeMenu, setShowThemeMenu] = useState(false);
       const [showShareMenu, setShowShareMenu] = useState(false);
       const [showSettingsMenu, setShowSettingsMenu] = useState(false);
       const [shareUrl, setShareUrl] = useState('');
-      const [history, setHistory] = useState([]);
       const [activeTab, setActiveTab] = useState('inputs'); // 'inputs' or 'history'
-      const [hideLabels, setHideLabels] = useState(false);
       const [isCopied, setIsCopied] = useState(false);
-      const [spinDuration, setSpinDuration] = useState(10000);
 
       // Refs for animation loop
       const canvasRef = useRef(null);
@@ -303,7 +329,7 @@
       const shareMenuRef = useRef(null);
       const settingsMenuRef = useRef(null);
       const spinFrameRef = useRef(null); // Capture requestAnimationFrame ID
-      const hideLabelsRef = useRef(false);
+      const hideLabelsRef = useRef(hideLabels);
       const pointerRef = useRef(null); // Ref for the arrow pointer
 
       // Audio Refs
@@ -328,10 +354,38 @@
         }
       }, []);
 
-      // Sync items ref for the animation loop
+      // Persistence Effects - Save to localStorage on change
       useEffect(() => {
-        itemsRef.current = items;
-      }, [items]);
+          localStorage.setItem('spinWheel_inputs', JSON.stringify(inputText));
+      }, [inputText]);
+
+      useEffect(() => {
+          localStorage.setItem('spinWheel_history', JSON.stringify(history));
+      }, [history]);
+
+      useEffect(() => {
+          localStorage.setItem('spinWheel_sound', JSON.stringify(soundEnabled));
+      }, [soundEnabled]);
+
+      useEffect(() => {
+          localStorage.setItem('spinWheel_theme', JSON.stringify(theme));
+      }, [theme]);
+
+      useEffect(() => {
+          localStorage.setItem('spinWheel_duration', JSON.stringify(spinDuration));
+      }, [spinDuration]);
+
+      useEffect(() => {
+          localStorage.setItem('spinWheel_hideLabels', JSON.stringify(hideLabels));
+      }, [hideLabels]);
+
+
+      // Sync items ref for the animation loop & Update Items State
+      useEffect(() => {
+        const list = inputText.split('\n').filter(item => item.trim() !== '');
+        setItems(list);
+        itemsRef.current = list;
+      }, [inputText]);
 
       // Sync spinning ref
       useEffect(() => {
@@ -487,12 +541,6 @@
         '#FFEEAD', '#FFD93D', '#FF9A8B', '#A0E7E5',
         '#B39CD0', '#FBE7C6', '#EB6B56', '#E056FD'
       ];
-
-      // Update items from text area
-      useEffect(() => {
-        const list = inputText.split('\n').filter(item => item.trim() !== '');
-        setItems(list);
-      }, [inputText]);
 
       // MAIN RENDER LOOP
       useEffect(() => {
@@ -699,11 +747,14 @@
         setWinner(winItem);
 
         // Add to history
-        setHistory(prev => [{
-            id: Date.now(),
-            text: winItem,
-            timestamp: new Date()
-        }, ...prev]);
+        setHistory(prev => {
+            const newHistory = [{
+                id: Date.now(),
+                text: winItem,
+                timestamp: new Date()
+            }, ...prev];
+            return newHistory;
+        });
 
         if (soundEnabled) {
            playWinSound();
