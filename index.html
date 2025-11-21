@@ -287,8 +287,8 @@
           y: startY,
           vx: vx,
           vy: vy,
-          gravity: 0.4 + Math.random() * 0.2, // Gravity pulls down over time
-          drag: 0.98, // Air resistance slows down velocity
+          gravity: 0.07 + Math.random() * 0.05, // Reduced gravity (was ~0.5) for floaty fall
+          drag: 0.96, // Increased drag (was 0.98) for air resistance
           rotX: Math.random() * 360,
           rotY: Math.random() * 360,
           rotZ: Math.random() * 360,
@@ -296,7 +296,7 @@
           rotSpeedY: (Math.random() - 0.5) * 15,
           rotSpeedZ: (Math.random() - 0.5) * 10,
           opacity: startOpacity,
-          fadeStart: Date.now() + 1500 + Math.random() * 1500 // Start fading after 1.5-3s
+          fadeStart: Date.now() + 3000 + Math.random() * 2000 // Start fading later (after 3-5s)
         });
       }
 
@@ -338,8 +338,8 @@
           }
         });
 
-        // Continue animation if particles are active and under time limit (8s safety stop)
-        if (activeParticles > 0 && (now - startTime < 8000)) {
+        // Continue animation if particles are active and under time limit (increased to 20s)
+        if (activeParticles > 0 && (now - startTime < 20000)) {
            animationFrameId = requestAnimationFrame(animate);
         } else {
            // Cleanup
