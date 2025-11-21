@@ -51,6 +51,10 @@ Salad  :  1
 - Others: Each have 1/8 of the total wheel (approx 12.5% chance).
 - If the user doesn't type a number (e.g., just "Ramen"), the system defaults that item's weight to 1.
 
+### AI features
+
+Get your Gemini API key from [Google AI Studio](https://aistudio.google.com/app/api-keys).
+
 ## How It Works
 
 The spin wheel uses HTML5 Canvas or CSS animations to create a smooth spinning effect.
