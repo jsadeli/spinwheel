@@ -133,6 +133,27 @@
       </svg>
     );
 
+    const SpinWheelLogo = (props) => (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 512 512"
+        width={props.size || 24}
+        height={props.size || 24}
+        className={props.className}
+        fill="none"
+        {...props}
+      >
+        <circle cx="256" cy="256" r="256" fill="#4f46e5"/>
+        <path d="M256 256 256 0 A256 256 0 0 1 477.7 128 Z" fill="#fbbf24"/>
+        <path d="M256 256 477.7 128 A256 256 0 0 1 477.7 384 Z" fill="#ec4899"/>
+        <path d="M256 256 477.7 384 A256 256 0 0 1 256 512 Z" fill="#10b981"/>
+        <path d="M256 256 256 512 A256 256 0 0 1 34.3 384 Z" fill="#3b82f6"/>
+        <path d="M256 256 34.3 384 A256 256 0 0 1 34.3 128 Z" fill="#8b5cf6"/>
+        <path d="M256 256 34.3 128 A256 256 0 0 1 256 0 Z" fill="#ef4444"/>
+        <circle cx="256" cy="256" r="40" fill="#fff"/>
+      </svg>
+    );
+
     const SettingsIcon = (props) => (
       <Icon {...props}>
         <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.47a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
@@ -962,8 +983,8 @@
           {/* Header */}
           <header className="bg-white dark:bg-gray-800 shadow-sm p-4 flex justify-between items-center z-50 border-b dark:border-gray-700 transition-colors duration-300">
             <div className="flex items-center space-x-2">
-              <div className="bg-indigo-600 text-white p-2 rounded-lg">
-                <SettingsIcon size={24} />
+              <div className="rounded-full overflow-hidden shadow-sm">
+                <SpinWheelLogo size={40} />
               </div>
               <h1 className="text-xl md:text-2xl font-bold text-indigo-900 dark:text-indigo-400">SpinWheel</h1>
             </div>
