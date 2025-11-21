@@ -235,7 +235,7 @@
     // Confetti Logic
     const fireConfetti = () => {
       const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
-      const confettiCount = 150;
+      const confettiCount = 200;
       const container = document.createElement('div');
       container.style.position = 'fixed';
       container.style.top = '0';
@@ -244,32 +244,62 @@
       container.style.height = '100%';
       container.style.pointerEvents = 'none';
       container.style.zIndex = '9999';
+      container.style.perspective = '1000px'; // Depth for 3D
       document.body.appendChild(container);
 
       for (let i = 0; i < confettiCount; i++) {
         const el = document.createElement('div');
         el.style.position = 'absolute';
-        el.style.width = '10px';
-        el.style.height = '10px';
-        el.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-        el.style.left = Math.random() * 100 + 'vw';
-        el.style.top = '-10px';
-        el.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
-        el.style.transform = `rotate(${Math.random() * 360}deg)`;
 
-        const animationDuration = 1 + Math.random() * 2;
-        el.style.transition = `top ${animationDuration}s ease-in, transform ${animationDuration}s linear`;
+        // Random size and shape
+        const size = Math.random() * 8 + 6 + 'px';
+        el.style.width = size;
+        el.style.height = Math.random() > 0.5 ? size : (Math.random() * 4 + 4 + 'px'); // Square or rectangle
+
+        const colorHex = colors[Math.floor(Math.random() * colors.length)];
+        el.style.backgroundColor = colorHex;
+        el.style.opacity = (0.7 + Math.random() * 0.1).toString(); // Semi-transparent (70-80%)
+
+        el.style.left = Math.random() * 100 + 'vw';
+        el.style.top = -20 + 'px'; // Start slightly above
+
+        // Random Initial Rotation
+        const rotationX = Math.random() * 360;
+        const rotationY = Math.random() * 360;
+        const rotationZ = Math.random() * 360;
+        el.style.transform = `rotateX(${rotationX}deg) rotateY(${rotationY}deg) rotateZ(${rotationZ}deg)`;
+
+        const animationDuration = 2 + Math.random() * 3; // 2s to 5s
+        const driftX = (Math.random() - 0.5) * 300 + 'px'; // Horizontal drift
+
+        // Define the transition
+        el.style.transition = `
+            top ${animationDuration}s ease-out,
+            left ${animationDuration}s ease-in-out,
+            transform ${animationDuration}s linear,
+            opacity ${animationDuration}s ease-in
+        `;
+
         container.appendChild(el);
 
-        setTimeout(() => {
-          el.style.top = '110vh';
-          el.style.transform = `rotate(${Math.random() * 360 + 360}deg)`;
-        }, 100);
+        // Trigger animation on next frame
+        requestAnimationFrame(() => {
+            // Small delay to ensure transition applies
+            setTimeout(() => {
+                el.style.top = '110vh';
+                el.style.left = `calc(${el.style.left} + ${driftX})`;
+                // Tumble wildly
+                el.style.transform = `rotateX(${rotationX + Math.random() * 720}deg) rotateY(${rotationY + Math.random() * 720}deg) rotateZ(${rotationZ + Math.random() * 720}deg)`;
+                el.style.opacity = '0';
+            }, 50);
+        });
       }
 
       setTimeout(() => {
-        document.body.removeChild(container);
-      }, 4000);
+        if (document.body.contains(container)) {
+            document.body.removeChild(container);
+        }
+      }, 6000);
     };
 
     // Helper function to load state from localStorage
