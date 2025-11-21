@@ -114,7 +114,6 @@
 
   <script type="text/babel">
     const { useState, useEffect, useRef } = React;
-    const apiKey = ""; // Provided by environment
 
     // --- Inline Icons ---
     const Icon = ({ children, size = 24, className = "" }) => (
@@ -1643,7 +1642,6 @@
                     <div className="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg border border-gray-200 dark:border-gray-600 font-mono text-xs">
                         <p><span className="text-indigo-600 dark:text-indigo-400">Pizza:10</span> <span className="text-gray-400">// Very likely (10x chance)</span></p>
                         <p><span className="text-indigo-600 dark:text-indigo-400">Burger</span> <span className="text-gray-400">// Default weight is 1</span></p>
-                        <p><span className="text-indigo-600 dark:text-indigo-400">Salad:0</span> <span className="text-gray-400">// Disabled (0 chance)</span></p>
                     </div>
                     <ul className="list-disc list-inside space-y-1">
                         <li>Format: <code>Item Name:Weight</code></li>
