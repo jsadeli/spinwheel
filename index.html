@@ -114,6 +114,7 @@
 
   <script type="text/babel">
     const { useState, useEffect, useRef } = React;
+    const apiKey = ""; // Provided by environment
 
     // --- Inline Icons ---
     const Icon = ({ children, size = 24, className = "" }) => (
@@ -576,13 +577,17 @@
       const [isGenerating, setIsGenerating] = useState(false);
       const [tempApiKey, setTempApiKey] = useState(''); // For editing key
 
-      // State to force re-render for relative time updates
-      const [, setTick] = useState(0);
+      // Power Meter State
+      const [isCharging, setIsCharging] = useState(false);
+      const [chargePower, setChargePower] = useState(0);
 
-      // Refs for animation loop
+      // REFS
+      const chargeIntervalRef = useRef(null);
+      const isChargingRef = useRef(false); // Ref to track charging status synchronously
+      const chargePowerRef = useRef(0);    // Ref to track power synchronously
       const canvasRef = useRef(null);
       const rotationRef = useRef(0);
-      const isSpinningRef = useRef(false);
+      const isSpinningRef = useRef(false); // Tracks spin status synchronously
       const itemsRef = useRef(items);
       const velocityRef = useRef(0);
       const winnerRef = useRef(null);
@@ -597,6 +602,9 @@
       // Audio Refs
       const audioCtxRef = useRef(null);
       const lastTickRef = useRef(0);
+
+      // State to force re-render for relative time updates
+      const [, setTick] = useState(0);
 
       // Interval to update relative times every 30 seconds
       useEffect(() => {
@@ -1059,22 +1067,93 @@
         return () => cancelAnimationFrame(animationFrameId);
       }, []);
 
-      const spinWheel = () => {
-        if (isSpinning || items.length === 0) return;
+      // Power Meter Logic
+      const handlePointerDown = (e) => {
+        // Prevent default to stop text selection or scrolling
+        if (e.cancelable) e.preventDefault();
+
+        // CHANGED: Check the Ref instead of State to guarantee we see the true status instantly
+        if (isSpinningRef.current) {
+            handleStopSpin();
+            return;
+        }
+
+        if (items.length === 0) return;
+
+        // Start Charging
+        isChargingRef.current = true;
+        chargePowerRef.current = 0;
+
+        setIsCharging(true);
+        setChargePower(0);
+
+        const startTime = Date.now();
+
+        // Clear any existing interval just in case
+        if (chargeIntervalRef.current) clearInterval(chargeIntervalRef.current);
+
+        chargeIntervalRef.current = setInterval(() => {
+            const elapsed = Date.now() - startTime;
+            // Fill up in 1.5 seconds
+            let power = Math.min(elapsed / 1500, 1);
+
+            // Update both state (for visual) and ref (for logic)
+            setChargePower(power);
+            chargePowerRef.current = power;
+        }, 16);
+      };
+
+      const stopCharging = () => {
+        // Check synchronous ref to handle fast clicks
+        if (!isChargingRef.current) return;
+
+        isChargingRef.current = false;
+        setIsCharging(false);
+
+        if (chargeIntervalRef.current) {
+            clearInterval(chargeIntervalRef.current);
+            chargeIntervalRef.current = null;
+        }
+
+        // Use REF value to guarantee freshness regardless of render cycle
+        const finalPower = Math.max(chargePowerRef.current, 0.02);
+        spinWheel(finalPower);
+
+        setChargePower(0);
+        chargePowerRef.current = 0;
+      };
+
+      const cancelCharging = () => {
+          if (isChargingRef.current) {
+             stopCharging();
+          }
+      };
+
+      const handlePointerUpOrLeave = (e) => {
+         if (e && e.cancelable) e.preventDefault();
+         stopCharging();
+      };
+
+      const spinWheel = (powerFactor = 1.0) => {
+        // CHANGED: Check Ref here too for safety
+        if (isSpinningRef.current || items.length === 0) return;
 
         initAudio();
 
+        // CHANGED: Update Ref synchronously BEFORE state
+        isSpinningRef.current = true;
         setIsSpinning(true);
-        setWinner(null);
 
+        setWinner(null);
         lastTickRef.current = rotationRef.current;
 
-        velocityRef.current = Math.random() * 0.2 + 0.5; // Random initial speed
+        const baseSpeed = Math.random() * 0.2 + 0.5;
+        velocityRef.current = baseSpeed * (0.05 + 0.95 * powerFactor);
 
-        // Dynamically calculate friction to force exactly the duration
-        const duration = spinDuration; // Use state variable
+        const maxDuration = spinDuration;
+        const targetDuration = Math.max(500, maxDuration * powerFactor);
         const stopThreshold = 0.0001;
-        const totalFrames = duration / 16.667;
+        const totalFrames = targetDuration / 16.667;
         const baseFriction = Math.pow(stopThreshold / velocityRef.current, 1 / totalFrames);
 
         let lastTime = performance.now();
@@ -1082,10 +1161,13 @@
         const animateSpin = (currentTime) => {
           const dt = currentTime - lastTime;
           lastTime = currentTime;
-
           const frameRatio = dt / 16.67;
-
           velocityRef.current *= Math.pow(baseFriction, frameRatio);
+
+          if (velocityRef.current < 0.05 && velocityRef.current > 0.001) {
+            const wobble = Math.sin(currentTime / 50) * (velocityRef.current * 0.15);
+            rotationRef.current += wobble;
+          }
 
           rotationRef.current += velocityRef.current * frameRatio;
 
@@ -1105,11 +1187,14 @@
             spinFrameRef.current = requestAnimationFrame(animateSpin);
           } else {
             velocityRef.current = 0;
+
+            // CHANGED: Update Ref synchronously
+            isSpinningRef.current = false;
             setIsSpinning(false);
+
             calculateWinner(rotationRef.current);
           }
         };
-
         spinFrameRef.current = requestAnimationFrame(animateSpin);
       };
 
@@ -1118,7 +1203,10 @@
             cancelAnimationFrame(spinFrameRef.current);
             spinFrameRef.current = null;
         }
+        // CHANGED: Update Ref synchronously
+        isSpinningRef.current = false;
         setIsSpinning(false);
+
         velocityRef.current = 0;
       };
 
@@ -1405,25 +1493,49 @@
                 </button>
 
                 {/* Center Spin Button Overlay */}
-                <button
-                  onClick={isSpinning ? handleStopSpin : spinWheel}
-                  disabled={items.length === 0}
-                  className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2
-                      w-20 h-20 rounded-full bg-white dark:bg-gray-800 border-4 shadow-lg
-                      flex items-center justify-center font-black text-xl tracking-wider
-                      hover:scale-105 active:scale-95 transition-all z-30
-                      ${isSpinning
-                        ? 'border-red-500 dark:border-red-400 text-red-600 dark:text-red-400'
-                        : 'border-indigo-600 dark:border-indigo-400 text-indigo-700 dark:text-indigo-400 animate-pulse'}
-                      ${items.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
-                >
-                  {isSpinning ? "STOP" : "SPIN"}
-                </button>
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30">
+                    {/* Power Meter Ring */}
+                    {isCharging && (
+                        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-28 h-28 pointer-events-none">
+                            <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
+                                <circle cx="50" cy="50" r="46" fill="none" stroke="#e5e7eb" strokeWidth="8" className="dark:stroke-gray-700"/>
+                                <circle cx="50" cy="50" r="46" fill="none" stroke="url(#powerGradient)" strokeWidth="8" strokeDasharray="289.02" strokeDashoffset={289.02 * (1 - chargePower)} strokeLinecap="round" className="transition-all duration-75 ease-linear"/>
+                                <defs>
+                                    <linearGradient id="powerGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                        <stop offset="0%" stopColor="#3b82f6" />
+                                        <stop offset="50%" stopColor="#8b5cf6" />
+                                        <stop offset="100%" stopColor="#ef4444" />
+                                    </linearGradient>
+                                </defs>
+                            </svg>
+                        </div>
+                    )}
+
+                    <button
+                        onPointerDown={handlePointerDown}
+                        onPointerUp={handlePointerUpOrLeave}
+                        onPointerLeave={handlePointerUpOrLeave}
+                        disabled={items.length === 0}
+                        className={`
+                            relative w-20 h-20 rounded-full bg-white dark:bg-gray-800 border-4 shadow-lg flex items-center justify-center font-black text-xl tracking-wider select-none touch-none
+                            ${isSpinning ? 'border-red-500 dark:border-red-400 text-red-600 dark:text-red-400' : 'border-indigo-600 dark:border-indigo-400 text-indigo-700 dark:text-indigo-400'}
+                            ${items.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}
+                        `}
+                        style={{
+                            boxShadow: isCharging ? `0 0 ${10 + chargePower * 20}px ${chargePower > 0.8 ? '#ef4444' : '#6366f1'}` : ''
+                        }}
+                    >
+                        <span className={`block transition-transform duration-75 ${isCharging && chargePower > 0.8 ? 'animate-[shake_0.2s_ease-in-out_infinite]' : ''} ${isCharging ? 'scale-90' : ''} ${!isSpinning && !isCharging ? 'animate-pulse' : ''}`}>
+                            {isSpinning ? "STOP" : "SPIN"}
+                        </span>
+                    </button>
+                </div>
+
+                <style>{`@keyframes shake { 0% { transform: translate(0, 0) rotate(0deg); } 25% { transform: translate(-1px, 1px) rotate(-1deg); } 50% { transform: translate(1px, -1px) rotate(1deg); } 75% { transform: translate(-2px, 1px) rotate(0deg); } 100% { transform: translate(0, 0) rotate(0deg); } }`}</style>
               </div>
             </div>
 
             {/* Right Panel: Controls */}
-            {/* CHANGED: md:h-auto to md:h-full to force container to fit viewport height */}
             <div className="w-full md:w-96 bg-white dark:bg-gray-800 border-l border-gray-200 dark:border-gray-700 flex flex-col h-[50vh] md:h-full z-10 shadow-xl md:shadow-none transition-colors duration-300">
 
               {/* Tabs */}
