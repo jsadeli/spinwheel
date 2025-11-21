@@ -168,6 +168,23 @@
       </Icon>
     );
 
+    const ShareIcon = (props) => (
+      <Icon {...props}>
+        <circle cx="18" cy="5" r="3" />
+        <circle cx="6" cy="12" r="3" />
+        <circle cx="18" cy="19" r="3" />
+        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+      </Icon>
+    );
+
+    const CopyIcon = (props) => (
+      <Icon {...props}>
+        <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+      </Icon>
+    );
+
     // Confetti Logic
     const fireConfetti = () => {
       const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
@@ -218,6 +235,8 @@
       const [soundEnabled, setSoundEnabled] = useState(true);
       const [theme, setTheme] = useState('auto'); // 'auto', 'light', 'dark'
       const [showThemeMenu, setShowThemeMenu] = useState(false);
+      const [showShareMenu, setShowShareMenu] = useState(false);
+      const [shareUrl, setShareUrl] = useState('');
 
       // Refs for animation loop
       const canvasRef = useRef(null);
@@ -228,11 +247,31 @@
       const winnerRef = useRef(null);
       const isDarkModeRef = useRef(false);
       const themeMenuRef = useRef(null);
+      const shareMenuRef = useRef(null);
       const spinFrameRef = useRef(null); // Capture requestAnimationFrame ID
 
       // Audio Refs
       const audioCtxRef = useRef(null);
       const lastTickRef = useRef(0);
+
+      // Initialize from URL parameters if present
+      useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        const encodedList = params.get('list');
+        if (encodedList) {
+          try {
+            const decodedList = decodeURIComponent(escape(atob(encodedList)));
+            setInputText(decodedList);
+            // Items effect will trigger automatically
+
+            // Clean URL without reloading
+            const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+            window.history.replaceState({path: newUrl}, '', newUrl);
+          } catch (e) {
+            console.error("Failed to decode list from URL", e);
+          }
+        }
+      }, []);
 
       // Sync items ref for the animation loop
       useEffect(() => {
@@ -273,11 +312,14 @@
         isDarkModeRef.current = isDark;
       }, [theme]);
 
-      // Click outside to close dropdown
+      // Click outside to close dropdowns
       useEffect(() => {
         const handleClickOutside = (event) => {
             if (themeMenuRef.current && !themeMenuRef.current.contains(event.target)) {
                 setShowThemeMenu(false);
+            }
+            if (shareMenuRef.current && !shareMenuRef.current.contains(event.target)) {
+                setShowShareMenu(false);
             }
         };
         document.addEventListener("mousedown", handleClickOutside);
@@ -290,6 +332,27 @@
         if (theme === 'auto') return <MonitorIcon size={24} />;
         if (theme === 'light') return <SunIcon size={24} />;
         return <MoonIcon size={24} />;
+      };
+
+      const handleOpenShare = () => {
+        if (!showShareMenu) {
+          try {
+            const baseUrl = window.location.href.split('?')[0];
+            const encoded = btoa(unescape(encodeURIComponent(inputText)));
+            setShareUrl(`${baseUrl}?list=${encoded}`);
+          } catch (e) {
+            console.error("Failed to encode list", e);
+            setShareUrl("Error generating link");
+          }
+        }
+        setShowShareMenu(!showShareMenu);
+      };
+
+      const copyToClipboard = () => {
+        navigator.clipboard.writeText(shareUrl).then(() => {
+          // Visual feedback could be added here
+          alert("Copied to clipboard!");
+        });
       };
 
       // --- AUDIO LOGIC ---
@@ -640,6 +703,42 @@
               >
                 {soundEnabled ? <Volume2Icon size={24} /> : <VolumeXIcon size={24} />}
               </button>
+
+              {/* Share Menu */}
+              <div className="relative" ref={shareMenuRef}>
+                <button
+                  onClick={handleOpenShare}
+                  className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition text-gray-600 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400"
+                  title="Share / Export List"
+                >
+                  <ShareIcon size={24} />
+                </button>
+
+                {showShareMenu && (
+                  <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 z-50 p-4 animate-[fade-in_0.2s_ease-out]">
+                    <h3 className="text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Share this Wheel</h3>
+                    <div className="flex space-x-2">
+                      <input
+                        type="text"
+                        readOnly
+                        value={shareUrl}
+                        className="flex-grow p-2 text-sm border border-gray-300 dark:border-gray-600 rounded bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                      />
+                      <button
+                        onClick={copyToClipboard}
+                        className="p-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded transition flex items-center justify-center"
+                        title="Copy to Clipboard"
+                      >
+                        <CopyIcon size={18} />
+                      </button>
+                    </div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                      Copy this link to share your current list with others.
+                    </p>
+                  </div>
+                )}
+              </div>
+
             </div>
           </header>
 
