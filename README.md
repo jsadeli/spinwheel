@@ -1,12 +1,12 @@
 # Spin Wheel
 
-An interactive spin wheel web application built as a single HTML page.
-This app allows users to create customizable spinning wheels for random selection and decision making.
+An interactive spin wheel web application built as a single HTML page. This app allows users to
+create customizable spinning wheels for random selection and decision making.
 
 ## About
 
-This is a simple, lightweight spin wheel application that runs entirely in the browser.
-Perfect for making random selections, choosing winners, or making decisions in a fun and interactive way.
+This is a simple, lightweight spin wheel application that runs entirely in the browser. Perfect for
+making random selections, choosing winners, or making decisions in a fun and interactive way.
 Vibe coding a Spin Wheel app into existence with the assistance of Gemini 3 Pro...
 
 Screenshot:
@@ -31,24 +31,27 @@ Screenshot:
 ## How It Works
 
 The spin wheel uses HTML5 Canvas or CSS animations to create a smooth spinning effect.
-Each segment of the wheel represents a different option, and the selection is made using a randomization algorithm for fair results.
+Each segment of the wheel represents a different option, and the selection is made using a
+randomization algorithm for fair results.
 
 ## Customization
 
 You can customize:
-- Wheel colors and design
-- Number of segments
-- Segment labels
-- Spin duration and speed
-- Sound effects (optional)
+
+- Theme (auto, light-mode, or dark-mode)
+- Sound effects (on or off)
+- Spin duration (quick 5s, normal 10s, or long 20s)
+- Spin labels visibility (set it to hidden for a little bit of a "mystery" spin)
 
 ## Inspiration
 
-This project is inspired by popular picker wheel websites like [PickerWheel.com](https://pickerwheel.com/), bringing the same functionality in a simple, self-contained format.
+This project is inspired by popular picker wheel websites like [PickerWheel.com](https://pickerwheel.com/),
+bringing the same functionality in a simple, self-contained format.
 
 ## Getting Started
 
-Simply clone this repository and open the HTML file in any modern web browser. No installation or build process required!
+Simply clone this repository and open the HTML file in any modern web browser.
+No installation or build process required.
 
 ```bash
 git clone https://github.com/samuelkripto/spin-wheel.git
@@ -62,4 +65,5 @@ This project is open source and available for personal and educational use.
 
 ## Contributing
 
-Contributions, issues, and feature requests are welcome! Feel free to check the issues page if you want to contribute.
+Contributions, issues, and feature requests are welcome! Feel free to check the issues page if you
+want to contribute.
