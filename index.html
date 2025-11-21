@@ -854,7 +854,8 @@
       };
 
       return (
-        <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex flex-col font-sans text-gray-800 dark:text-gray-100 transition-colors duration-300">
+        // CHANGED: Added md:h-screen and md:overflow-hidden to lock desktop layout to viewport
+        <div className="min-h-screen md:h-screen md:overflow-hidden bg-gray-100 dark:bg-gray-900 flex flex-col font-sans text-gray-800 dark:text-gray-100 transition-colors duration-300">
 
           {/* Header */}
           <header className="bg-white dark:bg-gray-800 shadow-sm p-4 flex justify-between items-center z-50 border-b dark:border-gray-700 transition-colors duration-300">
@@ -1056,7 +1057,8 @@
             </div>
 
             {/* Right Panel: Controls */}
-            <div className="w-full md:w-96 bg-white dark:bg-gray-800 border-l border-gray-200 dark:border-gray-700 flex flex-col h-[50vh] md:h-auto z-10 shadow-xl md:shadow-none transition-colors duration-300">
+            {/* CHANGED: md:h-auto to md:h-full to force container to fit viewport height */}
+            <div className="w-full md:w-96 bg-white dark:bg-gray-800 border-l border-gray-200 dark:border-gray-700 flex flex-col h-[50vh] md:h-full z-10 shadow-xl md:shadow-none transition-colors duration-300">
 
               {/* Tabs */}
               <div className="flex border-b border-gray-200 dark:border-gray-700">
