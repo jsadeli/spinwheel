@@ -583,6 +583,7 @@
 
       // REFS
       const chargeIntervalRef = useRef(null);
+      const pressTimerRef = useRef(null); // New ref for Tap vs Hold detection
       const isChargingRef = useRef(false); // Ref to track charging status synchronously
       const chargePowerRef = useRef(0);    // Ref to track power synchronously
       const canvasRef = useRef(null);
@@ -1072,7 +1073,7 @@
         // Prevent default to stop text selection or scrolling
         if (e.cancelable) e.preventDefault();
 
-        // CHANGED: Check the Ref instead of State to guarantee we see the true status instantly
+        // If currently spinning, stop it. Do NOT start a new charge/spin cycle.
         if (isSpinningRef.current) {
             handleStopSpin();
             return;
@@ -1080,27 +1081,63 @@
 
         if (items.length === 0) return;
 
-        // Start Charging
-        isChargingRef.current = true;
+        // Reset power refs
         chargePowerRef.current = 0;
-
-        setIsCharging(true);
         setChargePower(0);
+        isChargingRef.current = false;
 
-        const startTime = Date.now();
+        // Clear any existing hold timer
+        if (pressTimerRef.current) clearTimeout(pressTimerRef.current);
 
-        // Clear any existing interval just in case
-        if (chargeIntervalRef.current) clearInterval(chargeIntervalRef.current);
+        // Start delay timer. If user releases before this fires, it's a TAP.
+        pressTimerRef.current = setTimeout(() => {
+            // User held long enough: Start Charging
+            isChargingRef.current = true;
+            setIsCharging(true);
 
-        chargeIntervalRef.current = setInterval(() => {
-            const elapsed = Date.now() - startTime;
-            // Fill up in 1.5 seconds
-            let power = Math.min(elapsed / 1500, 1);
+            // Clear this timer ref so MouseUp knows we entered charging mode
+            pressTimerRef.current = null;
 
-            // Update both state (for visual) and ref (for logic)
-            setChargePower(power);
-            chargePowerRef.current = power;
-        }, 16);
+            const startTime = Date.now();
+
+            if (chargeIntervalRef.current) clearInterval(chargeIntervalRef.current);
+
+            chargeIntervalRef.current = setInterval(() => {
+                const elapsed = Date.now() - startTime;
+                // Fill up in 1.5 seconds
+                let power = Math.min(elapsed / 1500, 1);
+
+                // Update both state (for visual) and ref (for logic)
+                setChargePower(power);
+                chargePowerRef.current = power;
+            }, 16);
+        }, 200); // 200ms threshold for hold
+      };
+
+      const handlePointerUpOrLeave = (e) => {
+         if (e && e.cancelable) e.preventDefault();
+
+         // Case 1: User released QUICKLY (Tap)
+         // pressTimerRef is still active, meaning the Hold threshold wasn't reached.
+         if (pressTimerRef.current !== null) {
+             clearTimeout(pressTimerRef.current);
+             pressTimerRef.current = null;
+
+             // Trigger Full Power Spin
+             spinWheel(1.0);
+             return;
+         }
+
+         // Case 2: User released after HOLDING (Power Meter was active)
+         if (isChargingRef.current) {
+             stopCharging();
+             return;
+         }
+
+         // Case 3: User clicked to STOP spinning
+         // handlePointerDown handled the stop logic and returned early.
+         // pressTimerRef was never set, and isChargingRef is false.
+         // Do nothing here.
       };
 
       const stopCharging = () => {
@@ -1116,6 +1153,7 @@
         }
 
         // Use REF value to guarantee freshness regardless of render cycle
+        // Reduced minimum power for a very gentle nudge
         const finalPower = Math.max(chargePowerRef.current, 0.02);
         spinWheel(finalPower);
 
@@ -1127,11 +1165,6 @@
           if (isChargingRef.current) {
              stopCharging();
           }
-      };
-
-      const handlePointerUpOrLeave = (e) => {
-         if (e && e.cancelable) e.preventDefault();
-         stopCharging();
       };
 
       const spinWheel = (powerFactor = 1.0) => {
@@ -1706,7 +1739,7 @@
                     <button onClick={() => setShowGenModal(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"><Icon size={20}><path d="M18 6 6 18"/><path d="m6 6 12 12"/></Icon></button>
                 </div>
                 <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
-                    Describe what you want (e.g., "Lunch ideas for Indonesians who wants to lose weight but have given up on diet and exercise").
+                    Describe what you want (e.g., "Lunch ideas," "Excuses for being late," "Spicy truth or dare questions").
                 </p>
                 <textarea
                     value={genPrompt}
