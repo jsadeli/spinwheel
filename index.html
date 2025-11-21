@@ -364,6 +364,35 @@
         }
     };
 
+    // Helper for relative time
+    const getRelativeTime = (date) => {
+      if (!date) return '';
+      const now = new Date();
+      const diffInSeconds = Math.floor((now - new Date(date)) / 1000);
+      const rtf = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
+
+      if (diffInSeconds < 60) return 'just now'; // cosmetic preference for very recent events
+      // OR use: return rtf.format(-diffInSeconds, 'second');
+
+      const diffInMinutes = Math.floor(diffInSeconds / 60);
+      if (diffInMinutes < 60) return rtf.format(-diffInMinutes, 'minute');
+
+      const diffInHours = Math.floor(diffInMinutes / 60);
+      if (diffInHours < 24) return rtf.format(-diffInHours, 'hour');
+
+      const diffInDays = Math.floor(diffInHours / 24);
+      if (diffInDays < 7) return rtf.format(-diffInDays, 'day');
+
+      const diffInWeeks = Math.floor(diffInDays / 7);
+      if (diffInWeeks < 4) return rtf.format(-diffInWeeks, 'week');
+
+      const diffInMonths = Math.floor(diffInDays / 30);
+      if (diffInMonths < 12) return rtf.format(-diffInMonths, 'month');
+
+      const diffInYears = Math.floor(diffInDays / 365);
+      return rtf.format(-diffInYears, 'year');
+    };
+
     const App = () => {
       const defaultItems = [
         "Pizza", "Burger", "Sushi", "Tacos", "Salad", "Pasta", "Steak", "Ramen"
@@ -397,6 +426,9 @@
       const [activeTab, setActiveTab] = useState('inputs'); // 'inputs' or 'history'
       const [isCopied, setIsCopied] = useState(false);
 
+      // State to force re-render for relative time updates
+      const [, setTick] = useState(0);
+
       // Refs for animation loop
       const canvasRef = useRef(null);
       const rotationRef = useRef(0);
@@ -415,6 +447,14 @@
       // Audio Refs
       const audioCtxRef = useRef(null);
       const lastTickRef = useRef(0);
+
+      // Interval to update relative times every 30 seconds
+      useEffect(() => {
+        const timer = setInterval(() => {
+          setTick(t => t + 1);
+        }, 30000);
+        return () => clearInterval(timer);
+      }, []);
 
       // Initialize from URL parameters if present
       useEffect(() => {
@@ -1125,8 +1165,11 @@
                         {history.map((item) => (
                           <li key={item.id} className="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg border border-gray-100 dark:border-gray-700 flex justify-between items-center animate-[fade-in_0.3s_ease-out]">
                             <span className="font-medium text-gray-800 dark:text-gray-200 truncate pr-4">{item.text}</span>
-                            <span className="text-xs text-gray-400 dark:text-gray-500 whitespace-nowrap">
-                              {item.timestamp.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'})}
+                            <span
+                                className="text-xs text-gray-400 dark:text-gray-500 whitespace-nowrap cursor-help border-b border-dotted border-gray-300 dark:border-gray-600"
+                                title={item.timestamp.toISOString()}
+                            >
+                              {getRelativeTime(item.timestamp)}
                             </span>
                           </li>
                         ))}
