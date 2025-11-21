@@ -597,9 +597,9 @@
           // Apply friction scaled by time
           velocityRef.current *= Math.pow(baseFriction, frameRatio);
 
-          // "Grinding" effect at low speeds
+          // "Grinding" effect at low speeds - Made more subtle (0.5 -> 0.15)
           if (velocityRef.current < 0.05 && velocityRef.current > 0.001) {
-            const wobble = Math.sin(currentTime / 50) * (velocityRef.current * 0.5);
+            const wobble = Math.sin(currentTime / 50) * (velocityRef.current * 0.15);
             rotationRef.current += wobble;
           }
 
