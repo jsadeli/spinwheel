@@ -185,6 +185,13 @@
       </Icon>
     );
 
+    const ClockIcon = (props) => (
+      <Icon {...props}>
+        <circle cx="12" cy="12" r="10" />
+        <polyline points="12 6 12 12 16 14" />
+      </Icon>
+    );
+
     // Confetti Logic
     const fireConfetti = () => {
       const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
@@ -237,6 +244,8 @@
       const [showThemeMenu, setShowThemeMenu] = useState(false);
       const [showShareMenu, setShowShareMenu] = useState(false);
       const [shareUrl, setShareUrl] = useState('');
+      const [history, setHistory] = useState([]);
+      const [activeTab, setActiveTab] = useState('inputs'); // 'inputs' or 'history'
 
       // Refs for animation loop
       const canvasRef = useRef(null);
@@ -262,7 +271,6 @@
           try {
             const decodedList = decodeURIComponent(escape(atob(encodedList)));
             setInputText(decodedList);
-            // Items effect will trigger automatically
 
             // Clean URL without reloading
             const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
@@ -369,12 +377,10 @@
         if (!soundEnabled || !audioCtxRef.current) return;
         const ctx = audioCtxRef.current;
 
-        // Create oscillator for a short "wood block" click
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
 
         osc.type = 'triangle';
-        // Pitch glides down slightly for a punchier sound
         osc.frequency.setValueAtTime(800, ctx.currentTime);
         osc.frequency.exponentialRampToValueAtTime(300, ctx.currentTime + 0.05);
 
@@ -392,7 +398,6 @@
         if (!soundEnabled || !audioCtxRef.current) return;
         const ctx = audioCtxRef.current;
 
-        // C Major Arpeggio (C5, E5, G5, C6)
         const notes = [523.25, 659.25, 783.99, 1046.50];
 
         notes.forEach((freq, i) => {
@@ -445,10 +450,8 @@
           const isDark = isDarkModeRef.current;
 
           // --- Idle Spin Logic ---
-          // Only increment small rotation if NOT in active spin mode AND no winner is being displayed
           if (!isSpinningRef.current && currentItems.length > 0 && velocityRef.current === 0 && !winnerRef.current) {
             rotationRef.current = (rotationRef.current + 0.002) % (2 * Math.PI);
-            // Update lastTickRef so we don't play sounds during idle spin if we switch modes
             lastTickRef.current = rotationRef.current;
           }
 
@@ -492,7 +495,7 @@
               ctx.translate(centerX, centerY);
               ctx.rotate(startAngle + sliceAngle / 2);
               ctx.textAlign = "right";
-              ctx.fillStyle = "#fff"; // Always white on colored segments
+              ctx.fillStyle = "#fff";
               ctx.font = currentItems.length > 12 ? "bold 14px Arial" : "bold 18px Arial";
               ctx.fillText(item.substring(0, 18) + (item.length > 18 ? '...' : ''), radius - 20, 5);
               ctx.restore();
@@ -501,7 +504,7 @@
             // Hub
             ctx.beginPath();
             ctx.arc(centerX, centerY, 30, 0, 2 * Math.PI);
-            ctx.fillStyle = isDark ? '#1e293b' : 'white'; // Dark Slate 800 vs White
+            ctx.fillStyle = isDark ? '#1e293b' : 'white';
             ctx.fill();
             ctx.strokeStyle = '#333';
             ctx.lineWidth = 4;
@@ -520,54 +523,38 @@
 
         render();
         return () => cancelAnimationFrame(animationFrameId);
-      }, []); // Runs once on mount, subsequent updates handled by refs
+      }, []);
 
       const spinWheel = () => {
         if (isSpinning || items.length === 0) return;
 
-        // Initialize audio on user interaction
         initAudio();
 
         setIsSpinning(true);
         setWinner(null);
 
-        // Reset tracking for ticks
         lastTickRef.current = rotationRef.current;
 
-        // Physics variables
         velocityRef.current = Math.random() * 0.2 + 0.5;
-        const baseFriction = 0.993; // Friction reference for 60fps
+        const baseFriction = 0.993;
         let lastTime = performance.now();
 
         const animateSpin = (currentTime) => {
-          // Calculate time difference (Delta Time)
           const dt = currentTime - lastTime;
           lastTime = currentTime;
 
-          // Normalize to 60fps (approx 16.67ms per frame)
-          // If the device lags (e.g. 30fps), frameRatio will be ~2.0
-          // If the device is fast (120fps), frameRatio will be ~0.5
           const frameRatio = dt / 16.67;
 
-          // Apply friction scaled by time
-          // Math.pow allows us to apply the friction 'frameRatio' times
           velocityRef.current *= Math.pow(baseFriction, frameRatio);
 
-          // "Grinding" effect at low speeds
           if (velocityRef.current < 0.05 && velocityRef.current > 0.001) {
             const wobble = Math.sin(currentTime / 50) * (velocityRef.current * 0.5);
             rotationRef.current += wobble;
           }
 
-          // Update rotation based on time passed
           rotationRef.current += velocityRef.current * frameRatio;
 
-          // --- TICK SOUND LOGIC ---
-          // Check if we passed a segment boundary
-          // Angle of a single slice
           const sliceAngle = (2 * Math.PI) / itemsRef.current.length;
-
-          // Calculate "total segments passed" since start
           const currentStep = Math.floor(rotationRef.current / sliceAngle);
           const lastStep = Math.floor(lastTickRef.current / sliceAngle);
 
@@ -575,13 +562,10 @@
              playTickSound();
           }
           lastTickRef.current = rotationRef.current;
-          // ------------------------
 
-          // Continue animation if velocity is still significant
           if (velocityRef.current > 0.0005) {
             spinFrameRef.current = requestAnimationFrame(animateSpin);
           } else {
-            // Animation complete
             velocityRef.current = 0;
             setIsSpinning(false);
             calculateWinner(rotationRef.current);
@@ -604,7 +588,6 @@
         const normalizedRotation = finalRotation % (2 * Math.PI);
         const sliceAngle = (2 * Math.PI) / items.length;
 
-        // Effective angle calculation
         let effectiveAngle = (2 * Math.PI - normalizedRotation) % (2 * Math.PI);
         if (effectiveAngle < 0) effectiveAngle += 2 * Math.PI;
 
@@ -612,6 +595,13 @@
         const winItem = items[winningIndex];
 
         setWinner(winItem);
+
+        // Add to history
+        setHistory(prev => [{
+            id: Date.now(),
+            text: winItem,
+            timestamp: new Date()
+        }, ...prev]);
 
         if (soundEnabled) {
            playWinSound();
@@ -633,7 +623,7 @@
       return (
         <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex flex-col font-sans text-gray-800 dark:text-gray-100 transition-colors duration-300">
 
-          {/* Header - Fixed z-index to allow dropdown to be visible */}
+          {/* Header */}
           <header className="bg-white dark:bg-gray-800 shadow-sm p-4 flex justify-between items-center z-50 border-b dark:border-gray-700 transition-colors duration-300">
             <div className="flex items-center space-x-2">
               <div className="bg-indigo-600 text-white p-2 rounded-lg">
@@ -780,39 +770,90 @@
 
             {/* Right Panel: Controls */}
             <div className="w-full md:w-96 bg-white dark:bg-gray-800 border-l border-gray-200 dark:border-gray-700 flex flex-col h-[50vh] md:h-auto z-10 shadow-xl md:shadow-none transition-colors duration-300">
-              <div className="p-4 bg-gray-50 dark:bg-gray-900/50 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
-                <h2 className="font-bold text-gray-700 dark:text-gray-200 flex items-center">
-                  <SettingsIcon className="w-4 h-4 mr-2"/> Inputs
-                </h2>
-                <span className="text-xs bg-indigo-100 dark:bg-indigo-900/50 text-indigo-800 dark:text-indigo-300 px-2 py-1 rounded-full font-medium">
-                  {items.length} Items
-                </span>
-              </div>
 
-              <div className="flex-grow p-4 overflow-hidden flex flex-col">
-                <label className="text-sm text-gray-500 dark:text-gray-400 mb-2 block">Enter text (one item per line):</label>
-                <textarea
-                  value={inputText}
-                  onChange={(e) => setInputText(e.target.value)}
-                  className="flex-grow w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none font-mono text-sm shadow-inner bg-gray-50 dark:bg-gray-700 dark:text-gray-100 transition-colors"
-                  placeholder="Enter items here..."
-                />
-              </div>
-
-              <div className="p-4 border-t border-gray-200 dark:border-gray-700 grid grid-cols-2 gap-3 bg-gray-50 dark:bg-gray-900/50">
+              {/* Tabs */}
+              <div className="flex border-b border-gray-200 dark:border-gray-700">
                 <button
-                  onClick={handleShuffle}
-                  className="flex items-center justify-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 font-medium transition shadow-sm"
+                  onClick={() => setActiveTab('inputs')}
+                  className={`flex-1 p-4 font-bold text-sm flex items-center justify-center transition-colors relative ${activeTab === 'inputs' ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800'}`}
                 >
-                  <ShuffleIcon className="w-4 h-4 mr-2" /> Shuffle
+                  <SettingsIcon size={16} className="mr-2"/>
+                  Inputs <span className="ml-1 text-xs bg-gray-200 dark:bg-gray-700 px-1.5 py-0.5 rounded-full">{items.length}</span>
+                  {activeTab === 'inputs' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-indigo-600 dark:bg-indigo-400"></div>}
                 </button>
                 <button
-                  onClick={handleClear}
-                  className="flex items-center justify-center px-4 py-2 bg-white dark:bg-gray-800 border border-red-200 dark:border-red-900/50 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 font-medium transition shadow-sm"
+                  onClick={() => setActiveTab('history')}
+                  className={`flex-1 p-4 font-bold text-sm flex items-center justify-center transition-colors relative ${activeTab === 'history' ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800'}`}
                 >
-                  <Trash2Icon className="w-4 h-4 mr-2" /> Clear
+                  <ClockIcon size={16} className="mr-2"/>
+                  History <span className="ml-1 text-xs bg-gray-200 dark:bg-gray-700 px-1.5 py-0.5 rounded-full">{history.length}</span>
+                  {activeTab === 'history' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-indigo-600 dark:bg-indigo-400"></div>}
                 </button>
               </div>
+
+              {/* Content Area */}
+              {activeTab === 'inputs' ? (
+                <>
+                  <div className="flex-grow p-4 overflow-hidden flex flex-col">
+                    <label className="text-sm text-gray-500 dark:text-gray-400 mb-2 block">Enter text (one item per line):</label>
+                    <textarea
+                      value={inputText}
+                      onChange={(e) => setInputText(e.target.value)}
+                      className="flex-grow w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none font-mono text-sm shadow-inner bg-gray-50 dark:bg-gray-700 dark:text-gray-100 transition-colors"
+                      placeholder="Enter items here..."
+                    />
+                  </div>
+
+                  <div className="p-4 border-t border-gray-200 dark:border-gray-700 grid grid-cols-2 gap-3 bg-gray-50 dark:bg-gray-900/50">
+                    <button
+                      onClick={handleShuffle}
+                      className="flex items-center justify-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 font-medium transition shadow-sm"
+                    >
+                      <ShuffleIcon className="w-4 h-4 mr-2" /> Shuffle
+                    </button>
+                    <button
+                      onClick={handleClear}
+                      className="flex items-center justify-center px-4 py-2 bg-white dark:bg-gray-800 border border-red-200 dark:border-red-900/50 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 font-medium transition shadow-sm"
+                    >
+                      <Trash2Icon className="w-4 h-4 mr-2" /> Clear
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="flex-grow overflow-y-auto p-4">
+                    {history.length === 0 ? (
+                      <div className="h-full flex flex-col items-center justify-center text-gray-400 dark:text-gray-500">
+                        <ClockIcon size={48} className="mb-4 opacity-20"/>
+                        <p className="text-sm">No history yet.</p>
+                        <p className="text-xs mt-1">Spin the wheel to see results here.</p>
+                      </div>
+                    ) : (
+                      <ul className="space-y-2">
+                        {history.map((item) => (
+                          <li key={item.id} className="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg border border-gray-100 dark:border-gray-700 flex justify-between items-center animate-[fade-in_0.3s_ease-out]">
+                            <span className="font-medium text-gray-800 dark:text-gray-200 truncate pr-4">{item.text}</span>
+                            <span className="text-xs text-gray-400 dark:text-gray-500 whitespace-nowrap">
+                              {item.timestamp.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'})}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                  <div className="p-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50">
+                    <button
+                      onClick={() => {
+                        if(confirm("Clear entire history?")) setHistory([]);
+                      }}
+                      className="w-full flex items-center justify-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 font-medium transition shadow-sm"
+                      disabled={history.length === 0}
+                    >
+                      <Trash2Icon className="w-4 h-4 mr-2" /> Clear History
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
           </main>
 
