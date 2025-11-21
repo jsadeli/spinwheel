@@ -28,6 +28,28 @@ Screenshot:
 3. Click the spin button to make a random selection
 4. The wheel will spin and land on one of your options
 
+### Weighted Items
+
+You can customize the probability of each item winning by assigning a weight.
+
+- Format: `Item Name:Weight`
+- Higher number = Larger slice on the wheel.
+- If no number is specified, it defaults to 1.
+
+Example:
+
+```text
+Pizza: 5
+Burger: 1
+Sushi: 1
+Salad: 1
+```
+
+- Total Weight: `5 + 1 + 1 + 1 = 8`
+- Pizza: Has 5/8 of the total wheel (approx 62% chance).
+- Others: Each have 1/8 of the total wheel (approx 12.5% chance).
+- If the user doesn't type a number (e.g., just "Ramen"), the system defaults that item's weight to 1.
+
 ## How It Works
 
 The spin wheel uses HTML5 Canvas or CSS animations to create a smooth spinning effect.
