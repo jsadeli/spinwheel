@@ -15,12 +15,30 @@ Screenshot:
 
 ## Features
 
-- **Interactive Spin Wheel**: Click to spin and randomly select an option
-- **Customizable Options**: Add, edit, or remove wheel segments
-- **Single Page Application**: No server required, runs entirely in your browser
-- **Easy to Use**: Simple and intuitive interface
-- **Lightweight**: Built with vanilla HTML, CSS, and JavaScript
-- and many more...
+- ✨ Core Features
+  - **Interactive Spin Wheel**: Click to spin and randomly select an option
+  - **Customizable Options**: Add, edit, or remove wheel segments
+  - **Easy to Use**: Simple and intuitive interface
+  - **Single Page Application**: No server required, runs entirely in your browser
+  - **Lightweight**: Built with vanilla HTML, CSS, and JavaScript
+  - **Physics-Based Wheel**: Realistic deceleration (10s fixed duration) with "grinding" friction effects near the stop point.
+  - **Weighted Probabilities**: Support for weighted items using Item:Weight syntax (e.g., Pizza:10) to increase winning chances.
+  - **Interactive Pins**: 30 physical "pins" on the wheel edge that interact with the pointer (visual snapping and audio ticks).
+- 🎨 Visuals & UI
+  - **3D Confetti**: Physics-based confetti engine with wind resistance, tumbling, and semi-transparent paper effects.
+  - **Theme System**: Toggle between Auto (System), Light, and Dark modes.
+  - **Responsive Design**: Fully optimized for mobile and desktop, with a "Single Page App" feel (no scrolling on desktop).
+  - **Mystery Mode**: Toggle to hide item labels on the wheel ("?") for suspense.
+  - **Power Meter**: Adjustable spin power with a power meter.
+- 🤖 AI Integration (Gemini)
+  - **AI List Generator**: Generate creative lists (e.g., "Dinner ideas") using the Sparkle button.
+  - **AI Voice Announcer**: Optional Text-to-Speech announcement of the winner using Gemini's high-quality voices.
+  - **Secure Settings**: Dedicated UI for managing and persisting the Gemini API Key.
+- 🛠️ Utilities
+  - **Persistence**: All settings (Inputs, History, Theme, API Key, Audio) are saved automatically to localStorage.
+  - **History Tracking**: Logs winners with relative timestamps (e.g., "2 minutes ago") and exact ISO tooltips.
+  - **PWA Support**: Installable as a standalone app on iOS and Android with custom icons and splash screen configuration.
+  - **Share Functionality**: Export current lists via a shareable URL (Base64 encoded).
 
 ## Usage
 
