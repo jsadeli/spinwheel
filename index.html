@@ -1177,10 +1177,30 @@
              const pinPhase = (rotationRef.current % pinSpacing) / pinSpacing;
 
              let pointerAngle = 0;
-             if (pinPhase > 0.85) {
-                 pointerAngle = (pinPhase - 0.85) / 0.15 * -25;
+
+             // Physics Parameters
+             const maxAngle = 40;
+             const pushThreshold = 0.75; // When the pin starts pushing the pointer (0.0 to 1.0)
+
+             if (pinPhase > pushThreshold) {
+                 // PUSH PHASE: Pin contacts pointer and pushes it down (Clockwise)
+                 // Map range [0.85, 1.0] to [0, maxAngle]
+                 // CHANGED: Inverted direction per user fix
+                 const t = (pinPhase - pushThreshold) / (pushThreshold - 1);
+                 // Use a slight curve for weight
+                 pointerAngle = t * maxAngle;
              } else {
-                 pointerAngle = -25 * Math.exp(-15 * pinPhase);
+                 // SPRING/SNAP PHASE: Pin releases, pointer snaps back
+                 // Damped harmonic oscillator: A * e^(-ct) * cos(wt)
+                 // t goes from 0.0 to 0.85
+                 const t = pinPhase;
+
+                 // Tune these for "snapiness"
+                 const decay = 10; // How fast energy is lost
+                 const freq = 100;  // Wiggle speed
+
+                 // Start at maxAngle (t=0), decay to 0
+                 pointerAngle = maxAngle * Math.exp(-decay * t) * Math.cos(freq * t);
              }
 
              pointerRef.current.style.transform = `rotate(${pointerAngle}deg)`;
@@ -1764,11 +1784,6 @@
             {/* Left Panel: The Wheel */}
             <div className="flex-1 flex-col flex items-center justify-center p-4 relative min-h-[50vh]">
 
-              {/* Pointer Triangle */}
-              <div className="absolute z-20 right-0 md:right-auto top-1/2 -translate-y-1/2 translate-x-1/2 md:translate-x-[210px] lg:translate-x-[260px] filter drop-shadow-lg pointer-events-none">
-                <div ref={pointerRef} className="w-0 h-0 border-t-[20px] border-t-transparent border-r-[40px] border-r-red-600 border-b-[20px] border-b-transparent transform origin-right transition-transform duration-75"></div>
-              </div>
-
               <div className="relative">
                 <canvas
                   ref={canvasRef}
@@ -1776,6 +1791,15 @@
                   height={500}
                   className="max-w-full h-auto max-h-[60vh] md:max-h-[80vh] w-full object-contain filter drop-shadow-xl"
                 />
+
+                {/* Pointer Triangle - Adjusted to right-1 as requested */}
+                <div className="absolute top-1/2 right-1 transform -translate-y-1/2 translate-x-1/2 z-20 filter drop-shadow-lg pointer-events-none">
+                    <div
+                        ref={pointerRef}
+                        className="w-0 h-0 border-t-[20px] border-t-transparent border-r-[50px] border-r-red-600 border-b-[20px] border-b-transparent transform origin-right"
+                        style={{ filter: 'drop-shadow(2px 2px 2px rgba(0,0,0,0.3))' }}
+                    ></div>
+                </div>
 
                 {/* Mystery Toggle Button */}
                 <button
