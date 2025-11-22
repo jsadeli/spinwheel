@@ -940,6 +940,39 @@
         playTone(1046.50, now + 0.3, 2.0, 'sawtooth', 0.1); // C6 (Top Note, sharper)
       };
 
+      const playFireCrackle = () => {
+        if (!soundEnabled || !audioCtxRef.current) return;
+        const ctx = audioCtxRef.current;
+
+        // Synthesize a short burst of noise (crackle)
+        const bufferSize = ctx.sampleRate * 0.1; // 0.1 seconds of noise
+        const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+
+        for (let i = 0; i < bufferSize; i++) {
+            data[i] = Math.random() * 2 - 1;
+        }
+
+        const noise = ctx.createBufferSource();
+        noise.buffer = buffer;
+
+        // Filter to make it sound more like fire (low rumble + high crackle)
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.value = 1000; // Muffle the harsh white noise
+
+        const gain = ctx.createGain();
+        // Random volume for texture
+        gain.gain.setValueAtTime(0.05 + Math.random() * 0.1, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
+
+        noise.connect(filter);
+        filter.connect(gain);
+        gain.connect(ctx.destination);
+
+        noise.start();
+      };
+
       const colors = [
         '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4',
         '#FFEEAD', '#FFD93D', '#FF9A8B', '#A0E7E5',
@@ -1153,37 +1186,43 @@
         smokeContainerRef.current.appendChild(el);
 
         // --- FIRE PARTICLES (Inferno Phase Only) ---
-        if (isInferno && Math.random() > 0.5) {
-             const fire = document.createElement('div');
-             // Increased fire particle size for better visibility
-             const fSize = 50 + Math.random() * 25;
-             const fColors = ['#ef4444', '#f97316', '#eab308']; // Red, Orange, Yellow
-             const fColor = fColors[Math.floor(Math.random() * fColors.length)];
+        if (isInferno) {
+             // Play crackle sound randomly (approx 20% of frames) to create a texture
+             // 60fps * 0.2 = ~12 crackles per second
+             if (Math.random() > 0.8) playFireCrackle();
 
-             fire.style.width = `${fSize}px`;
-             fire.style.height = `${fSize}px`;
-             fire.style.background = fColor;
-             fire.style.position = 'absolute';
-             fire.style.borderRadius = '50%';
-             fire.style.filter = 'blur(4px)';
-             fire.style.pointerEvents = 'none';
+             if (Math.random() > 0.5) {
+                 const fire = document.createElement('div');
+                 // Increased fire particle size for better visibility
+                 const fSize = 50 + Math.random() * 25;
+                 const fColors = ['#ef4444', '#f97316', '#eab308']; // Red, Orange, Yellow
+                 const fColor = fColors[Math.floor(Math.random() * fColors.length)];
 
-             // Fire spawns tighter to the center
-             const fLeft = 50 + (Math.random() - 0.5) * 30;
-             const fTop = 50 + (Math.random() - 0.5) * 30;
+                 fire.style.width = `${fSize}px`;
+                 fire.style.height = `${fSize}px`;
+                 fire.style.background = fColor;
+                 fire.style.position = 'absolute';
+                 fire.style.borderRadius = '50%';
+                 fire.style.filter = 'blur(4px)';
+                 fire.style.pointerEvents = 'none';
 
-             fire.style.left = `calc(${fLeft}% - ${fSize/2}px)`;
-             fire.style.top = `calc(${fTop}% - ${fSize/2}px)`;
+                 // Fire spawns tighter to the center
+                 const fLeft = 50 + (Math.random() - 0.5) * 30;
+                 const fTop = 50 + (Math.random() - 0.5) * 30;
 
-             // Fire rises faster and dies quicker than smoke
-             fire.style.animation = `smokeRise 0.6s forwards`;
+                 fire.style.left = `calc(${fLeft}% - ${fSize/2}px)`;
+                 fire.style.top = `calc(${fTop}% - ${fSize/2}px)`;
 
-             smokeContainerRef.current.appendChild(fire);
+                 // Fire rises faster and dies quicker than smoke
+                 fire.style.animation = `smokeRise 0.6s forwards`;
 
-             // Cleanup fire
-             setTimeout(() => {
-                if (fire.parentNode) fire.parentNode.removeChild(fire);
-             }, 600);
+                 smokeContainerRef.current.appendChild(fire);
+
+                 // Cleanup fire
+                 setTimeout(() => {
+                    if (fire.parentNode) fire.parentNode.removeChild(fire);
+                 }, 600);
+             }
         }
 
         // Cleanup Smoke
