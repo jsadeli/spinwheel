@@ -1090,15 +1090,22 @@
         if (!smokeContainerRef.current) return;
 
         const timeOver = overchargeRef.current;
+        const delay = 3000; // 3 seconds delay before smoke starts
+
+        // If we haven't passed the delay threshold, don't spawn anything
+        if (timeOver < delay) return;
+
+        // Calculate effective time for phases relative to the start of smoke
+        const effectiveTime = timeOver - delay;
 
         // Determine intensity phases
-        // Phase 1 (0-5s): White -> Grey
-        // Phase 2 (5-10s): Grey -> Dark Grey
-        // Phase 3 (10s+): Inferno (Black + Fire)
+        // Phase 1 (0-5s of smoke): White -> Grey
+        // Phase 2 (5-10s of smoke): Grey -> Dark Grey
+        // Phase 3 (10s+ of smoke): Inferno (Black + Fire)
 
-        const intensity = Math.min(timeOver / 5000, 1);
-        const extremeIntensity = Math.max(0, Math.min((timeOver - 5000) / 5000, 1));
-        const isInferno = timeOver > 10000;
+        const intensity = Math.min(effectiveTime / 5000, 1);
+        const extremeIntensity = Math.max(0, Math.min((effectiveTime - 5000) / 5000, 1));
+        const isInferno = effectiveTime > 10000;
 
         // Probability to spawn a particle this frame
         if (Math.random() > 0.1 + intensity * 0.5) return;
@@ -1148,7 +1155,7 @@
         // --- FIRE PARTICLES (Inferno Phase Only) ---
         if (isInferno && Math.random() > 0.5) {
              const fire = document.createElement('div');
-             // CHANGED: Increased fire particle size for better visibility
+             // Increased fire particle size for better visibility
              const fSize = 50 + Math.random() * 25;
              const fColors = ['#ef4444', '#f97316', '#eab308']; // Red, Orange, Yellow
              const fColor = fColors[Math.floor(Math.random() * fColors.length)];
