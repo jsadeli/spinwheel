@@ -620,6 +620,8 @@
       // Audio Refs
       const audioCtxRef = useRef(null);
       const lastTickRef = useRef(0);
+      const chargeOscillatorRef = useRef(null); // Ref for the charging sound oscillator
+      const chargeGainRef = useRef(null);       // Ref for the charging sound volume
 
       // State to force re-render for relative time updates
       const [, setTick] = useState(0);
@@ -883,6 +885,79 @@
         }
         if (audioCtxRef.current.state === 'suspended') {
           audioCtxRef.current.resume();
+        }
+      };
+
+      const startChargeSound = () => {
+        if (!soundEnabled || !audioCtxRef.current) return;
+        const ctx = audioCtxRef.current;
+
+        // Stop existing if any
+        if (chargeOscillatorRef.current) {
+            try { chargeOscillatorRef.current.stop(); } catch(e){}
+        }
+
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        // Sawtooth gives a buzzy, mechanical "motor" sound
+        osc.type = 'sawtooth';
+        // Start pitch
+        osc.frequency.setValueAtTime(150, ctx.currentTime);
+
+        // Fade in to avoid clicking
+        gain.gain.setValueAtTime(0, ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.1, ctx.currentTime + 0.1);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+
+        chargeOscillatorRef.current = osc;
+        chargeGainRef.current = gain;
+      };
+
+      const updateChargeSound = (power) => {
+         if (!chargeOscillatorRef.current || !audioCtxRef.current) return;
+         const ctx = audioCtxRef.current;
+
+         // Ramp pitch from 150Hz to 600Hz based on power
+         // Using setTargetAtTime for smooth transitions
+         const targetFreq = 150 + (power * 450);
+         chargeOscillatorRef.current.frequency.setTargetAtTime(targetFreq, ctx.currentTime, 0.1);
+
+         // Slightly increase volume as power builds
+         if (chargeGainRef.current) {
+            chargeGainRef.current.gain.setTargetAtTime(0.1 + (power * 0.05), ctx.currentTime, 0.1);
+         }
+      };
+
+      const stopChargeSound = () => {
+        if (chargeOscillatorRef.current && audioCtxRef.current) {
+            try {
+                const ctx = audioCtxRef.current;
+                const gain = chargeGainRef.current;
+                const osc = chargeOscillatorRef.current;
+
+                // Fade out quickly
+                if (gain) {
+                    gain.gain.cancelScheduledValues(ctx.currentTime);
+                    gain.gain.setValueAtTime(gain.gain.value, ctx.currentTime);
+                    gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.15);
+                }
+
+                setTimeout(() => {
+                    if (osc) {
+                        osc.stop();
+                        osc.disconnect();
+                    }
+                    if (gain) gain.disconnect();
+                }, 200);
+
+            } catch (e) {}
+
+            chargeOscillatorRef.current = null;
+            chargeGainRef.current = null;
         }
       };
 
@@ -1245,6 +1320,9 @@
 
         if (items.length === 0) return;
 
+        // Initialize audio context immediately on user interaction
+        initAudio();
+
         // Reset power refs
         chargePowerRef.current = 0;
         setChargePower(0);
@@ -1259,6 +1337,9 @@
             // User held long enough: Start Charging
             isChargingRef.current = true;
             setIsCharging(true);
+
+            // Start Audio
+            startChargeSound();
 
             // Clear this timer ref so MouseUp knows we entered charging mode
             pressTimerRef.current = null;
@@ -1277,6 +1358,9 @@
                     overchargeRef.current += 16; // Add ~16ms per frame
                     spawnSmoke();
                 }
+
+                // Update sound pitch based on power
+                updateChargeSound(power);
 
                 // Update both state (for visual) and ref (for logic)
                 setChargePower(power);
@@ -1314,6 +1398,9 @@
       const stopCharging = () => {
         // Check synchronous ref to handle fast clicks
         if (!isChargingRef.current) return;
+
+        // Stop Audio
+        stopChargeSound();
 
         isChargingRef.current = false;
         setIsCharging(false);
@@ -1675,7 +1762,7 @@
           <main className="flex-grow flex flex-col md:flex-row overflow-hidden">
 
             {/* Left Panel: The Wheel */}
-            <div className="flex-1 flex flex-col items-center justify-center p-4 relative min-h-[50vh]">
+            <div className="flex-1 flex-col flex items-center justify-center p-4 relative min-h-[50vh]">
 
               {/* Pointer Triangle */}
               <div className="absolute z-20 right-0 md:right-auto top-1/2 -translate-y-1/2 translate-x-1/2 md:translate-x-[210px] lg:translate-x-[260px] filter drop-shadow-lg pointer-events-none">
