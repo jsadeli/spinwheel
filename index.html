@@ -1089,20 +1089,37 @@
       const spawnSmoke = () => {
         if (!smokeContainerRef.current) return;
 
-        // Determine intensity based on overcharge time (0 to 5000ms)
-        // Max intensity at 5000ms
-        const intensity = Math.min(overchargeRef.current / 5000, 1);
+        const timeOver = overchargeRef.current;
 
-        // Probability to spawn a particle this frame: increases with intensity
-        // Low intensity: fewer particles. High intensity: constant stream.
+        // Determine intensity phases
+        // Phase 1 (0-5s): White -> Grey
+        // Phase 2 (5-10s): Grey -> Dark Grey
+        // Phase 3 (10s+): Inferno (Black + Fire)
+
+        const intensity = Math.min(timeOver / 5000, 1);
+        const extremeIntensity = Math.max(0, Math.min((timeOver - 5000) / 5000, 1));
+        const isInferno = timeOver > 10000;
+
+        // Probability to spawn a particle this frame
         if (Math.random() > 0.1 + intensity * 0.5) return;
 
         const el = document.createElement('div');
-        const size = 10 + Math.random() * 20 + intensity * 30; // Size grows with intensity
+        let size = 10 + Math.random() * 20 + intensity * 30;
 
-        // Colors shift from white/steam to grey/smoke
-        const greyVal = Math.floor(255 - intensity * 100);
-        const color = `rgb(${greyVal},${greyVal},${greyVal})`;
+        // Phase 3: Double size for the smoke
+        if (isInferno) size *= 2;
+
+        // Calculate Smoke Color
+        let color;
+        if (isInferno) {
+            // Pitch black / very dark grey for inferno
+            const val = Math.floor(Math.random() * 30);
+            color = `rgb(${val},${val},${val})`;
+        } else {
+            // Progressive darkening from White (255) to Grey
+            const greyVal = Math.floor(255 - intensity * 100 - extremeIntensity * 100);
+            color = `rgb(${greyVal},${greyVal},${greyVal})`;
+        }
 
         el.style.width = `${size}px`;
         el.style.height = `${size}px`;
@@ -1115,7 +1132,7 @@
         // Random position around center
         const angle = Math.random() * Math.PI * 2;
         const dist = Math.random() * 40;
-        const left = 50 + Math.cos(angle) * dist; // % relative to container
+        const left = 50 + Math.cos(angle) * dist;
         const top = 50 + Math.sin(angle) * dist;
 
         el.style.left = `calc(${left}% - ${size/2}px)`;
@@ -1128,7 +1145,41 @@
 
         smokeContainerRef.current.appendChild(el);
 
-        // Cleanup
+        // --- FIRE PARTICLES (Inferno Phase Only) ---
+        if (isInferno && Math.random() > 0.5) {
+             const fire = document.createElement('div');
+             // CHANGED: Increased fire particle size for better visibility
+             const fSize = 50 + Math.random() * 25;
+             const fColors = ['#ef4444', '#f97316', '#eab308']; // Red, Orange, Yellow
+             const fColor = fColors[Math.floor(Math.random() * fColors.length)];
+
+             fire.style.width = `${fSize}px`;
+             fire.style.height = `${fSize}px`;
+             fire.style.background = fColor;
+             fire.style.position = 'absolute';
+             fire.style.borderRadius = '50%';
+             fire.style.filter = 'blur(4px)';
+             fire.style.pointerEvents = 'none';
+
+             // Fire spawns tighter to the center
+             const fLeft = 50 + (Math.random() - 0.5) * 30;
+             const fTop = 50 + (Math.random() - 0.5) * 30;
+
+             fire.style.left = `calc(${fLeft}% - ${fSize/2}px)`;
+             fire.style.top = `calc(${fTop}% - ${fSize/2}px)`;
+
+             // Fire rises faster and dies quicker than smoke
+             fire.style.animation = `smokeRise 0.6s forwards`;
+
+             smokeContainerRef.current.appendChild(fire);
+
+             // Cleanup fire
+             setTimeout(() => {
+                if (fire.parentNode) fire.parentNode.removeChild(fire);
+             }, 600);
+        }
+
+        // Cleanup Smoke
         setTimeout(() => {
             if (el.parentNode) el.parentNode.removeChild(el);
         }, 2000);
