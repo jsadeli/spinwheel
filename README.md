@@ -29,7 +29,11 @@ Screenshot:
   - **Theme System**: Toggle between Auto (System), Light, and Dark modes.
   - **Responsive Design**: Fully optimized for mobile and desktop, with a "Single Page App" feel (no scrolling on desktop).
   - **Mystery Mode**: Toggle to hide item labels on the wheel ("?") for suspense.
-  - **Power Meter**: Adjustable spin power with a power meter.
+  - **Interactive Power Meter**:
+    - Tap-to-Spin: a quick click triggers an instant full-power spin.
+    - Hold-to-Charge: Holding the button charges a power meter. Release to spin with the selected strength.
+    - Visual Feedback: An animated ring fills up, changing color from blue to purple to red as power increases. The button shakes intensely at max power.
+    - Overheating FX: Continuing to hold the button after full charge triggers an "Overheating" sequence.
 - 🤖 AI Integration (Gemini)
   - **AI List Generator**: Generate creative lists (e.g., "Dinner ideas") using the Sparkle button.
   - **AI Voice Announcer**: Optional Text-to-Speech announcement of the winner using Gemini's high-quality voices.
