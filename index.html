@@ -1522,7 +1522,8 @@
                   className="absolute bottom-2 right-2 p-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-full shadow-md hover:bg-gray-50 dark:hover:bg-gray-700 transition text-gray-600 dark:text-gray-300 z-30"
                   title={hideLabels ? "Show Items" : "Hide Items (Mystery Mode)"}
                 >
-                  {hideLabels ? <EyeIcon size={20} /> : <EyeOffIcon size={20} />}
+                  {/* CHANGED: Swapped icons so EyeOff displays when labels are hidden */}
+                  {hideLabels ? <EyeOffIcon size={20} /> : <EyeIcon size={20} />}
                 </button>
 
                 {/* Center Spin Button Overlay */}
