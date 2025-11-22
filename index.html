@@ -107,6 +107,21 @@
     .dark textarea::-webkit-scrollbar-thumb:hover {
       background: #64748b;
     }
+
+    /* Smoke Animation */
+    @keyframes smokeRise {
+      0% {
+        transform: translateY(0) scale(1) rotate(0deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.8;
+      }
+      100% {
+        transform: translateY(-100px) scale(3) rotate(var(--rot));
+        opacity: 0;
+      }
+    }
   </style>
 </head>
 <body>
@@ -520,7 +535,7 @@
           .filter(line => line.trim() !== '')
           .map(line => {
             // Check for "Text: Number" pattern
-            // CHANGED: Added \s* to allow spaces between colon and number (e.g. "Pizza: 10")
+            // Added \s* to allow spaces between colon and number (e.g. "Pizza: 10")
             const match = line.match(/^(.*):\s*(\d+)$/);
             if (match) {
               const weight = parseInt(match[2], 10);
@@ -586,6 +601,8 @@
       const pressTimerRef = useRef(null); // New ref for Tap vs Hold detection
       const isChargingRef = useRef(false); // Ref to track charging status synchronously
       const chargePowerRef = useRef(0);    // Ref to track power synchronously
+      const overchargeRef = useRef(0);     // Track how long we've been overcharged (ms)
+      const smokeContainerRef = useRef(null); // Container for smoke particles
       const canvasRef = useRef(null);
       const rotationRef = useRef(0);
       const isSpinningRef = useRef(false); // Tracks spin status synchronously
@@ -1068,6 +1085,56 @@
         return () => cancelAnimationFrame(animationFrameId);
       }, []);
 
+      // Smoke Effect Logic
+      const spawnSmoke = () => {
+        if (!smokeContainerRef.current) return;
+
+        // Determine intensity based on overcharge time (0 to 5000ms)
+        // Max intensity at 5000ms
+        const intensity = Math.min(overchargeRef.current / 5000, 1);
+
+        // Probability to spawn a particle this frame: increases with intensity
+        // Low intensity: fewer particles. High intensity: constant stream.
+        if (Math.random() > 0.1 + intensity * 0.5) return;
+
+        const el = document.createElement('div');
+        const size = 10 + Math.random() * 20 + intensity * 30; // Size grows with intensity
+
+        // Colors shift from white/steam to grey/smoke
+        const greyVal = Math.floor(255 - intensity * 100);
+        const color = `rgb(${greyVal},${greyVal},${greyVal})`;
+
+        el.style.width = `${size}px`;
+        el.style.height = `${size}px`;
+        el.style.background = color;
+        el.style.position = 'absolute';
+        el.style.borderRadius = '50%';
+        el.style.filter = 'blur(8px)';
+        el.style.pointerEvents = 'none';
+
+        // Random position around center
+        const angle = Math.random() * Math.PI * 2;
+        const dist = Math.random() * 40;
+        const left = 50 + Math.cos(angle) * dist; // % relative to container
+        const top = 50 + Math.sin(angle) * dist;
+
+        el.style.left = `calc(${left}% - ${size/2}px)`;
+        el.style.top = `calc(${top}% - ${size/2}px)`;
+
+        // Random rotation
+        el.style.setProperty('--rot', `${(Math.random() - 0.5) * 360}deg`);
+
+        el.style.animation = `smokeRise ${1 + Math.random()}s forwards`;
+
+        smokeContainerRef.current.appendChild(el);
+
+        // Cleanup
+        setTimeout(() => {
+            if (el.parentNode) el.parentNode.removeChild(el);
+        }, 2000);
+      };
+
+
       // Power Meter Logic
       const handlePointerDown = (e) => {
         // Prevent default to stop text selection or scrolling
@@ -1085,6 +1152,7 @@
         chargePowerRef.current = 0;
         setChargePower(0);
         isChargingRef.current = false;
+        overchargeRef.current = 0; // Reset overcharge
 
         // Clear any existing hold timer
         if (pressTimerRef.current) clearTimeout(pressTimerRef.current);
@@ -1106,6 +1174,12 @@
                 const elapsed = Date.now() - startTime;
                 // Fill up in 1.5 seconds
                 let power = Math.min(elapsed / 1500, 1);
+
+                // If fully charged, start counting overcharge time
+                if (power >= 1) {
+                    overchargeRef.current += 16; // Add ~16ms per frame
+                    spawnSmoke();
+                }
 
                 // Update both state (for visual) and ref (for logic)
                 setChargePower(power);
@@ -1159,6 +1233,7 @@
 
         setChargePower(0);
         chargePowerRef.current = 0;
+        overchargeRef.current = 0; // Reset smoke timer logic immediately
       };
 
       const cancelCharging = () => {
@@ -1181,9 +1256,11 @@
         lastTickRef.current = rotationRef.current;
 
         const baseSpeed = Math.random() * 0.2 + 0.5;
+        // CHANGED: Adjusted scaling to allow much slower speeds (5% to 100% instead of 20% to 100%)
         velocityRef.current = baseSpeed * (0.05 + 0.95 * powerFactor);
 
         const maxDuration = spinDuration;
+        // CHANGED: Reduced minimum duration from 2000ms to 500ms for quick nudges
         const targetDuration = Math.max(500, maxDuration * powerFactor);
         const stopThreshold = 0.0001;
         const totalFrames = targetDuration / 16.667;
@@ -1528,9 +1605,13 @@
 
                 {/* Center Spin Button Overlay */}
                 <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30">
+
+                    {/* Smoke Container */}
+                    <div ref={smokeContainerRef} className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-40 h-40 pointer-events-none z-10"></div>
+
                     {/* Power Meter Ring */}
                     {isCharging && (
-                        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-28 h-28 pointer-events-none">
+                        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-28 h-28 pointer-events-none z-20">
                             <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
                                 <circle cx="50" cy="50" r="46" fill="none" stroke="#e5e7eb" strokeWidth="8" className="dark:stroke-gray-700"/>
                                 <circle cx="50" cy="50" r="46" fill="none" stroke="url(#powerGradient)" strokeWidth="8" strokeDasharray="289.02" strokeDashoffset={289.02 * (1 - chargePower)} strokeLinecap="round" className="transition-all duration-75 ease-linear"/>
@@ -1551,7 +1632,7 @@
                         onPointerLeave={handlePointerUpOrLeave}
                         disabled={items.length === 0}
                         className={`
-                            relative w-20 h-20 rounded-full bg-white dark:bg-gray-800 border-4 shadow-lg flex items-center justify-center font-black text-xl tracking-wider select-none touch-none
+                            relative w-20 h-20 rounded-full bg-white dark:bg-gray-800 border-4 shadow-lg flex items-center justify-center font-black text-xl tracking-wider select-none touch-none z-30
                             ${isSpinning ? 'border-red-500 dark:border-red-400 text-red-600 dark:text-red-400' : 'border-indigo-600 dark:border-indigo-400 text-indigo-700 dark:text-indigo-400'}
                             ${items.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}
                         `}
