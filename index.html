@@ -2495,7 +2495,7 @@
                             <span className="block font-medium text-gray-800 dark:text-white">Default Rainbow</span>
                             <span className="text-xs text-gray-500 dark:text-gray-400">The standard colorful palette.</span>
                             <div className="flex mt-2 space-x-1">
-                                {defaultColors.slice(0, 6).map(c => (
+                                {defaultColors.map(c => (
                                     <div key={c} className="w-4 h-4 rounded-full" style={{backgroundColor: c}}></div>
                                 ))}
                             </div>
