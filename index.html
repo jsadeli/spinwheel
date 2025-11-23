@@ -182,7 +182,6 @@
     const apiKey = ""; // Provided by environment
 
     // --- Inline Icons ---
-    // ... [Same as before] ...
     const Icon = ({ children, size = 24, className = "" }) => (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -414,6 +413,16 @@
         </Icon>
     );
 
+    const PaletteIcon = (props) => (
+        <Icon {...props}>
+            <circle cx="13.5" cy="6.5" r=".5" fill="currentColor" />
+            <circle cx="17.5" cy="10.5" r=".5" fill="currentColor" />
+            <circle cx="8.5" cy="7.5" r=".5" fill="currentColor" />
+            <circle cx="6.5" cy="12.5" r=".5" fill="currentColor" />
+            <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z" />
+        </Icon>
+    );
+
     // Confetti Logic - Fireworks Style Physics
     const fireConfetti = () => {
       const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
@@ -580,6 +589,12 @@
         "Pizza", "Burger", "Sushi", "Tacos", "Salad", "Pasta", "Steak", "Ramen"
       ];
 
+      const defaultColors = [
+        '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4',
+        '#FFEEAD', '#FFD93D', '#FF9A8B', '#A0E7E5',
+        '#B39CD0', '#FBE7C6', '#EB6B56', '#E056FD'
+      ];
+
       // Helper to parse text into objects { text, weight }
       const parseItems = (text) => {
         return text.split('\n')
@@ -628,6 +643,14 @@
       const [aiVoiceEnabled, setAiVoiceEnabled] = useState(() => loadState('spinWheel_aiVoice', false));
       const [geminiApiKey, setGeminiApiKey] = useState(() => loadState('spinWheel_apiKey', ''));
 
+      // Color Settings
+      const [colorSettings, setColorSettings] = useState(() => loadState('spinWheel_colorSettings', {
+          type: 'default',
+          customColors: '#FF6B6B, #4ECDC4, #45B7D1'
+      }));
+
+      const [activeColors, setActiveColors] = useState(defaultColors);
+
       const [isSpinning, setIsSpinning] = useState(false);
       const [winner, setWinner] = useState(null);
       const [showThemeMenu, setShowThemeMenu] = useState(false);
@@ -639,9 +662,14 @@
       const [showGenModal, setShowGenModal] = useState(false);
       const [showHelpModal, setShowHelpModal] = useState(false);
       const [showApiKeyModal, setShowApiKeyModal] = useState(false); // New: API Key Modal
+      const [showColorModal, setShowColorModal] = useState(false); // New Color Modal
       const [genPrompt, setGenPrompt] = useState('');
       const [isGenerating, setIsGenerating] = useState(false);
       const [tempApiKey, setTempApiKey] = useState(''); // For editing key
+
+      // Temp state for color editing
+      const [tempColorType, setTempColorType] = useState('default');
+      const [tempCustomColors, setTempCustomColors] = useState('');
 
       // Power Meter State
       const [isCharging, setIsCharging] = useState(false);
@@ -658,6 +686,7 @@
       const rotationRef = useRef(0);
       const isSpinningRef = useRef(false); // Tracks spin status synchronously
       const itemsRef = useRef(items);
+      const colorsRef = useRef(defaultColors); // Ref for colors to be used in animation loop
       const velocityRef = useRef(0);
       const winnerRef = useRef(null);
       const isDarkModeRef = useRef(false);
@@ -736,6 +765,32 @@
           localStorage.setItem('spinWheel_apiKey', JSON.stringify(geminiApiKey));
       }, [geminiApiKey]);
 
+      useEffect(() => {
+          localStorage.setItem('spinWheel_colorSettings', JSON.stringify(colorSettings));
+      }, [colorSettings]);
+
+      // Color Logic
+      useEffect(() => {
+          let newColors = defaultColors;
+          if (colorSettings.type === 'custom') {
+              // Parse the custom string
+              const cleaned = colorSettings.customColors.replace(/[\[\]"']/g, ''); // Remove potential JSON formatting chars
+              const parsed = cleaned.split(/[\n,]+/).map(c => c.trim()).filter(c => c.match(/^#([0-9A-F]{3}){1,2}$/i));
+              if (parsed.length > 0) {
+                  newColors = parsed;
+              }
+          }
+          setActiveColors(newColors);
+          colorsRef.current = newColors;
+      }, [colorSettings]);
+
+      const saveColors = () => {
+          setColorSettings({
+              type: tempColorType,
+              customColors: tempCustomColors
+          });
+          setShowColorModal(false);
+      };
 
       // Sync items ref for the animation loop & Update Items State
       useEffect(() => {
@@ -1144,6 +1199,7 @@
           const centerY = height / 2;
           const radius = Math.min(width, height) / 2 - 20; // Leave room for pins
           const currentItems = itemsRef.current;
+          const currentColors = colorsRef.current; // Use ref for current colors
           const isDark = isDarkModeRef.current;
           const shouldHide = hideLabelsRef.current;
 
@@ -1190,7 +1246,7 @@
               ctx.arc(centerX, centerY, radius, startAngle, endAngle);
               ctx.closePath();
 
-              ctx.fillStyle = colors[index % colors.length];
+              ctx.fillStyle = currentColors[index % currentColors.length]; // Dynamic colors
               ctx.fill();
               ctx.stroke();
 
@@ -1778,6 +1834,24 @@
                     </div>
 
                     <div className="p-2 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/30">
+                        <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Themes</span>
+                    </div>
+                    <div className="py-1 border-b border-gray-100 dark:border-gray-700">
+                        <button
+                            onClick={() => {
+                                setTempColorType(colorSettings.type);
+                                setTempCustomColors(colorSettings.customColors);
+                                setShowColorModal(true);
+                                setShowSettingsMenu(false);
+                            }}
+                            className="flex items-center w-full px-4 py-2 text-sm text-left text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                        >
+                            <span className="mr-3"><PaletteIcon size={16} /></span>
+                            Wheel Colors
+                        </button>
+                    </div>
+
+                    <div className="p-2 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/30">
                         <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Gemini AI Features</span>
                     </div>
                     <div className="py-1">
@@ -2161,6 +2235,79 @@
                 </div>
                 <div className="mt-6 flex justify-end">
                     <button onClick={() => setShowHelpModal(false)} className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition">Got it</button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Color Settings Modal */}
+          {showColorModal && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 backdrop-blur-sm animate-in fade-in duration-200">
+              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 max-w-md w-full border dark:border-gray-700 transform scale-100 animate-in zoom-in-95 duration-200">
+                <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg font-bold text-gray-800 dark:text-white flex items-center">
+                        <PaletteIcon className="mr-2 text-indigo-500" size={20}/>
+                        Customize Wheel Colors
+                    </h3>
+                    <button onClick={() => setShowColorModal(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"><Icon size={20}><path d="M18 6 6 18"/><path d="m6 6 12 12"/></Icon></button>
+                </div>
+
+                <div className="space-y-4 mb-4">
+                    {/* Option: Default */}
+                    <label className={`flex items-start p-3 rounded-lg border cursor-pointer transition ${tempColorType === 'default' ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20' : 'border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50'}`}>
+                        <input
+                            type="radio"
+                            name="colorType"
+                            checked={tempColorType === 'default'}
+                            onChange={() => setTempColorType('default')}
+                            className="mt-1 mr-3"
+                        />
+                        <div>
+                            <span className="block font-medium text-gray-800 dark:text-white">Default Rainbow</span>
+                            <span className="text-xs text-gray-500 dark:text-gray-400">The standard colorful palette.</span>
+                            <div className="flex mt-2 space-x-1">
+                                {defaultColors.slice(0, 6).map(c => (
+                                    <div key={c} className="w-4 h-4 rounded-full" style={{backgroundColor: c}}></div>
+                                ))}
+                            </div>
+                        </div>
+                    </label>
+
+                    {/* Option: Custom */}
+                    <label className={`flex items-start p-3 rounded-lg border cursor-pointer transition ${tempColorType === 'custom' ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20' : 'border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50'}`}>
+                        <input
+                            type="radio"
+                            name="colorType"
+                            checked={tempColorType === 'custom'}
+                            onChange={() => setTempColorType('custom')}
+                            className="mt-1 mr-3"
+                        />
+                        <div className="flex-grow">
+                            <span className="block font-medium text-gray-800 dark:text-white">Custom Hex List</span>
+                            <span className="text-xs text-gray-500 dark:text-gray-400">Enter hex codes (e.g. #F00, #00F)</span>
+
+                            {tempColorType === 'custom' && (
+                                <textarea
+                                    value={tempCustomColors}
+                                    onChange={(e) => setTempCustomColors(e.target.value)}
+                                    placeholder="#FF0000, #00FF00, #0000FF"
+                                    rows={3}
+                                    className="w-full mt-2 p-2 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white font-mono"
+                                    onClick={(e) => e.stopPropagation()} // Prevent clicking textarea from toggling radio
+                                />
+                            )}
+                        </div>
+                    </label>
+                </div>
+
+                <div className="flex justify-end space-x-2">
+                    <button onClick={() => setShowColorModal(false)} className="px-4 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Cancel</button>
+                    <button
+                        onClick={saveColors}
+                        className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition"
+                    >
+                        Save Colors
+                    </button>
                 </div>
               </div>
             </div>
