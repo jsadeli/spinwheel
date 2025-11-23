@@ -806,10 +806,22 @@
       useEffect(() => {
         const loader = document.getElementById('app-loader');
         if (loader) {
-            loader.classList.add('opacity-0', 'pointer-events-none');
-            setTimeout(() => {
+            // Check if the app loaded quickly (e.g., from cache)
+            // performance.now() returns milliseconds since navigation start
+            const loadTime = performance.now();
+            const isFastLoad = loadTime < 800; // Threshold: 800ms
+
+            if (isFastLoad) {
+                // If loaded fast, remove immediately (skip animation)
+                loader.style.display = 'none';
                 if (loader.parentNode) loader.parentNode.removeChild(loader);
-            }, 500);
+            } else {
+                // If loaded slower (fresh load), fade out smoothly to mask the initialization
+                loader.classList.add('opacity-0', 'pointer-events-none');
+                setTimeout(() => {
+                    if (loader.parentNode) loader.parentNode.removeChild(loader);
+                }, 500);
+            }
         }
       }, []);
 
