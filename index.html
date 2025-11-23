@@ -773,6 +773,7 @@
       const lastTickRef = useRef(0);
       const chargeOscillatorRef = useRef(null); // Ref for the charging sound oscillator
       const chargeGainRef = useRef(null);       // Ref for the charging sound volume
+      const chargeFilterRef = useRef(null);     // Ref for the charging sound lowpass filter
 
       // State to force re-render for relative time updates
       const [, setTick] = useState(0);
@@ -1189,32 +1190,47 @@
 
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
+        const filter = ctx.createBiquadFilter(); // Create Lowpass Filter
 
         // Sawtooth gives a buzzy, mechanical "motor" sound
         osc.type = 'sawtooth';
         // Start pitch
         osc.frequency.setValueAtTime(150, ctx.currentTime);
 
+        // Configure Lowpass Filter to muffle the digital harshness
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(400, ctx.currentTime); // Start quite muffled (400Hz)
+
         // Fade in to avoid clicking
         gain.gain.setValueAtTime(0, ctx.currentTime);
         gain.gain.linearRampToValueAtTime(0.1, ctx.currentTime + 0.1);
 
-        osc.connect(gain);
+        // Connect: Oscillator -> Filter -> Gain -> Output
+        osc.connect(filter);
+        filter.connect(gain);
         gain.connect(ctx.destination);
         osc.start();
 
         chargeOscillatorRef.current = osc;
         chargeGainRef.current = gain;
+        chargeFilterRef.current = filter;
       };
 
       const updateChargeSound = (power) => {
          if (!chargeOscillatorRef.current || !audioCtxRef.current) return;
          const ctx = audioCtxRef.current;
 
-         // Ramp pitch from 150Hz to 600Hz based on power
-         // Using setTargetAtTime for smooth transitions
-         const targetFreq = 150 + (power * 450);
+         // Ramp pitch from 150Hz to 500Hz (150 + 350) based on power
+         // Reduced top end for a "heavier" feel
+         const targetFreq = 150 + (power * 350);
          chargeOscillatorRef.current.frequency.setTargetAtTime(targetFreq, ctx.currentTime, 0.1);
+
+         // Dynamically open the filter as power increases to let some "revving" brightness through
+         // but keep it capped to avoid digital screeching
+         if (chargeFilterRef.current) {
+             const filterFreq = 400 + (power * 600); // Maps 400Hz -> 1000Hz
+             chargeFilterRef.current.frequency.setTargetAtTime(filterFreq, ctx.currentTime, 0.1);
+         }
 
          // Slightly increase volume as power builds
          if (chargeGainRef.current) {
@@ -1228,6 +1244,7 @@
                 const ctx = audioCtxRef.current;
                 const gain = chargeGainRef.current;
                 const osc = chargeOscillatorRef.current;
+                const filter = chargeFilterRef.current;
 
                 // Fade out quickly
                 if (gain) {
@@ -1241,6 +1258,7 @@
                         osc.stop();
                         osc.disconnect();
                     }
+                    if (filter) filter.disconnect();
                     if (gain) gain.disconnect();
                 }, 200);
 
@@ -1248,6 +1266,7 @@
 
             chargeOscillatorRef.current = null;
             chargeGainRef.current = null;
+            chargeFilterRef.current = null;
         }
       };
 
