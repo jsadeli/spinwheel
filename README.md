@@ -41,6 +41,7 @@ Screenshot:
       increases. The button shakes intensely at max power.
     - Overheating FX: Continuing to hold the button after full charge triggers an "Overheating"
       sequence.
+  - **Wheel Color Editor**: Switch between default rainbow palette or define your own custom theme.
 - 🤖 AI Integration (Gemini)
   - **AI List Generator**: Generate creative lists (e.g., "Dinner ideas") using the Sparkle button.
   - **AI Voice Announcer**: Optional Text-to-Speech announcement of the winner using Gemini's

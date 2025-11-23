@@ -165,7 +165,7 @@
         <!-- Shadow on sand/ground -->
         <div class="w-16 h-2 bg-black rounded-full blur-sm mt-4" style="animation: shadowScale 1.2s infinite;"></div>
 
-        <h2 class="mt-6 text-blue-900 font-bold text-xl tracking-[0.3em] uppercase drop-shadow-sm animate-pulse">Loading App...</h2>
+        <h2 class="mt-6 text-blue-900 font-bold text-xl tracking-[0.3em] uppercase drop-shadow-sm animate-pulse">Loading...</h2>
     </div>
 
     <!-- Sand / Beach -->
@@ -2161,6 +2161,79 @@
             </div>
           )}
 
+          {/* Color Settings Modal */}
+          {showColorModal && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 backdrop-blur-sm animate-in fade-in duration-200">
+              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 max-w-md w-full border dark:border-gray-700 transform scale-100 animate-in zoom-in-95 duration-200">
+                <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg font-bold text-gray-800 dark:text-white flex items-center">
+                        <PaletteIcon className="mr-2 text-indigo-500" size={20}/>
+                        Customize Wheel Colors
+                    </h3>
+                    <button onClick={() => setShowColorModal(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"><Icon size={20}><path d="M18 6 6 18"/><path d="m6 6 12 12"/></Icon></button>
+                </div>
+
+                <div className="space-y-4 mb-4">
+                    {/* Option: Default */}
+                    <label className={`flex items-start p-3 rounded-lg border cursor-pointer transition ${tempColorType === 'default' ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20' : 'border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50'}`}>
+                        <input
+                            type="radio"
+                            name="colorType"
+                            checked={tempColorType === 'default'}
+                            onChange={() => setTempColorType('default')}
+                            className="mt-1 mr-3"
+                        />
+                        <div>
+                            <span className="block font-medium text-gray-800 dark:text-white">Default Rainbow</span>
+                            <span className="text-xs text-gray-500 dark:text-gray-400">The standard colorful palette.</span>
+                            <div className="flex mt-2 space-x-1">
+                                {defaultColors.slice(0, 6).map(c => (
+                                    <div key={c} className="w-4 h-4 rounded-full" style={{backgroundColor: c}}></div>
+                                ))}
+                            </div>
+                        </div>
+                    </label>
+
+                    {/* Option: Custom */}
+                    <label className={`flex items-start p-3 rounded-lg border cursor-pointer transition ${tempColorType === 'custom' ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20' : 'border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50'}`}>
+                        <input
+                            type="radio"
+                            name="colorType"
+                            checked={tempColorType === 'custom'}
+                            onChange={() => setTempColorType('custom')}
+                            className="mt-1 mr-3"
+                        />
+                        <div className="flex-grow">
+                            <span className="block font-medium text-gray-800 dark:text-white">Custom Hex List</span>
+                            <span className="text-xs text-gray-500 dark:text-gray-400">Enter hex codes (e.g. #F00, #00F)</span>
+
+                            {tempColorType === 'custom' && (
+                                <textarea
+                                    value={tempCustomColors}
+                                    onChange={(e) => setTempCustomColors(e.target.value)}
+                                    placeholder="#FF0000, #00FF00, #0000FF"
+                                    rows={3}
+                                    className="w-full mt-2 p-2 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white font-mono"
+                                    onClick={(e) => e.stopPropagation()} // Prevent clicking textarea from toggling radio
+                                />
+                            )}
+                        </div>
+                    </label>
+                </div>
+
+                <div className="flex justify-end space-x-2">
+                    <button onClick={() => setShowColorModal(false)} className="px-4 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Cancel</button>
+                    <button
+                        onClick={saveColors}
+                        className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition"
+                    >
+                        Save Colors
+                    </button>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* AI Generator Modal */}
           {showGenModal && (
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 backdrop-blur-sm animate-in fade-in duration-200">
@@ -2235,79 +2308,6 @@
                 </div>
                 <div className="mt-6 flex justify-end">
                     <button onClick={() => setShowHelpModal(false)} className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition">Got it</button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Color Settings Modal */}
-          {showColorModal && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 backdrop-blur-sm animate-in fade-in duration-200">
-              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 max-w-md w-full border dark:border-gray-700 transform scale-100 animate-in zoom-in-95 duration-200">
-                <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-bold text-gray-800 dark:text-white flex items-center">
-                        <PaletteIcon className="mr-2 text-indigo-500" size={20}/>
-                        Customize Wheel Colors
-                    </h3>
-                    <button onClick={() => setShowColorModal(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"><Icon size={20}><path d="M18 6 6 18"/><path d="m6 6 12 12"/></Icon></button>
-                </div>
-
-                <div className="space-y-4 mb-4">
-                    {/* Option: Default */}
-                    <label className={`flex items-start p-3 rounded-lg border cursor-pointer transition ${tempColorType === 'default' ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20' : 'border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50'}`}>
-                        <input
-                            type="radio"
-                            name="colorType"
-                            checked={tempColorType === 'default'}
-                            onChange={() => setTempColorType('default')}
-                            className="mt-1 mr-3"
-                        />
-                        <div>
-                            <span className="block font-medium text-gray-800 dark:text-white">Default Rainbow</span>
-                            <span className="text-xs text-gray-500 dark:text-gray-400">The standard colorful palette.</span>
-                            <div className="flex mt-2 space-x-1">
-                                {defaultColors.slice(0, 6).map(c => (
-                                    <div key={c} className="w-4 h-4 rounded-full" style={{backgroundColor: c}}></div>
-                                ))}
-                            </div>
-                        </div>
-                    </label>
-
-                    {/* Option: Custom */}
-                    <label className={`flex items-start p-3 rounded-lg border cursor-pointer transition ${tempColorType === 'custom' ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20' : 'border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50'}`}>
-                        <input
-                            type="radio"
-                            name="colorType"
-                            checked={tempColorType === 'custom'}
-                            onChange={() => setTempColorType('custom')}
-                            className="mt-1 mr-3"
-                        />
-                        <div className="flex-grow">
-                            <span className="block font-medium text-gray-800 dark:text-white">Custom Hex List</span>
-                            <span className="text-xs text-gray-500 dark:text-gray-400">Enter hex codes (e.g. #F00, #00F)</span>
-
-                            {tempColorType === 'custom' && (
-                                <textarea
-                                    value={tempCustomColors}
-                                    onChange={(e) => setTempCustomColors(e.target.value)}
-                                    placeholder="#FF0000, #00FF00, #0000FF"
-                                    rows={3}
-                                    className="w-full mt-2 p-2 text-sm border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white font-mono"
-                                    onClick={(e) => e.stopPropagation()} // Prevent clicking textarea from toggling radio
-                                />
-                            )}
-                        </div>
-                    </label>
-                </div>
-
-                <div className="flex justify-end space-x-2">
-                    <button onClick={() => setShowColorModal(false)} className="px-4 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Cancel</button>
-                    <button
-                        onClick={saveColors}
-                        className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition"
-                    >
-                        Save Colors
-                    </button>
                 </div>
               </div>
             </div>
