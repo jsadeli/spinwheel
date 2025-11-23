@@ -629,6 +629,7 @@
         "Pizza", "Burger", "Sushi", "Tacos", "Salad", "Pasta", "Steak", "Ramen"
       ];
 
+      // Added defaultColors definition inside App scope to fix ReferenceError
       const defaultColors = [
         '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4',
         '#FFEEAD', '#FFD93D', '#FF9A8B', '#A0E7E5',
@@ -767,6 +768,7 @@
       const hideLabelsRef = useRef(hideLabels);
       const pointerRef = useRef(null); // Ref for the arrow pointer
       const listDropdownRef = useRef(null); // Ref for list dropdown
+      const isOutOfOrderRef = useRef(isOutOfOrder); // Ref for out of order state
 
       // Audio Refs
       const audioCtxRef = useRef(null);
@@ -778,16 +780,10 @@
       // State to force re-render for relative time updates
       const [, setTick] = useState(0);
 
-      // Calculate custom preview colors in real-time for the modal
-      const customColorPreview = useMemo(() => {
-          if (!tempCustomColors) return [];
-          const cleaned = tempCustomColors.replace(/[\[\]"']/g, '');
-          return cleaned.split(/[\n,]+/)
-              .map(c => c.trim())
-              .filter(c => /^#([0-9A-F]{3}){1,2}$/i.test(c));
-      }, [tempCustomColors]);
-
-      const isCustomColorInvalid = tempCustomColors.trim().length > 0 && customColorPreview.length === 0;
+      // Sync isOutOfOrder ref
+      useEffect(() => {
+        isOutOfOrderRef.current = isOutOfOrder;
+      }, [isOutOfOrder]);
 
       // Interval to update relative times every 30 seconds
       useEffect(() => {
@@ -1418,8 +1414,8 @@
           const shouldHide = hideLabelsRef.current;
 
           // --- Idle Spin Logic ---
-          // CHANGED: Added !isChargingRef.current to stop idle spin while charging
-          if (!isSpinningRef.current && !isChargingRef.current && currentItems.length > 0 && velocityRef.current === 0 && !winnerRef.current) {
+          // CHANGED: Added !isOutOfOrderRef.current to stop idle spin when broken
+          if (!isSpinningRef.current && !isChargingRef.current && !isOutOfOrderRef.current && currentItems.length > 0 && velocityRef.current === 0 && !winnerRef.current) {
             rotationRef.current = (rotationRef.current + 0.002) % (2 * Math.PI);
             lastTickRef.current = rotationRef.current;
           }
