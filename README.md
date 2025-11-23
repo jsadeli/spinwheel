@@ -16,12 +16,12 @@ Screenshot:
 ## Features
 
 - ✨ Core Features
-  - **Interactive Spin Wheel**: Click to spin and randomly select an option
-  - **Customizable Options**: Add, edit, or remove wheel segments
-  - **Easy to Use**: Simple and intuitive interface
-  - **Single Page Application**: No server required, runs entirely in your browser
-  - **Lightweight**: Built with vanilla HTML, CSS, and JavaScript
-  - **Physics-Based Wheel**: Realistic deceleration with a Damped Harmonic Oscillator physics
+  - **Interactive Spin Wheel**: Click to spin and randomly select an option.
+  - **Customizable Options**: Add, edit, or remove wheel segments.
+  - **Easy to Use**: Simple and intuitive interface.
+  - **Single Page Application**: No server required, runs entirely in your browser.
+  - **Lightweight**: Built with vanilla HTML, CSS, and JavaScript.
+  - **Physics-Based Wheel**: Realistic deceleration with a Damped Harmonic Oscillator physics.
   - **Weighted Probabilities**: Support for weighted items using Item:Weight syntax (e.g., Pizza:10) to increase winning chances.
   - **Interactive Pins**: 30 physical "pins" on the wheel edge that interact with the pointer (visual snapping and audio ticks).
 - 🎨 Visuals & UI
