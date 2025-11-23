@@ -26,6 +26,8 @@ Screenshot:
     (e.g., `Pizza:10`) to increase winning chances.
   - **Interactive Pins**: 30 physical "pins" on the wheel edge that interact with the pointer
     (visual snapping and audio ticks).
+  - **List Management**: Create, rename, delete, and auto save multiple distinct lists
+    (e.g., "Lunch Options", "Daily Standup", "Movie Night").
 - 🎨 Visuals & UI
   - **3D Confetti**: Physics-based confetti engine with wind resistance, tumbling, and
     semi-transparent paper effects.
