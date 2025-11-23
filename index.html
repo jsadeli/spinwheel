@@ -320,6 +320,12 @@
       </Icon>
     );
 
+    const ChevronDownIcon = (props) => (
+      <Icon {...props}>
+        <polyline points="6 9 12 15 18 9" />
+      </Icon>
+    );
+
     const GithubIcon = (props) => (
       <Icon {...props}>
         <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" />
@@ -420,6 +426,13 @@
             <circle cx="8.5" cy="7.5" r=".5" fill="currentColor" />
             <circle cx="6.5" cy="12.5" r=".5" fill="currentColor" />
             <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z" />
+        </Icon>
+    );
+
+    const Plus = (props) => (
+        <Icon {...props}>
+            <path d="M5 12h14" />
+            <path d="M12 5v14" />
         </Icon>
     );
 
@@ -589,6 +602,7 @@
         "Pizza", "Burger", "Sushi", "Tacos", "Salad", "Pasta", "Steak", "Ramen"
       ];
 
+      // Added defaultColors definition inside App scope to fix ReferenceError
       const defaultColors = [
         '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4',
         '#FFEEAD', '#FFD93D', '#FF9A8B', '#A0E7E5',
@@ -622,11 +636,38 @@
         }).join('\n');
       };
 
+      // --- STATE MANAGEMENT ---
+
       // Load states from localStorage or defaults
-      const [inputText, setInputText] = useState(() => loadState('spinWheel_inputs', defaultItems.join('\n')));
+      // We now manage a list of lists.
+      // Legacy migration: if 'spinWheel_inputs' exists but 'spinWheel_savedLists' doesn't, migrate it.
+      const [savedLists, setSavedLists] = useState(() => {
+          const storedLists = loadState('spinWheel_savedLists', null);
+          if (storedLists) return storedLists;
+
+          // Migration / Default
+          const legacyInput = loadState('spinWheel_inputs', null);
+          const initialContent = legacyInput !== null ? legacyInput : defaultItems.join('\n');
+
+          return [{
+              id: 'default',
+              name: 'My First List',
+              content: initialContent
+          }];
+      });
+
+      const [activeListId, setActiveListId] = useState(() => loadState('spinWheel_activeListId', 'default'));
+
+      // Derived state for current input text based on active list
+      const getActiveListContent = (lists, id) => {
+          const list = lists.find(l => l.id === id);
+          return list ? list.content : '';
+      };
+
+      const [inputText, setInputText] = useState(getActiveListContent(savedLists, activeListId));
 
       // Items is now an array of objects: { text: string, weight: number }
-      const [items, setItems] = useState(() => parseItems(loadState('spinWheel_inputs', defaultItems.join('\n'))));
+      const [items, setItems] = useState(() => parseItems(inputText));
 
       const [history, setHistory] = useState(() => {
           const storedHistory = loadState('spinWheel_history', []);
@@ -662,6 +703,7 @@
       const [showGenModal, setShowGenModal] = useState(false);
       const [showHelpModal, setShowHelpModal] = useState(false);
       const [showApiKeyModal, setShowApiKeyModal] = useState(false); // New: API Key Modal
+      const [showListDropdown, setShowListDropdown] = useState(false); // New: List Dropdown
       const [showColorModal, setShowColorModal] = useState(false); // New Color Modal
       const [genPrompt, setGenPrompt] = useState('');
       const [isGenerating, setIsGenerating] = useState(false);
@@ -696,6 +738,7 @@
       const spinFrameRef = useRef(null); // Capture requestAnimationFrame ID
       const hideLabelsRef = useRef(hideLabels);
       const pointerRef = useRef(null); // Ref for the arrow pointer
+      const listDropdownRef = useRef(null); // Ref for list dropdown
 
       // Audio Refs
       const audioCtxRef = useRef(null);
@@ -727,12 +770,23 @@
       }, []);
 
       // Initialize from URL parameters if present
+      // MODIFIED: Import as new list
       useEffect(() => {
         const params = new URLSearchParams(window.location.search);
         const encodedList = params.get('list');
         if (encodedList) {
           try {
             const decodedList = decodeURIComponent(escape(atob(encodedList)));
+
+            // Create new imported list
+            const newList = {
+                id: Date.now().toString(),
+                name: `Imported List ${new Date().toLocaleTimeString()}`,
+                content: decodedList
+            };
+
+            setSavedLists(prev => [...prev, newList]);
+            setActiveListId(newList.id);
             setInputText(decodedList);
 
             // Clean URL without reloading
@@ -746,8 +800,25 @@
 
       // Persistence Effects - Save to localStorage on change
       useEffect(() => {
-          localStorage.setItem('spinWheel_inputs', JSON.stringify(inputText));
+          localStorage.setItem('spinWheel_savedLists', JSON.stringify(savedLists));
+      }, [savedLists]);
+
+      useEffect(() => {
+          localStorage.setItem('spinWheel_activeListId', JSON.stringify(activeListId));
+      }, [activeListId]);
+
+      // Update savedLists whenever inputText changes (Auto-save content)
+      useEffect(() => {
+          setSavedLists(prev => prev.map(list =>
+              list.id === activeListId ? { ...list, content: inputText } : list
+          ));
       }, [inputText]);
+
+      // Switch content when active ID changes
+      useEffect(() => {
+          const content = getActiveListContent(savedLists, activeListId);
+          setInputText(content);
+      }, [activeListId]);
 
       useEffect(() => {
           localStorage.setItem('spinWheel_history', JSON.stringify(history));
@@ -868,6 +939,9 @@
             if (settingsMenuRef.current && !settingsMenuRef.current.contains(event.target)) {
                 setShowSettingsMenu(false);
             }
+            if (listDropdownRef.current && !listDropdownRef.current.contains(event.target)) {
+                setShowListDropdown(false);
+            }
         };
         document.addEventListener("mousedown", handleClickOutside);
         return () => {
@@ -897,6 +971,48 @@
             }
         }
       }, []);
+
+      // List Management Handlers
+      const handleCreateList = () => {
+          const newId = Date.now().toString();
+          // Generate a unique name (Untitled 1, 2, etc)
+          let counter = 1;
+          while (savedLists.some(l => l.name === `Untitled ${counter}`)) {
+              counter++;
+          }
+
+          const newList = {
+              id: newId,
+              name: `Untitled ${counter}`,
+              content: ''
+          };
+
+          setSavedLists(prev => [...prev, newList]);
+          setActiveListId(newId);
+          // Input text effect will handle clearing the textarea
+      };
+
+      const handleDeleteList = () => {
+          if (savedLists.length <= 1) {
+              if (confirm("This is your only list. Clear it instead?")) {
+                  setInputText("");
+              }
+              return;
+          }
+
+          if (confirm("Are you sure you want to delete this list?")) {
+              const newLists = savedLists.filter(l => l.id !== activeListId);
+              setSavedLists(newLists);
+              // Switch to the first available list
+              setActiveListId(newLists[0].id);
+          }
+      };
+
+      const handleRenameList = (newName) => {
+          setSavedLists(prev => prev.map(list =>
+              list.id === activeListId ? { ...list, name: newName } : list
+          ));
+      };
 
       const getThemeIcon = () => {
         if (theme === 'auto') return <MonitorIcon size={24} />;
@@ -1010,19 +1126,6 @@
         } catch (error) {
             console.error("TTS failed", error);
         }
-      };
-
-      const saveApiKey = () => {
-          setGeminiApiKey(tempApiKey.trim());
-          setShowApiKeyModal(false);
-          setTempApiKey('');
-          // If we just added a key, we can potentially re-enable voice
-          if (tempApiKey.trim()) {
-              // Optional: auto-enable voice? keeping it manual for now.
-          } else {
-              // If key cleared, disable voice
-              setAiVoiceEnabled(false);
-          }
       };
 
       // --- AUDIO LOGIC ---
@@ -2047,6 +2150,67 @@
               {activeTab === 'inputs' ? (
                 <>
                   <div className="flex-grow p-4 overflow-hidden flex flex-col relative">
+
+                    {/* List Manager Toolbar */}
+                    <div className="flex items-center gap-2 mb-4 bg-gray-50 dark:bg-gray-700/30 p-2 rounded-lg border border-gray-200 dark:border-gray-600">
+                        {/* Create New */}
+                        <button
+                            onClick={handleCreateList}
+                            disabled={isSpinning}
+                            className="p-2 text-indigo-600 dark:text-indigo-400 hover:bg-white dark:hover:bg-gray-600 rounded shadow-sm border border-transparent hover:border-gray-200 dark:hover:border-gray-500 transition"
+                            title="Create New List"
+                        >
+                            <Plus size={18} />
+                        </button>
+
+                        {/* Combobox (Name Input + Dropdown Trigger) */}
+                        <div className="flex-grow relative flex" ref={listDropdownRef}>
+                            <input
+                                type="text"
+                                value={savedLists.find(l => l.id === activeListId)?.name || ''}
+                                onChange={(e) => handleRenameList(e.target.value)}
+                                disabled={isSpinning}
+                                className="flex-grow p-2 text-sm border border-gray-300 dark:border-gray-600 rounded-l-md focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white min-w-0"
+                                placeholder="List Name"
+                            />
+                            <button
+                                onClick={() => !isSpinning && setShowListDropdown(!showListDropdown)}
+                                disabled={isSpinning}
+                                className="px-2 border border-l-0 border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-600 hover:bg-gray-200 dark:hover:bg-gray-500 rounded-r-md text-gray-600 dark:text-gray-300 transition"
+                            >
+                                <ChevronDownIcon size={16} />
+                            </button>
+
+                            {/* Dropdown Menu */}
+                            {showListDropdown && (
+                                <div className="absolute top-full left-0 w-full mt-1 bg-white dark:bg-gray-800 rounded-md shadow-lg border border-gray-200 dark:border-gray-600 z-20 max-h-48 overflow-y-auto">
+                                    {savedLists.map(list => (
+                                        <button
+                                            key={list.id}
+                                            onClick={() => {
+                                                setActiveListId(list.id);
+                                                setShowListDropdown(false);
+                                            }}
+                                            className={`w-full text-left px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 truncate transition ${list.id === activeListId ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 font-medium' : 'text-gray-700 dark:text-gray-300'}`}
+                                        >
+                                            {list.name}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Delete List */}
+                        <button
+                            onClick={handleDeleteList}
+                            disabled={isSpinning}
+                            className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded border border-transparent hover:border-red-100 dark:hover:border-red-900 transition"
+                            title="Delete List"
+                        >
+                            <Trash2Icon size={18} />
+                        </button>
+                    </div>
+
                     <div className="flex justify-between items-center mb-2">
                       <div className="flex items-center">
                         {/* Sparkle Button with API Key check */}
