@@ -139,6 +139,33 @@
         0%, 100% { transform: scaleX(1); opacity: 0.4; }
         50% { transform: scaleX(0.6); opacity: 0.1; }
     }
+
+    /* Out of Order Neon Flicker */
+    @keyframes neonFlicker {
+      0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+        opacity: 1;
+        text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000, 0 0 30px #ff0000, 0 0 40px #ff0000;
+      }
+      20%, 24%, 55% {
+        opacity: 0.1;
+        text-shadow: none;
+      }
+    }
+
+    /* Spark Animation */
+    @keyframes sparkFlash {
+      0% { opacity: 1; transform: scale(1) rotate(0deg); }
+      50% { opacity: 1; transform: scale(1.5) rotate(45deg); }
+      100% { opacity: 0; transform: scale(0); }
+    }
+
+    @keyframes shake {
+        0% { transform: translate(0, 0) rotate(0deg); }
+        25% { transform: translate(-1px, 1px) rotate(-1deg); }
+        50% { transform: translate(1px, -1px) rotate(1deg); }
+        75% { transform: translate(-2px, 1px) rotate(0deg); }
+        100% { transform: translate(0, 0) rotate(0deg); }
+    }
   </style>
 </head>
 <body>
@@ -697,8 +724,8 @@
       const [showThemeMenu, setShowThemeMenu] = useState(false);
       const [showShareMenu, setShowShareMenu] = useState(false);
       const [showSettingsMenu, setShowSettingsMenu] = useState(false);
-      const [showListDropdown, setShowListDropdown] = useState(false); // RE-ADDED
-      const [showColorModal, setShowColorModal] = useState(false); // New Color Modal
+      const [showListDropdown, setShowListDropdown] = useState(false);
+      const [showColorModal, setShowColorModal] = useState(false);
       const [shareUrl, setShareUrl] = useState('');
       const [activeTab, setActiveTab] = useState('inputs'); // 'inputs' or 'history'
       const [isCopied, setIsCopied] = useState(false);
@@ -716,6 +743,7 @@
       // Power Meter State
       const [isCharging, setIsCharging] = useState(false);
       const [chargePower, setChargePower] = useState(0);
+      const [isOutOfOrder, setIsOutOfOrder] = useState(false); // NEW: Broken state
 
       // REFS
       const chargeIntervalRef = useRef(null);
@@ -797,7 +825,7 @@
         }
       }, []);
 
-      // RE-ADDED: List Persistence Effects
+      // List Persistence Effects
       useEffect(() => {
           localStorage.setItem('spinWheel_savedLists', JSON.stringify(savedLists));
       }, [savedLists]);
@@ -1139,6 +1167,9 @@
 
       // --- AUDIO LOGIC ---
       const initAudio = () => {
+        // If broken, don't init audio for spins
+        if (isOutOfOrder) return;
+
         if (!audioCtxRef.current) {
           audioCtxRef.current = new (window.AudioContext || window.webkitAudioContext)();
         }
@@ -1148,7 +1179,7 @@
       };
 
       const startChargeSound = () => {
-        if (!soundEnabled || !audioCtxRef.current) return;
+        if (!soundEnabled || !audioCtxRef.current || isOutOfOrder) return;
         const ctx = audioCtxRef.current;
 
         // Stop existing if any
@@ -1275,7 +1306,7 @@
       };
 
       const playFireCrackle = () => {
-        if (!soundEnabled || !audioCtxRef.current) return;
+        if (!soundEnabled || !audioCtxRef.current || isOutOfOrder) return;
         const ctx = audioCtxRef.current;
 
         // Synthesize a short burst of noise (crackle)
@@ -1305,6 +1336,28 @@
         gain.connect(ctx.destination);
 
         noise.start();
+      };
+
+      const playBreakdownSound = () => {
+          if (!soundEnabled || !audioCtxRef.current) return;
+          const ctx = audioCtxRef.current;
+
+          // A loud "clunk" and power down sound
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(100, ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(10, ctx.currentTime + 1);
+
+          gain.gain.setValueAtTime(0.5, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1);
+
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+
+          osc.start();
+          osc.stop(ctx.currentTime + 1);
       };
 
       // MAIN RENDER LOOP
@@ -1587,6 +1640,9 @@
         // Prevent default to stop text selection or scrolling
         if (e.cancelable) e.preventDefault();
 
+        // If out of order, do nothing
+        if (isOutOfOrder) return;
+
         // If currently spinning, stop it. Do NOT start a new charge/spin cycle.
         if (isSpinningRef.current) {
             handleStopSpin();
@@ -1632,6 +1688,28 @@
                 if (power >= 1) {
                     overchargeRef.current += 16; // Add ~16ms per frame
                     spawnSmoke();
+
+                    // BREAKDOWN LOGIC: Overcharge > 15s (10s past Inferno start which is 5s)
+                    // Actually phase logic:
+                    // 0-3s (Safe)
+                    // 3-8s (Steam)
+                    // 8-13s (Smoke)
+                    // 13s+ (Inferno)
+                    // Let's break it 5 seconds AFTER Inferno starts (13s + 5s = 18s total overcharge time)
+                    if (overchargeRef.current > 18000) {
+                        clearInterval(chargeIntervalRef.current);
+                        chargeIntervalRef.current = null;
+
+                        stopChargeSound();
+                        playBreakdownSound();
+
+                        setIsCharging(false);
+                        setChargePower(0);
+                        isChargingRef.current = false;
+
+                        setIsOutOfOrder(true); // TRIGGER BROKEN STATE
+                        return;
+                    }
                 }
 
                 // Update sound pitch based on power
@@ -1645,6 +1723,8 @@
       };
 
       const handlePointerUpOrLeave = (e) => {
+         if (isOutOfOrder) return; // Dead interaction
+
          if (e && e.cancelable) e.preventDefault();
 
          // Case 1: User released QUICKLY (Tap)
@@ -1663,14 +1743,11 @@
              stopCharging();
              return;
          }
-
-         // Case 3: User clicked to STOP spinning
-         // handlePointerDown handled the stop logic and returned early.
-         // pressTimerRef was never set, and isChargingRef is false.
-         // Do nothing here.
       };
 
       const stopCharging = () => {
+        if (isOutOfOrder) return;
+
         // Check synchronous ref to handle fast clicks
         if (!isChargingRef.current) return;
 
@@ -2347,85 +2424,6 @@
             </div>
           )}
 
-          {/* AI Generator Modal */}
-          {showGenModal && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 backdrop-blur-sm animate-in fade-in duration-200">
-              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 max-w-md w-full border dark:border-gray-700 transform scale-100 animate-in zoom-in-95 duration-200">
-                <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-bold text-gray-800 dark:text-white flex items-center">
-                        <SparklesIcon className="mr-2 text-indigo-500" size={20}/>
-                        AI List Generator
-                    </h3>
-                    <button onClick={() => setShowGenModal(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"><Icon size={20}><path d="M18 6 6 18"/><path d="m6 6 12 12"/></Icon></button>
-                </div>
-                <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
-                    Describe what you want (e.g., "Lunch ideas for Indonesians who wants to lose weight but have given up on diet and exercise", "Excuses for being late", "Very spicy truth or dare questions").
-                </p>
-                <textarea
-                    value={genPrompt}
-                    onChange={(e) => setGenPrompt(e.target.value)}
-                    placeholder="Enter a topic..."
-                    rows={2}
-                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg mb-4 focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white resize-none"
-                    onKeyDown={(e) => {
-                        if (e.key === 'Enter' && !e.shiftKey) {
-                            e.preventDefault();
-                            generateList();
-                        }
-                    }}
-                    autoFocus
-                />
-                <div className="flex justify-end space-x-2">
-                    <button onClick={() => setShowGenModal(false)} className="px-4 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Cancel</button>
-                    <button
-                        onClick={generateList}
-                        disabled={isGenerating || !genPrompt.trim()}
-                        className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        {isGenerating ? (
-                            <>
-                                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                                Generating...
-                            </>
-                        ) : (
-                            <>Generate <SparklesIcon size={16} className="ml-2"/></>
-                        )}
-                    </button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Help Modal */}
-          {showHelpModal && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 backdrop-blur-sm animate-in fade-in duration-200">
-              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 max-w-md w-full border dark:border-gray-700 transform scale-100 animate-in zoom-in-95 duration-200">
-                <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-bold text-gray-800 dark:text-white flex items-center">
-                        <HelpCircleIcon className="mr-2 text-indigo-500" size={20}/>
-                        Weighted Items Guide
-                    </h3>
-                    <button onClick={() => setShowHelpModal(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"><Icon size={20}><path d="M18 6 6 18"/><path d="m6 6 12 12"/></Icon></button>
-                </div>
-                <div className="text-sm text-gray-600 dark:text-gray-300 space-y-3">
-                    <p>You can customize the probability of each item winning by assigning a <strong>weight</strong>.</p>
-                    <div className="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg border border-gray-200 dark:border-gray-600 font-mono text-xs">
-                        <p><span className="text-indigo-600 dark:text-indigo-400">Pizza:10</span> <span className="text-gray-400">// Very likely (10x chance)</span></p>
-                        <p><span className="text-indigo-600 dark:text-indigo-400">Burger</span> <span className="text-gray-400">// Default weight is 1</span></p>
-                    </div>
-                    <ul className="list-disc list-inside space-y-1">
-                        <li>Format: <code>Item Name:Weight</code></li>
-                        <li>Higher number = Larger slice on the wheel.</li>
-                        <li>If no number is specified, it defaults to <strong>1</strong>.</li>
-                    </ul>
-                </div>
-                <div className="mt-6 flex justify-end">
-                    <button onClick={() => setShowHelpModal(false)} className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition">Got it</button>
-                </div>
-              </div>
-            </div>
-          )}
-
           {/* Color Settings Modal */}
           {showColorModal && (
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 backdrop-blur-sm animate-in fade-in duration-200">
@@ -2507,6 +2505,85 @@
             </div>
           )}
 
+          {/* AI Generator Modal */}
+          {showGenModal && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 backdrop-blur-sm animate-in fade-in duration-200">
+              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 max-w-md w-full border dark:border-gray-700 transform scale-100 animate-in zoom-in-95 duration-200">
+                <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg font-bold text-gray-800 dark:text-white flex items-center">
+                        <SparklesIcon className="mr-2 text-indigo-500" size={20}/>
+                        AI List Generator
+                    </h3>
+                    <button onClick={() => setShowGenModal(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"><Icon size={20}><path d="M18 6 6 18"/><path d="m6 6 12 12"/></Icon></button>
+                </div>
+                <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+                    Describe what you want (e.g., "Lunch ideas for Indonesians who wants to lose weight but have given up on diet and exercise", "Excuses for being late", "Very spicy truth or dare questions").
+                </p>
+                <textarea
+                    value={genPrompt}
+                    onChange={(e) => setGenPrompt(e.target.value)}
+                    placeholder="Enter a topic..."
+                    rows={2}
+                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg mb-4 focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white resize-none"
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter' && !e.shiftKey) {
+                            e.preventDefault();
+                            generateList();
+                        }
+                    }}
+                    autoFocus
+                />
+                <div className="flex justify-end space-x-2">
+                    <button onClick={() => setShowGenModal(false)} className="px-4 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Cancel</button>
+                    <button
+                        onClick={generateList}
+                        disabled={isGenerating || !genPrompt.trim()}
+                        className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        {isGenerating ? (
+                            <>
+                                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                Generating...
+                            </>
+                        ) : (
+                            <>Generate <SparklesIcon size={16} className="ml-2"/></>
+                        )}
+                    </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Help Modal */}
+          {showHelpModal && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 backdrop-blur-sm animate-in fade-in duration-200">
+              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 max-w-md w-full border dark:border-gray-700 transform scale-100 animate-in zoom-in-95 duration-200">
+                <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg font-bold text-gray-800 dark:text-white flex items-center">
+                        <HelpCircleIcon className="mr-2 text-indigo-500" size={20}/>
+                        Weighted Items Guide
+                    </h3>
+                    <button onClick={() => setShowHelpModal(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"><Icon size={20}><path d="M18 6 6 18"/><path d="m6 6 12 12"/></Icon></button>
+                </div>
+                <div className="text-sm text-gray-600 dark:text-gray-300 space-y-3">
+                    <p>You can customize the probability of each item winning by assigning a <strong>weight</strong>.</p>
+                    <div className="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg border border-gray-200 dark:border-gray-600 font-mono text-xs">
+                        <p><span className="text-indigo-600 dark:text-indigo-400">Pizza:10</span> <span className="text-gray-400">// Very likely (10x chance)</span></p>
+                        <p><span className="text-indigo-600 dark:text-indigo-400">Burger</span> <span className="text-gray-400">// Default weight is 1</span></p>
+                    </div>
+                    <ul className="list-disc list-inside space-y-1">
+                        <li>Format: <code>Item Name:Weight</code></li>
+                        <li>Higher number = Larger slice on the wheel.</li>
+                        <li>If no number is specified, it defaults to <strong>1</strong>.</li>
+                    </ul>
+                </div>
+                <div className="mt-6 flex justify-end">
+                    <button onClick={() => setShowHelpModal(false)} className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition">Got it</button>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* API Key Modal */}
           {showApiKeyModal && (
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 backdrop-blur-sm animate-in fade-in duration-200">
@@ -2546,6 +2623,67 @@
                 </div>
               </div>
             </div>
+          )}
+
+          {/* OUT OF ORDER OVERLAY */}
+          {isOutOfOrder && (
+              <div className="fixed inset-0 z-[9999] bg-black/90 flex items-center justify-center overflow-hidden cursor-not-allowed backdrop-blur-sm">
+
+                  {/* Sparks Generator */}
+                  <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                      {Array.from({ length: 20 }).map((_, i) => (
+                          <div
+                              key={i}
+                              className="absolute w-1 h-8 bg-yellow-200 rounded-full"
+                              style={{
+                                  left: `${Math.random() * 100}%`,
+                                  top: `${Math.random() * 100}%`,
+                                  opacity: 0,
+                                  animation: `sparkFlash ${0.2 + Math.random() * 0.5}s infinite`,
+                                  animationDelay: `${Math.random() * 2}s`,
+                                  transformOrigin: 'center',
+                                  boxShadow: '0 0 10px #fff, 0 0 20px #fbbf24'
+                              }}
+                          ></div>
+                      ))}
+                  </div>
+
+                  <div className="relative border-8 border-gray-800 bg-gray-900 p-10 rounded-xl shadow-2xl transform -rotate-2 max-w-lg text-center">
+                      {/* Metal bolts */}
+                      <div className="absolute top-2 left-2 w-4 h-4 bg-gray-400 rounded-full shadow-inner border border-gray-600"></div>
+                      <div className="absolute top-2 right-2 w-4 h-4 bg-gray-400 rounded-full shadow-inner border border-gray-600"></div>
+                      <div className="absolute bottom-2 left-2 w-4 h-4 bg-gray-400 rounded-full shadow-inner border border-gray-600"></div>
+                      <div className="absolute bottom-2 right-2 w-4 h-4 bg-gray-400 rounded-full shadow-inner border border-gray-600"></div>
+
+                      <h1
+                        className="text-6xl md:text-7xl font-black text-transparent bg-clip-text uppercase tracking-tighter mb-4"
+                        style={{
+                            color: 'rgba(255, 0, 0, 0.1)',
+                            WebkitTextStroke: '2px #ff0000',
+                            animation: 'neonFlicker 4s infinite alternate',
+                            fontFamily: 'Courier New, monospace'
+                        }}
+                      >
+                        OUT OF ORDER
+                      </h1>
+
+                      <div className="text-red-500 font-mono text-lg tracking-widest opacity-80 animate-pulse">
+                          SYSTEM FAILURE // OVERHEAT
+                      </div>
+
+                      <div className="mt-8 p-4 bg-black/50 border border-red-900/50 rounded text-red-400/60 text-xs font-mono">
+                          ERROR_CODE: 0xDEAD_WHEEL <br/>
+                          CHECKSUM: JEΔFREYSA?ELi <br/>
+                          Please refresh to reboot system.
+                      </div>
+
+                      {/* Hanging wire effect */}
+                      <svg className="absolute -bottom-20 right-10 w-12 h-24 text-gray-700" viewBox="0 0 20 50">
+                          <path d="M10 0 Q 5 25 15 50" stroke="currentColor" strokeWidth="4" fill="none" />
+                          <circle cx="15" cy="50" r="2" fill="red" className="animate-pulse"/>
+                      </svg>
+                  </div>
+              </div>
           )}
 
         </div>
