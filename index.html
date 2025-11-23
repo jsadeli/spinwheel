@@ -631,9 +631,15 @@
 
       // Added defaultColors definition inside App scope to fix ReferenceError
       const defaultColors = [
-        '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4',
-        '#FFEEAD', '#FFD93D', '#FF9A8B', '#A0E7E5',
-        '#B39CD0', '#FBE7C6', '#EB6B56', '#E056FD'
+        '#F25F5C', '#FF9F1C', '#FFBF69', '#FFE066',
+        '#70C1B3', '#21A0A0', '#247BA0', '#1B98E0',
+        '#6C5B7B', '#C06C84', '#F67280', '#F8B195'
+      ];
+
+      const beachColors = [
+        '#D98C8C', '#D9A679', '#D9BF6F', '#A8C686',
+        '#7FB0A6', '#7FA6C6', '#A6A1C6', '#C6A1B5',
+        '#C6C6A1', '#BFA58F', '#A6C6C6', '#D9A1A1'
       ];
 
       // Helper to parse text into objects { text, weight }
@@ -891,7 +897,9 @@
       // Color Logic
       useEffect(() => {
           let newColors = defaultColors;
-          if (colorSettings.type === 'custom') {
+          if (colorSettings.type === 'beach') {
+              newColors = beachColors;
+          } else if (colorSettings.type === 'custom') {
               // Parse the custom string
               const cleaned = colorSettings.customColors.replace(/[\[\]"']/g, ''); // Remove potential JSON formatting chars
               const parsed = cleaned.split(/[\n,]+/).map(c => c.trim()).filter(c => c.match(/^#([0-9A-F]{3}){1,2}$/i));
@@ -2469,87 +2477,6 @@
             </div>
           )}
 
-          {/* Color Settings Modal */}
-          {showColorModal && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 backdrop-blur-sm animate-in fade-in duration-200">
-              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 max-w-md w-full border dark:border-gray-700 transform scale-100 animate-in zoom-in-95 duration-200">
-                <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-bold text-gray-800 dark:text-white flex items-center">
-                        <PaletteIcon className="mr-2 text-indigo-500" size={20}/>
-                        Customize Wheel Colors
-                    </h3>
-                    <button onClick={() => setShowColorModal(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"><Icon size={20}><path d="M18 6 6 18"/><path d="m6 6 12 12"/></Icon></button>
-                </div>
-
-                <div className="space-y-4 mb-4">
-                    {/* Option: Default */}
-                    <label className={`flex items-start p-3 rounded-lg border cursor-pointer transition ${tempColorType === 'default' ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20' : 'border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50'}`}>
-                        <input
-                            type="radio"
-                            name="colorType"
-                            checked={tempColorType === 'default'}
-                            onChange={() => setTempColorType('default')}
-                            className="mt-1 mr-3"
-                        />
-                        <div>
-                            <span className="block font-medium text-gray-800 dark:text-white">Default Rainbow</span>
-                            <span className="text-xs text-gray-500 dark:text-gray-400">The standard colorful palette.</span>
-                            <div className="flex mt-2 space-x-1">
-                                {defaultColors.map(c => (
-                                    <div key={c} className="w-4 h-4 rounded-full" style={{backgroundColor: c}}></div>
-                                ))}
-                            </div>
-                        </div>
-                    </label>
-
-                    {/* Option: Custom */}
-                    <label className={`flex items-start p-3 rounded-lg border cursor-pointer transition ${tempColorType === 'custom' ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20' : 'border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50'}`}>
-                        <input
-                            type="radio"
-                            name="colorType"
-                            checked={tempColorType === 'custom'}
-                            onChange={() => setTempColorType('custom')}
-                            className="mt-1 mr-3"
-                        />
-                        <div className="flex-grow">
-                            <span className="block font-medium text-gray-800 dark:text-white">Custom Hex List</span>
-                            <span className="text-xs text-gray-500 dark:text-gray-400">Enter hex codes (e.g. #F00, #00F)</span>
-
-                            {tempColorType === 'custom' && (
-                                <>
-                                    <div className="flex mt-2 space-x-1 min-h-[1rem] flex-wrap gap-y-1">
-                                        {customColorPreview.map((c, i) => (
-                                            <div key={i} className="w-4 h-4 rounded-full border border-gray-200 dark:border-gray-600 shadow-sm" style={{backgroundColor: c}}></div>
-                                        ))}
-                                    </div>
-                                    <textarea
-                                        value={tempCustomColors}
-                                        onChange={(e) => setTempCustomColors(e.target.value)}
-                                        placeholder="#FF0000, #00FF00, #0000FF"
-                                        rows={3}
-                                        className={`w-full mt-2 p-2 text-sm border rounded focus:ring-2 font-mono transition-colors ${isCustomColorInvalid ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 dark:border-gray-600 focus:ring-indigo-500'} dark:bg-gray-700 dark:text-white`}
-                                        onClick={(e) => e.stopPropagation()}
-                                    />
-                                    {isCustomColorInvalid && <p className="text-xs text-red-500 mt-1">Please enter valid hex codes (e.g. #FF5733).</p>}
-                                </>
-                            )}
-                        </div>
-                    </label>
-                </div>
-
-                <div className="flex justify-end space-x-2">
-                    <button onClick={() => setShowColorModal(false)} className="px-4 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Cancel</button>
-                    <button
-                        onClick={saveColors}
-                        className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition"
-                    >
-                        Save Colors
-                    </button>
-                </div>
-              </div>
-            </div>
-          )}
-
           {/* AI Generator Modal */}
           {showGenModal && (
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 backdrop-blur-sm animate-in fade-in duration-200">
@@ -2624,6 +2551,107 @@
                 </div>
                 <div className="mt-6 flex justify-end">
                     <button onClick={() => setShowHelpModal(false)} className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition">Got it</button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Color Settings Modal */}
+          {showColorModal && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 backdrop-blur-sm animate-in fade-in duration-200">
+              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 max-w-md w-full border dark:border-gray-700 transform scale-100 animate-in zoom-in-95 duration-200">
+                <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg font-bold text-gray-800 dark:text-white flex items-center">
+                        <PaletteIcon className="mr-2 text-indigo-500" size={20}/>
+                        Customize Wheel Colors
+                    </h3>
+                    <button onClick={() => setShowColorModal(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"><Icon size={20}><path d="M18 6 6 18"/><path d="m6 6 12 12"/></Icon></button>
+                </div>
+
+                <div className="space-y-4 mb-4 max-h-[60vh] overflow-y-auto pr-2">
+                    {/* Option: Default */}
+                    <label className={`flex items-start p-3 rounded-lg border cursor-pointer transition ${tempColorType === 'default' ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20' : 'border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50'}`}>
+                        <input
+                            type="radio"
+                            name="colorType"
+                            checked={tempColorType === 'default'}
+                            onChange={() => setTempColorType('default')}
+                            className="mt-1 mr-3"
+                        />
+                        <div>
+                            <span className="block font-medium text-gray-800 dark:text-white">Default Rainbow</span>
+                            <span className="text-xs text-gray-500 dark:text-gray-400">The standard colorful palette.</span>
+                            <div className="flex mt-2 space-x-1">
+                                {defaultColors.map(c => (
+                                    <div key={c} className="w-4 h-4 rounded-full" style={{backgroundColor: c}}></div>
+                                ))}
+                            </div>
+                        </div>
+                    </label>
+
+                    {/* Option: Beach */}
+                    <label className={`flex items-start p-3 rounded-lg border cursor-pointer transition ${tempColorType === 'beach' ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20' : 'border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50'}`}>
+                        <input
+                            type="radio"
+                            name="colorType"
+                            checked={tempColorType === 'beach'}
+                            onChange={() => setTempColorType('beach')}
+                            className="mt-1 mr-3"
+                        />
+                        <div>
+                            <span className="block font-medium text-gray-800 dark:text-white">Soft Summer Beach Ball</span>
+                            <span className="text-xs text-gray-500 dark:text-gray-400">A relaxed, pastel summer vibe.</span>
+                            <div className="flex mt-2 space-x-1">
+                                {beachColors.map(c => (
+                                    <div key={c} className="w-4 h-4 rounded-full" style={{backgroundColor: c}}></div>
+                                ))}
+                            </div>
+                        </div>
+                    </label>
+
+                    {/* Option: Custom */}
+                    <label className={`flex items-start p-3 rounded-lg border cursor-pointer transition ${tempColorType === 'custom' ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20' : 'border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50'}`}>
+                        <input
+                            type="radio"
+                            name="colorType"
+                            checked={tempColorType === 'custom'}
+                            onChange={() => setTempColorType('custom')}
+                            className="mt-1 mr-3"
+                        />
+                        <div className="flex-grow">
+                            <span className="block font-medium text-gray-800 dark:text-white">Custom Hex List</span>
+                            <span className="text-xs text-gray-500 dark:text-gray-400">Enter hex codes (e.g. #F00, #00F)</span>
+
+                            {tempColorType === 'custom' && (
+                                <>
+                                    <div className="flex mt-2 space-x-1 min-h-[1rem] flex-wrap gap-y-1">
+                                        {customColorPreview.map((c, i) => (
+                                            <div key={i} className="w-4 h-4 rounded-full border border-gray-200 dark:border-gray-600 shadow-sm" style={{backgroundColor: c}}></div>
+                                        ))}
+                                    </div>
+                                    <textarea
+                                        value={tempCustomColors}
+                                        onChange={(e) => setTempCustomColors(e.target.value)}
+                                        placeholder="#FF0000, #00FF00, #0000FF"
+                                        rows={3}
+                                        className={`w-full mt-2 p-2 text-sm border rounded focus:ring-2 font-mono transition-colors ${isCustomColorInvalid ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 dark:border-gray-600 focus:ring-indigo-500'} dark:bg-gray-700 dark:text-white`}
+                                        onClick={(e) => e.stopPropagation()}
+                                    />
+                                    {isCustomColorInvalid && <p className="text-xs text-red-500 mt-1">Please enter valid hex codes (e.g. #FF5733).</p>}
+                                </>
+                            )}
+                        </div>
+                    </label>
+                </div>
+
+                <div className="flex justify-end space-x-2 pt-2 border-t border-gray-100 dark:border-gray-700">
+                    <button onClick={() => setShowColorModal(false)} className="px-4 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Cancel</button>
+                    <button
+                        onClick={saveColors}
+                        className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition"
+                    >
+                        Save Colors
+                    </button>
                 </div>
               </div>
             </div>
