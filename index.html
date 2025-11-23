@@ -1328,7 +1328,8 @@
           const shouldHide = hideLabelsRef.current;
 
           // --- Idle Spin Logic ---
-          if (!isSpinningRef.current && currentItems.length > 0 && velocityRef.current === 0 && !winnerRef.current) {
+          // CHANGED: Added !isChargingRef.current to stop idle spin while charging
+          if (!isSpinningRef.current && !isChargingRef.current && currentItems.length > 0 && velocityRef.current === 0 && !winnerRef.current) {
             rotationRef.current = (rotationRef.current + 0.002) % (2 * Math.PI);
             lastTickRef.current = rotationRef.current;
           }
