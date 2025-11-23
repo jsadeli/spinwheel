@@ -22,26 +22,37 @@ Screenshot:
   - **Single Page Application**: No server required, runs entirely in your browser.
   - **Lightweight**: Built with vanilla HTML, CSS, and JavaScript.
   - **Physics-Based Wheel**: Realistic deceleration with a Damped Harmonic Oscillator physics.
-  - **Weighted Probabilities**: Support for weighted items using Item:Weight syntax (e.g., Pizza:10) to increase winning chances.
-  - **Interactive Pins**: 30 physical "pins" on the wheel edge that interact with the pointer (visual snapping and audio ticks).
+  - **Weighted Probabilities**: Support for weighted items using `Item:Weight` syntax
+    (e.g., `Pizza:10`) to increase winning chances.
+  - **Interactive Pins**: 30 physical "pins" on the wheel edge that interact with the pointer
+    (visual snapping and audio ticks).
 - 🎨 Visuals & UI
-  - **3D Confetti**: Physics-based confetti engine with wind resistance, tumbling, and semi-transparent paper effects.
+  - **3D Confetti**: Physics-based confetti engine with wind resistance, tumbling, and
+    semi-transparent paper effects.
   - **Theme System**: Toggle between Auto (System), Light, and Dark modes.
-  - **Responsive Design**: Fully optimized for mobile and desktop, with a "Single Page App" feel (no scrolling on desktop).
+  - **Responsive Design**: Fully optimized for mobile and desktop, with a "Single Page App" feel
+    (no scrolling on desktop).
   - **Mystery Mode**: Toggle to hide item labels on the wheel ("?") for suspense.
   - **Interactive Power Meter**:
     - Tap-to-Spin: a quick click triggers an instant full-power spin.
-    - Hold-to-Charge: Holding the button charges a power meter. Release to spin with the selected strength.
-    - Visual Feedback: An animated ring fills up, changing color from blue to purple to red as power increases. The button shakes intensely at max power.
-    - Overheating FX: Continuing to hold the button after full charge triggers an "Overheating" sequence.
+    - Hold-to-Charge: Holding the button charges a power meter. Release to spin with the selected
+      strength.
+    - Visual Feedback: An animated ring fills up, changing color from blue to purple to red as power
+      increases. The button shakes intensely at max power.
+    - Overheating FX: Continuing to hold the button after full charge triggers an "Overheating"
+      sequence.
 - 🤖 AI Integration (Gemini)
   - **AI List Generator**: Generate creative lists (e.g., "Dinner ideas") using the Sparkle button.
-  - **AI Voice Announcer**: Optional Text-to-Speech announcement of the winner using Gemini's high-quality voices.
+  - **AI Voice Announcer**: Optional Text-to-Speech announcement of the winner using Gemini's
+    high-quality voices.
   - **Secure Settings**: Dedicated UI for managing and persisting the Gemini API Key.
 - 🛠️ Utilities
-  - **Persistence**: All settings (Inputs, History, Theme, API Key, Audio) are saved automatically to localStorage.
-  - **History Tracking**: Logs winners with relative timestamps (e.g., "2 minutes ago") and exact ISO tooltips.
-  - **PWA Support**: Installable as a standalone app on iOS and Android with custom icons and splash screen configuration.
+  - **Persistence**: All settings (Inputs, History, Theme, API Key, Audio) are saved automatically
+    to localStorage.
+  - **History Tracking**: Logs winners with relative timestamps (e.g., "2 minutes ago") and exact
+    ISO tooltips.
+  - **PWA Support**: Installable as a standalone app on iOS and Android with custom icons and splash
+    screen configuration.
   - **Share Functionality**: Export current lists via a shareable URL (Base64 encoded).
 
 ## Usage
