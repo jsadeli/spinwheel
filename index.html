@@ -602,7 +602,7 @@
         "Pizza", "Burger", "Sushi", "Tacos", "Salad", "Pasta", "Steak", "Ramen"
       ];
 
-      // Added defaultColors definition inside App scope to fix ReferenceError
+      // Explicitly define defaultColors inside App to ensure it's available
       const defaultColors = [
         '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4',
         '#FFEEAD', '#FFD93D', '#FF9A8B', '#A0E7E5',
@@ -658,12 +658,13 @@
 
       const [activeListId, setActiveListId] = useState(() => loadState('spinWheel_activeListId', 'default'));
 
-      // Derived state for current input text based on active list
+      // Helper to get content safely
       const getActiveListContent = (lists, id) => {
           const list = lists.find(l => l.id === id);
           return list ? list.content : '';
       };
 
+      // Initialize input text from the active list, NOT direct localStorage
       const [inputText, setInputText] = useState(getActiveListContent(savedLists, activeListId));
 
       // Items is now an array of objects: { text: string, weight: number }
@@ -697,14 +698,14 @@
       const [showThemeMenu, setShowThemeMenu] = useState(false);
       const [showShareMenu, setShowShareMenu] = useState(false);
       const [showSettingsMenu, setShowSettingsMenu] = useState(false);
+      const [showListDropdown, setShowListDropdown] = useState(false); // RE-ADDED
+      const [showColorModal, setShowColorModal] = useState(false); // New Color Modal
       const [shareUrl, setShareUrl] = useState('');
       const [activeTab, setActiveTab] = useState('inputs'); // 'inputs' or 'history'
       const [isCopied, setIsCopied] = useState(false);
       const [showGenModal, setShowGenModal] = useState(false);
       const [showHelpModal, setShowHelpModal] = useState(false);
       const [showApiKeyModal, setShowApiKeyModal] = useState(false); // New: API Key Modal
-      const [showListDropdown, setShowListDropdown] = useState(false); // New: List Dropdown
-      const [showColorModal, setShowColorModal] = useState(false); // New Color Modal
       const [genPrompt, setGenPrompt] = useState('');
       const [isGenerating, setIsGenerating] = useState(false);
       const [tempApiKey, setTempApiKey] = useState(''); // For editing key
@@ -752,7 +753,6 @@
       // Calculate custom preview colors in real-time for the modal
       const customColorPreview = useMemo(() => {
           if (!tempCustomColors) return [];
-          // Clean input and extract valid hex codes
           const cleaned = tempCustomColors.replace(/[\[\]"']/g, '');
           return cleaned.split(/[\n,]+/)
               .map(c => c.trim())
@@ -781,7 +781,7 @@
             // Create new imported list
             const newList = {
                 id: Date.now().toString(),
-                name: `Imported List ${new Date().toLocaleTimeString()}`,
+                name: `Imported List ${new Date().toISOString()}`,
                 content: decodedList
             };
 
@@ -798,7 +798,7 @@
         }
       }, []);
 
-      // Persistence Effects - Save to localStorage on change
+      // RE-ADDED: List Persistence Effects
       useEffect(() => {
           localStorage.setItem('spinWheel_savedLists', JSON.stringify(savedLists));
       }, [savedLists]);
@@ -807,7 +807,7 @@
           localStorage.setItem('spinWheel_activeListId', JSON.stringify(activeListId));
       }, [activeListId]);
 
-      // Update savedLists whenever inputText changes (Auto-save content)
+      // Auto-save content to current list when typing
       useEffect(() => {
           setSavedLists(prev => prev.map(list =>
               list.id === activeListId ? { ...list, content: inputText } : list
@@ -975,7 +975,6 @@
       // List Management Handlers
       const handleCreateList = () => {
           const newId = Date.now().toString();
-          // Generate a unique name (Untitled 1, 2, etc)
           let counter = 1;
           while (savedLists.some(l => l.name === `Untitled ${counter}`)) {
               counter++;
@@ -989,7 +988,6 @@
 
           setSavedLists(prev => [...prev, newList]);
           setActiveListId(newId);
-          // Input text effect will handle clearing the textarea
       };
 
       const handleDeleteList = () => {
@@ -1003,7 +1001,6 @@
           if (confirm("Are you sure you want to delete this list?")) {
               const newLists = savedLists.filter(l => l.id !== activeListId);
               setSavedLists(newLists);
-              // Switch to the first available list
               setActiveListId(newLists[0].id);
           }
       };
@@ -1126,6 +1123,19 @@
         } catch (error) {
             console.error("TTS failed", error);
         }
+      };
+
+      const saveApiKey = () => {
+          setGeminiApiKey(tempApiKey.trim());
+          setShowApiKeyModal(false);
+          setTempApiKey('');
+          // If we just added a key, we can potentially re-enable voice
+          if (tempApiKey.trim()) {
+              // Optional: auto-enable voice? keeping it manual for now.
+          } else {
+              // If key cleared, disable voice
+              setAiVoiceEnabled(false);
+          }
       };
 
       // --- AUDIO LOGIC ---
@@ -2151,7 +2161,7 @@
                 <>
                   <div className="flex-grow p-4 overflow-hidden flex flex-col relative">
 
-                    {/* List Manager Toolbar */}
+                    {/* RE-ADDED: List Manager Toolbar */}
                     <div className="flex items-center gap-2 mb-4 bg-gray-50 dark:bg-gray-700/30 p-2 rounded-lg border border-gray-200 dark:border-gray-600">
                         {/* Create New */}
                         <button
