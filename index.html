@@ -602,7 +602,6 @@
         "Pizza", "Burger", "Sushi", "Tacos", "Salad", "Pasta", "Steak", "Ramen"
       ];
 
-      // Explicitly define defaultColors inside App to ensure it's available
       const defaultColors = [
         '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4',
         '#FFEEAD', '#FFD93D', '#FF9A8B', '#A0E7E5',
@@ -1307,12 +1306,6 @@
 
         noise.start();
       };
-
-      const colors = [
-        '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4',
-        '#FFEEAD', '#FFD93D', '#FF9A8B', '#A0E7E5',
-        '#B39CD0', '#FBE7C6', '#EB6B56', '#E056FD'
-      ];
 
       // MAIN RENDER LOOP
       useEffect(() => {
@@ -2161,7 +2154,7 @@
                 <>
                   <div className="flex-grow p-4 overflow-hidden flex flex-col relative">
 
-                    {/* RE-ADDED: List Manager Toolbar */}
+                    {/* List Manager Toolbar */}
                     <div className="flex items-center gap-2 mb-4 bg-gray-50 dark:bg-gray-700/30 p-2 rounded-lg border border-gray-200 dark:border-gray-600">
                         {/* Create New */}
                         <button
@@ -2353,6 +2346,85 @@
             </div>
           )}
 
+          {/* AI Generator Modal */}
+          {showGenModal && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 backdrop-blur-sm animate-in fade-in duration-200">
+              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 max-w-md w-full border dark:border-gray-700 transform scale-100 animate-in zoom-in-95 duration-200">
+                <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg font-bold text-gray-800 dark:text-white flex items-center">
+                        <SparklesIcon className="mr-2 text-indigo-500" size={20}/>
+                        AI List Generator
+                    </h3>
+                    <button onClick={() => setShowGenModal(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"><Icon size={20}><path d="M18 6 6 18"/><path d="m6 6 12 12"/></Icon></button>
+                </div>
+                <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+                    Describe what you want (e.g., "Lunch ideas for Indonesians who wants to lose weight but have given up on diet and exercise", "Excuses for being late", "Very spicy truth or dare questions").
+                </p>
+                <textarea
+                    value={genPrompt}
+                    onChange={(e) => setGenPrompt(e.target.value)}
+                    placeholder="Enter a topic..."
+                    rows={2}
+                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg mb-4 focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white resize-none"
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter' && !e.shiftKey) {
+                            e.preventDefault();
+                            generateList();
+                        }
+                    }}
+                    autoFocus
+                />
+                <div className="flex justify-end space-x-2">
+                    <button onClick={() => setShowGenModal(false)} className="px-4 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Cancel</button>
+                    <button
+                        onClick={generateList}
+                        disabled={isGenerating || !genPrompt.trim()}
+                        className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        {isGenerating ? (
+                            <>
+                                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                Generating...
+                            </>
+                        ) : (
+                            <>Generate <SparklesIcon size={16} className="ml-2"/></>
+                        )}
+                    </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Help Modal */}
+          {showHelpModal && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 backdrop-blur-sm animate-in fade-in duration-200">
+              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 max-w-md w-full border dark:border-gray-700 transform scale-100 animate-in zoom-in-95 duration-200">
+                <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg font-bold text-gray-800 dark:text-white flex items-center">
+                        <HelpCircleIcon className="mr-2 text-indigo-500" size={20}/>
+                        Weighted Items Guide
+                    </h3>
+                    <button onClick={() => setShowHelpModal(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"><Icon size={20}><path d="M18 6 6 18"/><path d="m6 6 12 12"/></Icon></button>
+                </div>
+                <div className="text-sm text-gray-600 dark:text-gray-300 space-y-3">
+                    <p>You can customize the probability of each item winning by assigning a <strong>weight</strong>.</p>
+                    <div className="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg border border-gray-200 dark:border-gray-600 font-mono text-xs">
+                        <p><span className="text-indigo-600 dark:text-indigo-400">Pizza:10</span> <span className="text-gray-400">// Very likely (10x chance)</span></p>
+                        <p><span className="text-indigo-600 dark:text-indigo-400">Burger</span> <span className="text-gray-400">// Default weight is 1</span></p>
+                    </div>
+                    <ul className="list-disc list-inside space-y-1">
+                        <li>Format: <code>Item Name:Weight</code></li>
+                        <li>Higher number = Larger slice on the wheel.</li>
+                        <li>If no number is specified, it defaults to <strong>1</strong>.</li>
+                    </ul>
+                </div>
+                <div className="mt-6 flex justify-end">
+                    <button onClick={() => setShowHelpModal(false)} className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition">Got it</button>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Color Settings Modal */}
           {showColorModal && (
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 backdrop-blur-sm animate-in fade-in duration-200">
@@ -2429,85 +2501,6 @@
                     >
                         Save Colors
                     </button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* AI Generator Modal */}
-          {showGenModal && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 backdrop-blur-sm animate-in fade-in duration-200">
-              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 max-w-md w-full border dark:border-gray-700 transform scale-100 animate-in zoom-in-95 duration-200">
-                <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-bold text-gray-800 dark:text-white flex items-center">
-                        <SparklesIcon className="mr-2 text-indigo-500" size={20}/>
-                        AI List Generator
-                    </h3>
-                    <button onClick={() => setShowGenModal(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"><Icon size={20}><path d="M18 6 6 18"/><path d="m6 6 12 12"/></Icon></button>
-                </div>
-                <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
-                    Describe what you want (e.g., "Lunch ideas for Indonesians who wants to lose weight but have given up on diet and exercise", "Excuses for being late", "Very spicy truth or dare questions").
-                </p>
-                <textarea
-                    value={genPrompt}
-                    onChange={(e) => setGenPrompt(e.target.value)}
-                    placeholder="Enter a topic..."
-                    rows={2}
-                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg mb-4 focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white resize-none"
-                    onKeyDown={(e) => {
-                        if (e.key === 'Enter' && !e.shiftKey) {
-                            e.preventDefault();
-                            generateList();
-                        }
-                    }}
-                    autoFocus
-                />
-                <div className="flex justify-end space-x-2">
-                    <button onClick={() => setShowGenModal(false)} className="px-4 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Cancel</button>
-                    <button
-                        onClick={generateList}
-                        disabled={isGenerating || !genPrompt.trim()}
-                        className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        {isGenerating ? (
-                            <>
-                                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                                Generating...
-                            </>
-                        ) : (
-                            <>Generate <SparklesIcon size={16} className="ml-2"/></>
-                        )}
-                    </button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Help Modal */}
-          {showHelpModal && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 backdrop-blur-sm animate-in fade-in duration-200">
-              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 max-w-md w-full border dark:border-gray-700 transform scale-100 animate-in zoom-in-95 duration-200">
-                <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-bold text-gray-800 dark:text-white flex items-center">
-                        <HelpCircleIcon className="mr-2 text-indigo-500" size={20}/>
-                        Weighted Items Guide
-                    </h3>
-                    <button onClick={() => setShowHelpModal(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"><Icon size={20}><path d="M18 6 6 18"/><path d="m6 6 12 12"/></Icon></button>
-                </div>
-                <div className="text-sm text-gray-600 dark:text-gray-300 space-y-3">
-                    <p>You can customize the probability of each item winning by assigning a <strong>weight</strong>.</p>
-                    <div className="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg border border-gray-200 dark:border-gray-600 font-mono text-xs">
-                        <p><span className="text-indigo-600 dark:text-indigo-400">Pizza:10</span> <span className="text-gray-400">// Very likely (10x chance)</span></p>
-                        <p><span className="text-indigo-600 dark:text-indigo-400">Burger</span> <span className="text-gray-400">// Default weight is 1</span></p>
-                    </div>
-                    <ul className="list-disc list-inside space-y-1">
-                        <li>Format: <code>Item Name:Weight</code></li>
-                        <li>Higher number = Larger slice on the wheel.</li>
-                        <li>If no number is specified, it defaults to <strong>1</strong>.</li>
-                    </ul>
-                </div>
-                <div className="mt-6 flex justify-end">
-                    <button onClick={() => setShowHelpModal(false)} className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition">Got it</button>
                 </div>
               </div>
             </div>
