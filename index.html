@@ -1216,26 +1216,44 @@
         chargeFilterRef.current = filter;
       };
 
-      const updateChargeSound = (power) => {
+      const updateChargeSound = (power, overchargeTime = 0) => {
          if (!chargeOscillatorRef.current || !audioCtxRef.current) return;
          const ctx = audioCtxRef.current;
 
-         // Ramp pitch from 150Hz to 500Hz (150 + 350) based on power
-         // Reduced top end for a "heavier" feel
-         const targetFreq = 150 + (power * 350);
+         // Base: Ramp pitch from 150Hz to 500Hz based on power (0 to 1)
+         let targetFreq = 150 + (power * 350);
+
+         // Overcharge Logic: If smoke is appearing (>3000ms overcharge), ramp pitch higher
+         // Breakdown happens at ~18000ms. We ramp from 3000ms to 18000ms.
+         if (overchargeTime > 3000) {
+             // Normalize progress from 0.0 to 1.0 based on the danger zone duration (15s)
+             const dangerProgress = Math.min((overchargeTime - 3000) / 15000, 1);
+
+             // Add extra pitch (up to +800Hz) to reach ~1300Hz screaming
+             targetFreq += (dangerProgress * 800);
+
+             // Open the filter wide to let the harsh high frequencies through
+             if (chargeFilterRef.current) {
+                 const filterFreq = 1000 + (dangerProgress * 5000); // Open up to 6000Hz
+                 chargeFilterRef.current.frequency.setTargetAtTime(filterFreq, ctx.currentTime, 0.1);
+             }
+
+             // Increase volume slightly
+             if (chargeGainRef.current) {
+                chargeGainRef.current.gain.setTargetAtTime(0.15 + (dangerProgress * 0.1), ctx.currentTime, 0.1);
+             }
+         } else {
+             // Normal charging behavior
+             if (chargeFilterRef.current) {
+                 const filterFreq = 400 + (power * 600); // Cap at 1000Hz for heavy feel
+                 chargeFilterRef.current.frequency.setTargetAtTime(filterFreq, ctx.currentTime, 0.1);
+             }
+             if (chargeGainRef.current) {
+                chargeGainRef.current.gain.setTargetAtTime(0.1 + (power * 0.05), ctx.currentTime, 0.1);
+             }
+         }
+
          chargeOscillatorRef.current.frequency.setTargetAtTime(targetFreq, ctx.currentTime, 0.1);
-
-         // Dynamically open the filter as power increases to let some "revving" brightness through
-         // but keep it capped to avoid digital screeching
-         if (chargeFilterRef.current) {
-             const filterFreq = 400 + (power * 600); // Maps 400Hz -> 1000Hz
-             chargeFilterRef.current.frequency.setTargetAtTime(filterFreq, ctx.currentTime, 0.1);
-         }
-
-         // Slightly increase volume as power builds
-         if (chargeGainRef.current) {
-            chargeGainRef.current.gain.setTargetAtTime(0.1 + (power * 0.05), ctx.currentTime, 0.1);
-         }
       };
 
       const stopChargeSound = () => {
@@ -1731,8 +1749,8 @@
                     }
                 }
 
-                // Update sound pitch based on power
-                updateChargeSound(power);
+                // Update sound pitch based on power AND overcharge time
+                updateChargeSound(power, overchargeRef.current);
 
                 // Update both state (for visual) and ref (for logic)
                 setChargePower(power);
