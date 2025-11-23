@@ -1048,7 +1048,7 @@
                 body: JSON.stringify({
                     contents: [{
                         parts: [{
-                            text: `You are a helper for a spin wheel app. Generate a weighted list of 8-12 short, creative items based on the user's request: "${genPrompt}". Return only the items, one per line. If you want to make some items more likely, add ": weight" (e.g. Pizza: 5) otherwise just the name. Do not include numbering or markdown blocks.`
+                            text: `You are a helper for a spin wheel app. Generate a weighted list of 8-12 short, creative items based on the user's request: "${genPrompt}". Return only the items, one per line. If you want to make some items more likely, add ":weight" (e.g. Pizza:5) otherwise just the name. Do not include numbering, markdown blocks, or ending punctuations (except question mark).`
                         }]
                     }]
                 })
