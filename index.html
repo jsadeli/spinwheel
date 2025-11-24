@@ -498,6 +498,13 @@
       </Icon>
     );
 
+    const TrendingUpIcon = (props) => (
+      <Icon {...props}>
+        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+        <polyline points="17 6 23 6 23 12" />
+      </Icon>
+    );
+
     // Confetti Logic - Fireworks Style Physics
     const fireConfetti = () => {
       const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
@@ -791,6 +798,59 @@
       const [isOutOfOrder, setIsOutOfOrder] = useState(false); // NEW: Broken state
       const [deferredPrompt, setDeferredPrompt] = useState(null);
 
+      // XP System State
+      const [xp, setXp] = useState(() => loadState('spinWheel_xp', 0));
+
+      // Leveling Logic Helpers
+      const calculateLevel = (currentXp) => {
+        let level = 0;
+        let required = 10;
+        while (currentXp >= required) {
+          currentXp -= required;
+          level++;
+          required = 10 * Math.pow(2, level);
+        }
+        return level;
+      };
+
+      const getLevelProgress = (currentXp) => {
+        let level = 0;
+        let required = 10;
+        let accumulatedXp = 0;
+
+        // Find current level base XP
+        while (currentXp >= required) {
+          currentXp -= required;
+          accumulatedXp += required;
+          level++;
+          required = 10 * Math.pow(2, level);
+        }
+
+        return {
+          level,
+          currentLevelXp: currentXp,
+          requiredLevelXp: required,
+          progressPercent: (currentXp / required) * 100
+        };
+      };
+
+      const getLevelTitle = (level) => {
+        if (level === 0) return "Novice Spinner";
+        if (level === 1) return "Casual Clicker";
+        if (level === 2) return "Spin Enthusiast";
+        if (level === 3) return "Professional Procrastinator";
+        if (level === 4) return "Frequent Spinner";
+        if (level === 5) return "Spin Doctor";
+        if (level === 6) return "Entropy Engineer";
+        if (level === 7) return "Lord of the Spins";
+        if (level === 8) return "Agent of Probability";
+        if (level === 9) return "Wheel Master";
+        if (level === 10) return "Oracle of Spin";
+        return "God of Wheel";
+      };
+
+      const levelInfo = getLevelProgress(xp);
+
       // REFS
       const chargeIntervalRef = useRef(null);
       const pressTimerRef = useRef(null); // New ref for Tap vs Hold detection
@@ -944,6 +1004,10 @@
       useEffect(() => {
         localStorage.setItem('spinWheel_colorSettings', JSON.stringify(colorSettings));
       }, [colorSettings]);
+
+      useEffect(() => {
+        localStorage.setItem('spinWheel_xp', JSON.stringify(xp));
+      }, [xp]);
 
       // Color Logic
       useEffect(() => {
@@ -2112,6 +2176,9 @@
           return newHistory;
         });
 
+        // Award XP
+        setXp(prev => prev + 1);
+
         if (soundEnabled) {
           playWinSound();
           if (aiVoiceEnabled && geminiApiKey) {
@@ -2462,6 +2529,14 @@
                   History <span className="ml-1 text-xs bg-gray-200 dark:bg-gray-700 px-1.5 py-0.5 rounded-full">{history.length}</span>
                   {activeTab === 'history' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-indigo-600 dark:bg-indigo-400"></div>}
                 </button>
+                <button
+                  onClick={() => setActiveTab('progress')}
+                  className={`flex-1 p-4 font-bold text-sm flex items-center justify-center transition-colors relative ${activeTab === 'progress' ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800'}`}
+                >
+                  <TrendingUpIcon size={16} className="mr-2" />
+                  Progress
+                  {activeTab === 'progress' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-indigo-600 dark:bg-indigo-400"></div>}
+                </button>
               </div>
 
               {/* Content Area */}
@@ -2582,7 +2657,7 @@
                     </button>
                   </div>
                 </>
-              ) : (
+              ) : activeTab === 'history' ? (
                 <>
                   <div className="flex-grow overflow-y-auto p-4">
                     {history.length === 0 ? (
@@ -2619,6 +2694,75 @@
                     </button>
                   </div>
                 </>
+              ) : (
+                <div className="flex-grow p-6 overflow-y-auto">
+                  <div className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl p-6 text-white shadow-lg mb-6 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white opacity-10 rounded-full blur-xl"></div>
+                    <div className="absolute bottom-0 left-0 -mb-4 -ml-4 w-32 h-32 bg-white opacity-10 rounded-full blur-xl"></div>
+
+                    <div className="relative z-10">
+                      <div className="flex justify-between items-start mb-4">
+                        <div>
+                          <p className="text-indigo-100 text-sm font-medium uppercase tracking-wider">Current Level</p>
+                          <h2 className="text-4xl font-black mt-1">{levelInfo.level}</h2>
+                        </div>
+                        <div className="bg-white/20 backdrop-blur-sm p-2 rounded-lg">
+                          <TrophyIcon size={24} className="text-yellow-300" />
+                        </div>
+                      </div>
+
+                      <div className="mb-4">
+                        <p className="text-xl font-bold text-white mb-1">{getLevelTitle(levelInfo.level)}</p>
+                        <p className="text-indigo-100 text-xs">Keep spinning to unlock new titles!</p>
+                      </div>
+
+                      <div className="relative pt-1">
+                        <div className="flex mb-2 items-center justify-between">
+                          <div className="text-xs font-semibold inline-block text-indigo-100">
+                            {Math.floor(levelInfo.currentLevelXp)} / {levelInfo.requiredLevelXp} XP
+                          </div>
+                          <div className="text-xs font-semibold inline-block text-indigo-100">
+                            {Math.round(levelInfo.progressPercent)}%
+                          </div>
+                        </div>
+                        <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-black/20">
+                          <div style={{ width: `${levelInfo.progressPercent}%` }} className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-yellow-400 transition-all duration-500 ease-out"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-xl border border-gray-100 dark:border-gray-700">
+                      <div className="flex items-center space-x-3 mb-2">
+                        <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg text-blue-600 dark:text-blue-400">
+                          <ZapIcon size={20} />
+                        </div>
+                        <span className="text-sm font-bold text-gray-500 dark:text-gray-400">Total XP</span>
+                      </div>
+                      <p className="text-2xl font-black text-gray-800 dark:text-white">{xp}</p>
+                    </div>
+
+                    <div className="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-xl border border-gray-100 dark:border-gray-700">
+                      <div className="flex items-center space-x-3 mb-2">
+                        <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg text-green-600 dark:text-green-400">
+                          <ClockIcon size={20} />
+                        </div>
+                        <span className="text-sm font-bold text-gray-500 dark:text-gray-400">Total Spins</span>
+                      </div>
+                      <p className="text-2xl font-black text-gray-800 dark:text-white">{history.length}</p>
+                    </div>
+                  </div>
+
+                  <div className="mt-6 p-4 bg-indigo-50 dark:bg-indigo-900/20 rounded-xl border border-indigo-100 dark:border-indigo-800/50">
+                    <h4 className="font-bold text-indigo-900 dark:text-indigo-300 mb-2 flex items-center">
+                      <SparklesIcon size={16} className="mr-2" /> How to Level Up
+                    </h4>
+                    <p className="text-sm text-indigo-800 dark:text-indigo-200 leading-relaxed">
+                      Earn <strong>1 XP</strong> for every spin you complete. As you level up, it takes more XP to reach the next level.
+                    </p>
+                  </div>
+                </div>
               )}
             </div>
           </main>
