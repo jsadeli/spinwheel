@@ -1595,25 +1595,27 @@
             let pointerAngle = 0;
 
             // Physics Parameters
-            const maxAngle = 40;
-            const pushThreshold = 0.75; // When the pin starts pushing the pointer (0.0 to 1.0)
+            // Dynamic max angle based on velocity
+            // Cap velocity influence to avoid 360 spins
+            const velocityFactor = Math.min(velocityRef.current * 800, 40);
+            const maxAngle = 30 + velocityFactor;
+
+            const pushThreshold = 0.65; // Earlier contact for smoother push
 
             if (pinPhase > pushThreshold) {
               // PUSH PHASE: Pin contacts pointer and pushes it down (Clockwise)
               // Map range [0.85, 1.0] to [0, maxAngle]
-              // Inverted direction per user fix
               const t = (pinPhase - pushThreshold) / (pushThreshold - 1);
               // Use a slight curve for weight
               pointerAngle = t * maxAngle;
             } else {
               // SPRING/SNAP PHASE: Pin releases, pointer snaps back
               // Damped harmonic oscillator: A * e^(-ct) * cos(wt)
-              // t goes from 0.0 to 0.85
               const t = pinPhase;
 
               // Tune these for "snapiness"
               const decay = 10; // How fast energy is lost
-              const freq = 100;  // Wiggle speed
+              const freq = 120;  // Wiggle speed
 
               // Start at maxAngle (t=0), decay to 0
               pointerAngle = maxAngle * Math.exp(-decay * t) * Math.cos(freq * t);
@@ -1682,7 +1684,8 @@
 
         // Random position around center
         const angle = Math.random() * Math.PI * 2;
-        const dist = Math.random() * 40;
+        // Distance from container (50% of container)
+        const dist = Math.random() * 50;
         const left = 50 + Math.cos(angle) * dist;
         const top = 50 + Math.sin(angle) * dist;
 
