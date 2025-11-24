@@ -798,6 +798,7 @@
       const canvasRef = useRef(null);
       const rotationRef = useRef(0);
       const isSpinningRef = useRef(false); // Tracks spin status synchronously
+      const removingItemRef = useRef(null); // Tracks item being removed for animation
       const itemsRef = useRef(items);
       const colorsRef = useRef(defaultColors); // Ref for colors to be used in animation loop
       const velocityRef = useRef(0);
@@ -1490,9 +1491,66 @@
 
           // --- Idle Spin Logic ---
           // CHANGED: Added !isOutOfOrderRef.current to stop idle spin when broken
-          if (!isSpinningRef.current && !isChargingRef.current && !isOutOfOrderRef.current && currentItems.length > 0 && velocityRef.current === 0 && !winnerRef.current) {
+          // CHANGED: Stop idle spin if removing an item (static wheel during animation)
+          if (!isSpinningRef.current && !isChargingRef.current && !isOutOfOrderRef.current && !removingItemRef.current && currentItems.length > 0 && velocityRef.current === 0 && !winnerRef.current) {
             rotationRef.current = (rotationRef.current + 0.002) % (2 * Math.PI);
             lastTickRef.current = rotationRef.current;
+          }
+
+          // --- Removing Item Animation Logic ---
+          if (removingItemRef.current) {
+            const { startTime, duration, index } = removingItemRef.current;
+            const now = Date.now();
+            const elapsed = now - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+
+            // Ease in out cubic
+            const ease = progress < 0.5 ? 4 * progress * progress * progress : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+
+            if (progress >= 1) {
+              // Animation complete: actually remove the item
+              const itemToRemove = removingItemRef.current.text;
+              const newItems = currentItems.filter(i => i.text !== itemToRemove);
+
+              // We need to update state, but we are in a ref-based loop.
+              // We can't easily call setInputText/setItems from here without causing issues or needing to wait for next render.
+              // BUT, we can force a state update which will trigger a re-render.
+              // To avoid race conditions, we'll dispatch a custom event or just call the state setter.
+              // Since this is inside useEffect, calling state setter is fine, it will schedule re-render.
+
+              // However, we need to be careful not to loop.
+              // We'll clear the ref FIRST.
+              removingItemRef.current = null;
+
+              // Trigger the removal in React state
+              // We need to access the LATEST itemsToString and setInputText from the closure or refs if they are stable.
+              // Actually, we can just use the helper we defined outside.
+              // But we need to call setInputText. We have access to it in the closure.
+              // We also need to update itemsRef immediately for the next frame if possible, 
+              // but React state update is async.
+
+              // Let's use a helper function exposed via ref or just call the setter.
+              // We need to make sure we don't get into an infinite loop of updates.
+              // The check `if (removingItemRef.current)` protects us.
+
+              // We need to find the item in the ORIGINAL list to remove it properly? 
+              // No, currentItems is good.
+
+              // Wait, we need to update the TEXT AREA input, which drives the items.
+              // So we need to convert newItems back to string.
+              // We can't use `itemsToString` easily if it's not in scope or if it relies on something.
+              // It is in scope of App.
+
+              // We'll use a timeout to break out of the render loop stack just in case, though not strictly necessary.
+              setTimeout(() => {
+                setInputText(itemsToString(newItems));
+                // items state will update via useEffect on inputText
+              }, 0);
+
+            } else {
+              // Animation in progress: Adjust effective weights for rendering ONLY
+              // We don't change the actual items array, just how we calculate angles.
+            }
           }
 
           // --- Drawing ---
@@ -1515,12 +1573,30 @@
             ctx.fillText('Add items to spin!', centerX, centerY);
           } else {
             // Calculate Total Weight
-            const totalWeight = currentItems.reduce((sum, item) => sum + item.weight, 0);
+            // Modified for animation: if removing, reduce weight of that item
+            let effectiveItems = [...currentItems];
+            if (removingItemRef.current) {
+              const { index, startTime, duration } = removingItemRef.current;
+              const now = Date.now();
+              const progress = Math.min((now - startTime) / duration, 1);
+              // Ease in out
+              const ease = progress < 0.5 ? 4 * progress * progress * progress : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+
+              // We need to identify the item by index or text. Index is safer if text is not unique?
+              // But items list might have changed? No, we blocked interaction.
+              // Let's use the index stored in ref.
+              if (effectiveItems[index]) {
+                // Clone the item to not mutate ref
+                effectiveItems[index] = { ...effectiveItems[index], weight: effectiveItems[index].weight * (1 - ease) };
+              }
+            }
+
+            const totalWeight = effectiveItems.reduce((sum, item) => sum + item.weight, 0);
 
             // Draw Wheel Slices
             let currentAngle = rotationRef.current;
 
-            currentItems.forEach((item, index) => {
+            effectiveItems.forEach((item, index) => {
               // Calculate slice size based on weight
               const sliceAngle = (item.weight / totalWeight) * (2 * Math.PI);
 
@@ -2578,10 +2654,25 @@
                   </button>
                   <button
                     onClick={() => {
-                      // Remove winner logic
-                      const newItems = items.filter(i => i.text !== winner);
-                      setInputText(itemsToString(newItems));
-                      setWinner(null);
+                      // Remove winner logic with animation
+                      const winnerIndex = items.findIndex(i => i.text === winner);
+                      if (winnerIndex !== -1) {
+                        removingItemRef.current = {
+                          index: winnerIndex,
+                          text: winner,
+                          startTime: Date.now(),
+                          duration: 750 // 0.75 seconds
+                        };
+                        setWinner(null);
+                        // Ensure loop continues if it was paused (though idle spin usually handles it)
+                        // If idle spin is disabled or something, we might need to kick it. 
+                        // But our idle spin logic now checks removingItemRef, so it should auto-start/continue.
+                      } else {
+                        // Fallback if not found
+                        const newItems = items.filter(i => i.text !== winner);
+                        setInputText(itemsToString(newItems));
+                        setWinner(null);
+                      }
                     }}
                     className="w-full py-3 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 rounded-xl font-bold hover:border-red-200 dark:hover:border-red-800 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition"
                   >
