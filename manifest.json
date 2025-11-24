@@ -1,0 +1,27 @@
+{
+  "name": "SpinWheel",
+  "short_name": "SpinWheel",
+  "description": "An interactive spin wheel application built with vanilla HTML, CSS, and JavaScript. This app allows users to create customizable spinning wheels for random selection and decision making.",
+  "developer": {
+    "name": "Samuel Kripto",
+    "url": "https://samuelkripto.com/"
+  },
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#4f46e5",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -10,61 +11,9 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="SpinWheel">
-
-  <!-- Dynamic Favicon/Icon Generation -->
-  <script>
-    (function() {
-      const iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><circle cx="256" cy="256" r="256" fill="#4f46e5"/><path d="M256 256 256 0 A256 256 0 0 1 477.7 128 Z" fill="#fbbf24"/><path d="M256 256 477.7 128 A256 256 0 0 1 477.7 384 Z" fill="#ec4899"/><path d="M256 256 477.7 384 A256 256 0 0 1 256 512 Z" fill="#10b981"/><path d="M256 256 256 512 A256 256 0 0 1 34.3 384 Z" fill="#3b82f6"/><path d="M256 256 34.3 384 A256 256 0 0 1 34.3 128 Z" fill="#8b5cf6"/><path d="M256 256 34.3 128 A256 256 0 0 1 256 0 Z" fill="#ef4444"/><circle cx="256" cy="256" r="40" fill="#fff"/></svg>`;
-      const iconUrl = "data:image/svg+xml;base64," + btoa(iconSvg);
-
-      // Set Favicon
-      let link = document.querySelector("link[rel~='icon']");
-      if (!link) {
-        link = document.createElement('link');
-        link.rel = 'icon';
-        document.head.appendChild(link);
-      }
-      link.href = iconUrl;
-
-      // Set Apple Touch Icon
-      let appleLink = document.querySelector("link[rel='apple-touch-icon']");
-      if (!appleLink) {
-        appleLink = document.createElement('link');
-        appleLink.rel = 'apple-touch-icon';
-        document.head.appendChild(appleLink);
-      }
-      appleLink.href = iconUrl;
-
-      // Generate Manifest
-      const manifest = {
-        "name": "SpinWheel",
-        "short_name": "SpinWheel",
-        "start_url": ".",
-        "display": "standalone",
-        "background_color": "#ffffff",
-        "theme_color": "#4f46e5",
-        "icons": [
-          {
-            "src": iconUrl,
-            "sizes": "512x512",
-            "type": "image/svg+xml",
-            "purpose": "any maskable"
-          }
-        ]
-      };
-
-      const manifestBlob = new Blob([JSON.stringify(manifest)], {type: 'application/manifest+json'});
-      const manifestUrl = URL.createObjectURL(manifestBlob);
-
-      let manifestLink = document.querySelector("link[rel='manifest']");
-      if (!manifestLink) {
-        manifestLink = document.createElement('link');
-        manifestLink.rel = 'manifest';
-        document.head.appendChild(manifestLink);
-      }
-      manifestLink.href = manifestUrl;
-    })();
-  </script>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon.png" type="image/png">
+  <link rel="apple-touch-icon" href="icon.png">
 
   <!-- Tailwind CSS with Dark Mode Config -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -85,25 +34,32 @@
     body {
       overflow-x: hidden;
       transition: background-color 0.3s ease, color 0.3s ease;
-      overscroll-behavior-y: none; /* Prevent pull-to-refresh on mobile */
+      overscroll-behavior-y: none;
+      /* Prevent pull-to-refresh on mobile */
     }
+
     /* Scrollbar styling for the text area */
     textarea::-webkit-scrollbar {
       width: 8px;
     }
+
     textarea::-webkit-scrollbar-track {
       background: transparent;
     }
+
     textarea::-webkit-scrollbar-thumb {
       background: #cbd5e1;
       border-radius: 4px;
     }
+
     .dark textarea::-webkit-scrollbar-thumb {
       background: #475569;
     }
+
     textarea::-webkit-scrollbar-thumb:hover {
       background: #94a3b8;
     }
+
     .dark textarea::-webkit-scrollbar-thumb:hover {
       background: #64748b;
     }
@@ -114,9 +70,11 @@
         transform: translateY(0) scale(1) rotate(0deg);
         opacity: 0;
       }
+
       10% {
         opacity: 0.8;
       }
+
       100% {
         transform: translateY(-100px) scale(3) rotate(var(--rot));
         opacity: 0;
@@ -125,28 +83,51 @@
 
     /* Loading Screen Animations */
     @keyframes beachBounce {
-        0%, 100% {
-            transform: translateY(0) rotate(0deg);
-            animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
-        }
-        50% {
-            transform: translateY(-40px) rotate(180deg);
-            animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
-        }
+
+      0%,
+      100% {
+        transform: translateY(0) rotate(0deg);
+        animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+      }
+
+      50% {
+        transform: translateY(-40px) rotate(180deg);
+        animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+      }
     }
 
     @keyframes shadowScale {
-        0%, 100% { transform: scaleX(1); opacity: 0.4; }
-        50% { transform: scaleX(0.6); opacity: 0.1; }
+
+      0%,
+      100% {
+        transform: scaleX(1);
+        opacity: 0.4;
+      }
+
+      50% {
+        transform: scaleX(0.6);
+        opacity: 0.1;
+      }
     }
 
     /* Out of Order Neon Flicker */
     @keyframes neonFlicker {
-      0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+
+      0%,
+      19%,
+      21%,
+      23%,
+      25%,
+      54%,
+      56%,
+      100% {
         opacity: 1;
         text-shadow: 0 0 10px #ff0000, 0 0 30px #ff0000;
       }
-      20%, 24%, 55% {
+
+      20%,
+      24%,
+      55% {
         opacity: 0.1;
         text-shadow: none;
       }
@@ -154,45 +135,75 @@
 
     /* Spark Animation */
     @keyframes sparkFlash {
-      0% { opacity: 1; transform: scale(1) rotate(0deg); }
-      50% { opacity: 1; transform: scale(1.5) rotate(45deg); }
-      100% { opacity: 0; transform: scale(0); }
+      0% {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+      }
+
+      50% {
+        opacity: 1;
+        transform: scale(1.5) rotate(45deg);
+      }
+
+      100% {
+        opacity: 0;
+        transform: scale(0);
+      }
     }
 
     @keyframes shake {
-        0% { transform: translate(0, 0) rotate(0deg); }
-        25% { transform: translate(-1px, 1px) rotate(-1deg); }
-        50% { transform: translate(1px, -1px) rotate(1deg); }
-        75% { transform: translate(-2px, 1px) rotate(0deg); }
-        100% { transform: translate(0, 0) rotate(0deg); }
+      0% {
+        transform: translate(0, 0) rotate(0deg);
+      }
+
+      25% {
+        transform: translate(-1px, 1px) rotate(-1deg);
+      }
+
+      50% {
+        transform: translate(1px, -1px) rotate(1deg);
+      }
+
+      75% {
+        transform: translate(-2px, 1px) rotate(0deg);
+      }
+
+      100% {
+        transform: translate(0, 0) rotate(0deg);
+      }
     }
   </style>
 </head>
+
 <body>
   <!-- Loading Screen -->
-  <div id="app-loader" class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-gradient-to-b from-sky-300 to-blue-200 transition-opacity duration-500">
+  <div id="app-loader"
+    class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-gradient-to-b from-sky-300 to-blue-200 transition-opacity duration-500">
     <!-- Sun -->
-    <div class="absolute top-10 right-10 w-20 h-20 bg-yellow-400 rounded-full shadow-[0_0_40px_rgba(251,191,36,0.8)] animate-pulse"></div>
+    <div
+      class="absolute top-10 right-10 w-20 h-20 bg-yellow-400 rounded-full shadow-[0_0_40px_rgba(251,191,36,0.8)] animate-pulse">
+    </div>
 
     <!-- Content -->
     <div class="relative z-10 flex flex-col items-center mb-16">
-        <!-- Bouncing Ball -->
-        <div class="w-24 h-24" style="animation: beachBounce 1.2s infinite;">
-             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-full h-full drop-shadow-xl">
-                <circle cx="256" cy="256" r="256" fill="#4f46e5"/>
-                <path d="M256 256 256 0 A256 256 0 0 1 477.7 128 Z" fill="#fbbf24"/>
-                <path d="M256 256 477.7 128 A256 256 0 0 1 477.7 384 Z" fill="#ec4899"/>
-                <path d="M256 256 477.7 384 A256 256 0 0 1 256 512 Z" fill="#10b981"/>
-                <path d="M256 256 256 512 A256 256 0 0 1 34.3 384 Z" fill="#3b82f6"/>
-                <path d="M256 256 34.3 384 A256 256 0 0 1 34.3 128 Z" fill="#8b5cf6"/>
-                <path d="M256 256 34.3 128 A256 256 0 0 1 256 0 Z" fill="#ef4444"/>
-                <circle cx="256" cy="256" r="40" fill="#fff"/>
-             </svg>
-        </div>
-        <!-- Shadow on sand/ground -->
-        <div class="w-16 h-2 bg-black rounded-full blur-sm mt-4" style="animation: shadowScale 1.2s infinite;"></div>
+      <!-- Bouncing Ball -->
+      <div class="w-24 h-24" style="animation: beachBounce 1.2s infinite;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-full h-full drop-shadow-xl">
+          <circle cx="256" cy="256" r="256" fill="#4f46e5" />
+          <path d="M256 256 256 0 A256 256 0 0 1 477.7 128 Z" fill="#fbbf24" />
+          <path d="M256 256 477.7 128 A256 256 0 0 1 477.7 384 Z" fill="#ec4899" />
+          <path d="M256 256 477.7 384 A256 256 0 0 1 256 512 Z" fill="#10b981" />
+          <path d="M256 256 256 512 A256 256 0 0 1 34.3 384 Z" fill="#3b82f6" />
+          <path d="M256 256 34.3 384 A256 256 0 0 1 34.3 128 Z" fill="#8b5cf6" />
+          <path d="M256 256 34.3 128 A256 256 0 0 1 256 0 Z" fill="#ef4444" />
+          <circle cx="256" cy="256" r="40" fill="#fff" />
+        </svg>
+      </div>
+      <!-- Shadow on sand/ground -->
+      <div class="w-16 h-2 bg-black rounded-full blur-sm mt-4" style="animation: shadowScale 1.2s infinite;"></div>
 
-        <h2 class="mt-6 text-blue-900 font-bold text-xl tracking-[0.3em] uppercase drop-shadow-sm animate-pulse">Loading...</h2>
+      <h2 class="mt-6 text-blue-900 font-bold text-xl tracking-[0.3em] uppercase drop-shadow-sm animate-pulse">
+        Loading...</h2>
     </div>
 
     <!-- Sand / Beach -->
@@ -236,21 +247,21 @@
         fill="none"
         {...props}
       >
-        <circle cx="256" cy="256" r="256" fill="#4f46e5"/>
-        <path d="M256 256 256 0 A256 256 0 0 1 477.7 128 Z" fill="#fbbf24"/>
-        <path d="M256 256 477.7 128 A256 256 0 0 1 477.7 384 Z" fill="#ec4899"/>
-        <path d="M256 256 477.7 384 A256 256 0 0 1 256 512 Z" fill="#10b981"/>
-        <path d="M256 256 256 512 A256 256 0 0 1 34.3 384 Z" fill="#3b82f6"/>
-        <path d="M256 256 34.3 384 A256 256 0 0 1 34.3 128 Z" fill="#8b5cf6"/>
-        <path d="M256 256 34.3 128 A256 256 0 0 1 256 0 Z" fill="#ef4444"/>
-        <circle cx="256" cy="256" r="40" fill="#fff"/>
+        <circle cx="256" cy="256" r="256" fill="#4f46e5" />
+        <path d="M256 256 256 0 A256 256 0 0 1 477.7 128 Z" fill="#fbbf24" />
+        <path d="M256 256 477.7 128 A256 256 0 0 1 477.7 384 Z" fill="#ec4899" />
+        <path d="M256 256 477.7 384 A256 256 0 0 1 256 512 Z" fill="#10b981" />
+        <path d="M256 256 256 512 A256 256 0 0 1 34.3 384 Z" fill="#3b82f6" />
+        <path d="M256 256 34.3 384 A256 256 0 0 1 34.3 128 Z" fill="#8b5cf6" />
+        <path d="M256 256 34.3 128 A256 256 0 0 1 256 0 Z" fill="#ef4444" />
+        <circle cx="256" cy="256" r="40" fill="#fff" />
       </svg>
     );
 
     const SettingsIcon = (props) => (
       <Icon {...props}>
-        <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.47a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
-        <circle cx="12" cy="12" r="3"/>
+        <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.47a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+        <circle cx="12" cy="12" r="3" />
       </Icon>
     );
 
@@ -270,46 +281,46 @@
 
     const Volume2Icon = (props) => (
       <Icon {...props}>
-        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
-        <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+        <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" />
       </Icon>
     );
 
     const VolumeXIcon = (props) => (
       <Icon {...props}>
-        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
-        <line x1="23" y1="9" x2="17" y2="15"/>
-        <line x1="17" y1="9" x2="23" y2="15"/>
+        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+        <line x1="23" y1="9" x2="17" y2="15" />
+        <line x1="17" y1="9" x2="23" y2="15" />
       </Icon>
     );
 
     const ShuffleIcon = (props) => (
       <Icon {...props}>
-        <polyline points="16 3 21 3 21 8"/>
-        <line x1="4" y1="20" x2="21" y2="3"/>
-        <polyline points="21 16 21 21 16 21"/>
-        <line x1="15" y1="15" x2="21" y2="21"/>
-        <line x1="4" y1="4" x2="9" y2="9"/>
+        <polyline points="16 3 21 3 21 8" />
+        <line x1="4" y1="20" x2="21" y2="3" />
+        <polyline points="21 16 21 21 16 21" />
+        <line x1="15" y1="15" x2="21" y2="21" />
+        <line x1="4" y1="4" x2="9" y2="9" />
       </Icon>
     );
 
     const Trash2Icon = (props) => (
       <Icon {...props}>
-        <polyline points="3 6 5 6 21 6"/>
-        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-        <line x1="10" y1="11" x2="10" y2="17"/>
-        <line x1="14" y1="11" x2="14" y2="17"/>
+        <polyline points="3 6 5 6 21 6" />
+        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+        <line x1="10" y1="11" x2="10" y2="17" />
+        <line x1="14" y1="11" x2="14" y2="17" />
       </Icon>
     );
 
     const TrophyIcon = (props) => (
       <Icon {...props}>
-        <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
-        <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
-        <path d="M4 22h16"/>
-        <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/>
-        <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/>
-        <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>
+        <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
+        <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
+        <path d="M4 22h16" />
+        <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" />
+        <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" />
+        <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
       </Icon>
     );
 
@@ -400,18 +411,18 @@
     );
 
     const ZapIcon = (props) => (
-        <Icon {...props}>
-            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
-        </Icon>
+      <Icon {...props}>
+        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+      </Icon>
     );
 
     const HourglassIcon = (props) => (
-        <Icon {...props}>
-            <path d="M5 22h14" />
-            <path d="M5 2h14" />
-            <path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22" />
-            <path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2" />
-        </Icon>
+      <Icon {...props}>
+        <path d="M5 22h14" />
+        <path d="M5 2h14" />
+        <path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22" />
+        <path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2" />
+      </Icon>
     );
 
     const CodeIcon = (props) => (
@@ -423,10 +434,10 @@
 
     const ScrollIcon = (props) => (
       <Icon {...props}>
-         <path d="M19 20H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
-         <polyline points="17 21 17 13 15 11" />
-         <line x1="7" y1="10" x2="11" y2="10" />
-         <line x1="7" y1="14" x2="13" y2="14" />
+        <path d="M19 20H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+        <polyline points="17 21 17 13 15 11" />
+        <line x1="7" y1="10" x2="11" y2="10" />
+        <line x1="7" y1="14" x2="13" y2="14" />
       </Icon>
     );
 
@@ -439,44 +450,52 @@
     );
 
     const SparklesIcon = (props) => (
-        <Icon {...props}>
-            <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />
-        </Icon>
+      <Icon {...props}>
+        <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />
+      </Icon>
     );
 
     const BotIcon = (props) => (
-        <Icon {...props}>
-            <path d="M12 8V4H8" />
-            <rect width="16" height="12" x="4" y="8" rx="2" />
-            <path d="M2 14h2" />
-            <path d="M20 14h2" />
-            <path d="M15 13v2" />
-            <path d="M9 13v2" />
-        </Icon>
+      <Icon {...props}>
+        <path d="M12 8V4H8" />
+        <rect width="16" height="12" x="4" y="8" rx="2" />
+        <path d="M2 14h2" />
+        <path d="M20 14h2" />
+        <path d="M15 13v2" />
+        <path d="M9 13v2" />
+      </Icon>
     );
 
     const KeyIcon = (props) => (
-        <Icon {...props}>
-            <path d="m21 2-2 2m-7.6 7.6a6.5 6.5 0 1 1-2.8-2.8c.7.7 1.2 1.2 1.8 1.8 1.2 1.2 2.2 2.2 2.9 2.9.7.7 1.3 1.3 2 2l2.4-2.4c-.7-.7-1.3-1.3-2-2l-2.4 2.4-2-2" />
-            <circle cx="7.5" cy="7.5" r="2.5" />
-        </Icon>
+      <Icon {...props}>
+        <path d="m21 2-2 2m-7.6 7.6a6.5 6.5 0 1 1-2.8-2.8c.7.7 1.2 1.2 1.8 1.8 1.2 1.2 2.2 2.2 2.9 2.9.7.7 1.3 1.3 2 2l2.4-2.4c-.7-.7-1.3-1.3-2-2l-2.4 2.4-2-2" />
+        <circle cx="7.5" cy="7.5" r="2.5" />
+      </Icon>
     );
 
     const PaletteIcon = (props) => (
-        <Icon {...props}>
-            <circle cx="13.5" cy="6.5" r=".5" fill="currentColor" />
-            <circle cx="17.5" cy="10.5" r=".5" fill="currentColor" />
-            <circle cx="8.5" cy="7.5" r=".5" fill="currentColor" />
-            <circle cx="6.5" cy="12.5" r=".5" fill="currentColor" />
-            <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z" />
-        </Icon>
+      <Icon {...props}>
+        <circle cx="13.5" cy="6.5" r=".5" fill="currentColor" />
+        <circle cx="17.5" cy="10.5" r=".5" fill="currentColor" />
+        <circle cx="8.5" cy="7.5" r=".5" fill="currentColor" />
+        <circle cx="6.5" cy="12.5" r=".5" fill="currentColor" />
+        <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z" />
+      </Icon>
     );
 
     const Plus = (props) => (
-        <Icon {...props}>
-            <path d="M5 12h14" />
-            <path d="M12 5v14" />
-        </Icon>
+      <Icon {...props}>
+        <path d="M5 12h14" />
+        <path d="M12 5v14" />
+      </Icon>
+    );
+
+    const DownloadIcon = (props) => (
+      <Icon {...props}>
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+        <polyline points="7 10 12 15 17 10" />
+        <line x1="12" y1="15" x2="12" y2="3" />
+      </Icon>
     );
 
     // Confetti Logic - Fireworks Style Physics
@@ -575,24 +594,24 @@
 
           // Fade out logic
           if (now > p.fadeStart) {
-              p.opacity -= 0.015;
-              p.el.style.opacity = Math.max(0, p.opacity);
+            p.opacity -= 0.015;
+            p.el.style.opacity = Math.max(0, p.opacity);
           }
 
           // Check if particle is still visible on screen
           if (p.y < window.innerHeight + 50 && p.opacity > 0) {
-              activeParticles++;
+            activeParticles++;
           }
         });
 
         // Continue animation if particles are active and under time limit (increased to 20s)
         if (activeParticles > 0 && (now - startTime < 20000)) {
-           animationFrameId = requestAnimationFrame(animate);
+          animationFrameId = requestAnimationFrame(animate);
         } else {
-           // Cleanup
-           if (document.body.contains(container)) {
-             document.body.removeChild(container);
-           }
+          // Cleanup
+          if (document.body.contains(container)) {
+            document.body.removeChild(container);
+          }
         }
       };
 
@@ -601,14 +620,14 @@
 
     // Helper function to load state from localStorage
     const loadState = (key, defaultValue) => {
-        if (typeof window === 'undefined') return defaultValue;
-        try {
-            const stored = localStorage.getItem(key);
-            return stored !== null ? JSON.parse(stored) : defaultValue;
-        } catch (e) {
-            console.error(`Failed to load ${key} from localStorage`, e);
-            return defaultValue;
-        }
+      if (typeof window === 'undefined') return defaultValue;
+      try {
+        const stored = localStorage.getItem(key);
+        return stored !== null ? JSON.parse(stored) : defaultValue;
+      } catch (e) {
+        console.error(`Failed to load ${key} from localStorage`, e);
+        return defaultValue;
+      }
     };
 
     // Helper for relative time
@@ -679,9 +698,9 @@
       // Helper to convert item objects back to string for text area
       const itemsToString = (itemsArray) => {
         return itemsArray.map(i => {
-            // If the current parsed text + weight matches the original input format, preserve it
-            // Otherwise reconstruct it
-            return i.weight > 1 ? `${i.text}: ${i.weight}` : i.text;
+          // If the current parsed text + weight matches the original input format, preserve it
+          // Otherwise reconstruct it
+          return i.weight > 1 ? `${i.text}: ${i.weight}` : i.text;
         }).join('\n');
       };
 
@@ -691,26 +710,26 @@
       // We now manage a list of lists.
       // Legacy migration: if 'spinWheel_inputs' exists but 'spinWheel_savedLists' doesn't, migrate it.
       const [savedLists, setSavedLists] = useState(() => {
-          const storedLists = loadState('spinWheel_savedLists', null);
-          if (storedLists) return storedLists;
+        const storedLists = loadState('spinWheel_savedLists', null);
+        if (storedLists) return storedLists;
 
-          // Migration / Default
-          const legacyInput = loadState('spinWheel_inputs', null);
-          const initialContent = legacyInput !== null ? legacyInput : defaultItems.join('\n');
+        // Migration / Default
+        const legacyInput = loadState('spinWheel_inputs', null);
+        const initialContent = legacyInput !== null ? legacyInput : defaultItems.join('\n');
 
-          return [{
-              id: 'default',
-              name: 'My First List',
-              content: initialContent
-          }];
+        return [{
+          id: 'default',
+          name: 'My First List',
+          content: initialContent
+        }];
       });
 
       const [activeListId, setActiveListId] = useState(() => loadState('spinWheel_activeListId', 'default'));
 
       // Helper to get content safely
       const getActiveListContent = (lists, id) => {
-          const list = lists.find(l => l.id === id);
-          return list ? list.content : '';
+        const list = lists.find(l => l.id === id);
+        return list ? list.content : '';
       };
 
       // Initialize input text from the active list, NOT direct localStorage
@@ -720,12 +739,12 @@
       const [items, setItems] = useState(() => parseItems(inputText));
 
       const [history, setHistory] = useState(() => {
-          const storedHistory = loadState('spinWheel_history', []);
-          // Rehydrate timestamp strings back to Date objects
-          return storedHistory.map(item => ({
-              ...item,
-              timestamp: new Date(item.timestamp)
-          }));
+        const storedHistory = loadState('spinWheel_history', []);
+        // Rehydrate timestamp strings back to Date objects
+        return storedHistory.map(item => ({
+          ...item,
+          timestamp: new Date(item.timestamp)
+        }));
       });
       const [soundEnabled, setSoundEnabled] = useState(() => loadState('spinWheel_sound', true));
       const [theme, setTheme] = useState(() => loadState('spinWheel_theme', 'auto'));
@@ -736,8 +755,8 @@
 
       // Color Settings
       const [colorSettings, setColorSettings] = useState(() => loadState('spinWheel_colorSettings', {
-          type: 'default',
-          customColors: '#FF6B6B, #4ECDC4, #45B7D1'
+        type: 'default',
+        customColors: '#FF6B6B, #4ECDC4, #45B7D1'
       }));
 
       const [activeColors, setActiveColors] = useState(defaultColors);
@@ -767,6 +786,7 @@
       const [isCharging, setIsCharging] = useState(false);
       const [chargePower, setChargePower] = useState(0);
       const [isOutOfOrder, setIsOutOfOrder] = useState(false); // NEW: Broken state
+      const [deferredPrompt, setDeferredPrompt] = useState(null);
 
       // REFS
       const chargeIntervalRef = useRef(null);
@@ -804,12 +824,12 @@
 
       // Calculate custom preview colors in real-time for the modal
       const customColorPreview = useMemo(() => {
-          if (!tempCustomColors) return [];
-          // Clean input and extract valid hex codes
-          const cleaned = tempCustomColors.replace(/[\[\]"']/g, '');
-          return cleaned.split(/[\n,]+/)
-              .map(c => c.trim())
-              .filter(c => /^#([0-9A-F]{3}){1,2}$/i.test(c));
+        if (!tempCustomColors) return [];
+        // Clean input and extract valid hex codes
+        const cleaned = tempCustomColors.replace(/[\[\]"']/g, '');
+        return cleaned.split(/[\n,]+/)
+          .map(c => c.trim())
+          .filter(c => /^#([0-9A-F]{3}){1,2}$/i.test(c));
       }, [tempCustomColors]);
 
       const isCustomColorInvalid = tempCustomColors.trim().length > 0 && customColorPreview.length === 0;
@@ -818,6 +838,16 @@
       useEffect(() => {
         isOutOfOrderRef.current = isOutOfOrder;
       }, [isOutOfOrder]);
+
+      // PWA Install Prompt Listener
+      useEffect(() => {
+        const handler = (e) => {
+          e.preventDefault();
+          setDeferredPrompt(e);
+        };
+        window.addEventListener('beforeinstallprompt', handler);
+        return () => window.removeEventListener('beforeinstallprompt', handler);
+      }, []);
 
       // Interval to update relative times every 30 seconds
       useEffect(() => {
@@ -838,9 +868,9 @@
 
             // Create new imported list
             const newList = {
-                id: Date.now().toString(),
-                name: `Imported List ${new Date().toISOString()}`,
-                content: decodedList
+              id: Date.now().toString(),
+              name: `Imported List ${new Date().toISOString()}`,
+              content: decodedList
             };
 
             setSavedLists(prev => [...prev, newList]);
@@ -849,7 +879,7 @@
 
             // Clean URL without reloading
             const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
-            window.history.replaceState({path: newUrl}, '', newUrl);
+            window.history.replaceState({ path: newUrl }, '', newUrl);
           } catch (e) {
             console.error("Failed to decode list from URL", e);
           }
@@ -858,87 +888,87 @@
 
       // List Persistence Effects
       useEffect(() => {
-          localStorage.setItem('spinWheel_savedLists', JSON.stringify(savedLists));
+        localStorage.setItem('spinWheel_savedLists', JSON.stringify(savedLists));
       }, [savedLists]);
 
       useEffect(() => {
-          localStorage.setItem('spinWheel_activeListId', JSON.stringify(activeListId));
+        localStorage.setItem('spinWheel_activeListId', JSON.stringify(activeListId));
       }, [activeListId]);
 
       // Auto-save content to current list when typing
       useEffect(() => {
-          setSavedLists(prev => prev.map(list =>
-              list.id === activeListId ? { ...list, content: inputText } : list
-          ));
+        setSavedLists(prev => prev.map(list =>
+          list.id === activeListId ? { ...list, content: inputText } : list
+        ));
       }, [inputText]);
 
       // Switch content when active ID changes
       useEffect(() => {
-          const content = getActiveListContent(savedLists, activeListId);
-          setInputText(content);
+        const content = getActiveListContent(savedLists, activeListId);
+        setInputText(content);
       }, [activeListId]);
 
       useEffect(() => {
-          localStorage.setItem('spinWheel_history', JSON.stringify(history));
+        localStorage.setItem('spinWheel_history', JSON.stringify(history));
       }, [history]);
 
       useEffect(() => {
-          localStorage.setItem('spinWheel_sound', JSON.stringify(soundEnabled));
+        localStorage.setItem('spinWheel_sound', JSON.stringify(soundEnabled));
       }, [soundEnabled]);
 
       useEffect(() => {
-          localStorage.setItem('spinWheel_theme', JSON.stringify(theme));
+        localStorage.setItem('spinWheel_theme', JSON.stringify(theme));
       }, [theme]);
 
       useEffect(() => {
-          localStorage.setItem('spinWheel_duration', JSON.stringify(spinDuration));
+        localStorage.setItem('spinWheel_duration', JSON.stringify(spinDuration));
       }, [spinDuration]);
 
       useEffect(() => {
-          localStorage.setItem('spinWheel_hideLabels', JSON.stringify(hideLabels));
+        localStorage.setItem('spinWheel_hideLabels', JSON.stringify(hideLabels));
       }, [hideLabels]);
 
       useEffect(() => {
-          localStorage.setItem('spinWheel_aiVoice', JSON.stringify(aiVoiceEnabled));
+        localStorage.setItem('spinWheel_aiVoice', JSON.stringify(aiVoiceEnabled));
       }, [aiVoiceEnabled]);
 
       useEffect(() => {
-          localStorage.setItem('spinWheel_apiKey', JSON.stringify(geminiApiKey));
+        localStorage.setItem('spinWheel_apiKey', JSON.stringify(geminiApiKey));
       }, [geminiApiKey]);
 
       useEffect(() => {
-          localStorage.setItem('spinWheel_colorSettings', JSON.stringify(colorSettings));
+        localStorage.setItem('spinWheel_colorSettings', JSON.stringify(colorSettings));
       }, [colorSettings]);
 
       // Color Logic
       useEffect(() => {
-          let newColors = defaultColors;
-          if (colorSettings.type === 'beach') {
-              newColors = beachColors;
-          } else if (colorSettings.type === 'custom') {
-              // Parse the custom string
-              const cleaned = colorSettings.customColors.replace(/[\[\]"']/g, ''); // Remove potential JSON formatting chars
-              const parsed = cleaned.split(/[\n,]+/).map(c => c.trim()).filter(c => c.match(/^#([0-9A-F]{3}){1,2}$/i));
-              if (parsed.length > 0) {
-                  newColors = parsed;
-              }
+        let newColors = defaultColors;
+        if (colorSettings.type === 'beach') {
+          newColors = beachColors;
+        } else if (colorSettings.type === 'custom') {
+          // Parse the custom string
+          const cleaned = colorSettings.customColors.replace(/[\[\]"']/g, ''); // Remove potential JSON formatting chars
+          const parsed = cleaned.split(/[\n,]+/).map(c => c.trim()).filter(c => c.match(/^#([0-9A-F]{3}){1,2}$/i));
+          if (parsed.length > 0) {
+            newColors = parsed;
           }
-          setActiveColors(newColors);
-          colorsRef.current = newColors;
+        }
+        setActiveColors(newColors);
+        colorsRef.current = newColors;
       }, [colorSettings]);
 
       const saveColors = () => {
-          // Prevent saving invalid state
-          if (tempColorType === 'custom' && tempCustomColors.trim().length > 0 && customColorPreview.length === 0) {
-              alert("Please enter at least one valid hex color code.");
-              return;
-          }
+        // Prevent saving invalid state
+        if (tempColorType === 'custom' && tempCustomColors.trim().length > 0 && customColorPreview.length === 0) {
+          alert("Please enter at least one valid hex color code.");
+          return;
+        }
 
-          setColorSettings({
-              type: tempColorType,
-              customColors: tempCustomColors
-          });
-          setShowColorModal(false);
+        setColorSettings({
+          type: tempColorType,
+          customColors: tempCustomColors
+        });
+        setShowColorModal(false);
       };
 
       // Sync items ref for the animation loop & Update Items State
@@ -990,22 +1020,22 @@
       // Click outside to close dropdowns
       useEffect(() => {
         const handleClickOutside = (event) => {
-            if (themeMenuRef.current && !themeMenuRef.current.contains(event.target)) {
-                setShowThemeMenu(false);
-            }
-            if (shareMenuRef.current && !shareMenuRef.current.contains(event.target)) {
-                setShowShareMenu(false);
-            }
-            if (settingsMenuRef.current && !settingsMenuRef.current.contains(event.target)) {
-                setShowSettingsMenu(false);
-            }
-            if (listDropdownRef.current && !listDropdownRef.current.contains(event.target)) {
-                setShowListDropdown(false);
-            }
+          if (themeMenuRef.current && !themeMenuRef.current.contains(event.target)) {
+            setShowThemeMenu(false);
+          }
+          if (shareMenuRef.current && !shareMenuRef.current.contains(event.target)) {
+            setShowShareMenu(false);
+          }
+          if (settingsMenuRef.current && !settingsMenuRef.current.contains(event.target)) {
+            setShowSettingsMenu(false);
+          }
+          if (listDropdownRef.current && !listDropdownRef.current.contains(event.target)) {
+            setShowListDropdown(false);
+          }
         };
         document.addEventListener("mousedown", handleClickOutside);
         return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
+          document.removeEventListener("mousedown", handleClickOutside);
         };
       }, []);
 
@@ -1013,62 +1043,71 @@
       useEffect(() => {
         const loader = document.getElementById('app-loader');
         if (loader) {
-            // Check if the app loaded quickly (e.g., from cache)
-            // performance.now() returns milliseconds since navigation start
-            const loadTime = performance.now();
-            const isFastLoad = loadTime < 800; // Threshold: 800ms
+          // Check if the app loaded quickly (e.g., from cache)
+          // performance.now() returns milliseconds since navigation start
+          const loadTime = performance.now();
+          const isFastLoad = loadTime < 800; // Threshold: 800ms
 
-            if (isFastLoad) {
-                // If loaded fast, remove immediately (skip animation)
-                loader.style.display = 'none';
-                if (loader.parentNode) loader.parentNode.removeChild(loader);
-            } else {
-                // If loaded slower (fresh load), fade out smoothly to mask the initialization
-                loader.classList.add('opacity-0', 'pointer-events-none');
-                setTimeout(() => {
-                    if (loader.parentNode) loader.parentNode.removeChild(loader);
-                }, 500);
-            }
+          if (isFastLoad) {
+            // If loaded fast, remove immediately (skip animation)
+            loader.style.display = 'none';
+            if (loader.parentNode) loader.parentNode.removeChild(loader);
+          } else {
+            // If loaded slower (fresh load), fade out smoothly to mask the initialization
+            loader.classList.add('opacity-0', 'pointer-events-none');
+            setTimeout(() => {
+              if (loader.parentNode) loader.parentNode.removeChild(loader);
+            }, 500);
+          }
         }
       }, []);
 
       // List Management Handlers
       const handleCreateList = () => {
-          const newId = Date.now().toString();
-          let counter = 1;
-          while (savedLists.some(l => l.name === `Untitled ${counter}`)) {
-              counter++;
-          }
+        const newId = Date.now().toString();
+        let counter = 1;
+        while (savedLists.some(l => l.name === `Untitled ${counter}`)) {
+          counter++;
+        }
 
-          const newList = {
-              id: newId,
-              name: `Untitled ${counter}`,
-              content: ''
-          };
+        const newList = {
+          id: newId,
+          name: `Untitled ${counter}`,
+          content: ''
+        };
 
-          setSavedLists(prev => [...prev, newList]);
-          setActiveListId(newId);
+        setSavedLists(prev => [...prev, newList]);
+        setActiveListId(newId);
       };
 
       const handleDeleteList = () => {
-          if (savedLists.length <= 1) {
-              if (confirm("This is your only list. Clear it instead?")) {
-                  setInputText("");
-              }
-              return;
+        if (savedLists.length <= 1) {
+          if (confirm("This is your only list. Clear it instead?")) {
+            setInputText("");
           }
+          return;
+        }
 
-          if (confirm("Are you sure you want to delete this list?")) {
-              const newLists = savedLists.filter(l => l.id !== activeListId);
-              setSavedLists(newLists);
-              setActiveListId(newLists[0].id);
-          }
+        if (confirm("Are you sure you want to delete this list?")) {
+          const newLists = savedLists.filter(l => l.id !== activeListId);
+          setSavedLists(newLists);
+          setActiveListId(newLists[0].id);
+        }
       };
 
       const handleRenameList = (newName) => {
-          setSavedLists(prev => prev.map(list =>
-              list.id === activeListId ? { ...list, name: newName } : list
-          ));
+        setSavedLists(prev => prev.map(list =>
+          list.id === activeListId ? { ...list, name: newName } : list
+        ));
+      };
+
+      const handleInstallClick = async () => {
+        if (!deferredPrompt) return;
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+          setDeferredPrompt(null);
+        }
       };
 
       const getThemeIcon = () => {
@@ -1103,99 +1142,99 @@
         if (!genPrompt.trim() || !geminiApiKey) return;
         setIsGenerating(true);
         try {
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${geminiApiKey}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    contents: [{
-                        parts: [{
-                            text: `You are a helper for a spin wheel app. Generate a weighted list of 8-12 short, creative items based on the user's request: "${genPrompt}". Return only the items, one per line. If you want to make some items more likely, add ":weight" (e.g. Pizza:5) otherwise just the name. Do not include numbering, markdown blocks, or ending punctuations (except question mark).`
-                        }]
-                    }]
-                })
-            });
-            const data = await response.json();
-            if (data.error) throw new Error(data.error.message);
-            const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-            if (text) {
-                setInputText(text.trim());
-                setShowGenModal(false);
-                setGenPrompt('');
-            }
+          const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${geminiApiKey}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{
+                parts: [{
+                  text: `You are a helper for a spin wheel app. Generate a weighted list of 8-12 short, creative items based on the user's request: "${genPrompt}". Return only the items, one per line. If you want to make some items more likely, add ":weight" (e.g. Pizza:5) otherwise just the name. Do not include numbering, markdown blocks, or ending punctuations (except question mark).`
+                }]
+              }]
+            })
+          });
+          const data = await response.json();
+          if (data.error) throw new Error(data.error.message);
+          const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (text) {
+            setInputText(text.trim());
+            setShowGenModal(false);
+            setGenPrompt('');
+          }
         } catch (error) {
-            console.error("Generation failed", error);
-            alert(`Failed to generate list: ${error.message || "Unknown error"}`);
+          console.error("Generation failed", error);
+          alert(`Failed to generate list: ${error.message || "Unknown error"}`);
         } finally {
-            setIsGenerating(false);
+          setIsGenerating(false);
         }
       };
 
       const announceWinner = async (winnerText) => {
         if (!aiVoiceEnabled || !geminiApiKey) return;
         try {
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${geminiApiKey}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    contents: [{ parts: [{ text: `The winner is... ${winnerText}!` }] }],
-                    generationConfig: {
-                        responseModalities: ["AUDIO"],
-                        speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: "Kore" } } }
-                    }
-                })
-            });
-            const data = await response.json();
-            if (data.error) throw new Error(data.error.message);
-            const audioContent = data.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
-            if (audioContent) {
-                const audioBytes = Uint8Array.from(atob(audioContent), c => c.charCodeAt(0));
-                // Basic WAV header construction for PCM data
-                const wavHeader = new ArrayBuffer(44);
-                const view = new DataView(wavHeader);
-                const sampleRate = 24000;
-                const numChannels = 1;
-                const bitsPerSample = 16;
+          const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${geminiApiKey}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: `The winner is... ${winnerText}!` }] }],
+              generationConfig: {
+                responseModalities: ["AUDIO"],
+                speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: "Kore" } } }
+              }
+            })
+          });
+          const data = await response.json();
+          if (data.error) throw new Error(data.error.message);
+          const audioContent = data.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+          if (audioContent) {
+            const audioBytes = Uint8Array.from(atob(audioContent), c => c.charCodeAt(0));
+            // Basic WAV header construction for PCM data
+            const wavHeader = new ArrayBuffer(44);
+            const view = new DataView(wavHeader);
+            const sampleRate = 24000;
+            const numChannels = 1;
+            const bitsPerSample = 16;
 
-                const writeString = (offset, string) => {
-                    for (let i = 0; i < string.length; i++) view.setUint8(offset + i, string.charCodeAt(i));
-                };
+            const writeString = (offset, string) => {
+              for (let i = 0; i < string.length; i++) view.setUint8(offset + i, string.charCodeAt(i));
+            };
 
-                writeString(0, 'RIFF');
-                view.setUint32(4, 36 + audioBytes.length, true);
-                writeString(8, 'WAVE');
-                writeString(12, 'fmt ');
-                view.setUint32(16, 16, true);
-                view.setUint16(20, 1, true);
-                view.setUint16(22, numChannels, true);
-                view.setUint32(24, sampleRate, true);
-                view.setUint32(28, sampleRate * numChannels * 2, true);
-                view.setUint16(32, numChannels * 2, true);
-                view.setUint16(34, bitsPerSample, true);
-                writeString(36, 'data');
-                view.setUint32(40, audioBytes.length, true);
+            writeString(0, 'RIFF');
+            view.setUint32(4, 36 + audioBytes.length, true);
+            writeString(8, 'WAVE');
+            writeString(12, 'fmt ');
+            view.setUint32(16, 16, true);
+            view.setUint16(20, 1, true);
+            view.setUint16(22, numChannels, true);
+            view.setUint32(24, sampleRate, true);
+            view.setUint32(28, sampleRate * numChannels * 2, true);
+            view.setUint16(32, numChannels * 2, true);
+            view.setUint16(34, bitsPerSample, true);
+            writeString(36, 'data');
+            view.setUint32(40, audioBytes.length, true);
 
-                const blob = new Blob([wavHeader, audioBytes], { type: 'audio/wav' });
-                const url = URL.createObjectURL(blob);
-                const audio = new Audio(url);
+            const blob = new Blob([wavHeader, audioBytes], { type: 'audio/wav' });
+            const url = URL.createObjectURL(blob);
+            const audio = new Audio(url);
 
-                setTimeout(() => audio.play(), 500);
-            }
+            setTimeout(() => audio.play(), 500);
+          }
         } catch (error) {
-            console.error("TTS failed", error);
+          console.error("TTS failed", error);
         }
       };
 
       const saveApiKey = () => {
-          setGeminiApiKey(tempApiKey.trim());
-          setShowApiKeyModal(false);
-          setTempApiKey('');
-          // If we just added a key, we can potentially re-enable voice
-          if (tempApiKey.trim()) {
-              // Optional: auto-enable voice? keeping it manual for now.
-          } else {
-              // If key cleared, disable voice
-              setAiVoiceEnabled(false);
-          }
+        setGeminiApiKey(tempApiKey.trim());
+        setShowApiKeyModal(false);
+        setTempApiKey('');
+        // If we just added a key, we can potentially re-enable voice
+        if (tempApiKey.trim()) {
+          // Optional: auto-enable voice? keeping it manual for now.
+        } else {
+          // If key cleared, disable voice
+          setAiVoiceEnabled(false);
+        }
       };
 
       // --- AUDIO LOGIC ---
@@ -1217,7 +1256,7 @@
 
         // Stop existing if any
         if (chargeOscillatorRef.current) {
-            try { chargeOscillatorRef.current.stop(); } catch(e){}
+          try { chargeOscillatorRef.current.stop(); } catch (e) { }
         }
 
         const osc = ctx.createOscillator();
@@ -1249,74 +1288,74 @@
       };
 
       const updateChargeSound = (power, overchargeTime = 0) => {
-         if (!chargeOscillatorRef.current || !audioCtxRef.current) return;
-         const ctx = audioCtxRef.current;
+        if (!chargeOscillatorRef.current || !audioCtxRef.current) return;
+        const ctx = audioCtxRef.current;
 
-         // Base: Ramp pitch from 150Hz to 500Hz based on power (0 to 1)
-         let targetFreq = 150 + (power * 350);
+        // Base: Ramp pitch from 150Hz to 500Hz based on power (0 to 1)
+        let targetFreq = 150 + (power * 350);
 
-         // Overcharge Logic: If smoke is appearing (>3000ms overcharge), ramp pitch higher
-         // Breakdown happens at ~18000ms. We ramp from 3000ms to 18000ms.
-         if (overchargeTime > 3000) {
-             // Normalize progress from 0.0 to 1.0 based on the danger zone duration (15s)
-             const dangerProgress = Math.min((overchargeTime - 3000) / 15000, 1);
+        // Overcharge Logic: If smoke is appearing (>3000ms overcharge), ramp pitch higher
+        // Breakdown happens at ~18000ms. We ramp from 3000ms to 18000ms.
+        if (overchargeTime > 3000) {
+          // Normalize progress from 0.0 to 1.0 based on the danger zone duration (15s)
+          const dangerProgress = Math.min((overchargeTime - 3000) / 15000, 1);
 
-             // Add extra pitch (up to +800Hz) to reach ~1300Hz screaming
-             targetFreq += (dangerProgress * 800);
+          // Add extra pitch (up to +800Hz) to reach ~1300Hz screaming
+          targetFreq += (dangerProgress * 800);
 
-             // Open the filter wide to let the harsh high frequencies through
-             if (chargeFilterRef.current) {
-                 const filterFreq = 1000 + (dangerProgress * 5000); // Open up to 6000Hz
-                 chargeFilterRef.current.frequency.setTargetAtTime(filterFreq, ctx.currentTime, 0.1);
-             }
+          // Open the filter wide to let the harsh high frequencies through
+          if (chargeFilterRef.current) {
+            const filterFreq = 1000 + (dangerProgress * 5000); // Open up to 6000Hz
+            chargeFilterRef.current.frequency.setTargetAtTime(filterFreq, ctx.currentTime, 0.1);
+          }
 
-             // Increase volume slightly
-             if (chargeGainRef.current) {
-                chargeGainRef.current.gain.setTargetAtTime(0.15 + (dangerProgress * 0.1), ctx.currentTime, 0.1);
-             }
-         } else {
-             // Normal charging behavior
-             if (chargeFilterRef.current) {
-                 const filterFreq = 400 + (power * 600); // Cap at 1000Hz for heavy feel
-                 chargeFilterRef.current.frequency.setTargetAtTime(filterFreq, ctx.currentTime, 0.1);
-             }
-             if (chargeGainRef.current) {
-                chargeGainRef.current.gain.setTargetAtTime(0.1 + (power * 0.05), ctx.currentTime, 0.1);
-             }
-         }
+          // Increase volume slightly
+          if (chargeGainRef.current) {
+            chargeGainRef.current.gain.setTargetAtTime(0.15 + (dangerProgress * 0.1), ctx.currentTime, 0.1);
+          }
+        } else {
+          // Normal charging behavior
+          if (chargeFilterRef.current) {
+            const filterFreq = 400 + (power * 600); // Cap at 1000Hz for heavy feel
+            chargeFilterRef.current.frequency.setTargetAtTime(filterFreq, ctx.currentTime, 0.1);
+          }
+          if (chargeGainRef.current) {
+            chargeGainRef.current.gain.setTargetAtTime(0.1 + (power * 0.05), ctx.currentTime, 0.1);
+          }
+        }
 
-         chargeOscillatorRef.current.frequency.setTargetAtTime(targetFreq, ctx.currentTime, 0.1);
+        chargeOscillatorRef.current.frequency.setTargetAtTime(targetFreq, ctx.currentTime, 0.1);
       };
 
       const stopChargeSound = () => {
         if (chargeOscillatorRef.current && audioCtxRef.current) {
-            try {
-                const ctx = audioCtxRef.current;
-                const gain = chargeGainRef.current;
-                const osc = chargeOscillatorRef.current;
-                const filter = chargeFilterRef.current;
+          try {
+            const ctx = audioCtxRef.current;
+            const gain = chargeGainRef.current;
+            const osc = chargeOscillatorRef.current;
+            const filter = chargeFilterRef.current;
 
-                // Fade out quickly
-                if (gain) {
-                    gain.gain.cancelScheduledValues(ctx.currentTime);
-                    gain.gain.setValueAtTime(gain.gain.value, ctx.currentTime);
-                    gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.15);
-                }
+            // Fade out quickly
+            if (gain) {
+              gain.gain.cancelScheduledValues(ctx.currentTime);
+              gain.gain.setValueAtTime(gain.gain.value, ctx.currentTime);
+              gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.15);
+            }
 
-                setTimeout(() => {
-                    if (osc) {
-                        osc.stop();
-                        osc.disconnect();
-                    }
-                    if (filter) filter.disconnect();
-                    if (gain) gain.disconnect();
-                }, 200);
+            setTimeout(() => {
+              if (osc) {
+                osc.stop();
+                osc.disconnect();
+              }
+              if (filter) filter.disconnect();
+              if (gain) gain.disconnect();
+            }, 200);
 
-            } catch (e) {}
+          } catch (e) { }
 
-            chargeOscillatorRef.current = null;
-            chargeGainRef.current = null;
-            chargeFilterRef.current = null;
+          chargeOscillatorRef.current = null;
+          chargeGainRef.current = null;
+          chargeFilterRef.current = null;
         }
       };
 
@@ -1349,17 +1388,17 @@
 
         // Helper for playing a tone
         const playTone = (freq, start, dur, type = 'triangle', vol = 0.1) => {
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            osc.type = type;
-            osc.frequency.value = freq;
-            gain.gain.setValueAtTime(0, start);
-            gain.gain.linearRampToValueAtTime(vol, start + 0.05);
-            gain.gain.exponentialRampToValueAtTime(0.001, start + dur);
-            osc.connect(gain);
-            gain.connect(ctx.destination);
-            osc.start(start);
-            osc.stop(start + dur);
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = type;
+          osc.frequency.value = freq;
+          gain.gain.setValueAtTime(0, start);
+          gain.gain.linearRampToValueAtTime(vol, start + 0.05);
+          gain.gain.exponentialRampToValueAtTime(0.001, start + dur);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(start);
+          osc.stop(start + dur);
         };
 
         // A major fanfare sequence (C Major)
@@ -1384,7 +1423,7 @@
         const data = buffer.getChannelData(0);
 
         for (let i = 0; i < bufferSize; i++) {
-            data[i] = Math.random() * 2 - 1;
+          data[i] = Math.random() * 2 - 1;
         }
 
         const noise = ctx.createBufferSource();
@@ -1408,25 +1447,25 @@
       };
 
       const playBreakdownSound = () => {
-          if (!soundEnabled || !audioCtxRef.current) return;
-          const ctx = audioCtxRef.current;
+        if (!soundEnabled || !audioCtxRef.current) return;
+        const ctx = audioCtxRef.current;
 
-          // A loud "clunk" and power down sound
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
+        // A loud "clunk" and power down sound
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
 
-          osc.type = 'sawtooth';
-          osc.frequency.setValueAtTime(100, ctx.currentTime);
-          osc.frequency.exponentialRampToValueAtTime(10, ctx.currentTime + 1);
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(100, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(10, ctx.currentTime + 1);
 
-          gain.gain.setValueAtTime(0.5, ctx.currentTime);
-          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1);
+        gain.gain.setValueAtTime(0.5, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1);
 
-          osc.connect(gain);
-          gain.connect(ctx.destination);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
 
-          osc.start();
-          osc.stop(ctx.currentTime + 1);
+        osc.start();
+        osc.stop(ctx.currentTime + 1);
       };
 
       // MAIN RENDER LOOP
@@ -1534,53 +1573,53 @@
             // Draw Pins
             const pinRadius = radius + 10; // Pins sit outside the main wheel
             for (let i = 0; i < NUM_PINS; i++) {
-                const angle = (i * 2 * Math.PI / NUM_PINS) + rotationRef.current;
-                const px = centerX + Math.cos(angle) * pinRadius;
-                const py = centerY + Math.sin(angle) * pinRadius;
+              const angle = (i * 2 * Math.PI / NUM_PINS) + rotationRef.current;
+              const px = centerX + Math.cos(angle) * pinRadius;
+              const py = centerY + Math.sin(angle) * pinRadius;
 
-                ctx.beginPath();
-                ctx.arc(px, py, 4, 0, 2 * Math.PI);
-                ctx.fillStyle = '#C0C0C0'; // Silver pins
-                ctx.fill();
-                ctx.strokeStyle = '#666';
-                ctx.lineWidth = 1;
-                ctx.stroke();
+              ctx.beginPath();
+              ctx.arc(px, py, 4, 0, 2 * Math.PI);
+              ctx.fillStyle = '#C0C0C0'; // Silver pins
+              ctx.fill();
+              ctx.strokeStyle = '#666';
+              ctx.lineWidth = 1;
+              ctx.stroke();
             }
           }
 
           // --- Pointer Animation Logic ---
           if (pointerRef.current) {
-             const pinSpacing = (2 * Math.PI) / NUM_PINS;
-             const pinPhase = (rotationRef.current % pinSpacing) / pinSpacing;
+            const pinSpacing = (2 * Math.PI) / NUM_PINS;
+            const pinPhase = (rotationRef.current % pinSpacing) / pinSpacing;
 
-             let pointerAngle = 0;
+            let pointerAngle = 0;
 
-             // Physics Parameters
-             const maxAngle = 40;
-             const pushThreshold = 0.75; // When the pin starts pushing the pointer (0.0 to 1.0)
+            // Physics Parameters
+            const maxAngle = 40;
+            const pushThreshold = 0.75; // When the pin starts pushing the pointer (0.0 to 1.0)
 
-             if (pinPhase > pushThreshold) {
-                 // PUSH PHASE: Pin contacts pointer and pushes it down (Clockwise)
-                 // Map range [0.85, 1.0] to [0, maxAngle]
-                 // Inverted direction per user fix
-                 const t = (pinPhase - pushThreshold) / (pushThreshold - 1);
-                 // Use a slight curve for weight
-                 pointerAngle = t * maxAngle;
-             } else {
-                 // SPRING/SNAP PHASE: Pin releases, pointer snaps back
-                 // Damped harmonic oscillator: A * e^(-ct) * cos(wt)
-                 // t goes from 0.0 to 0.85
-                 const t = pinPhase;
+            if (pinPhase > pushThreshold) {
+              // PUSH PHASE: Pin contacts pointer and pushes it down (Clockwise)
+              // Map range [0.85, 1.0] to [0, maxAngle]
+              // Inverted direction per user fix
+              const t = (pinPhase - pushThreshold) / (pushThreshold - 1);
+              // Use a slight curve for weight
+              pointerAngle = t * maxAngle;
+            } else {
+              // SPRING/SNAP PHASE: Pin releases, pointer snaps back
+              // Damped harmonic oscillator: A * e^(-ct) * cos(wt)
+              // t goes from 0.0 to 0.85
+              const t = pinPhase;
 
-                 // Tune these for "snapiness"
-                 const decay = 10; // How fast energy is lost
-                 const freq = 100;  // Wiggle speed
+              // Tune these for "snapiness"
+              const decay = 10; // How fast energy is lost
+              const freq = 100;  // Wiggle speed
 
-                 // Start at maxAngle (t=0), decay to 0
-                 pointerAngle = maxAngle * Math.exp(-decay * t) * Math.cos(freq * t);
-             }
+              // Start at maxAngle (t=0), decay to 0
+              pointerAngle = maxAngle * Math.exp(-decay * t) * Math.cos(freq * t);
+            }
 
-             pointerRef.current.style.transform = `rotate(${pointerAngle}deg)`;
+            pointerRef.current.style.transform = `rotate(${pointerAngle}deg)`;
           }
 
           animationFrameId = requestAnimationFrame(render);
@@ -1624,13 +1663,13 @@
         // Calculate Smoke Color
         let color;
         if (isInferno) {
-            // Pitch black / very dark grey for inferno
-            const val = Math.floor(Math.random() * 30);
-            color = `rgb(${val},${val},${val})`;
+          // Pitch black / very dark grey for inferno
+          const val = Math.floor(Math.random() * 30);
+          color = `rgb(${val},${val},${val})`;
         } else {
-            // Progressive darkening from White (255) to Grey
-            const greyVal = Math.floor(255 - intensity * 100 - extremeIntensity * 100);
-            color = `rgb(${greyVal},${greyVal},${greyVal})`;
+          // Progressive darkening from White (255) to Grey
+          const greyVal = Math.floor(255 - intensity * 100 - extremeIntensity * 100);
+          color = `rgb(${greyVal},${greyVal},${greyVal})`;
         }
 
         el.style.width = `${size}px`;
@@ -1647,8 +1686,8 @@
         const left = 50 + Math.cos(angle) * dist;
         const top = 50 + Math.sin(angle) * dist;
 
-        el.style.left = `calc(${left}% - ${size/2}px)`;
-        el.style.top = `calc(${top}% - ${size/2}px)`;
+        el.style.left = `calc(${left}% - ${size / 2}px)`;
+        el.style.top = `calc(${top}% - ${size / 2}px)`;
 
         // Random rotation
         el.style.setProperty('--rot', `${(Math.random() - 0.5) * 360}deg`);
@@ -1659,47 +1698,47 @@
 
         // --- FIRE PARTICLES (Inferno Phase Only) ---
         if (isInferno) {
-             // Play crackle sound randomly (approx 20% of frames) to create a texture
-             // 60fps * 0.2 = ~12 crackles per second
-             if (Math.random() > 0.8) playFireCrackle();
+          // Play crackle sound randomly (approx 20% of frames) to create a texture
+          // 60fps * 0.2 = ~12 crackles per second
+          if (Math.random() > 0.8) playFireCrackle();
 
-             if (Math.random() > 0.5) {
-                 const fire = document.createElement('div');
-                 // Increased fire particle size for better visibility
-                 const fSize = 50 + Math.random() * 25;
-                 const fColors = ['#ef4444', '#f97316', '#eab308']; // Red, Orange, Yellow
-                 const fColor = fColors[Math.floor(Math.random() * fColors.length)];
+          if (Math.random() > 0.5) {
+            const fire = document.createElement('div');
+            // Increased fire particle size for better visibility
+            const fSize = 50 + Math.random() * 25;
+            const fColors = ['#ef4444', '#f97316', '#eab308']; // Red, Orange, Yellow
+            const fColor = fColors[Math.floor(Math.random() * fColors.length)];
 
-                 fire.style.width = `${fSize}px`;
-                 fire.style.height = `${fSize}px`;
-                 fire.style.background = fColor;
-                 fire.style.position = 'absolute';
-                 fire.style.borderRadius = '50%';
-                 fire.style.filter = 'blur(4px)';
-                 fire.style.pointerEvents = 'none';
+            fire.style.width = `${fSize}px`;
+            fire.style.height = `${fSize}px`;
+            fire.style.background = fColor;
+            fire.style.position = 'absolute';
+            fire.style.borderRadius = '50%';
+            fire.style.filter = 'blur(4px)';
+            fire.style.pointerEvents = 'none';
 
-                 // Fire spawns tighter to the center
-                 const fLeft = 50 + (Math.random() - 0.5) * 30;
-                 const fTop = 50 + (Math.random() - 0.5) * 30;
+            // Fire spawns tighter to the center
+            const fLeft = 50 + (Math.random() - 0.5) * 30;
+            const fTop = 50 + (Math.random() - 0.5) * 30;
 
-                 fire.style.left = `calc(${fLeft}% - ${fSize/2}px)`;
-                 fire.style.top = `calc(${fTop}% - ${fSize/2}px)`;
+            fire.style.left = `calc(${fLeft}% - ${fSize / 2}px)`;
+            fire.style.top = `calc(${fTop}% - ${fSize / 2}px)`;
 
-                 // Fire rises faster and dies quicker than smoke
-                 fire.style.animation = `smokeRise 0.6s forwards`;
+            // Fire rises faster and dies quicker than smoke
+            fire.style.animation = `smokeRise 0.6s forwards`;
 
-                 smokeContainerRef.current.appendChild(fire);
+            smokeContainerRef.current.appendChild(fire);
 
-                 // Cleanup fire
-                 setTimeout(() => {
-                    if (fire.parentNode) fire.parentNode.removeChild(fire);
-                 }, 600);
-             }
+            // Cleanup fire
+            setTimeout(() => {
+              if (fire.parentNode) fire.parentNode.removeChild(fire);
+            }, 600);
+          }
         }
 
         // Cleanup Smoke
         setTimeout(() => {
-            if (el.parentNode) el.parentNode.removeChild(el);
+          if (el.parentNode) el.parentNode.removeChild(el);
         }, 2000);
       };
 
@@ -1714,8 +1753,8 @@
 
         // If currently spinning, stop it. Do NOT start a new charge/spin cycle.
         if (isSpinningRef.current) {
-            handleStopSpin();
-            return;
+          handleStopSpin();
+          return;
         }
 
         if (items.length === 0) return;
@@ -1734,84 +1773,84 @@
 
         // Start delay timer. If user releases before this fires, it's a TAP.
         pressTimerRef.current = setTimeout(() => {
-            // User held long enough: Start Charging
-            isChargingRef.current = true;
-            setIsCharging(true);
+          // User held long enough: Start Charging
+          isChargingRef.current = true;
+          setIsCharging(true);
 
-            // Start Audio
-            startChargeSound();
+          // Start Audio
+          startChargeSound();
 
-            // Clear this timer ref so MouseUp knows we entered charging mode
-            pressTimerRef.current = null;
+          // Clear this timer ref so MouseUp knows we entered charging mode
+          pressTimerRef.current = null;
 
-            const startTime = Date.now();
+          const startTime = Date.now();
 
-            if (chargeIntervalRef.current) clearInterval(chargeIntervalRef.current);
+          if (chargeIntervalRef.current) clearInterval(chargeIntervalRef.current);
 
-            chargeIntervalRef.current = setInterval(() => {
-                const elapsed = Date.now() - startTime;
-                // Fill up in 1.5 seconds
-                let power = Math.min(elapsed / 1500, 1);
+          chargeIntervalRef.current = setInterval(() => {
+            const elapsed = Date.now() - startTime;
+            // Fill up in 1.5 seconds
+            let power = Math.min(elapsed / 1500, 1);
 
-                // If fully charged, start counting overcharge time
-                if (power >= 1) {
-                    overchargeRef.current += 16; // Add ~16ms per frame
-                    spawnSmoke();
+            // If fully charged, start counting overcharge time
+            if (power >= 1) {
+              overchargeRef.current += 16; // Add ~16ms per frame
+              spawnSmoke();
 
-                    // BREAKDOWN LOGIC: Overcharge > 15s (10s past Inferno start which is 5s)
-                    // Actually phase logic:
-                    // 0-3s (Safe)
-                    // 3-8s (Steam)
-                    // 8-13s (Smoke)
-                    // 13s+ (Inferno)
-                    // Let's break it 5 seconds AFTER Inferno starts (13s + 5s = 18s total overcharge time)
-                    if (overchargeRef.current > 18000) {
-                        clearInterval(chargeIntervalRef.current);
-                        chargeIntervalRef.current = null;
+              // BREAKDOWN LOGIC: Overcharge > 15s (10s past Inferno start which is 5s)
+              // Actually phase logic:
+              // 0-3s (Safe)
+              // 3-8s (Steam)
+              // 8-13s (Smoke)
+              // 13s+ (Inferno)
+              // Let's break it 5 seconds AFTER Inferno starts (13s + 5s = 18s total overcharge time)
+              if (overchargeRef.current > 18000) {
+                clearInterval(chargeIntervalRef.current);
+                chargeIntervalRef.current = null;
 
-                        stopChargeSound();
-                        playBreakdownSound();
+                stopChargeSound();
+                playBreakdownSound();
 
-                        setIsCharging(false);
-                        setChargePower(0);
-                        isChargingRef.current = false;
+                setIsCharging(false);
+                setChargePower(0);
+                isChargingRef.current = false;
 
-                        setIsOutOfOrder(true); // TRIGGER BROKEN STATE
-                        return;
-                    }
-                }
+                setIsOutOfOrder(true); // TRIGGER BROKEN STATE
+                return;
+              }
+            }
 
-                // Update sound pitch based on power AND overcharge time
-                updateChargeSound(power, overchargeRef.current);
+            // Update sound pitch based on power AND overcharge time
+            updateChargeSound(power, overchargeRef.current);
 
-                // Update both state (for visual) and ref (for logic)
-                setChargePower(power);
-                chargePowerRef.current = power;
-            }, 16);
+            // Update both state (for visual) and ref (for logic)
+            setChargePower(power);
+            chargePowerRef.current = power;
+          }, 16);
         }, 200); // 200ms threshold for hold
       };
 
       const handlePointerUpOrLeave = (e) => {
-         if (isOutOfOrder) return; // Dead interaction
+        if (isOutOfOrder) return; // Dead interaction
 
-         if (e && e.cancelable) e.preventDefault();
+        if (e && e.cancelable) e.preventDefault();
 
-         // Case 1: User released QUICKLY (Tap)
-         // pressTimerRef is still active, meaning the Hold threshold wasn't reached.
-         if (pressTimerRef.current !== null) {
-             clearTimeout(pressTimerRef.current);
-             pressTimerRef.current = null;
+        // Case 1: User released QUICKLY (Tap)
+        // pressTimerRef is still active, meaning the Hold threshold wasn't reached.
+        if (pressTimerRef.current !== null) {
+          clearTimeout(pressTimerRef.current);
+          pressTimerRef.current = null;
 
-             // Trigger Full Power Spin
-             spinWheel(1.0);
-             return;
-         }
+          // Trigger Full Power Spin
+          spinWheel(1.0);
+          return;
+        }
 
-         // Case 2: User released after HOLDING (Power Meter was active)
-         if (isChargingRef.current) {
-             stopCharging();
-             return;
-         }
+        // Case 2: User released after HOLDING (Power Meter was active)
+        if (isChargingRef.current) {
+          stopCharging();
+          return;
+        }
       };
 
       const stopCharging = () => {
@@ -1827,8 +1866,8 @@
         setIsCharging(false);
 
         if (chargeIntervalRef.current) {
-            clearInterval(chargeIntervalRef.current);
-            chargeIntervalRef.current = null;
+          clearInterval(chargeIntervalRef.current);
+          chargeIntervalRef.current = null;
         }
 
         // Use REF value to guarantee freshness regardless of render cycle
@@ -1842,9 +1881,9 @@
       };
 
       const cancelCharging = () => {
-          if (isChargingRef.current) {
-             stopCharging();
-          }
+        if (isChargingRef.current) {
+          stopCharging();
+        }
       };
 
       const spinWheel = (powerFactor = 1.0) => {
@@ -1894,7 +1933,7 @@
           const lastStep = Math.floor(lastTickRef.current / pinSpacing);
 
           if (currentStep !== lastStep) {
-             playTickSound();
+            playTickSound();
           }
           lastTickRef.current = rotationRef.current;
 
@@ -1915,8 +1954,8 @@
 
       const handleStopSpin = () => {
         if (spinFrameRef.current) {
-            cancelAnimationFrame(spinFrameRef.current);
-            spinFrameRef.current = null;
+          cancelAnimationFrame(spinFrameRef.current);
+          spinFrameRef.current = null;
         }
         // CHANGED: Update Ref synchronously
         isSpinningRef.current = false;
@@ -1942,14 +1981,14 @@
         let winItem = null;
 
         for (let i = 0; i < currentItems.length; i++) {
-            const item = currentItems[i];
-            const sliceAngle = (item.weight / totalWeight) * (2 * Math.PI);
+          const item = currentItems[i];
+          const sliceAngle = (item.weight / totalWeight) * (2 * Math.PI);
 
-            if (effectiveAngle >= accumulatedAngle && effectiveAngle < accumulatedAngle + sliceAngle) {
-                winItem = item.text;
-                break;
-            }
-            accumulatedAngle += sliceAngle;
+          if (effectiveAngle >= accumulatedAngle && effectiveAngle < accumulatedAngle + sliceAngle) {
+            winItem = item.text;
+            break;
+          }
+          accumulatedAngle += sliceAngle;
         }
 
         // Fallback (should mostly not happen unless float precision error)
@@ -1959,19 +1998,19 @@
 
         // Add to history
         setHistory(prev => {
-            const newHistory = [{
-                id: Date.now(),
-                text: winItem,
-                timestamp: new Date()
-            }, ...prev];
-            return newHistory;
+          const newHistory = [{
+            id: Date.now(),
+            text: winItem,
+            timestamp: new Date()
+          }, ...prev];
+          return newHistory;
         });
 
         if (soundEnabled) {
-           playWinSound();
-           if (aiVoiceEnabled && geminiApiKey) {
-               announceWinner(winItem); // Call Gemini TTS only if enabled and key exists
-           }
+          playWinSound();
+          if (aiVoiceEnabled && geminiApiKey) {
+            announceWinner(winItem); // Call Gemini TTS only if enabled and key exists
+          }
         }
         fireConfetti();
       };
@@ -1982,7 +2021,7 @@
       };
 
       const handleClear = () => {
-        if(confirm("Are you sure you want to clear the list?")) {
+        if (confirm("Are you sure you want to clear the list?")) {
           setInputText("");
         }
       };
@@ -2026,7 +2065,7 @@
                   <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 z-50 overflow-hidden animate-[fade-in_0.2s_ease-out]">
                     <div className="py-1">
                       <button
-                        onClick={() => {setTheme('auto'); setShowThemeMenu(false)}}
+                        onClick={() => { setTheme('auto'); setShowThemeMenu(false) }}
                         className={`flex items-center w-full px-4 py-2 text-sm text-left ${theme === 'auto' ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
                       >
                         <span className="mr-3"><MonitorIcon size={16} /></span>
@@ -2034,7 +2073,7 @@
                         {theme === 'auto' && <span className="ml-auto"><CheckIcon size={16} /></span>}
                       </button>
                       <button
-                        onClick={() => {setTheme('light'); setShowThemeMenu(false)}}
+                        onClick={() => { setTheme('light'); setShowThemeMenu(false) }}
                         className={`flex items-center w-full px-4 py-2 text-sm text-left ${theme === 'light' ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
                       >
                         <span className="mr-3"><SunIcon size={16} /></span>
@@ -2042,7 +2081,7 @@
                         {theme === 'light' && <span className="ml-auto"><CheckIcon size={16} /></span>}
                       </button>
                       <button
-                        onClick={() => {setTheme('dark'); setShowThemeMenu(false)}}
+                        onClick={() => { setTheme('dark'); setShowThemeMenu(false) }}
                         className={`flex items-center w-full px-4 py-2 text-sm text-left ${theme === 'dark' ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
                       >
                         <span className="mr-3"><MoonIcon size={16} /></span>
@@ -2074,12 +2113,26 @@
 
                 {showSettingsMenu && (
                   <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 z-50 overflow-hidden animate-[fade-in_0.2s_ease-out]">
+                    {deferredPrompt && (
+                      <div className="py-1 border-b border-gray-100 dark:border-gray-700">
+                        <button
+                          onClick={() => {
+                            handleInstallClick();
+                            setShowSettingsMenu(false);
+                          }}
+                          className="flex items-center w-full px-4 py-2 text-sm text-left text-indigo-600 dark:text-indigo-400 hover:bg-gray-100 dark:hover:bg-gray-700 font-medium"
+                        >
+                          <span className="mr-3"><DownloadIcon size={16} /></span>
+                          Install App
+                        </button>
+                      </div>
+                    )}
                     <div className="p-2 border-b border-gray-100 dark:border-gray-700">
-                        <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Spin Duration</span>
+                      <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Spin Duration</span>
                     </div>
                     <div className="py-1 border-b border-gray-100 dark:border-gray-700">
                       <button
-                        onClick={() => {setSpinDuration(5000); setShowSettingsMenu(false)}}
+                        onClick={() => { setSpinDuration(5000); setShowSettingsMenu(false) }}
                         className={`flex items-center w-full px-4 py-2 text-sm text-left ${spinDuration === 5000 ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
                       >
                         <span className="mr-3"><ZapIcon size={16} /></span>
@@ -2087,7 +2140,7 @@
                         {spinDuration === 5000 && <span className="ml-auto"><CheckIcon size={16} /></span>}
                       </button>
                       <button
-                        onClick={() => {setSpinDuration(10000); setShowSettingsMenu(false)}}
+                        onClick={() => { setSpinDuration(10000); setShowSettingsMenu(false) }}
                         className={`flex items-center w-full px-4 py-2 text-sm text-left ${spinDuration === 10000 ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
                       >
                         <span className="mr-3"><ClockIcon size={16} /></span>
@@ -2095,7 +2148,7 @@
                         {spinDuration === 10000 && <span className="ml-auto"><CheckIcon size={16} /></span>}
                       </button>
                       <button
-                        onClick={() => {setSpinDuration(20000); setShowSettingsMenu(false)}}
+                        onClick={() => { setSpinDuration(20000); setShowSettingsMenu(false) }}
                         className={`flex items-center w-full px-4 py-2 text-sm text-left ${spinDuration === 20000 ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
                       >
                         <span className="mr-3"><HourglassIcon size={16} /></span>
@@ -2105,56 +2158,56 @@
                     </div>
 
                     <div className="p-2 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/30">
-                        <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Themes</span>
+                      <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Themes</span>
                     </div>
                     <div className="py-1 border-b border-gray-100 dark:border-gray-700">
-                        <button
-                            onClick={() => {
-                                setTempColorType(colorSettings.type);
-                                setTempCustomColors(colorSettings.customColors);
-                                setShowColorModal(true);
-                                setShowSettingsMenu(false);
-                            }}
-                            className="flex items-center w-full px-4 py-2 text-sm text-left text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                        >
-                            <span className="mr-3"><PaletteIcon size={16} /></span>
-                            Wheel Colors
-                        </button>
+                      <button
+                        onClick={() => {
+                          setTempColorType(colorSettings.type);
+                          setTempCustomColors(colorSettings.customColors);
+                          setShowColorModal(true);
+                          setShowSettingsMenu(false);
+                        }}
+                        className="flex items-center w-full px-4 py-2 text-sm text-left text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      >
+                        <span className="mr-3"><PaletteIcon size={16} /></span>
+                        Wheel Colors
+                      </button>
                     </div>
 
                     <div className="p-2 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/30">
-                        <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Gemini AI Features</span>
+                      <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Gemini AI Features</span>
                     </div>
                     <div className="py-1">
-                        <button
-                            onClick={() => {
-                                setTempApiKey(geminiApiKey);
-                                setShowApiKeyModal(true);
-                                setShowSettingsMenu(false);
-                            }}
-                            className="flex items-center w-full px-4 py-2 text-sm text-left text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                        >
-                            <span className="mr-3"><KeyIcon size={16} /></span>
-                            {geminiApiKey ? 'Configure API Key' : 'Set API Key'}
-                            {geminiApiKey && <span className="ml-auto text-xs text-green-500 font-medium">Active</span>}
-                        </button>
-                        <button
-                            onClick={() => {
-                                if (geminiApiKey) setAiVoiceEnabled(!aiVoiceEnabled);
-                                else {
-                                    setTempApiKey('');
-                                    setShowApiKeyModal(true);
-                                    setShowSettingsMenu(false);
-                                }
-                            }}
-                            disabled={!geminiApiKey}
-                            className={`flex items-center w-full px-4 py-2 text-sm text-left ${aiVoiceEnabled && geminiApiKey ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'} ${!geminiApiKey ? 'opacity-50' : ''}`}
-                            title={!geminiApiKey ? "Requires API Key" : ""}
-                        >
-                            <span className="mr-3"><BotIcon size={16} /></span>
-                            Announce Winner
-                            {aiVoiceEnabled && geminiApiKey && <span className="ml-auto"><CheckIcon size={16} /></span>}
-                        </button>
+                      <button
+                        onClick={() => {
+                          setTempApiKey(geminiApiKey);
+                          setShowApiKeyModal(true);
+                          setShowSettingsMenu(false);
+                        }}
+                        className="flex items-center w-full px-4 py-2 text-sm text-left text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      >
+                        <span className="mr-3"><KeyIcon size={16} /></span>
+                        {geminiApiKey ? 'Configure API Key' : 'Set API Key'}
+                        {geminiApiKey && <span className="ml-auto text-xs text-green-500 font-medium">Active</span>}
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (geminiApiKey) setAiVoiceEnabled(!aiVoiceEnabled);
+                          else {
+                            setTempApiKey('');
+                            setShowApiKeyModal(true);
+                            setShowSettingsMenu(false);
+                          }
+                        }}
+                        disabled={!geminiApiKey}
+                        className={`flex items-center w-full px-4 py-2 text-sm text-left ${aiVoiceEnabled && geminiApiKey ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'} ${!geminiApiKey ? 'opacity-50' : ''}`}
+                        title={!geminiApiKey ? "Requires API Key" : ""}
+                      >
+                        <span className="mr-3"><BotIcon size={16} /></span>
+                        Announce Winner
+                        {aiVoiceEnabled && geminiApiKey && <span className="ml-auto"><CheckIcon size={16} /></span>}
+                      </button>
                     </div>
                   </div>
                 )}
@@ -2229,44 +2282,44 @@
                 {/* Center Spin Button Overlay */}
                 <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30">
 
-                    {/* Smoke Container */}
-                    <div ref={smokeContainerRef} className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-40 h-40 pointer-events-none z-10"></div>
+                  {/* Smoke Container */}
+                  <div ref={smokeContainerRef} className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-40 h-40 pointer-events-none z-10"></div>
 
-                    {/* Power Meter Ring */}
-                    {isCharging && (
-                        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-28 h-28 pointer-events-none z-20">
-                            <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
-                                <circle cx="50" cy="50" r="46" fill="none" stroke="#e5e7eb" strokeWidth="8" className="dark:stroke-gray-700"/>
-                                <circle cx="50" cy="50" r="46" fill="none" stroke="url(#powerGradient)" strokeWidth="8" strokeDasharray="289.02" strokeDashoffset={289.02 * (1 - chargePower)} strokeLinecap="round" className="transition-all duration-75 ease-linear"/>
-                                <defs>
-                                    <linearGradient id="powerGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                                        <stop offset="0%" stopColor="#3b82f6" />
-                                        <stop offset="50%" stopColor="#8b5cf6" />
-                                        <stop offset="100%" stopColor="#ef4444" />
-                                    </linearGradient>
-                                </defs>
-                            </svg>
-                        </div>
-                    )}
+                  {/* Power Meter Ring */}
+                  {isCharging && (
+                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-28 h-28 pointer-events-none z-20">
+                      <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="46" fill="none" stroke="#e5e7eb" strokeWidth="8" className="dark:stroke-gray-700" />
+                        <circle cx="50" cy="50" r="46" fill="none" stroke="url(#powerGradient)" strokeWidth="8" strokeDasharray="289.02" strokeDashoffset={289.02 * (1 - chargePower)} strokeLinecap="round" className="transition-all duration-75 ease-linear" />
+                        <defs>
+                          <linearGradient id="powerGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stopColor="#3b82f6" />
+                            <stop offset="50%" stopColor="#8b5cf6" />
+                            <stop offset="100%" stopColor="#ef4444" />
+                          </linearGradient>
+                        </defs>
+                      </svg>
+                    </div>
+                  )}
 
-                    <button
-                        onPointerDown={handlePointerDown}
-                        onPointerUp={handlePointerUpOrLeave}
-                        onPointerLeave={handlePointerUpOrLeave}
-                        disabled={items.length === 0}
-                        className={`
+                  <button
+                    onPointerDown={handlePointerDown}
+                    onPointerUp={handlePointerUpOrLeave}
+                    onPointerLeave={handlePointerUpOrLeave}
+                    disabled={items.length === 0}
+                    className={`
                             relative w-20 h-20 rounded-full bg-white dark:bg-gray-800 border-4 shadow-lg flex items-center justify-center font-black text-xl tracking-wider select-none touch-none z-30
                             ${isSpinning ? 'border-red-500 dark:border-red-400 text-red-600 dark:text-red-400' : 'border-indigo-600 dark:border-indigo-400 text-indigo-700 dark:text-indigo-400'}
                             ${items.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}
                         `}
-                        style={{
-                            boxShadow: isCharging ? `0 0 ${10 + chargePower * 20}px ${chargePower > 0.8 ? '#ef4444' : '#6366f1'}` : ''
-                        }}
-                    >
-                        <span className={`block transition-transform duration-75 ${isCharging && chargePower > 0.8 ? 'animate-[shake_0.2s_ease-in-out_infinite]' : ''} ${isCharging ? 'scale-90' : ''} ${!isSpinning && !isCharging ? 'animate-pulse' : ''}`}>
-                            {isSpinning ? "STOP" : "SPIN"}
-                        </span>
-                    </button>
+                    style={{
+                      boxShadow: isCharging ? `0 0 ${10 + chargePower * 20}px ${chargePower > 0.8 ? '#ef4444' : '#6366f1'}` : ''
+                    }}
+                  >
+                    <span className={`block transition-transform duration-75 ${isCharging && chargePower > 0.8 ? 'animate-[shake_0.2s_ease-in-out_infinite]' : ''} ${isCharging ? 'scale-90' : ''} ${!isSpinning && !isCharging ? 'animate-pulse' : ''}`}>
+                      {isSpinning ? "STOP" : "SPIN"}
+                    </span>
+                  </button>
                 </div>
 
                 <style>{`@keyframes shake { 0% { transform: translate(0, 0) rotate(0deg); } 25% { transform: translate(-1px, 1px) rotate(-1deg); } 50% { transform: translate(1px, -1px) rotate(1deg); } 75% { transform: translate(-2px, 1px) rotate(0deg); } 100% { transform: translate(0, 0) rotate(0deg); } }`}</style>
@@ -2282,7 +2335,7 @@
                   onClick={() => setActiveTab('inputs')}
                   className={`flex-1 p-4 font-bold text-sm flex items-center justify-center transition-colors relative ${activeTab === 'inputs' ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800'}`}
                 >
-                  <SettingsIcon size={16} className="mr-2"/>
+                  <SettingsIcon size={16} className="mr-2" />
                   Inputs <span className="ml-1 text-xs bg-gray-200 dark:bg-gray-700 px-1.5 py-0.5 rounded-full">{items.length}</span>
                   {activeTab === 'inputs' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-indigo-600 dark:bg-indigo-400"></div>}
                 </button>
@@ -2290,7 +2343,7 @@
                   onClick={() => setActiveTab('history')}
                   className={`flex-1 p-4 font-bold text-sm flex items-center justify-center transition-colors relative ${activeTab === 'history' ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800'}`}
                 >
-                  <ClockIcon size={16} className="mr-2"/>
+                  <ClockIcon size={16} className="mr-2" />
                   History <span className="ml-1 text-xs bg-gray-200 dark:bg-gray-700 px-1.5 py-0.5 rounded-full">{history.length}</span>
                   {activeTab === 'history' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-indigo-600 dark:bg-indigo-400"></div>}
                 </button>
@@ -2303,80 +2356,80 @@
 
                     {/* List Manager Toolbar */}
                     <div className="flex items-center gap-2 mb-4 bg-gray-50 dark:bg-gray-700/30 p-2 rounded-lg border border-gray-200 dark:border-gray-600">
-                        {/* Create New */}
+                      {/* Create New */}
+                      <button
+                        onClick={handleCreateList}
+                        disabled={isSpinning}
+                        className="p-2 text-indigo-600 dark:text-indigo-400 hover:bg-white dark:hover:bg-gray-600 rounded shadow-sm border border-transparent hover:border-gray-200 dark:hover:border-gray-500 transition"
+                        title="Create New List"
+                      >
+                        <Plus size={18} />
+                      </button>
+
+                      {/* Combobox (Name Input + Dropdown Trigger) */}
+                      <div className="flex-grow relative flex" ref={listDropdownRef}>
+                        <input
+                          type="text"
+                          value={savedLists.find(l => l.id === activeListId)?.name || ''}
+                          onChange={(e) => handleRenameList(e.target.value)}
+                          disabled={isSpinning}
+                          className="flex-grow p-2 text-sm border border-gray-300 dark:border-gray-600 rounded-l-md focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white min-w-0"
+                          placeholder="List Name"
+                        />
                         <button
-                            onClick={handleCreateList}
-                            disabled={isSpinning}
-                            className="p-2 text-indigo-600 dark:text-indigo-400 hover:bg-white dark:hover:bg-gray-600 rounded shadow-sm border border-transparent hover:border-gray-200 dark:hover:border-gray-500 transition"
-                            title="Create New List"
+                          onClick={() => !isSpinning && setShowListDropdown(!showListDropdown)}
+                          disabled={isSpinning}
+                          className="px-2 border border-l-0 border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-600 hover:bg-gray-200 dark:hover:bg-gray-500 rounded-r-md text-gray-600 dark:text-gray-300 transition"
                         >
-                            <Plus size={18} />
+                          <ChevronDownIcon size={16} />
                         </button>
 
-                        {/* Combobox (Name Input + Dropdown Trigger) */}
-                        <div className="flex-grow relative flex" ref={listDropdownRef}>
-                            <input
-                                type="text"
-                                value={savedLists.find(l => l.id === activeListId)?.name || ''}
-                                onChange={(e) => handleRenameList(e.target.value)}
-                                disabled={isSpinning}
-                                className="flex-grow p-2 text-sm border border-gray-300 dark:border-gray-600 rounded-l-md focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white min-w-0"
-                                placeholder="List Name"
-                            />
-                            <button
-                                onClick={() => !isSpinning && setShowListDropdown(!showListDropdown)}
-                                disabled={isSpinning}
-                                className="px-2 border border-l-0 border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-600 hover:bg-gray-200 dark:hover:bg-gray-500 rounded-r-md text-gray-600 dark:text-gray-300 transition"
-                            >
-                                <ChevronDownIcon size={16} />
-                            </button>
+                        {/* Dropdown Menu */}
+                        {showListDropdown && (
+                          <div className="absolute top-full left-0 w-full mt-1 bg-white dark:bg-gray-800 rounded-md shadow-lg border border-gray-200 dark:border-gray-600 z-20 max-h-48 overflow-y-auto">
+                            {savedLists.map(list => (
+                              <button
+                                key={list.id}
+                                onClick={() => {
+                                  setActiveListId(list.id);
+                                  setShowListDropdown(false);
+                                }}
+                                className={`w-full text-left px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 truncate transition ${list.id === activeListId ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 font-medium' : 'text-gray-700 dark:text-gray-300'}`}
+                              >
+                                {list.name}
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
 
-                            {/* Dropdown Menu */}
-                            {showListDropdown && (
-                                <div className="absolute top-full left-0 w-full mt-1 bg-white dark:bg-gray-800 rounded-md shadow-lg border border-gray-200 dark:border-gray-600 z-20 max-h-48 overflow-y-auto">
-                                    {savedLists.map(list => (
-                                        <button
-                                            key={list.id}
-                                            onClick={() => {
-                                                setActiveListId(list.id);
-                                                setShowListDropdown(false);
-                                            }}
-                                            className={`w-full text-left px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 truncate transition ${list.id === activeListId ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 font-medium' : 'text-gray-700 dark:text-gray-300'}`}
-                                        >
-                                            {list.name}
-                                        </button>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-
-                        {/* Delete List */}
-                        <button
-                            onClick={handleDeleteList}
-                            disabled={isSpinning}
-                            className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded border border-transparent hover:border-red-100 dark:hover:border-red-900 transition"
-                            title="Delete List"
-                        >
-                            <Trash2Icon size={18} />
-                        </button>
+                      {/* Delete List */}
+                      <button
+                        onClick={handleDeleteList}
+                        disabled={isSpinning}
+                        className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded border border-transparent hover:border-red-100 dark:hover:border-red-900 transition"
+                        title="Delete List"
+                      >
+                        <Trash2Icon size={18} />
+                      </button>
                     </div>
 
                     <div className="flex justify-between items-center mb-2">
                       <div className="flex items-center">
                         {/* Sparkle Button with API Key check */}
                         <button
-                            onClick={() => {
-                                if (geminiApiKey) setShowGenModal(true);
-                                else {
-                                    setTempApiKey('');
-                                    setShowApiKeyModal(true);
-                                }
-                            }}
-                            disabled={isSpinning}
-                            className={`mr-2 transition-colors p-1 rounded ${geminiApiKey ? 'text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 hover:bg-gray-100 dark:hover:bg-gray-700' : 'text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 cursor-help'}`}
-                            title={geminiApiKey ? "Generate with AI" : "AI Generator (Requires API Key)"}
+                          onClick={() => {
+                            if (geminiApiKey) setShowGenModal(true);
+                            else {
+                              setTempApiKey('');
+                              setShowApiKeyModal(true);
+                            }
+                          }}
+                          disabled={isSpinning}
+                          className={`mr-2 transition-colors p-1 rounded ${geminiApiKey ? 'text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 hover:bg-gray-100 dark:hover:bg-gray-700' : 'text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 cursor-help'}`}
+                          title={geminiApiKey ? "Generate with AI" : "AI Generator (Requires API Key)"}
                         >
-                            <SparklesIcon size={18} />
+                          <SparklesIcon size={18} />
                         </button>
                         <label className="text-sm text-gray-500 dark:text-gray-400 block">Enter text (one item per line):</label>
                       </div>
@@ -2385,7 +2438,7 @@
                         className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 text-xs flex items-center transition-colors font-medium"
                         title="Weighted Items Guide"
                       >
-                        <HelpCircleIcon size={14} className="mr-1"/> Syntax Guide
+                        <HelpCircleIcon size={14} className="mr-1" /> Syntax Guide
                       </button>
                     </div>
                     <textarea
@@ -2419,7 +2472,7 @@
                   <div className="flex-grow overflow-y-auto p-4">
                     {history.length === 0 ? (
                       <div className="h-full flex flex-col items-center justify-center text-gray-400 dark:text-gray-500">
-                        <ClockIcon size={48} className="mb-4 opacity-20"/>
+                        <ClockIcon size={48} className="mb-4 opacity-20" />
                         <p className="text-sm">No history yet.</p>
                         <p className="text-xs mt-1">Spin the wheel to see results here.</p>
                       </div>
@@ -2429,8 +2482,8 @@
                           <li key={item.id} className="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg border border-gray-100 dark:border-gray-700 flex justify-between items-center animate-[fade-in_0.3s_ease-out]">
                             <span className="font-medium text-gray-800 dark:text-gray-200 truncate pr-4">{item.text}</span>
                             <span
-                                className="text-xs text-gray-400 dark:text-gray-500 whitespace-nowrap cursor-help border-b border-dotted border-gray-300 dark:border-gray-600"
-                                title={item.timestamp.toISOString()}
+                              className="text-xs text-gray-400 dark:text-gray-500 whitespace-nowrap cursor-help border-b border-dotted border-gray-300 dark:border-gray-600"
+                              title={item.timestamp.toISOString()}
                             >
                               {getRelativeTime(item.timestamp)}
                             </span>
@@ -2442,7 +2495,7 @@
                   <div className="p-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50">
                     <button
                       onClick={() => {
-                        if(confirm("Clear entire history?")) setHistory([]);
+                        if (confirm("Clear entire history?")) setHistory([]);
                       }}
                       className="w-full flex items-center justify-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 font-medium transition shadow-sm"
                       disabled={history.length === 0}
@@ -2462,55 +2515,55 @@
 
                 {/* Conditional Content Based on Winner Name (Easter Eggs) */}
                 {winner === '@author' ? (
-                    <>
-                        {/* Author Easter Egg */}
-                        <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500"></div>
-                        <div className="mx-auto w-16 h-16 bg-indigo-100 dark:bg-indigo-900/30 rounded-full flex items-center justify-center mb-4 text-indigo-600 dark:text-indigo-400">
-                            <CodeIcon size={32} />
-                        </div>
-                        <h3 className="text-gray-500 dark:text-gray-400 uppercase tracking-widest text-xs font-bold mb-2">Developer Revealed!</h3>
-                        <div className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 mb-4 break-words">
-                            PT Samuel Kripto Indonesia
-                        </div>
-                        <p className="text-sm text-gray-600 dark:text-gray-300 mb-8 italic">
-                            We turn caffeine into code and panic into features, all proudly debugged with console.log. ☕😱💻🔍🚀
-                        </p>
-                    </>
+                  <>
+                    {/* Author Easter Egg */}
+                    <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500"></div>
+                    <div className="mx-auto w-16 h-16 bg-indigo-100 dark:bg-indigo-900/30 rounded-full flex items-center justify-center mb-4 text-indigo-600 dark:text-indigo-400">
+                      <CodeIcon size={32} />
+                    </div>
+                    <h3 className="text-gray-500 dark:text-gray-400 uppercase tracking-widest text-xs font-bold mb-2">Developer Revealed!</h3>
+                    <div className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 mb-4 break-words">
+                      PT Samuel Kripto Indonesia
+                    </div>
+                    <p className="text-sm text-gray-600 dark:text-gray-300 mb-8 italic">
+                      We turn caffeine into code and panic into features, all proudly debugged with console.log. ☕😱💻🔍🚀
+                    </p>
+                  </>
                 ) : winner === '@about' ? (
-                    <>
-                        {/* About Easter Egg */}
-                        <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500"></div>
-                        <div className="mx-auto w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mb-4 text-blue-600 dark:text-blue-400">
-                            <ScrollIcon size={32} />
-                        </div>
-                        <h3 className="text-gray-500 dark:text-gray-400 uppercase tracking-widest text-xs font-bold mb-2">The Secret Origin</h3>
-                        <div className="text-2xl font-black text-gray-800 dark:text-white mb-4 break-words">
-                            Why does this exist?
-                        </div>
-                        <div className="text-sm text-gray-600 dark:text-gray-300 mb-8 leading-relaxed text-left space-y-4 max-h-60 overflow-y-auto pr-2">
-                            <p>
-                                Originally developed by the Samuel Kripto technical team to solve a very real operational crisis: choosing the next weekly meeting host without triggering mass avoidance behavior. Manual selection had become an undeniable productivity sink, often followed by five minutes of awkward silence, sudden bursts of “urgent” typing, and at least one person staring intently at logs that absolutely did not require immediate attention.
-                            </p>
-                            <p>
-                                Over time, the process evolved into something resembling a workplace survival game. Cameras mysteriously turned off, microphones instantly muted, and several team members perfected the art of blending into the background like highly trained corporate chameleons. In extreme cases, strategic “BRB” bathroom breaks were deployed the moment the question “Who wants to host next week?” appeared.
-                            </p>
-                            <p>
-                                To restore order (and dignity), this wheel was built. A tool of fairness, efficiency, and cold, impartial randomness—because if fate chooses the host, at least no one can be blamed.
-                            </p>
-                        </div>
-                    </>
+                  <>
+                    {/* About Easter Egg */}
+                    <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500"></div>
+                    <div className="mx-auto w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mb-4 text-blue-600 dark:text-blue-400">
+                      <ScrollIcon size={32} />
+                    </div>
+                    <h3 className="text-gray-500 dark:text-gray-400 uppercase tracking-widest text-xs font-bold mb-2">The Secret Origin</h3>
+                    <div className="text-2xl font-black text-gray-800 dark:text-white mb-4 break-words">
+                      Why does this exist?
+                    </div>
+                    <div className="text-sm text-gray-600 dark:text-gray-300 mb-8 leading-relaxed text-left space-y-4 max-h-60 overflow-y-auto pr-2">
+                      <p>
+                        Originally developed by the Samuel Kripto technical team to solve a very real operational crisis: choosing the next weekly meeting host without triggering mass avoidance behavior. Manual selection had become an undeniable productivity sink, often followed by five minutes of awkward silence, sudden bursts of “urgent” typing, and at least one person staring intently at logs that absolutely did not require immediate attention.
+                      </p>
+                      <p>
+                        Over time, the process evolved into something resembling a workplace survival game. Cameras mysteriously turned off, microphones instantly muted, and several team members perfected the art of blending into the background like highly trained corporate chameleons. In extreme cases, strategic “BRB” bathroom breaks were deployed the moment the question “Who wants to host next week?” appeared.
+                      </p>
+                      <p>
+                        To restore order (and dignity), this wheel was built. A tool of fairness, efficiency, and cold, impartial randomness—because if fate chooses the host, at least no one can be blamed.
+                      </p>
+                    </div>
+                  </>
                 ) : (
-                    <>
-                        {/* Standard Winner */}
-                        <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
-                        <div className="mx-auto w-16 h-16 bg-yellow-100 dark:bg-yellow-900/30 rounded-full flex items-center justify-center mb-4 text-yellow-600 dark:text-yellow-500">
-                            <TrophyIcon size={32} />
-                        </div>
-                        <h3 className="text-gray-500 dark:text-gray-400 uppercase tracking-widest text-sm font-bold mb-2">We have a winner!</h3>
-                        <div className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 mb-8 break-words">
-                            {winner}
-                        </div>
-                    </>
+                  <>
+                    {/* Standard Winner */}
+                    <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
+                    <div className="mx-auto w-16 h-16 bg-yellow-100 dark:bg-yellow-900/30 rounded-full flex items-center justify-center mb-4 text-yellow-600 dark:text-yellow-500">
+                      <TrophyIcon size={32} />
+                    </div>
+                    <h3 className="text-gray-500 dark:text-gray-400 uppercase tracking-widest text-sm font-bold mb-2">We have a winner!</h3>
+                    <div className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 mb-8 break-words">
+                      {winner}
+                    </div>
+                  </>
                 )}
 
                 <div className="grid grid-cols-1 gap-3">
@@ -2541,97 +2594,97 @@
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 backdrop-blur-sm animate-in fade-in duration-200">
               <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 max-w-md w-full border dark:border-gray-700 transform scale-100 animate-in zoom-in-95 duration-200">
                 <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-bold text-gray-800 dark:text-white flex items-center">
-                        <PaletteIcon className="mr-2 text-indigo-500" size={20}/>
-                        Customize Wheel Colors
-                    </h3>
-                    <button onClick={() => setShowColorModal(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"><Icon size={20}><path d="M18 6 6 18"/><path d="m6 6 12 12"/></Icon></button>
+                  <h3 className="text-lg font-bold text-gray-800 dark:text-white flex items-center">
+                    <PaletteIcon className="mr-2 text-indigo-500" size={20} />
+                    Customize Wheel Colors
+                  </h3>
+                  <button onClick={() => setShowColorModal(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"><Icon size={20}><path d="M18 6 6 18" /><path d="m6 6 12 12" /></Icon></button>
                 </div>
 
                 <div className="space-y-4 mb-4 max-h-[60vh] overflow-y-auto pr-2">
-                    {/* Option: Default */}
-                    <label className={`flex items-start p-3 rounded-lg border cursor-pointer transition ${tempColorType === 'default' ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20' : 'border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50'}`}>
-                        <input
-                            type="radio"
-                            name="colorType"
-                            checked={tempColorType === 'default'}
-                            onChange={() => setTempColorType('default')}
-                            className="mt-1 mr-3"
-                        />
-                        <div>
-                            <span className="block font-medium text-gray-800 dark:text-white">Default Rainbow</span>
-                            <span className="text-xs text-gray-500 dark:text-gray-400">The standard colorful palette.</span>
-                            <div className="flex mt-2 space-x-1">
-                                {defaultColors.map(c => (
-                                    <div key={c} className="w-4 h-4 rounded-full" style={{backgroundColor: c}}></div>
-                                ))}
-                            </div>
-                        </div>
-                    </label>
+                  {/* Option: Default */}
+                  <label className={`flex items-start p-3 rounded-lg border cursor-pointer transition ${tempColorType === 'default' ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20' : 'border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50'}`}>
+                    <input
+                      type="radio"
+                      name="colorType"
+                      checked={tempColorType === 'default'}
+                      onChange={() => setTempColorType('default')}
+                      className="mt-1 mr-3"
+                    />
+                    <div>
+                      <span className="block font-medium text-gray-800 dark:text-white">Default Rainbow</span>
+                      <span className="text-xs text-gray-500 dark:text-gray-400">The standard colorful palette.</span>
+                      <div className="flex mt-2 space-x-1">
+                        {defaultColors.map(c => (
+                          <div key={c} className="w-4 h-4 rounded-full" style={{ backgroundColor: c }}></div>
+                        ))}
+                      </div>
+                    </div>
+                  </label>
 
-                    {/* Option: Beach */}
-                    <label className={`flex items-start p-3 rounded-lg border cursor-pointer transition ${tempColorType === 'beach' ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20' : 'border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50'}`}>
-                        <input
-                            type="radio"
-                            name="colorType"
-                            checked={tempColorType === 'beach'}
-                            onChange={() => setTempColorType('beach')}
-                            className="mt-1 mr-3"
-                        />
-                        <div>
-                            <span className="block font-medium text-gray-800 dark:text-white">Soft Summer Beach Ball</span>
-                            <span className="text-xs text-gray-500 dark:text-gray-400">A relaxed, pastel summer vibe.</span>
-                            <div className="flex mt-2 space-x-1">
-                                {beachColors.map(c => (
-                                    <div key={c} className="w-4 h-4 rounded-full" style={{backgroundColor: c}}></div>
-                                ))}
-                            </div>
-                        </div>
-                    </label>
+                  {/* Option: Beach */}
+                  <label className={`flex items-start p-3 rounded-lg border cursor-pointer transition ${tempColorType === 'beach' ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20' : 'border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50'}`}>
+                    <input
+                      type="radio"
+                      name="colorType"
+                      checked={tempColorType === 'beach'}
+                      onChange={() => setTempColorType('beach')}
+                      className="mt-1 mr-3"
+                    />
+                    <div>
+                      <span className="block font-medium text-gray-800 dark:text-white">Soft Summer Beach Ball</span>
+                      <span className="text-xs text-gray-500 dark:text-gray-400">A relaxed, pastel summer vibe.</span>
+                      <div className="flex mt-2 space-x-1">
+                        {beachColors.map(c => (
+                          <div key={c} className="w-4 h-4 rounded-full" style={{ backgroundColor: c }}></div>
+                        ))}
+                      </div>
+                    </div>
+                  </label>
 
-                    {/* Option: Custom */}
-                    <label className={`flex items-start p-3 rounded-lg border cursor-pointer transition ${tempColorType === 'custom' ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20' : 'border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50'}`}>
-                        <input
-                            type="radio"
-                            name="colorType"
-                            checked={tempColorType === 'custom'}
-                            onChange={() => setTempColorType('custom')}
-                            className="mt-1 mr-3"
-                        />
-                        <div className="flex-grow">
-                            <span className="block font-medium text-gray-800 dark:text-white">Custom Hex List</span>
-                            <span className="text-xs text-gray-500 dark:text-gray-400">Enter hex codes (e.g. #F00, #00F)</span>
+                  {/* Option: Custom */}
+                  <label className={`flex items-start p-3 rounded-lg border cursor-pointer transition ${tempColorType === 'custom' ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20' : 'border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50'}`}>
+                    <input
+                      type="radio"
+                      name="colorType"
+                      checked={tempColorType === 'custom'}
+                      onChange={() => setTempColorType('custom')}
+                      className="mt-1 mr-3"
+                    />
+                    <div className="flex-grow">
+                      <span className="block font-medium text-gray-800 dark:text-white">Custom Hex List</span>
+                      <span className="text-xs text-gray-500 dark:text-gray-400">Enter hex codes (e.g. #F00, #00F)</span>
 
-                            {tempColorType === 'custom' && (
-                                <>
-                                    <div className="flex mt-2 space-x-1 min-h-[1rem] flex-wrap gap-y-1">
-                                        {customColorPreview.map((c, i) => (
-                                            <div key={i} className="w-4 h-4 rounded-full border border-gray-200 dark:border-gray-600 shadow-sm" style={{backgroundColor: c}}></div>
-                                        ))}
-                                    </div>
-                                    <textarea
-                                        value={tempCustomColors}
-                                        onChange={(e) => setTempCustomColors(e.target.value)}
-                                        placeholder="#FF0000, #00FF00, #0000FF"
-                                        rows={3}
-                                        className={`w-full mt-2 p-2 text-sm border rounded focus:ring-2 font-mono transition-colors ${isCustomColorInvalid ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 dark:border-gray-600 focus:ring-indigo-500'} dark:bg-gray-700 dark:text-white`}
-                                        onClick={(e) => e.stopPropagation()}
-                                    />
-                                    {isCustomColorInvalid && <p className="text-xs text-red-500 mt-1">Please enter valid hex codes (e.g. #FF5733).</p>}
-                                </>
-                            )}
-                        </div>
-                    </label>
+                      {tempColorType === 'custom' && (
+                        <>
+                          <div className="flex mt-2 space-x-1 min-h-[1rem] flex-wrap gap-y-1">
+                            {customColorPreview.map((c, i) => (
+                              <div key={i} className="w-4 h-4 rounded-full border border-gray-200 dark:border-gray-600 shadow-sm" style={{ backgroundColor: c }}></div>
+                            ))}
+                          </div>
+                          <textarea
+                            value={tempCustomColors}
+                            onChange={(e) => setTempCustomColors(e.target.value)}
+                            placeholder="#FF0000, #00FF00, #0000FF"
+                            rows={3}
+                            className={`w-full mt-2 p-2 text-sm border rounded focus:ring-2 font-mono transition-colors ${isCustomColorInvalid ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 dark:border-gray-600 focus:ring-indigo-500'} dark:bg-gray-700 dark:text-white`}
+                            onClick={(e) => e.stopPropagation()}
+                          />
+                          {isCustomColorInvalid && <p className="text-xs text-red-500 mt-1">Please enter valid hex codes (e.g. #FF5733).</p>}
+                        </>
+                      )}
+                    </div>
+                  </label>
                 </div>
 
                 <div className="flex justify-end space-x-2 pt-2 border-t border-gray-100 dark:border-gray-700">
-                    <button onClick={() => setShowColorModal(false)} className="px-4 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Cancel</button>
-                    <button
-                        onClick={saveColors}
-                        className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition"
-                    >
-                        Save Colors
-                    </button>
+                  <button onClick={() => setShowColorModal(false)} className="px-4 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Cancel</button>
+                  <button
+                    onClick={saveColors}
+                    className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition"
+                  >
+                    Save Colors
+                  </button>
                 </div>
               </div>
             </div>
@@ -2642,45 +2695,45 @@
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 backdrop-blur-sm animate-in fade-in duration-200">
               <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 max-w-md w-full border dark:border-gray-700 transform scale-100 animate-in zoom-in-95 duration-200">
                 <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-bold text-gray-800 dark:text-white flex items-center">
-                        <SparklesIcon className="mr-2 text-indigo-500" size={20}/>
-                        AI List Generator
-                    </h3>
-                    <button onClick={() => setShowGenModal(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"><Icon size={20}><path d="M18 6 6 18"/><path d="m6 6 12 12"/></Icon></button>
+                  <h3 className="text-lg font-bold text-gray-800 dark:text-white flex items-center">
+                    <SparklesIcon className="mr-2 text-indigo-500" size={20} />
+                    AI List Generator
+                  </h3>
+                  <button onClick={() => setShowGenModal(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"><Icon size={20}><path d="M18 6 6 18" /><path d="m6 6 12 12" /></Icon></button>
                 </div>
                 <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
-                    Describe what you want (e.g., "Lunch ideas for Indonesians who wants to lose weight but have given up on diet and exercise", "Excuses for being late", "Very spicy truth or dare questions").
+                  Describe what you want (e.g., "Lunch ideas for Indonesians who wants to lose weight but have given up on diet and exercise", "Excuses for being late", "Very spicy truth or dare questions").
                 </p>
                 <textarea
-                    value={genPrompt}
-                    onChange={(e) => setGenPrompt(e.target.value)}
-                    placeholder="Enter a topic..."
-                    rows={2}
-                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg mb-4 focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white resize-none"
-                    onKeyDown={(e) => {
-                        if (e.key === 'Enter' && !e.shiftKey) {
-                            e.preventDefault();
-                            generateList();
-                        }
-                    }}
-                    autoFocus
+                  value={genPrompt}
+                  onChange={(e) => setGenPrompt(e.target.value)}
+                  placeholder="Enter a topic..."
+                  rows={2}
+                  className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg mb-4 focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white resize-none"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault();
+                      generateList();
+                    }
+                  }}
+                  autoFocus
                 />
                 <div className="flex justify-end space-x-2">
-                    <button onClick={() => setShowGenModal(false)} className="px-4 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Cancel</button>
-                    <button
-                        onClick={generateList}
-                        disabled={isGenerating || !genPrompt.trim()}
-                        className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        {isGenerating ? (
-                            <>
-                                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                                Generating...
-                            </>
-                        ) : (
-                            <>Generate <SparklesIcon size={16} className="ml-2"/></>
-                        )}
-                    </button>
+                  <button onClick={() => setShowGenModal(false)} className="px-4 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Cancel</button>
+                  <button
+                    onClick={generateList}
+                    disabled={isGenerating || !genPrompt.trim()}
+                    className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isGenerating ? (
+                      <>
+                        <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                        Generating...
+                      </>
+                    ) : (
+                      <>Generate <SparklesIcon size={16} className="ml-2" /></>
+                    )}
+                  </button>
                 </div>
               </div>
             </div>
@@ -2691,26 +2744,26 @@
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 backdrop-blur-sm animate-in fade-in duration-200">
               <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 max-w-md w-full border dark:border-gray-700 transform scale-100 animate-in zoom-in-95 duration-200">
                 <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-bold text-gray-800 dark:text-white flex items-center">
-                        <HelpCircleIcon className="mr-2 text-indigo-500" size={20}/>
-                        Weighted Items Guide
-                    </h3>
-                    <button onClick={() => setShowHelpModal(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"><Icon size={20}><path d="M18 6 6 18"/><path d="m6 6 12 12"/></Icon></button>
+                  <h3 className="text-lg font-bold text-gray-800 dark:text-white flex items-center">
+                    <HelpCircleIcon className="mr-2 text-indigo-500" size={20} />
+                    Weighted Items Guide
+                  </h3>
+                  <button onClick={() => setShowHelpModal(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"><Icon size={20}><path d="M18 6 6 18" /><path d="m6 6 12 12" /></Icon></button>
                 </div>
                 <div className="text-sm text-gray-600 dark:text-gray-300 space-y-3">
-                    <p>You can customize the probability of each item winning by assigning a <strong>weight</strong>.</p>
-                    <div className="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg border border-gray-200 dark:border-gray-600 font-mono text-xs">
-                        <p><span className="text-indigo-600 dark:text-indigo-400">Pizza:10</span> <span className="text-gray-400">// Very likely (10x chance)</span></p>
-                        <p><span className="text-indigo-600 dark:text-indigo-400">Burger</span> <span className="text-gray-400">// Default weight is 1</span></p>
-                    </div>
-                    <ul className="list-disc list-inside space-y-1">
-                        <li>Format: <code>Item Name:Weight</code></li>
-                        <li>Higher number = Larger slice on the wheel.</li>
-                        <li>If no number is specified, it defaults to <strong>1</strong>.</li>
-                    </ul>
+                  <p>You can customize the probability of each item winning by assigning a <strong>weight</strong>.</p>
+                  <div className="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg border border-gray-200 dark:border-gray-600 font-mono text-xs">
+                    <p><span className="text-indigo-600 dark:text-indigo-400">Pizza:10</span> <span className="text-gray-400">// Very likely (10x chance)</span></p>
+                    <p><span className="text-indigo-600 dark:text-indigo-400">Burger</span> <span className="text-gray-400">// Default weight is 1</span></p>
+                  </div>
+                  <ul className="list-disc list-inside space-y-1">
+                    <li>Format: <code>Item Name:Weight</code></li>
+                    <li>Higher number = Larger slice on the wheel.</li>
+                    <li>If no number is specified, it defaults to <strong>1</strong>.</li>
+                  </ul>
                 </div>
                 <div className="mt-6 flex justify-end">
-                    <button onClick={() => setShowHelpModal(false)} className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition">Got it</button>
+                  <button onClick={() => setShowHelpModal(false)} className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition">Got it</button>
                 </div>
               </div>
             </div>
@@ -2721,37 +2774,37 @@
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 backdrop-blur-sm animate-in fade-in duration-200">
               <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 max-w-md w-full border dark:border-gray-700 transform scale-100 animate-in zoom-in-95 duration-200">
                 <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-bold text-gray-800 dark:text-white flex items-center">
-                        <KeyIcon className="mr-2 text-indigo-500" size={20}/>
-                        Gemini API Key
-                    </h3>
-                    <button onClick={() => setShowApiKeyModal(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"><Icon size={20}><path d="M18 6 6 18"/><path d="m6 6 12 12"/></Icon></button>
+                  <h3 className="text-lg font-bold text-gray-800 dark:text-white flex items-center">
+                    <KeyIcon className="mr-2 text-indigo-500" size={20} />
+                    Gemini API Key
+                  </h3>
+                  <button onClick={() => setShowApiKeyModal(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"><Icon size={20}><path d="M18 6 6 18" /><path d="m6 6 12 12" /></Icon></button>
                 </div>
                 <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
-                    To use AI features like the <strong>List Generator</strong> and <strong>Voice Announcer</strong>, you need a valid Google Gemini API key.
+                  To use AI features like the <strong>List Generator</strong> and <strong>Voice Announcer</strong>, you need a valid Google Gemini API key.
                 </p>
                 <div className="mb-4">
-                    <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">API Key</label>
-                    <input
-                        type="password"
-                        value={tempApiKey}
-                        onChange={(e) => setTempApiKey(e.target.value)}
-                        placeholder="Enter your API key here..."
-                        className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white"
-                        autoFocus
-                    />
-                    <p className="text-xs text-gray-400 mt-1">
-                        Your key is stored locally in your browser and is never shared.
-                    </p>
+                  <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">API Key</label>
+                  <input
+                    type="password"
+                    value={tempApiKey}
+                    onChange={(e) => setTempApiKey(e.target.value)}
+                    placeholder="Enter your API key here..."
+                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white"
+                    autoFocus
+                  />
+                  <p className="text-xs text-gray-400 mt-1">
+                    Your key is stored locally in your browser and is never shared.
+                  </p>
                 </div>
                 <div className="flex justify-end space-x-2">
-                    <button onClick={() => setShowApiKeyModal(false)} className="px-4 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Cancel</button>
-                    <button
-                        onClick={saveApiKey}
-                        className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition"
-                    >
-                        Save Key
-                    </button>
+                  <button onClick={() => setShowApiKeyModal(false)} className="px-4 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Cancel</button>
+                  <button
+                    onClick={saveApiKey}
+                    className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition"
+                  >
+                    Save Key
+                  </button>
                 </div>
               </div>
             </div>
@@ -2759,58 +2812,58 @@
 
           {/* OUT OF ORDER OVERLAY */}
           {isOutOfOrder && (
-              <div className="fixed inset-0 z-[9999] bg-black/90 flex items-center justify-center overflow-hidden cursor-not-allowed backdrop-blur-sm">
+            <div className="fixed inset-0 z-[9999] bg-black/90 flex items-center justify-center overflow-hidden cursor-not-allowed backdrop-blur-sm">
 
-                  {/* Sparks Generator */}
-                  <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                      {Array.from({ length: 20 }).map((_, i) => (
-                          <div
-                              key={i}
-                              className="absolute w-1 h-8 bg-yellow-200 rounded-full"
-                              style={{
-                                  left: `${Math.random() * 100}%`,
-                                  top: `${Math.random() * 100}%`,
-                                  opacity: 0,
-                                  animation: `sparkFlash ${0.2 + Math.random() * 0.5}s infinite`,
-                                  animationDelay: `${Math.random() * 2}s`,
-                                  transformOrigin: 'center',
-                                  boxShadow: '0 0 10px #fff, 0 0 20px #fbbf24'
-                              }}
-                          ></div>
-                      ))}
-                  </div>
-
-                  <div className="relative border-8 border-gray-800 bg-gray-900 p-10 rounded-xl shadow-2xl transform -rotate-2 max-w-lg text-center">
-                      {/* Metal bolts */}
-                      <div className="absolute top-2 left-2 w-4 h-4 bg-gray-400 rounded-full shadow-inner border border-gray-600"></div>
-                      <div className="absolute top-2 right-2 w-4 h-4 bg-gray-400 rounded-full shadow-inner border border-gray-600"></div>
-                      <div className="absolute bottom-2 left-2 w-4 h-4 bg-gray-400 rounded-full shadow-inner border border-gray-600"></div>
-                      <div className="absolute bottom-2 right-2 w-4 h-4 bg-gray-400 rounded-full shadow-inner border border-gray-600"></div>
-
-                      <h1
-                        className="text-6xl md:text-7xl font-black text-transparent bg-clip-text uppercase tracking-tighter mb-4"
-                        style={{
-                            color: 'rgba(255, 0, 0, 0.1)',
-                            WebkitTextStroke: '2px #ff0000',
-                            animation: 'neonFlicker 4s infinite alternate',
-                            fontFamily: 'Courier New, monospace'
-                        }}
-                      >
-                        OUT OF ORDER
-                      </h1>
-
-                      <div className="text-red-500 font-mono text-lg tracking-widest opacity-80 animate-pulse">
-                          SYSTEM FAILURE // OVERHEAT
-                      </div>
-
-                      <div className="mt-8 p-4 bg-black/50 border border-red-900/50 rounded text-red-400/60 text-xs font-mono">
-                          ERROR_CODE: 0xDEAD_WHEEL <br/>
-                          CHECKSUM: JEΔFREYSA?ELi <br/>
-                          Please refresh to reboot system.
-                      </div>
-
-                  </div>
+              {/* Sparks Generator */}
+              <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                {Array.from({ length: 20 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className="absolute w-1 h-8 bg-yellow-200 rounded-full"
+                    style={{
+                      left: `${Math.random() * 100}%`,
+                      top: `${Math.random() * 100}%`,
+                      opacity: 0,
+                      animation: `sparkFlash ${0.2 + Math.random() * 0.5}s infinite`,
+                      animationDelay: `${Math.random() * 2}s`,
+                      transformOrigin: 'center',
+                      boxShadow: '0 0 10px #fff, 0 0 20px #fbbf24'
+                    }}
+                  ></div>
+                ))}
               </div>
+
+              <div className="relative border-8 border-gray-800 bg-gray-900 p-10 rounded-xl shadow-2xl transform -rotate-2 max-w-lg text-center">
+                {/* Metal bolts */}
+                <div className="absolute top-2 left-2 w-4 h-4 bg-gray-400 rounded-full shadow-inner border border-gray-600"></div>
+                <div className="absolute top-2 right-2 w-4 h-4 bg-gray-400 rounded-full shadow-inner border border-gray-600"></div>
+                <div className="absolute bottom-2 left-2 w-4 h-4 bg-gray-400 rounded-full shadow-inner border border-gray-600"></div>
+                <div className="absolute bottom-2 right-2 w-4 h-4 bg-gray-400 rounded-full shadow-inner border border-gray-600"></div>
+
+                <h1
+                  className="text-6xl md:text-7xl font-black text-transparent bg-clip-text uppercase tracking-tighter mb-4"
+                  style={{
+                    color: 'rgba(255, 0, 0, 0.1)',
+                    WebkitTextStroke: '2px #ff0000',
+                    animation: 'neonFlicker 4s infinite alternate',
+                    fontFamily: 'Courier New, monospace'
+                  }}
+                >
+                  OUT OF ORDER
+                </h1>
+
+                <div className="text-red-500 font-mono text-lg tracking-widest opacity-80 animate-pulse">
+                  SYSTEM FAILURE // OVERHEAT
+                </div>
+
+                <div className="mt-8 p-4 bg-black/50 border border-red-900/50 rounded text-red-400/60 text-xs font-mono">
+                  ERROR_CODE: 0xDEAD_WHEEL <br />
+                  CHECKSUM: JEΔFREYSA?ELi <br />
+                  Please refresh to reboot system.
+                </div>
+
+              </div>
+            </div>
           )}
 
         </div>
@@ -2819,6 +2872,20 @@
 
     const root = ReactDOM.createRoot(document.getElementById('root'));
     root.render(<App />);
+
+    // Service Worker Registration
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then(registration => {
+            console.log('SW registered: ', registration);
+          })
+          .catch(registrationError => {
+            console.log('SW registration failed: ', registrationError);
+          });
+      });
+    }
   </script>
 </body>
+
 </html>
