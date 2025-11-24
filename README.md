@@ -117,8 +117,8 @@ Simply clone this repository and open the HTML file in any modern web browser.
 No installation or build process required.
 
 ```bash
-git clone https://github.com/samuelkripto/spin-wheel.git
-cd spin-wheel
+git clone https://github.com/samuelkripto/spinwheel.git
+cd spinwheel
 # Open index.html in your browser
 ```
 
