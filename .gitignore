@@ -1,0 +1,185 @@
+# ==============================================================================
+# `.gitignore` file applies recursively to subfolders.
+# a later match takes precedence.
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# Packages
+# ------------------------------------------------------------------------------
+
+*.ear
+*.jar
+*.nar
+*.rar
+*.tar.gz
+*.war
+*.zip
+
+# ------------------------------------------------------------------------------
+# CMake
+# ------------------------------------------------------------------------------
+
+cmake-build-*/
+
+# ------------------------------------------------------------------------------
+# Gradle
+# ------------------------------------------------------------------------------
+
+.gradle/
+build/
+!*.gradle.kts
+!**/gradle/wrapper/gradle-wrapper.jar
+!gradlew
+!gradlew.bat
+
+# ------------------------------------------------------------------------------
+# Java
+# ------------------------------------------------------------------------------
+
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# BlueJ files
+*.ctxt
+
+# Compiled class file
+*.class
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+replay_pid*
+
+# ------------------------------------------------------------------------------
+# Eclipse
+# ------------------------------------------------------------------------------
+
+bin/
+tmp/
+.settings/
+.metadata
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.loadpath
+
+# STS (Spring Tool Suite)
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+# Annotation Processing
+.apt_generated/
+.apt_generated_test/
+
+# Code Recommenders
+.recommenders/
+
+# Scala IDE specific (Scala & Java development for Eclipse)
+.cache-main
+.scala_dependencies
+.worksheet
+
+# ------------------------------------------------------------------------------
+# IntelliJ IDEA
+# ------------------------------------------------------------------------------
+
+!**/src/main/**/out/
+!**/src/test/**/out/
+.idea/
+out/
+*.iml
+*.ipr
+
+# File-based project format
+*.iws
+
+# plugin: Crashlytics (for Android Studio and IntelliJ)
+com_crashlytics_export_strings.xml
+crashlytics.properties
+crashlytics-build.properties
+fabric.properties
+
+# plugin: JIRA
+atlassian-ide-plugin.xml
+
+# plugin: mpeltonen/sbt-idea
+.idea_modules/
+
+# ------------------------------------------------------------------------------
+# NetBeans
+# ------------------------------------------------------------------------------
+
+/.nb-gradle/
+/dist/
+/nbbuild/
+/nbdist/
+/nbproject/private/
+
+# ------------------------------------------------------------------------------
+# Sublime Text
+# ------------------------------------------------------------------------------
+
+# Cache files for Sublime Text
+*.tmlanguage.cache
+*.tmPreferences.cache
+*.stTheme.cache
+
+# Package control specific files
+Package Control.cache/
+Package Control.ca-certs/
+Package Control.last-run
+Package Control.ca-list
+Package Control.ca-bundle
+Package Control.system-ca-bundle
+Package Control.merged-ca-bundle
+Package Control.user-ca-bundle
+oscrypto-ca-bundle.crt
+bh_unicode_properties.cache
+
+# Sublime-github package stores a github token in this file
+# https://packagecontrol.io/packages/sublime-github
+GitHub.sublime-settings
+
+# Workspace files are user-specific
+*.sublime-workspace
+
+# ------------------------------------------------------------------------------
+# Visual Studio Code
+# ------------------------------------------------------------------------------
+
+.vscode/**
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+
+# Built Visual Studio Code Extensions
+*.vsix
+
+# Local History
+.history/
+
+# ------------------------------------------------------------------------------
+# Other
+# ------------------------------------------------------------------------------
+
+HELP.md
+*.log
+
+# macOS
+.DS_Store
+
+# Docker volume data
+/.data/
