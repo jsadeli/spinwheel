@@ -1610,14 +1610,14 @@
               // We need to access the LATEST itemsToString and setInputText from the closure or refs if they are stable.
               // Actually, we can just use the helper we defined outside.
               // But we need to call setInputText. We have access to it in the closure.
-              // We also need to update itemsRef immediately for the next frame if possible, 
+              // We also need to update itemsRef immediately for the next frame if possible,
               // but React state update is async.
 
               // Let's use a helper function exposed via ref or just call the setter.
               // We need to make sure we don't get into an infinite loop of updates.
               // The check `if (removingItemRef.current)` protects us.
 
-              // We need to find the item in the ORIGINAL list to remove it properly? 
+              // We need to find the item in the ORIGINAL list to remove it properly?
               // No, currentItems is good.
 
               // Wait, we need to update the TEXT AREA input, which drives the items.
@@ -2509,7 +2509,7 @@
             </div>
 
             {/* Right Panel: Controls */}
-            <div className="w-full md:w-96 bg-white dark:bg-gray-800 border-l border-gray-200 dark:border-gray-700 flex flex-col h-[50vh] md:h-full z-10 shadow-xl md:shadow-none transition-colors duration-300">
+            <div className="w-full md:w-[450px] bg-white dark:bg-gray-800 border-l border-gray-200 dark:border-gray-700 flex flex-col h-[50vh] md:h-full z-10 shadow-xl md:shadow-none transition-colors duration-300">
 
               {/* Tabs */}
               <div className="flex border-b border-gray-200 dark:border-gray-700 relative">
@@ -2534,7 +2534,7 @@
                   className={`flex-1 p-4 font-bold text-sm flex items-center justify-center transition-colors relative ${activeTab === 'progress' ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800'}`}
                 >
                   <TrendingUpIcon size={16} className="mr-2" />
-                  Progress
+                  Progress <span className="ml-1 text-xs bg-gray-200 dark:bg-gray-700 px-1.5 py-0.5 rounded-full">{levelInfo.level}</span>
                   {activeTab === 'progress' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-indigo-600 dark:bg-indigo-400"></div>}
                 </button>
               </div>
@@ -2845,7 +2845,7 @@
                         };
                         setWinner(null);
                         // Ensure loop continues if it was paused (though idle spin usually handles it)
-                        // If idle spin is disabled or something, we might need to kick it. 
+                        // If idle spin is disabled or something, we might need to kick it.
                         // But our idle spin logic now checks removingItemRef, so it should auto-start/continue.
                       } else {
                         // Fallback if not found
