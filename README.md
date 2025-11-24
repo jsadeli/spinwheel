@@ -122,6 +122,12 @@ cd spin-wheel
 # Open index.html in your browser
 ```
 
+Serve locally using python3:
+
+```bash
+python3 -m http.server
+```
+
 ## License
 
 This project is open source and available for personal and educational use.
