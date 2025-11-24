@@ -759,6 +759,9 @@
         customColors: '#FF6B6B, #4ECDC4, #45B7D1'
       }));
 
+      // New: Color Assignment Mode (Dynamic vs Deterministic)
+      const [colorAssignment, setColorAssignment] = useState(() => loadState('spinWheel_colorAssignment', 'dynamic'));
+
       const [activeColors, setActiveColors] = useState(defaultColors);
 
       const [isSpinning, setIsSpinning] = useState(false);
@@ -812,6 +815,7 @@
       const pointerRef = useRef(null); // Ref for the arrow pointer
       const listDropdownRef = useRef(null); // Ref for list dropdown
       const isOutOfOrderRef = useRef(isOutOfOrder); // Ref for out of order state
+      const colorAssignmentRef = useRef(colorAssignment); // Ref for color assignment mode
 
       // Audio Refs
       const audioCtxRef = useRef(null);
@@ -993,6 +997,12 @@
       useEffect(() => {
         hideLabelsRef.current = hideLabels;
       }, [hideLabels]);
+
+      // Sync color assignment ref & persist
+      useEffect(() => {
+        colorAssignmentRef.current = colorAssignment;
+        localStorage.setItem('spinWheel_colorAssignment', JSON.stringify(colorAssignment));
+      }, [colorAssignment]);
 
       // Theme Logic
       useEffect(() => {
@@ -1478,6 +1488,16 @@
 
         const NUM_PINS = 30; // Fixed number of pins for the game show feel
 
+        // Helper for deterministic colors
+        const getItemColor = (text, colors) => {
+          let hash = 0;
+          for (let i = 0; i < text.length; i++) {
+            hash = text.charCodeAt(i) + ((hash << 5) - hash);
+          }
+          const index = Math.abs(hash) % colors.length;
+          return colors[index];
+        };
+
         const render = () => {
           const width = canvas.width;
           const height = canvas.height;
@@ -1608,7 +1628,14 @@
               ctx.arc(centerX, centerY, radius, startAngle, endAngle);
               ctx.closePath();
 
-              ctx.fillStyle = currentColors[index % currentColors.length]; // Dynamic colors
+              ctx.closePath();
+
+              if (colorAssignmentRef.current === 'deterministic') {
+                ctx.fillStyle = getItemColor(item.text, currentColors); // Deterministic colors
+              } else {
+                ctx.fillStyle = currentColors[index % currentColors.length]; // Dynamic colors
+              }
+
               ctx.fill();
               ctx.stroke();
 
@@ -2191,7 +2218,7 @@
                 </button>
 
                 {showSettingsMenu && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 z-50 overflow-hidden animate-[fade-in_0.2s_ease-out]">
+                  <div className="absolute right-0 mt-2 w-64 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 z-50 overflow-hidden animate-[fade-in_0.2s_ease-out]">
                     {deferredPrompt && (
                       <div className="py-1 border-b border-gray-100 dark:border-gray-700">
                         <button
@@ -2251,6 +2278,15 @@
                       >
                         <span className="mr-3"><PaletteIcon size={16} /></span>
                         Wheel Colors
+                      </button>
+                      <button
+                        onClick={() => {
+                          setColorAssignment(prev => prev === 'dynamic' ? 'deterministic' : 'dynamic');
+                        }}
+                        className="flex items-center w-full px-4 py-2 text-sm text-left text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      >
+                        <span className="mr-3"><Icon size={16}><circle cx="12" cy="12" r="10" /><path d="M12 8v8" /><path d="M8 12h8" /></Icon></span>
+                        Item Colors: <span className="ml-1 font-semibold">{colorAssignment === 'dynamic' ? 'Dynamic' : 'Fixed'}</span>
                       </button>
                     </div>
 
