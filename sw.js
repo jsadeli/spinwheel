@@ -1,4 +1,4 @@
-const CACHE_NAME = 'spinwheel-v6';
+const CACHE_NAME = 'spinwheel-v7';
 const ASSETS = [
     './',
     './index.html',
@@ -9,6 +9,7 @@ const ASSETS = [
     './scripts/icons.js',
     './scripts/react-dom.production.min.js',
     './scripts/react.production.min.js',
+    './scripts/sounds.js',
     './scripts/tailwindcss.js',
     './scripts/themes.js',
     './scripts/utils.js',
