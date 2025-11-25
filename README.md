@@ -120,7 +120,6 @@ No installation or build process required.
 ```bash
 git clone https://github.com/samuelkripto/spinwheel.git
 cd spinwheel
-# Open index.html in your browser
 ```
 
 Serve locally using python3:
