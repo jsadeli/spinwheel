@@ -2706,71 +2706,37 @@
                 </>
               ) : (
                 <div className="flex-grow p-6 overflow-y-auto">
-                  <div className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl p-6 text-white shadow-lg mb-6 relative overflow-hidden">
-                    <div className="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white opacity-10 rounded-full blur-xl"></div>
-                    <div className="absolute bottom-0 left-0 -mb-4 -ml-4 w-32 h-32 bg-white opacity-10 rounded-full blur-xl"></div>
-
-                    <div className="relative z-10">
-                      <div className="flex justify-between items-start mb-4">
-                        <div>
-                          <p className="text-indigo-100 text-sm font-medium uppercase tracking-wider">Current Level</p>
-                          <h2 className="text-4xl font-black mt-1">{levelInfo.level}</h2>
-                        </div>
-                        <div className="bg-white/20 backdrop-blur-sm p-2 rounded-lg">
-                          <TrophyIcon size={24} className="text-yellow-300" />
-                        </div>
-                      </div>
-
-                      <div className="mb-4">
-                        <p className="text-xl font-bold text-white mb-1">{getLevelTitle(levelInfo.level)}</p>
-                      </div>
-
-                      <div className="relative pt-1">
-                        <div className="flex mb-2 items-center justify-between">
-                          <div className="text-xs font-semibold inline-block text-indigo-100">
-                            {Math.floor(levelInfo.currentLevelXp)} / {levelInfo.requiredLevelXp} XP
-                          </div>
-                          <div className="text-xs font-semibold inline-block text-indigo-100">
-                            {Math.round(levelInfo.progressPercent)}%
-                          </div>
-                        </div>
-                        <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-black/20">
-                          <div style={{ width: `${levelInfo.progressPercent}%` }} className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-yellow-400 transition-all duration-500 ease-out"></div>
-                        </div>
-                      </div>
+                  {/* Top Section: XP Header */}
+                  <div className="bg-indigo-50 dark:bg-indigo-900/20 rounded-xl p-5 mb-4 text-center border border-indigo-100 dark:border-indigo-800">
+                    <div className="flex items-center justify-center mb-2 space-x-2">
+                      <TrophyIcon size={24} className="text-yellow-500 animate-pulse" />
+                      <h3 className="text-2xl font-bold text-indigo-900 dark:text-indigo-100">
+                        {getLevelTitle(levelInfo.level)}
+                      </h3>
                     </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-xl border border-gray-100 dark:border-gray-700">
-                      <div className="flex items-center space-x-3 mb-2">
-                        <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg text-green-600 dark:text-green-400">
-                          <ClockIcon size={20} />
-                        </div>
-                        <span className="text-sm font-bold text-gray-500 dark:text-gray-400">Total Spins</span>
-                      </div>
-                      <p className="text-2xl font-black text-gray-800 dark:text-white">{history.length}</p>
-                    </div>
-
-                    <div className="bg-gray-50 dark:bg-gray-700/50 p-4 rounded-xl border border-gray-100 dark:border-gray-700">
-                      <div className="flex items-center space-x-3 mb-2">
-                        <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg text-blue-600 dark:text-blue-400">
-                          <ZapIcon size={20} />
-                        </div>
-                        <span className="text-sm font-bold text-gray-500 dark:text-gray-400">Total XP</span>
-                      </div>
-                      <p className="text-2xl font-black text-gray-800 dark:text-white">{xp}</p>
-                    </div>
-                  </div>
-
-                  <div className="mt-6 p-4 bg-indigo-50 dark:bg-indigo-900/20 rounded-xl border border-indigo-100 dark:border-indigo-800/50">
-                    <h4 className="font-bold text-indigo-900 dark:text-indigo-300 mb-2 flex items-center">
-                      <SparklesIcon size={16} className="mr-2" /> How to Level Up
-                    </h4>
-                    <p className="text-sm text-indigo-800 dark:text-indigo-200 leading-relaxed">
-                      Earn <strong>1 XP</strong> for every spin you complete. As you level up, it takes more XP to reach the next level.
+                    <p className="text-sm text-indigo-600 dark:text-indigo-300 font-medium mb-3">
+                      Level {levelInfo.level} ({xp} XP)
                     </p>
+
+                    {/* Progress Bar */}
+                    <div className="relative h-4 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden shadow-inner">
+                      <div
+                        className="absolute top-0 left-0 h-full bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-1000 ease-out"
+                        style={{ width: `${levelInfo.progressPercent}%` }}
+                      >
+                        {/* Shine effect */}
+                        <div className="absolute top-0 left-0 w-full h-full bg-white/20"></div>
+                      </div>
+                    </div>
+
+                    <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1.5 px-1">
+                      <span>{Math.floor(levelInfo.currentLevelXp)} XP ({Math.round(levelInfo.progressPercent)}%)</span>
+                      <span>{Math.floor(levelInfo.requiredLevelXp)} XP</span>
+                    </div>
                   </div>
+
+                  {/* Bottom Section: Achievements List */}
+
                 </div>
               )}
             </div>
