@@ -14,7 +14,8 @@ const ASSETS = [
     './scripts/utils.js',
     './scripts/components/Modal.js',
     './scripts/components/OutOfOrderOverlay.js',
-    './scripts/components/Toast.js'
+    './scripts/components/Toast.js',
+    './styles/main.css'
 ];
 
 self.addEventListener('install', (event) => {
