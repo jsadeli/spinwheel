@@ -1,13 +1,14 @@
-const CACHE_NAME = 'spinwheel-v5';
+const CACHE_NAME = 'spinwheel-v6';
 const ASSETS = [
     './',
     './index.html',
     './icon.png',
     './manifest.json',
-    'https://cdn.tailwindcss.com',
-    'https://unpkg.com/react@18/umd/react.production.min.js',
-    'https://unpkg.com/react-dom@18/umd/react-dom.production.min.js',
-    'https://unpkg.com/@babel/standalone/babel.min.js'
+    './scripts/babel.min.js',
+    './scripts/icons.js',
+    './scripts/react-dom.production.min.js',
+    './scripts/react.production.min.js',
+    './scripts/tailwindcss.js'
 ];
 
 self.addEventListener('install', (event) => {
