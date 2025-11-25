@@ -876,6 +876,7 @@
       const listDropdownRef = useRef(null); // Ref for list dropdown
       const isOutOfOrderRef = useRef(isOutOfOrder); // Ref for out of order state
       const colorAssignmentRef = useRef(colorAssignment); // Ref for color assignment mode
+      const idleVelocityRef = useRef(0); // Tracks current idle rotation speed for gradual acceleration
 
       // Audio Refs
       const audioCtxRef = useRef(null);
@@ -1577,7 +1578,15 @@
           // CHANGED: Added !isOutOfOrderRef.current to stop idle spin when broken
           // CHANGED: Stop idle spin if removing an item (static wheel during animation)
           if (!isSpinningRef.current && !isChargingRef.current && !isOutOfOrderRef.current && !removingItemRef.current && currentItems.length > 0 && velocityRef.current === 0 && !winnerRef.current) {
-            rotationRef.current = (rotationRef.current + 0.002) % (2 * Math.PI);
+            const targetIdleSpeed = 0.002;
+            const acceleration = 0.00001; // Gradual acceleration rate
+
+            // Gradually accelerate to target idle speed
+            if (idleVelocityRef.current < targetIdleSpeed) {
+              idleVelocityRef.current = Math.min(idleVelocityRef.current + acceleration, targetIdleSpeed);
+            }
+
+            rotationRef.current = (rotationRef.current + idleVelocityRef.current) % (2 * Math.PI);
             lastTickRef.current = rotationRef.current;
           }
 
@@ -2068,6 +2077,7 @@
 
         setWinner(null);
         lastTickRef.current = rotationRef.current;
+        idleVelocityRef.current = 0; // Reset idle velocity for gradual startup after spin
 
         const baseSpeed = Math.random() * 0.2 + 0.5;
         // CHANGED: Adjusted scaling to allow much slower speeds (5% to 100% instead of 20% to 100%)
