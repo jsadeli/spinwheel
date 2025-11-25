@@ -184,15 +184,19 @@
       const [isOutOfOrder, setIsOutOfOrder] = useState(false); // NEW: Broken state
       const [deferredPrompt, setDeferredPrompt] = useState(null);
 
-      // Toast State
-      const [toast, setToast] = useState(null);
+      // Toast State (Queue System)
+      const [toastQueue, setToastQueue] = useState([]);
 
       const addToast = (message, duration = 5000) => {
-        setToast({ message, duration, id: Date.now() });
+        let title = "Notification";
+        if (message.startsWith("Level Up!")) title = "Level Up!";
+        else if (message.startsWith("Achievement Unlocked")) title = "Achievement Unlocked";
+
+        setToastQueue(prev => [...prev, { message, duration, title, id: Date.now() + Math.random() }]);
       };
 
       const closeToast = () => {
-        setToast(null);
+        setToastQueue(prev => prev.slice(1));
       };
 
       // XP System State
@@ -2397,10 +2401,12 @@
 
           {/* Toast Notification */}
           {
-            toast && (
+            toastQueue.length > 0 && (
               <Toast
-                message={toast.message}
-                duration={toast.duration}
+                key={toastQueue[0].id}
+                message={toastQueue[0].message}
+                duration={toastQueue[0].duration}
+                title={toastQueue[0].title}
                 onClose={closeToast}
               />
             )

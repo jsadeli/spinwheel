@@ -1,5 +1,5 @@
 // Toast Component
-window.Toast = ({ message, onClose, duration = 5000 }) => {
+window.Toast = ({ message, onClose, duration = 5000, title = "Notification" }) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       onClose();
@@ -20,10 +20,10 @@ window.Toast = ({ message, onClose, duration = 5000 }) => {
       {/* Text Content */}
       <div className="flex flex-col flex-grow">
         <span className="text-xs font-bold tracking-wide text-indigo-500 dark:text-indigo-400 uppercase">
-          Level Up!
+          {title}
         </span>
         <span className="text-sm font-bold text-indigo-900 dark:text-indigo-100 leading-tight">
-          {message.replace("Level Up! ", "")}
+          {message.replace("Level Up! ", "").replace("Achievement Unlocked: ", "")}
         </span>
       </div>
 
