@@ -8,7 +8,8 @@ const ASSETS = [
     './scripts/icons.js',
     './scripts/react-dom.production.min.js',
     './scripts/react.production.min.js',
-    './scripts/tailwindcss.js'
+    './scripts/tailwindcss.js',
+    './scripts/themes.js'
 ];
 
 self.addEventListener('install', (event) => {
