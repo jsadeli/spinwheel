@@ -256,6 +256,12 @@
       const chargeGainRef = useRef(null);       // Ref for the charging sound volume
       const chargeFilterRef = useRef(null);     // Ref for the charging sound lowpass filter
 
+      // Achievement Tracking Refs
+      const spinTimestampsRef = useRef([]); // Track spins for "Analysis Paralysis"
+      const themeToggleTimestampsRef = useRef([]); // Track theme toggles for "Light Switch Rave"
+      const consecutiveOverheatsRef = useRef(0); // Track consecutive overheats for "This Is Fine"
+      const usedAIRef = useRef(false); // Track if AI was used for "Ghost in the Machine"
+
       // State to force re-render for relative time updates
       const [, setTick] = useState(0);
 
@@ -466,6 +472,21 @@
         }
 
         isDarkModeRef.current = isDark;
+
+        // Track Theme Toggles for "Light Switch Rave"
+        const now = Date.now();
+        // Filter toggles within last 10 seconds
+        themeToggleTimestampsRef.current = [...themeToggleTimestampsRef.current, now].filter(t => now - t < 10000);
+
+        if (themeToggleTimestampsRef.current.length >= 10) {
+          const newUnlocks = achievementManager.check({
+            rapidThemeToggles: themeToggleTimestampsRef.current.length
+          });
+          if (newUnlocks.length > 0) {
+            newUnlocks.forEach(ach => addToast(`Achievement Unlocked: ${ach.title}`, 5000));
+            setAchievements(achievementManager.getAll());
+          }
+        }
       }, [theme]);
 
       // Click outside to close dropdowns
@@ -529,6 +550,17 @@
 
         setSavedLists(prev => [...prev, newList]);
         setActiveListId(newId);
+
+        // Check "One Small Step" (List Count >= 2) and "Data Hoarder" (List Count >= 10)
+        // We need to wait for state update or pass expected length
+        const expectedLength = savedLists.length + 1;
+        const newUnlocks = achievementManager.check({
+          listCount: expectedLength
+        });
+        if (newUnlocks.length > 0) {
+          newUnlocks.forEach(ach => addToast(`Achievement Unlocked: ${ach.title}`, 5000));
+          setAchievements(achievementManager.getAll());
+        }
       };
 
       const handleDeleteList = () => {
@@ -604,6 +636,18 @@
             setInputText(text.trim());
             setShowGenModal(false);
             setGenPrompt('');
+
+            // Mark AI usage
+            usedAIRef.current = true;
+
+            // Check "Ghost in the Machine" immediately
+            const newUnlocks = achievementManager.check({
+              usedAI: true
+            });
+            if (newUnlocks.length > 0) {
+              newUnlocks.forEach(ach => addToast(`Achievement Unlocked: ${ach.title}`, 5000));
+              setAchievements(achievementManager.getAll());
+            }
           }
         } catch (error) {
           console.error("Generation failed", error);
@@ -1080,7 +1124,17 @@
           return;
         }
 
-        if (items.length === 0) return;
+        if (items.length === 0) {
+          // Check "Into The Void"
+          const newUnlocks = achievementManager.check({
+            triedEmptySpin: true
+          });
+          if (newUnlocks.length > 0) {
+            newUnlocks.forEach(ach => addToast(`Achievement Unlocked: ${ach.title}`, 5000));
+            setAchievements(achievementManager.getAll());
+          }
+          return;
+        }
 
         // Initialize audio context immediately on user interaction
         initAudio();
@@ -1120,6 +1174,16 @@
               overchargeRef.current += 16; // Add ~16ms per frame
               window.spawnSmoke(smokeContainerRef, overchargeRef, () => window.playFireCrackle(audioCtxRef, soundEnabled, isOutOfOrder));
 
+              // Track Overheats for "This Is Fine"
+              // We only want to count this ONCE per "press" when it enters the danger zone.
+              // But this runs every frame.
+              // We can check if overchargeRef.current just crossed a threshold?
+              // Or just increment when we release if it was high enough?
+              // The achievement says "Trigger the 'Overheating' button effect".
+              // Smoke starts at 3000ms.
+              // Let's count it if we release and it was > 3000ms.
+              // See handlePointerUpOrLeave.
+
               // CHECK ACHIEVEMENT: Power Overwhelming
               // If we are shaking (power > 0.8) and charging, we might trigger it.
               // But the condition is "Hold the charge until the button shakes".
@@ -1147,6 +1211,15 @@
                 isChargingRef.current = false;
 
                 setIsOutOfOrder(true); // TRIGGER BROKEN STATE
+
+                // Check "0xDEAD_WHEEL"
+                const newUnlocks = achievementManager.check({
+                  isBroken: true
+                });
+                if (newUnlocks.length > 0) {
+                  newUnlocks.forEach(ach => addToast(`Achievement Unlocked: ${ach.title}`, 5000));
+                  setAchievements(achievementManager.getAll());
+                }
                 return;
               }
             }
@@ -1182,19 +1255,27 @@
           // Check for Power Overwhelming achievement
           // If power was > 0.8 (shaking threshold), we consider it "max power" enough for the achievement
           const wasMaxPower = chargePowerRef.current > 0.8;
+          const wasOverheating = overchargeRef.current > 3000; // Smoke threshold
+
+          if (wasOverheating) {
+            consecutiveOverheatsRef.current += 1;
+          } else {
+            // If we didn't overheat, do we reset? "5 times in a row".
+            // A "normal" charge (no smoke) should probably reset it.
+            consecutiveOverheatsRef.current = 0;
+          }
 
           stopCharging();
 
-          if (wasMaxPower) {
-            const newUnlocks = achievementManager.check({
-              maxPowerCharge: true,
-              spins: totalSpins, // Pass current spins, though this achievement doesn't need it
-              level: levelInfo.level
-            });
-            if (newUnlocks.length > 0) {
-              newUnlocks.forEach(ach => addToast(`Achievement Unlocked: ${ach.title}`, 5000));
-              setAchievements(achievementManager.getAll()); // Refresh UI
-            }
+          const newUnlocks = achievementManager.check({
+            maxPowerCharge: wasMaxPower,
+            consecutiveOverheats: consecutiveOverheatsRef.current,
+            spins: totalSpins,
+            level: levelInfo.level
+          });
+          if (newUnlocks.length > 0) {
+            newUnlocks.forEach(ach => addToast(`Achievement Unlocked: ${ach.title}`, 5000));
+            setAchievements(achievementManager.getAll());
           }
           return;
         }
@@ -1246,6 +1327,13 @@
         setWinner(null);
         lastTickRef.current = rotationRef.current;
         idleVelocityRef.current = 0; // Reset idle velocity for gradual startup after spin
+
+        // Reset consecutive overheats on successful spin
+        consecutiveOverheatsRef.current = 0;
+
+        // Track Spin Timestamp for "Analysis Paralysis"
+        const now = Date.now();
+        spinTimestampsRef.current = [...spinTimestampsRef.current, now].filter(t => now - t < 60000); // Keep last minute
 
         const baseSpeed = Math.random() * 0.2 + 0.5;
         // CHANGED: Adjusted scaling to allow much slower speeds (5% to 100% instead of 20% to 100%)
@@ -1371,12 +1459,39 @@
         // But here `history` state is stale until next render.
         // We can check `winItem` against the PREVIOUS history item.
         const lastResult = history.length > 0 ? history[0].text : null;
-        const consecutiveWins = (lastResult === winItem) ? 2 : 0; // Simplified: just check if matches previous
+        // Check for 3 in a row for "Deja Vu"
+        let consecutiveWins = 0;
+        if (lastResult === winItem) {
+          consecutiveWins = 2;
+          // Check one more back
+          if (history.length > 1 && history[1].text === winItem) {
+            consecutiveWins = 3;
+          }
+        }
+
+        // Calculate weights for "Never Tell Me The Odds" and "The House Always Wins"
+        // const currentItems = itemsRef.current; // Already defined above
+        const winnerObj = currentItems.find(i => i.text === winItem);
+        const winnerWeight = winnerObj ? winnerObj.weight : 1;
+        const maxWeight = Math.max(...currentItems.map(i => i.weight));
+        const maxItemLength = Math.max(...currentItems.map(i => i.text.length));
 
         const newUnlocks = achievementManager.check({
           spins: newTotalSpins,
           level: newLevelInfo.level,
-          consecutiveWins: consecutiveWins
+          consecutiveWins: consecutiveWins,
+          hasSpun: true,
+          itemCount: currentItems.length,
+          spinsInLastMinute: spinTimestampsRef.current.length,
+          winnerWeight: winnerWeight,
+          maxWeight: maxWeight,
+          maxItemLength: maxItemLength,
+          mysteryMode: hideLabels,
+          listCount: savedLists.length,
+          usedAI: usedAIRef.current,
+          soundMuted: !soundEnabled,
+          spinDuration: spinDuration,
+          winnerId: winItem // Pass winner text as ID for checks like @about
         });
 
         if (newUnlocks.length > 0) {
@@ -1693,7 +1808,7 @@
                     onPointerDown={handlePointerDown}
                     onPointerUp={handlePointerUpOrLeave}
                     onPointerLeave={handlePointerUpOrLeave}
-                    disabled={items.length === 0}
+                    // disabled={items.length === 0} // Removed to allow "Into The Void" check
                     className={`
                             relative w-20 h-20 rounded-full bg-white dark:bg-gray-800 border-4 shadow-lg flex items-center justify-center font-black text-xl tracking-wider select-none touch-none z-30
                             ${isSpinning ? 'border-red-500 dark:border-red-400 text-red-600 dark:text-red-400' : 'border-indigo-600 dark:border-indigo-400 text-indigo-700 dark:text-indigo-400'}
