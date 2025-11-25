@@ -12,6 +12,7 @@ const ASSETS = [
     './scripts/tailwindcss.js',
     './scripts/themes.js',
     './scripts/utils.js',
+    './scripts/components/modal.js',
     './scripts/components/toast.js'
 ];
 

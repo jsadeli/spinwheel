@@ -239,6 +239,7 @@
   <script type="text/javascript" src="scripts/utils.js"></script>
 
   <!-- Load Components (Toast, etc.) -->
+  <script type="text/babel" src="scripts/components/modal.js"></script>
   <script type="text/babel" src="scripts/components/toast.js"></script>
 
   <script type="text/babel">
@@ -2353,225 +2354,207 @@
           )}
 
           {/* Color Settings Modal */}
-          {showColorModal && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 backdrop-blur-sm animate-in fade-in duration-200">
-              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 max-w-md w-full border dark:border-gray-700 transform scale-100 animate-in zoom-in-95 duration-200">
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-lg font-bold text-gray-800 dark:text-white flex items-center">
-                    <PaletteIcon className="mr-2 text-indigo-500" size={20} />
-                    Customize Wheel Colors
-                  </h3>
-                  <button onClick={() => setShowColorModal(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"><CloseIcon size={20} /></button>
-                </div>
-
-                <div className="space-y-4 mb-4 max-h-[60vh] overflow-y-auto pr-2">
-                  {/* Option: Default */}
-                  <label className={`flex items-start p-3 rounded-lg border cursor-pointer transition ${tempColorType === 'default' ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20' : 'border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50'}`}>
-                    <input
-                      type="radio"
-                      name="colorType"
-                      checked={tempColorType === 'default'}
-                      onChange={() => setTempColorType('default')}
-                      className="mt-1 mr-3"
-                    />
-                    <div>
-                      <span className="block font-medium text-gray-800 dark:text-white">Default Rainbow</span>
-                      <span className="text-xs text-gray-500 dark:text-gray-400">The standard colorful palette.</span>
-                      <div className="flex mt-2 space-x-1">
-                        {defaultColors.map(c => (
-                          <div key={c} className="w-4 h-4 rounded-full" style={{ backgroundColor: c }}></div>
-                        ))}
-                      </div>
-                    </div>
-                  </label>
-
-                  {/* Option: Beach */}
-                  <label className={`flex items-start p-3 rounded-lg border cursor-pointer transition ${tempColorType === 'beach' ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20' : 'border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50'}`}>
-                    <input
-                      type="radio"
-                      name="colorType"
-                      checked={tempColorType === 'beach'}
-                      onChange={() => setTempColorType('beach')}
-                      className="mt-1 mr-3"
-                    />
-                    <div>
-                      <span className="block font-medium text-gray-800 dark:text-white">Soft Summer Beach Ball</span>
-                      <span className="text-xs text-gray-500 dark:text-gray-400">A relaxed, pastel summer vibe.</span>
-                      <div className="flex mt-2 space-x-1">
-                        {beachColors.map(c => (
-                          <div key={c} className="w-4 h-4 rounded-full" style={{ backgroundColor: c }}></div>
-                        ))}
-                      </div>
-                    </div>
-                  </label>
-
-                  {/* Option: Custom */}
-                  <label className={`flex items-start p-3 rounded-lg border cursor-pointer transition ${tempColorType === 'custom' ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20' : 'border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50'}`}>
-                    <input
-                      type="radio"
-                      name="colorType"
-                      checked={tempColorType === 'custom'}
-                      onChange={() => setTempColorType('custom')}
-                      className="mt-1 mr-3"
-                    />
-                    <div className="flex-grow">
-                      <span className="block font-medium text-gray-800 dark:text-white">Custom Hex List</span>
-                      <span className="text-xs text-gray-500 dark:text-gray-400">Enter hex codes (e.g. #F00, #00F)</span>
-
-                      {tempColorType === 'custom' && (
-                        <>
-                          <div className="flex mt-2 space-x-1 min-h-[1rem] flex-wrap gap-y-1">
-                            {customColorPreview.map((c, i) => (
-                              <div key={i} className="w-4 h-4 rounded-full border border-gray-200 dark:border-gray-600 shadow-sm" style={{ backgroundColor: c }}></div>
-                            ))}
-                          </div>
-                          <textarea
-                            value={tempCustomColors}
-                            onChange={(e) => setTempCustomColors(e.target.value)}
-                            placeholder="#FF0000, #00FF00, #0000FF"
-                            rows={3}
-                            className={`w-full mt-2 p-2 text-sm border rounded focus:ring-2 font-mono transition-colors ${isCustomColorInvalid ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 dark:border-gray-600 focus:ring-indigo-500'} dark:bg-gray-700 dark:text-white`}
-                            onClick={(e) => e.stopPropagation()}
-                          />
-                          {isCustomColorInvalid && <p className="text-xs text-red-500 mt-1">Please enter valid hex codes (e.g. #FF5733).</p>}
-                        </>
-                      )}
-                    </div>
-                  </label>
-                </div>
-
-                <div className="flex justify-end space-x-2 pt-2 border-t border-gray-100 dark:border-gray-700">
-                  <button onClick={() => setShowColorModal(false)} className="px-4 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Cancel</button>
-                  <button
-                    onClick={saveColors}
-                    className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition"
-                  >
-                    Save Colors
-                  </button>
-                </div>
+          <Modal
+            isOpen={showColorModal}
+            onClose={() => setShowColorModal(false)}
+            title="Customize Wheel Colors"
+            icon={<PaletteIcon size={20} />}
+            footer={
+              <div className="flex justify-end space-x-2">
+                <button onClick={() => setShowColorModal(false)} className="px-4 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Cancel</button>
+                <button
+                  onClick={saveColors}
+                  className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition"
+                >
+                  Save Colors
+                </button>
               </div>
+            }
+          >
+            <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
+              {/* Option: Default */}
+              <label className={`flex items-start p-3 rounded-lg border cursor-pointer transition ${tempColorType === 'default' ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20' : 'border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50'}`}>
+                <input
+                  type="radio"
+                  name="colorType"
+                  checked={tempColorType === 'default'}
+                  onChange={() => setTempColorType('default')}
+                  className="mt-1 mr-3"
+                />
+                <div>
+                  <span className="block font-medium text-gray-800 dark:text-white">Default Rainbow</span>
+                  <span className="text-xs text-gray-500 dark:text-gray-400">The standard colorful palette.</span>
+                  <div className="flex mt-2 space-x-1">
+                    {defaultColors.map(c => (
+                      <div key={c} className="w-4 h-4 rounded-full" style={{ backgroundColor: c }}></div>
+                    ))}
+                  </div>
+                </div>
+              </label>
+
+              {/* Option: Beach */}
+              <label className={`flex items-start p-3 rounded-lg border cursor-pointer transition ${tempColorType === 'beach' ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20' : 'border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50'}`}>
+                <input
+                  type="radio"
+                  name="colorType"
+                  checked={tempColorType === 'beach'}
+                  onChange={() => setTempColorType('beach')}
+                  className="mt-1 mr-3"
+                />
+                <div>
+                  <span className="block font-medium text-gray-800 dark:text-white">Soft Summer Beach Ball</span>
+                  <span className="text-xs text-gray-500 dark:text-gray-400">A relaxed, pastel summer vibe.</span>
+                  <div className="flex mt-2 space-x-1">
+                    {beachColors.map(c => (
+                      <div key={c} className="w-4 h-4 rounded-full" style={{ backgroundColor: c }}></div>
+                    ))}
+                  </div>
+                </div>
+              </label>
+
+              {/* Option: Custom */}
+              <label className={`flex items-start p-3 rounded-lg border cursor-pointer transition ${tempColorType === 'custom' ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20' : 'border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50'}`}>
+                <input
+                  type="radio"
+                  name="colorType"
+                  checked={tempColorType === 'custom'}
+                  onChange={() => setTempColorType('custom')}
+                  className="mt-1 mr-3"
+                />
+                <div className="flex-grow">
+                  <span className="block font-medium text-gray-800 dark:text-white">Custom Hex List</span>
+                  <span className="text-xs text-gray-500 dark:text-gray-400">Enter hex codes (e.g. #F00, #00F)</span>
+
+                  {tempColorType === 'custom' && (
+                    <>
+                      <div className="flex mt-2 space-x-1 min-h-[1rem] flex-wrap gap-y-1">
+                        {customColorPreview.map((c, i) => (
+                          <div key={i} className="w-4 h-4 rounded-full border border-gray-200 dark:border-gray-600 shadow-sm" style={{ backgroundColor: c }}></div>
+                        ))}
+                      </div>
+                      <textarea
+                        value={tempCustomColors}
+                        onChange={(e) => setTempCustomColors(e.target.value)}
+                        placeholder="#FF0000, #00FF00, #0000FF"
+                        rows={3}
+                        className={`w-full mt-2 p-2 text-sm border rounded focus:ring-2 font-mono transition-colors ${isCustomColorInvalid ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 dark:border-gray-600 focus:ring-indigo-500'} dark:bg-gray-700 dark:text-white`}
+                        onClick={(e) => e.stopPropagation()}
+                      />
+                      {isCustomColorInvalid && <p className="text-xs text-red-500 mt-1">Please enter valid hex codes (e.g. #FF5733).</p>}
+                    </>
+                  )}
+                </div>
+              </label>
             </div>
-          )}
+          </Modal>
 
           {/* AI Generator Modal */}
-          {showGenModal && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 backdrop-blur-sm animate-in fade-in duration-200">
-              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 max-w-md w-full border dark:border-gray-700 transform scale-100 animate-in zoom-in-95 duration-200">
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-lg font-bold text-gray-800 dark:text-white flex items-center">
-                    <SparklesIcon className="mr-2 text-indigo-500" size={20} />
-                    AI List Generator
-                  </h3>
-                  <button onClick={() => setShowGenModal(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"><CloseIcon size={20} /></button>
-                </div>
-                <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
-                  Describe what you want (e.g., "Lunch ideas for Indonesians who wants to lose weight but have given up on diet and exercise", "Excuses for being late", "Very spicy truth or dare questions").
-                </p>
-                <textarea
-                  value={genPrompt}
-                  onChange={(e) => setGenPrompt(e.target.value)}
-                  placeholder="Enter a topic..."
-                  rows={2}
-                  className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg mb-4 focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white resize-none"
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                      e.preventDefault();
-                      generateList();
-                    }
-                  }}
-                  autoFocus
-                />
-                <div className="flex justify-end space-x-2">
-                  <button onClick={() => setShowGenModal(false)} className="px-4 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Cancel</button>
-                  <button
-                    onClick={generateList}
-                    disabled={isGenerating || !genPrompt.trim()}
-                    className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {isGenerating ? (
-                      <>
-                        <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                        Generating...
-                      </>
-                    ) : (
-                      <>Generate <SparklesIcon size={16} className="ml-2" /></>
-                    )}
-                  </button>
-                </div>
+          <Modal
+            isOpen={showGenModal}
+            onClose={() => setShowGenModal(false)}
+            title="AI List Generator"
+            icon={<SparklesIcon size={20} />}
+            footer={
+              <div className="flex justify-end space-x-2">
+                <button onClick={() => setShowGenModal(false)} className="px-4 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Cancel</button>
+                <button
+                  onClick={generateList}
+                  disabled={isGenerating || !genPrompt.trim()}
+                  className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isGenerating ? (
+                    <>
+                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                      Generating...
+                    </>
+                  ) : (
+                    <>Generate <SparklesIcon size={16} className="ml-2" /></>
+                  )}
+                </button>
               </div>
-            </div>
-          )}
+            }
+          >
+            <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+              Describe what you want (e.g., "Lunch ideas for Indonesians who wants to lose weight but have given up on diet and exercise", "Excuses for being late", "Very spicy truth or dare questions").
+            </p>
+            <textarea
+              value={genPrompt}
+              onChange={(e) => setGenPrompt(e.target.value)}
+              placeholder="Enter a topic..."
+              rows={2}
+              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg mb-4 focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white resize-none"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  generateList();
+                }
+              }}
+              autoFocus
+            />
+          </Modal>
 
           {/* Help Modal */}
-          {showHelpModal && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 backdrop-blur-sm animate-in fade-in duration-200">
-              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 max-w-md w-full border dark:border-gray-700 transform scale-100 animate-in zoom-in-95 duration-200">
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-lg font-bold text-gray-800 dark:text-white flex items-center">
-                    <HelpCircleIcon className="mr-2 text-indigo-500" size={20} />
-                    Weighted Items Guide
-                  </h3>
-                  <button onClick={() => setShowHelpModal(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"><CloseIcon size={20} /></button>
-                </div>
-                <div className="text-sm text-gray-600 dark:text-gray-300 space-y-3">
-                  <p>You can customize the probability of each item winning by assigning a <strong>weight</strong>.</p>
-                  <div className="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg border border-gray-200 dark:border-gray-600 font-mono text-xs">
-                    <p><span className="text-indigo-600 dark:text-indigo-400">Pizza:10</span> <span className="text-gray-400">// Very likely (10x chance)</span></p>
-                    <p><span className="text-indigo-600 dark:text-indigo-400">Burger</span> <span className="text-gray-400">// Default weight is 1</span></p>
-                  </div>
-                  <ul className="list-disc list-inside space-y-1">
-                    <li>Format: <code>Item Name:Weight</code></li>
-                    <li>Higher number = Larger slice on the wheel.</li>
-                    <li>If no number is specified, it defaults to <strong>1</strong>.</li>
-                  </ul>
-                </div>
-                <div className="mt-6 flex justify-end">
-                  <button onClick={() => setShowHelpModal(false)} className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition">Got it</button>
-                </div>
+          <Modal
+            isOpen={showHelpModal}
+            onClose={() => setShowHelpModal(false)}
+            title="Weighted Items Guide"
+            icon={<HelpCircleIcon size={20} />}
+            footer={
+              <div className="flex justify-end">
+                <button onClick={() => setShowHelpModal(false)} className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition">Got it</button>
               </div>
+            }
+          >
+            <div className="text-sm text-gray-600 dark:text-gray-300 space-y-3">
+              <p>You can customize the probability of each item winning by assigning a <strong>weight</strong>.</p>
+              <div className="bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg border border-gray-200 dark:border-gray-600 font-mono text-xs">
+                <p><span className="text-indigo-600 dark:text-indigo-400">Pizza:10</span> <span className="text-gray-400">// Very likely (10x chance)</span></p>
+                <p><span className="text-indigo-600 dark:text-indigo-400">Burger</span> <span className="text-gray-400">// Default weight is 1</span></p>
+              </div>
+              <ul className="list-disc list-inside space-y-1">
+                <li>Format: <code>Item Name:Weight</code></li>
+                <li>Higher number = Larger slice on the wheel.</li>
+                <li>If no number is specified, it defaults to <strong>1</strong>.</li>
+              </ul>
             </div>
-          )}
+          </Modal>
 
           {/* API Key Modal */}
-          {showApiKeyModal && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 backdrop-blur-sm animate-in fade-in duration-200">
-              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 max-w-md w-full border dark:border-gray-700 transform scale-100 animate-in zoom-in-95 duration-200">
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-lg font-bold text-gray-800 dark:text-white flex items-center">
-                    <KeyIcon className="mr-2 text-indigo-500" size={20} />
-                    Gemini API Key
-                  </h3>
-                  <button onClick={() => setShowApiKeyModal(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"><CloseIcon size={20} /></button>
-                </div>
-                <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
-                  To use AI features like the <strong>List Generator</strong> and <strong>Voice Announcer</strong>, you need a valid Google Gemini API key.
-                </p>
-                <div className="mb-4">
-                  <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">API Key</label>
-                  <input
-                    type="password"
-                    value={tempApiKey}
-                    onChange={(e) => setTempApiKey(e.target.value)}
-                    placeholder="Enter your API key here..."
-                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white"
-                    autoFocus
-                  />
-                  <p className="text-xs text-gray-400 mt-1">
-                    Your key is stored locally in your browser and is never shared.
-                  </p>
-                </div>
-                <div className="flex justify-end space-x-2">
-                  <button onClick={() => setShowApiKeyModal(false)} className="px-4 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Cancel</button>
-                  <button
-                    onClick={saveApiKey}
-                    className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition"
-                  >
-                    Save Key
-                  </button>
-                </div>
+          <Modal
+            isOpen={showApiKeyModal}
+            onClose={() => setShowApiKeyModal(false)}
+            title="Gemini API Key"
+            icon={<KeyIcon size={20} />}
+            footer={
+              <div className="flex justify-end space-x-2">
+                <button onClick={() => setShowApiKeyModal(false)} className="px-4 py-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">Cancel</button>
+                <button
+                  onClick={saveApiKey}
+                  className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition"
+                >
+                  Save Key
+                </button>
               </div>
+            }
+          >
+            <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+              To use AI features like the <strong>List Generator</strong> and <strong>Voice Announcer</strong>, you need a valid Google Gemini API key.
+            </p>
+            <div className="mb-4">
+              <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">API Key</label>
+              <input
+                type="password"
+                value={tempApiKey}
+                onChange={(e) => setTempApiKey(e.target.value)}
+                placeholder="Enter your API key here..."
+                className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white"
+                autoFocus
+              />
+              <p className="text-xs text-gray-400 mt-1">
+                Your key is stored locally in your browser and is never shared.
+              </p>
             </div>
-          )}
+          </Modal>
 
           {/* OUT OF ORDER OVERLAY */}
           {isOutOfOrder && (
