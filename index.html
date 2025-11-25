@@ -2051,7 +2051,9 @@
 
                   {/* Bottom Section: Achievements List */}
                   <div className="space-y-3">
-                    <h4 className="font-bold text-gray-700 dark:text-gray-300 text-sm uppercase tracking-wider mb-2">Achievements</h4>
+                    <h4 className="font-bold text-gray-700 dark:text-gray-300 text-sm uppercase tracking-wider mb-2">
+                      Achievements ({achievements.filter(a => a.isUnlocked).length}/{achievements.length})
+                    </h4>
                     {achievements
                       .sort((a, b) => {
                         // 1. Unlocked comes first
