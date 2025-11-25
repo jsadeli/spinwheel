@@ -1,5 +1,5 @@
 // Confetti Logic - Fireworks Style Physics
-const fireConfetti = () => {
+window.fireConfetti = () => {
   const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
   const confettiCount = 250; // Increased count slightly for explosion effect
   const container = document.createElement('div');

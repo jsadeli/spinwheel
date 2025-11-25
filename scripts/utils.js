@@ -1,5 +1,5 @@
 // Helper function to load state from localStorage
-const loadState = (key, defaultValue) => {
+window.loadState = (key, defaultValue) => {
   if (typeof window === 'undefined') return defaultValue;
   try {
     const stored = localStorage.getItem(key);
@@ -11,7 +11,7 @@ const loadState = (key, defaultValue) => {
 };
 
 // Helper for relative time
-const getRelativeTime = (date) => {
+window.getRelativeTime = (date) => {
   if (!date) return '';
   const now = new Date();
   const diffInSeconds = Math.floor((now - new Date(date)) / 1000);
@@ -40,7 +40,7 @@ const getRelativeTime = (date) => {
 };
 
 // Helper to parse text into objects { text, weight }
-const parseItems = (text) => {
+window.parseItems = (text) => {
   return text.split('\n')
     .filter(line => line.trim() !== '')
     .map(line => {
@@ -58,7 +58,7 @@ const parseItems = (text) => {
 };
 
 // Helper to convert item objects back to string ("Text:Number") for text area
-const itemsToString = (itemsArray) => {
+window.itemsToString = (itemsArray) => {
   return itemsArray.map(i => {
     // If the current parsed text + weight matches the original input format, preserve it
     // Otherwise reconstruct it
@@ -67,7 +67,7 @@ const itemsToString = (itemsArray) => {
 };
 
 // Helper to calculate XP level
-const calculateLevel = (currentXp) => {
+window.calculateLevel = (currentXp) => {
   let level = 0;
   let required = 10;
   while (currentXp >= required) {
@@ -79,7 +79,7 @@ const calculateLevel = (currentXp) => {
 };
 
 // Helper to get XP level progress
-const getLevelProgress = (currentXp) => {
+window.getLevelProgress = (currentXp) => {
   let level = 0;
   let required = 10;
   let accumulatedXp = 0;
@@ -101,7 +101,7 @@ const getLevelProgress = (currentXp) => {
 };
 
 // Helper to get XP level title
-const getLevelTitle = (level) => {
+window.getLevelTitle = (level) => {
   const titles = [
     "Novice Spinner",              // 0
     "Casual Clicker",              // 1
