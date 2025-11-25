@@ -1956,8 +1956,11 @@
                               {ach.title}
                             </h5>
                             {ach.isUnlocked && (
-                              <span className="text-xs text-indigo-600 dark:text-indigo-400 font-medium bg-indigo-50 dark:bg-indigo-900/20 px-2 py-0.5 rounded-full">
-                                {ach.unlockedAt ? new Date(ach.unlockedAt).toLocaleDateString() : 'Unlocked'}
+                              <span
+                                className="text-xs text-indigo-600 dark:text-indigo-400 font-medium bg-indigo-50 dark:bg-indigo-900/20 px-2 py-0.5 rounded-full"
+                                title={ach.unlockedAt.toISOString()}
+                              >
+                                {ach.unlockedAt ? getRelativeTime(ach.unlockedAt) : 'Unlocked'}
                               </span>
                             )}
                           </div>
