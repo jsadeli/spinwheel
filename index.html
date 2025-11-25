@@ -80,6 +80,7 @@
   <script type="text/javascript" src="scripts/animations.js"></script>
   <script type="text/javascript" src="scripts/sounds.js"></script>
   <script type="text/javascript" src="scripts/utils.js"></script>
+  <script type="text/javascript" src="scripts/achievements.js"></script>
 
   <!-- Load Components (Toast, etc.) -->
   <script type="text/babel" src="scripts/components/Modal.js"></script>
@@ -196,6 +197,16 @@
 
       // XP System State
       const [xp, setXp] = useState(() => loadState('spinWheel_xp', 0));
+      const [totalSpins, setTotalSpins] = useState(() => loadState('spinWheel_totalSpins', 0)); // Track total spins
+      const [achievements, setAchievements] = useState([]); // Store achievement objects with status
+
+      // Initialize Achievement Manager
+      const achievementManager = useMemo(() => new window.AchievementManager(), []);
+
+      // Load initial achievements
+      useEffect(() => {
+        setAchievements(achievementManager.getAll());
+      }, []);
 
       const levelInfo = getLevelProgress(xp);
 
@@ -369,6 +380,10 @@
       useEffect(() => {
         localStorage.setItem('spinWheel_xp', JSON.stringify(xp));
       }, [xp]);
+
+      useEffect(() => {
+        localStorage.setItem('spinWheel_totalSpins', JSON.stringify(totalSpins));
+      }, [totalSpins]);
 
       // Color Logic
       useEffect(() => {
@@ -1105,6 +1120,14 @@
               overchargeRef.current += 16; // Add ~16ms per frame
               window.spawnSmoke(smokeContainerRef, overchargeRef, () => window.playFireCrackle(audioCtxRef, soundEnabled, isOutOfOrder));
 
+              // CHECK ACHIEVEMENT: Power Overwhelming
+              // If we are shaking (power > 0.8) and charging, we might trigger it.
+              // But the condition is "Hold the charge until the button shakes".
+              // Let's check it when we release or here?
+              // The condition in achievements.js is `stats.maxPowerCharge`.
+              // We'll pass this flag when we check.
+
+
               // BREAKDOWN LOGIC: Overcharge > 15s (10s past Inferno start which is 5s)
               // Actually phase logic:
               // 0-3s (Safe)
@@ -1156,7 +1179,23 @@
 
         // Case 2: User released after HOLDING (Power Meter was active)
         if (isChargingRef.current) {
+          // Check for Power Overwhelming achievement
+          // If power was > 0.8 (shaking threshold), we consider it "max power" enough for the achievement
+          const wasMaxPower = chargePowerRef.current > 0.8;
+
           stopCharging();
+
+          if (wasMaxPower) {
+            const newUnlocks = achievementManager.check({
+              maxPowerCharge: true,
+              spins: totalSpins, // Pass current spins, though this achievement doesn't need it
+              level: levelInfo.level
+            });
+            if (newUnlocks.length > 0) {
+              newUnlocks.forEach(ach => addToast(`Achievement Unlocked: ${ach.title}`, 5000));
+              setAchievements(achievementManager.getAll()); // Refresh UI
+            }
+          }
           return;
         }
       };
@@ -1317,6 +1356,33 @@
 
         // Award XP
         setXp(prev => prev + 1);
+        setTotalSpins(prev => prev + 1);
+
+        // Check Achievements
+        // We need the NEW total spins and level.
+        // Since state updates are async, we calculate expected values.
+        const newTotalSpins = totalSpins + 1;
+        // Level might change if XP crosses threshold.
+        // Current XP is `xp`, new is `xp + 1`.
+        const newLevelInfo = getLevelProgress(xp + 1);
+
+        // Check for consecutive wins
+        // History has the NEWEST result at index 0 (after update).
+        // But here `history` state is stale until next render.
+        // We can check `winItem` against the PREVIOUS history item.
+        const lastResult = history.length > 0 ? history[0].text : null;
+        const consecutiveWins = (lastResult === winItem) ? 2 : 0; // Simplified: just check if matches previous
+
+        const newUnlocks = achievementManager.check({
+          spins: newTotalSpins,
+          level: newLevelInfo.level,
+          consecutiveWins: consecutiveWins
+        });
+
+        if (newUnlocks.length > 0) {
+          newUnlocks.forEach(ach => addToast(`Achievement Unlocked: ${ach.title}`, 5000));
+          setAchievements(achievementManager.getAll());
+        }
 
         if (soundEnabled) {
           window.playWinSound(audioCtxRef, soundEnabled);
@@ -1865,107 +1931,145 @@
                   </div>
 
                   {/* Bottom Section: Achievements List */}
+                  <div className="space-y-3">
+                    <h4 className="font-bold text-gray-700 dark:text-gray-300 text-sm uppercase tracking-wider mb-2">Achievements</h4>
+                    {achievements.map((ach) => (
+                      <div
+                        key={ach.id}
+                        className={`p-4 rounded-xl border flex items-start space-x-4 transition-all duration-300 ${ach.isUnlocked
+                          ? 'bg-white dark:bg-gray-800 border-indigo-200 dark:border-indigo-900 shadow-sm'
+                          : 'bg-gray-100 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700 opacity-75'
+                          }`}
+                      >
+                        {/* Icon */}
+                        <div className={`w-12 h-12 rounded-full flex items-center justify-center text-2xl flex-shrink-0 ${ach.isUnlocked
+                          ? 'bg-indigo-100 dark:bg-indigo-900/30 shadow-inner'
+                          : 'bg-gray-200 dark:bg-gray-700 grayscale'
+                          }`}>
+                          {ach.icon}
+                        </div>
 
+                        {/* Content */}
+                        <div className="flex-grow">
+                          <div className="flex justify-between items-start">
+                            <h5 className={`font-bold text-base ${ach.isUnlocked ? 'text-gray-800 dark:text-gray-100' : 'text-gray-500 dark:text-gray-400'}`}>
+                              {ach.title}
+                            </h5>
+                            {ach.isUnlocked && (
+                              <span className="text-xs text-indigo-600 dark:text-indigo-400 font-medium bg-indigo-50 dark:bg-indigo-900/20 px-2 py-0.5 rounded-full">
+                                {ach.unlockedAt ? new Date(ach.unlockedAt).toLocaleDateString() : 'Unlocked'}
+                              </span>
+                            )}
+                          </div>
+                          <p className={`text-sm mt-1 ${ach.isUnlocked ? 'text-gray-600 dark:text-gray-300' : 'text-gray-400 dark:text-gray-500'}`}>
+                            {ach.description}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
-          </main>
+          </main >
 
           {/* Winner Modal */}
-          {winner && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 backdrop-blur-sm animate-in fade-in duration-300">
-              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center transform scale-100 animate-in zoom-in-95 duration-300 relative overflow-hidden border dark:border-gray-700">
+          {
+            winner && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 backdrop-blur-sm animate-in fade-in duration-300">
+                <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center transform scale-100 animate-in zoom-in-95 duration-300 relative overflow-hidden border dark:border-gray-700">
 
-                {/* Conditional Content Based on Winner Name (Easter Eggs) */}
-                {winner === '@author' ? (
-                  <>
-                    {/* Author Easter Egg */}
-                    <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500"></div>
-                    <div className="mx-auto w-16 h-16 bg-indigo-100 dark:bg-indigo-900/30 rounded-full flex items-center justify-center mb-4 text-indigo-600 dark:text-indigo-400">
-                      <CodeIcon size={32} />
-                    </div>
-                    <h3 className="text-gray-500 dark:text-gray-400 uppercase tracking-widest text-xs font-bold mb-2">Developer Revealed!</h3>
-                    <div className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 mb-4 break-words">
-                      PT Samuel Kripto Indonesia
-                    </div>
-                    <p className="text-sm text-gray-600 dark:text-gray-300 mb-8 italic">
-                      We turn caffeine into code and panic into features, all proudly debugged with console.log. ☕😱💻🔍🚀
-                    </p>
-                  </>
-                ) : winner === '@about' ? (
-                  <>
-                    {/* About Easter Egg */}
-                    <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500"></div>
-                    <div className="mx-auto w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mb-4 text-blue-600 dark:text-blue-400">
-                      <ScrollIcon size={32} />
-                    </div>
-                    <h3 className="text-gray-500 dark:text-gray-400 uppercase tracking-widest text-xs font-bold mb-2">The Secret Origin</h3>
-                    <div className="text-2xl font-black text-gray-800 dark:text-white mb-4 break-words">
-                      Why does this exist?
-                    </div>
-                    <div className="text-sm text-gray-600 dark:text-gray-300 mb-8 leading-relaxed text-left space-y-4 max-h-60 overflow-y-auto pr-2">
-                      <p>
-                        Originally developed by the Samuel Kripto technical team to solve a very real operational crisis: choosing the next weekly meeting host without triggering mass avoidance behavior. Manual selection had become an undeniable productivity sink, often followed by five minutes of awkward silence, sudden bursts of “urgent” typing, and at least one person staring intently at logs that absolutely did not require immediate attention.
+                  {/* Conditional Content Based on Winner Name (Easter Eggs) */}
+                  {winner === '@author' ? (
+                    <>
+                      {/* Author Easter Egg */}
+                      <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500"></div>
+                      <div className="mx-auto w-16 h-16 bg-indigo-100 dark:bg-indigo-900/30 rounded-full flex items-center justify-center mb-4 text-indigo-600 dark:text-indigo-400">
+                        <CodeIcon size={32} />
+                      </div>
+                      <h3 className="text-gray-500 dark:text-gray-400 uppercase tracking-widest text-xs font-bold mb-2">Developer Revealed!</h3>
+                      <div className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 mb-4 break-words">
+                        PT Samuel Kripto Indonesia
+                      </div>
+                      <p className="text-sm text-gray-600 dark:text-gray-300 mb-8 italic">
+                        We turn caffeine into code and panic into features, all proudly debugged with console.log. ☕😱💻🔍🚀
                       </p>
-                      <p>
-                        Over time, the process evolved into something resembling a workplace survival game. Cameras mysteriously turned off, microphones instantly muted, and several team members perfected the art of blending into the background like highly trained corporate chameleons. In extreme cases, strategic “BRB” bathroom breaks were deployed the moment the question “Who wants to host next week?” appeared.
-                      </p>
-                      <p>
-                        To restore order (and dignity), this wheel was built. A tool of fairness, efficiency, and cold, impartial randomness—because if fate chooses the host, at least no one can be blamed.
-                      </p>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    {/* Standard Winner */}
-                    <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
-                    <div className="mx-auto w-16 h-16 bg-yellow-100 dark:bg-yellow-900/30 rounded-full flex items-center justify-center mb-4 text-yellow-600 dark:text-yellow-500">
-                      <TrophyIcon size={32} />
-                    </div>
-                    <h3 className="text-gray-500 dark:text-gray-400 uppercase tracking-widest text-sm font-bold mb-2">We have a winner!</h3>
-                    <div className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 mb-8 break-words">
-                      {winner}
-                    </div>
-                  </>
-                )}
+                    </>
+                  ) : winner === '@about' ? (
+                    <>
+                      {/* About Easter Egg */}
+                      <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500"></div>
+                      <div className="mx-auto w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mb-4 text-blue-600 dark:text-blue-400">
+                        <ScrollIcon size={32} />
+                      </div>
+                      <h3 className="text-gray-500 dark:text-gray-400 uppercase tracking-widest text-xs font-bold mb-2">The Secret Origin</h3>
+                      <div className="text-2xl font-black text-gray-800 dark:text-white mb-4 break-words">
+                        Why does this exist?
+                      </div>
+                      <div className="text-sm text-gray-600 dark:text-gray-300 mb-8 leading-relaxed text-left space-y-4 max-h-60 overflow-y-auto pr-2">
+                        <p>
+                          Originally developed by the Samuel Kripto technical team to solve a very real operational crisis: choosing the next weekly meeting host without triggering mass avoidance behavior. Manual selection had become an undeniable productivity sink, often followed by five minutes of awkward silence, sudden bursts of “urgent” typing, and at least one person staring intently at logs that absolutely did not require immediate attention.
+                        </p>
+                        <p>
+                          Over time, the process evolved into something resembling a workplace survival game. Cameras mysteriously turned off, microphones instantly muted, and several team members perfected the art of blending into the background like highly trained corporate chameleons. In extreme cases, strategic “BRB” bathroom breaks were deployed the moment the question “Who wants to host next week?” appeared.
+                        </p>
+                        <p>
+                          To restore order (and dignity), this wheel was built. A tool of fairness, efficiency, and cold, impartial randomness—because if fate chooses the host, at least no one can be blamed.
+                        </p>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      {/* Standard Winner */}
+                      <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
+                      <div className="mx-auto w-16 h-16 bg-yellow-100 dark:bg-yellow-900/30 rounded-full flex items-center justify-center mb-4 text-yellow-600 dark:text-yellow-500">
+                        <TrophyIcon size={32} />
+                      </div>
+                      <h3 className="text-gray-500 dark:text-gray-400 uppercase tracking-widest text-sm font-bold mb-2">We have a winner!</h3>
+                      <div className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 mb-8 break-words">
+                        {winner}
+                      </div>
+                    </>
+                  )}
 
-                <div className="grid grid-cols-1 gap-3">
-                  <button
-                    onClick={() => setWinner(null)}
-                    className="w-full py-3 bg-gray-900 dark:bg-gray-700 text-white rounded-xl font-bold hover:bg-gray-800 dark:hover:bg-gray-600 transition shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-                  >
-                    Close
-                  </button>
-                  <button
-                    onClick={() => {
-                      // Remove winner logic with animation
-                      const winnerIndex = items.findIndex(i => i.text === winner);
-                      if (winnerIndex !== -1) {
-                        removingItemRef.current = {
-                          index: winnerIndex,
-                          text: winner,
-                          startTime: Date.now(),
-                          duration: 750 // 0.75 seconds
-                        };
-                        setWinner(null);
-                        // Ensure loop continues if it was paused (though idle spin usually handles it)
-                        // If idle spin is disabled or something, we might need to kick it.
-                        // But our idle spin logic now checks removingItemRef, so it should auto-start/continue.
-                      } else {
-                        // Fallback if not found
-                        const newItems = items.filter(i => i.text !== winner);
-                        setInputText(itemsToString(newItems));
-                        setWinner(null);
-                      }
-                    }}
-                    className="w-full py-3 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 rounded-xl font-bold hover:border-red-200 dark:hover:border-red-800 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition"
-                  >
-                    Remove & Spin Again
-                  </button>
+                  <div className="grid grid-cols-1 gap-3">
+                    <button
+                      onClick={() => setWinner(null)}
+                      className="w-full py-3 bg-gray-900 dark:bg-gray-700 text-white rounded-xl font-bold hover:bg-gray-800 dark:hover:bg-gray-600 transition shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                    >
+                      Close
+                    </button>
+                    <button
+                      onClick={() => {
+                        // Remove winner logic with animation
+                        const winnerIndex = items.findIndex(i => i.text === winner);
+                        if (winnerIndex !== -1) {
+                          removingItemRef.current = {
+                            index: winnerIndex,
+                            text: winner,
+                            startTime: Date.now(),
+                            duration: 750 // 0.75 seconds
+                          };
+                          setWinner(null);
+                          // Ensure loop continues if it was paused (though idle spin usually handles it)
+                          // If idle spin is disabled or something, we might need to kick it.
+                          // But our idle spin logic now checks removingItemRef, so it should auto-start/continue.
+                        } else {
+                          // Fallback if not found
+                          const newItems = items.filter(i => i.text !== winner);
+                          setInputText(itemsToString(newItems));
+                          setWinner(null);
+                        }
+                      }}
+                      className="w-full py-3 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 rounded-xl font-bold hover:border-red-200 dark:hover:border-red-800 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition"
+                    >
+                      Remove & Spin Again
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            )
+          }
 
           {/* Color Settings Modal */}
           <Modal
@@ -2174,15 +2278,17 @@
           <OutOfOrderOverlay isVisible={isOutOfOrder} />
 
           {/* Toast Notification */}
-          {toast && (
-            <Toast
-              message={toast.message}
-              duration={toast.duration}
-              onClose={closeToast}
-            />
-          )}
+          {
+            toast && (
+              <Toast
+                message={toast.message}
+                duration={toast.duration}
+                onClose={closeToast}
+              />
+            )
+          }
 
-        </div>
+        </div >
       );
     };
 
