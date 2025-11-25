@@ -117,3 +117,11 @@ window.getLevelTitle = (level) => {
   ];
   return titles[level] || "God of Wheel";
 };
+
+// Helper to copy text to clipboard
+window.copyToClipboard = (text, setIsCopied) => {
+  navigator.clipboard.writeText(text).then(() => {
+    setIsCopied(true);
+    setTimeout(() => setIsCopied(false), 2000);
+  });
+};
