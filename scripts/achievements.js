@@ -1,6 +1,7 @@
 
 // Achievement Definitions
 const ACHIEVEMENTS = [
+  // --- Spins ---
   {
     id: 'hello_world',
     title: 'Hello World',
@@ -30,26 +31,29 @@ const ACHIEVEMENTS = [
     condition: (stats) => stats.spins >= 100
   },
   {
-    id: 'apprentice',
-    title: 'Apprentice',
-    description: "You have reached Level 1.",
-    icon: '🎓',
-    condition: (stats) => stats.level >= 1
+    id: 'analysis_paralysis',
+    title: 'Analysis Paralysis',
+    description: "Spin the wheel 5 times in under a minute. (Just pick one already.)",
+    icon: '🤯',
+    condition: (stats) => stats.spinsInLastMinute >= 5
   },
+  // --- Mystery Spin ---
   {
-    id: 'the_chosen_one',
-    title: 'The Chosen One',
-    description: "You have reached Level 10. Please, go touch some grass.",
-    icon: '🌟',
-    condition: (stats) => stats.level >= 10
+    id: 'jesus_take_the_wheel',
+    title: 'Jesus Take The Wheel',
+    description: "Spin the wheel while in \"Mystery Mode\" (labels hidden).",
+    icon: '🙈',
+    condition: (stats) => stats.mysteryMode && stats.hasSpun
   },
+  // --- Muted Spin ---
   {
-    id: 'double_or_nothing',
-    title: 'Double or Nothing',
-    description: "Get the same result twice in a row.",
-    icon: '🎲',
-    condition: (stats) => stats.consecutiveWins >= 2
+    id: 'silence_is_golden',
+    title: 'Silence is Golden',
+    description: "Shhh, the wheel is thinking. Complete a spin with the sound muted.",
+    icon: '🔇',
+    condition: (stats) => stats.hasSpun && stats.soundMuted
   },
+  // --- Other Spins ---
   {
     id: 'power_overwhelming',
     title: 'Power Overwhelming',
@@ -58,25 +62,55 @@ const ACHIEVEMENTS = [
     condition: (stats) => stats.maxPowerCharge
   },
   {
-    id: 'i_make_my_own_luck',
-    title: 'I Make My Own Luck',
-    description: "Create a wheel with only one option. (Spoiler: You won.)",
-    icon: '🍀',
-    condition: (stats) => stats.itemCount === 1 && stats.hasSpun
+    id: 'this_is_fine',
+    title: 'This Is Fine',
+    description: "Trigger the \"Overheating\" button effect 5 times in a row.",
+    icon: '🔥',
+    condition: (stats) => stats.consecutiveOverheats >= 5
   },
   {
-    id: 'analysis_paralysis',
-    title: 'Analysis Paralysis',
-    description: "Spin the wheel 10 times in under a minute. (Just pick lunch already.)",
-    icon: '🤯',
-    condition: (stats) => stats.spinsInLastMinute >= 10
+    id: 'marathon_runner',
+    title: 'Marathon Runner',
+    description: "Set the spin duration to \"Long (20s)\" and watch the whole thing.",
+    icon: '🏃',
+    condition: (stats) => stats.hasSpun && stats.spinDuration === 20000
   },
   {
-    id: 'never_tell_me_the_odds',
-    title: 'Never Tell Me The Odds',
-    description: "Win on a segment with 1 weight against a segment with 50+ weight.",
+    id: 'into_the_void',
+    title: 'Into The Void',
+    description: "Null Pointer Exception waiting to happen. Delete all options and try to spin an empty wheel.",
+    icon: '🕳️',
+    condition: (stats) => stats.triedEmptySpin
+  },
+  // --- Level Ups ---
+  {
+    id: 'apprentice',
+    title: 'Apprentice',
+    description: "You have reached Level 1.",
+    icon: '🎓',
+    condition: (stats) => stats.level >= 1
+  },
+  {
+    id: 'one_small_step',
+    title: 'One Small Step',
+    description: "One giant leap for indecisive kind.",
+    icon: '🚀',
+    condition: (stats) => stats.level >= 2
+  },
+  {
+    id: 'the_chosen_one',
+    title: 'The Chosen One',
+    description: "You have reached Level 10. Please, go touch some grass.",
+    icon: '🌟',
+    condition: (stats) => stats.level >= 10
+  },
+  // --- Consecutive Wins ---
+  {
+    id: 'double_or_nothing',
+    title: 'Double or Nothing',
+    description: "Get the same result twice in a row.",
     icon: '🎲',
-    condition: (stats) => stats.winnerWeight === 1 && stats.maxWeight >= 50
+    condition: (stats) => stats.consecutiveWins >= 2
   },
   {
     id: 'deja_vu',
@@ -86,18 +120,47 @@ const ACHIEVEMENTS = [
     condition: (stats) => stats.consecutiveWins >= 3
   },
   {
+    id: 'broken_record',
+    title: 'Broken Record',
+    description: "Spin the same result 4 consecutive times.",
+    icon: '😵‍💫',
+    condition: (stats) => stats.consecutiveWins >= 4
+  },
+  {
+    id: 'one_in_a_million',
+    title: 'One in a Million',
+    description: "Defy the odds by hitting the same winner 5 times in a row!",
+    icon: '🦄',
+    condition: (stats) => stats.consecutiveWins >= 5
+  },
+  // --- Inputs ---
+  {
+    id: 'i_make_my_own_luck',
+    title: 'I Make My Own Luck',
+    description: "Create a wheel with only one option. (Spoiler: You won.)",
+    icon: '🍀',
+    condition: (stats) => stats.itemCount === 1 && stats.hasSpun
+  },
+  {
+    id: 'never_tell_me_the_odds',
+    title: 'Never Tell Me The Odds',
+    description: "Win on a segment with 1 weight against a segment with 50+ weight.",
+    icon: '🎲',
+    condition: (stats) => stats.winnerWeight === 1 && stats.maxWeight >= 50
+  },
+  {
+    id: 'the_house_always_wins',
+    title: 'The House Always Wins',
+    description: "We all knew that was coming. Create a weighted item with 100 weight and win.",
+    icon: '🎰',
+    condition: (stats) => stats.winnerWeight >= 100
+  },
+  {
     id: 'tl_dr',
     title: 'TL;DR',
     description: "Create a wheel option with more than 50 characters. (We're not reading that.)",
     icon: '📜',
     condition: (stats) => stats.maxItemLength > 50
-  },
-  {
-    id: 'jesus_take_the_wheel',
-    title: 'Jesus Take The Wheel',
-    description: "Spin the wheel while in \"Mystery Mode\" (labels hidden).",
-    icon: '🙈',
-    condition: (stats) => stats.mysteryMode && stats.hasSpun
   },
   {
     id: 'why_are_you_like_this',
@@ -107,16 +170,31 @@ const ACHIEVEMENTS = [
     condition: (stats) => stats.itemCount > 50
   },
   {
-    id: 'one_small_step',
-    title: 'One Small Step',
-    description: "One giant leap for indecisive kind.",
-    icon: '🚀',
+    id: 'branching_out',
+    title: 'Branching Out',
+    description: "Create a new list to organize a different category of items.",
+    icon: '🌱',
     condition: (stats) => stats.listCount >= 2 // Assumed: Created at least one new list (default is 1)
   },
   {
+    id: 'the_more_the_merrier',
+    title: 'The More the Merrier',
+    description: "Add 8 different lists to your collection.",
+    icon: '🥳',
+    condition: (stats) => stats.listCount >= 8
+  },
+  {
+    id: 'data_hoarder',
+    title: 'Data Hoarder',
+    description: "Save 10 different lists in your library.",
+    icon: '💾',
+    condition: (stats) => stats.listCount >= 10
+  },
+  // --- Time of Day ---
+  {
     id: 'night_owl',
     title: 'Night Owl',
-    description: "Spin the wheel between 1 AM and 6 AM. (Go to sleep.)",
+    description: "Spin the wheel between 1 AM and 6 AM. (Go to sleep!)",
     icon: '🦉',
     condition: (stats) => {
       const h = new Date().getHours();
@@ -143,27 +221,15 @@ const ACHIEVEMENTS = [
       return stats.hasSpun && h >= 13 && h < 15;
     }
   },
+  // --- Theme features ---
   {
-    id: '0xdead_wheel',
-    title: '0xDEAD_WHEEL',
-    description: "Overcharge the spinner until it reached the overheating/out-of-order state.",
-    icon: '💀',
-    condition: (stats) => stats.isBroken
+    id: 'light_switch_rave',
+    title: 'Light Switch Rave',
+    description: "My eyes! Toggle between Light and Dark mode 10 times rapidly.",
+    icon: '💡',
+    condition: (stats) => stats.rapidThemeToggles >= 10
   },
-  {
-    id: 'this_is_fine',
-    title: 'This Is Fine',
-    description: "Trigger the \"Overheating\" button effect 5 times in a row.",
-    icon: '🔥',
-    condition: (stats) => stats.consecutiveOverheats >= 5
-  },
-  {
-    id: 'the_house_always_wins',
-    title: 'The House Always Wins',
-    description: "We all knew that was coming. Create a weighted item with 100 weight and win.",
-    icon: '🎰',
-    condition: (stats) => stats.winnerWeight >= 100
-  },
+  // --- AI features ---
   {
     id: 'ghost_in_the_machine',
     title: 'Ghost in the Machine',
@@ -171,40 +237,13 @@ const ACHIEVEMENTS = [
     icon: '🤖',
     condition: (stats) => stats.usedAI
   },
+  // --- Easter Eggs ---
   {
-    id: 'silence_is_golden',
-    title: 'Silence is Golden',
-    description: "Shhh, the wheel is thinking. Complete a spin with the sound muted.",
-    icon: '🔇',
-    condition: (stats) => stats.hasSpun && stats.soundMuted
-  },
-  {
-    id: 'data_hoarder',
-    title: 'Data Hoarder',
-    description: "Save 10 different lists in your library.",
-    icon: '💾',
-    condition: (stats) => stats.listCount >= 10
-  },
-  {
-    id: 'marathon_runner',
-    title: 'Marathon Runner',
-    description: "Set the spin duration to \"Long (20s)\" and watch the whole thing.",
-    icon: '🏃',
-    condition: (stats) => stats.hasSpun && stats.spinDuration === 20000
-  },
-  {
-    id: 'into_the_void',
-    title: 'Into The Void',
-    description: "Null Pointer Exception waiting to happen. Delete all options and try to spin an empty wheel.",
-    icon: '🕳️',
-    condition: (stats) => stats.triedEmptySpin
-  },
-  {
-    id: 'light_switch_rave',
-    title: 'Light Switch Rave',
-    description: "My eyes! Toggle between Light and Dark mode 10 times rapidly.",
-    icon: '💡',
-    condition: (stats) => stats.rapidThemeToggles >= 10
+    id: '0xdead_wheel',
+    title: '0xDEAD_WHEEL',
+    description: "Overcharge the spinner until it reached the overheating/out-of-order state.",
+    icon: '💀',
+    condition: (stats) => stats.isBroken
   },
   {
     id: 'lore_master',
