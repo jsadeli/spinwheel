@@ -1,9 +1,10 @@
-const CACHE_NAME = 'spinwheel-v7';
+const CACHE_NAME = 'spinwheel-v8';
 const ASSETS = [
     './',
     './index.html',
     './icon.png',
     './manifest.json',
+    './scripts/achievements.js',
     './scripts/animations.js',
     './scripts/babel.min.js',
     './scripts/icons.js',
