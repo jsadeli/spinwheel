@@ -13,6 +13,7 @@ const ASSETS = [
     './scripts/themes.js',
     './scripts/utils.js',
     './scripts/components/Modal.js',
+    './scripts/components/OutOfOrderOverlay.js',
     './scripts/components/Toast.js'
 ];
 
