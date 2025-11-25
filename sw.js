@@ -11,7 +11,8 @@ const ASSETS = [
     './scripts/react.production.min.js',
     './scripts/tailwindcss.js',
     './scripts/themes.js',
-    './scripts/utils.js'
+    './scripts/utils.js',
+    './scripts/components/toast.js'
 ];
 
 self.addEventListener('install', (event) => {
