@@ -88,7 +88,7 @@ const ACHIEVEMENTS = [
   {
     id: 'this_is_fine',
     title: 'This Is Fine',
-    description: "Trigger the \"Overheating\" button effect 5 times in a row.",
+    description: "Stress-test the fire supression system by spinning 5 consecutive overheats.",
     icon: '🔥',
     bonusXp: 50,
     condition: (stats) => stats.consecutiveOverheats >= 5
