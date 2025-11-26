@@ -103,19 +103,19 @@ window.getLevelProgress = (currentXp) => {
 // Helper to get XP level title
 window.getLevelTitle = (level) => {
   const titles = [
-    "Novice Spinner",              // 0
-    "Casual Clicker",              // 1
-    "Spin Enthusiast",             // 2
-    "Professional Procrastinator", // 3
-    "Frequent Spinner",            // 4
-    "Spin Doctor",                 // 5
-    "Entropy Engineer",            // 6
-    "Lord of the Spins",           // 7
-    "Agent of Probability",        // 8
-    "Wheel Master",                // 9
-    "Oracle of Spin"               // 10
+    "Novice Spinner",              // 0: 0 XP
+    "Casual Clicker",              // 1: 10 XP
+    "Spin Enthusiast",             // 2: 30 XP
+    "Professional Procrastinator", // 3: 70 XP
+    "Frequent Spinner",            // 4: 150 XP
+    "Spin Doctor",                 // 5: 310 XP
+    "Entropy Engineer",            // 6: 630 XP
+    "Lord of the Spins",           // 7: 1270 XP
+    "Agent of Probability",        // 8: 2550 XP
+    "Wheel Master",                // 9: 5110 XP
+    "Oracle of Spin"               // 10: 10230 XP
   ];
-  return titles[level] || "God of Wheel";
+  return titles[level] || "God of Wheel"; // 11+: 20470 XP
 };
 
 // Helper to copy text to clipboard
