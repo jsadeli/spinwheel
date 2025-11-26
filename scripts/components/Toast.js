@@ -9,7 +9,7 @@ window.Toast = ({ message, onClose, duration = 5000, title = "Notification", ico
 
   return (
     <div
-      className="fixed bottom-12 left-1/2 transform -translate-x-1/2 z-[200] flex items-center gap-4 pl-4 pr-6 py-3 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.5)] border border-indigo-100 dark:border-indigo-900 min-w-[320px]"
+      className="fixed bottom-12 left-1/2 transform -translate-x-1/2 z-[10000] flex items-center gap-4 pl-4 pr-6 py-3 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.5)] border border-indigo-100 dark:border-indigo-900 min-w-[320px]"
       style={{ animation: 'xboxPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards' }}
     >
       {/* Icon Circle */}
