@@ -285,6 +285,27 @@ const ACHIEVEMENTS = [
   },
   // --- Theme features ---
   {
+    id: 'flashbang',
+    title: 'Flashbang',
+    description: "My eyes! Spin the wheel in Light Mode.",
+    icon: '😎',
+    condition: (stats) => stats.hasSpun && !stats.isDark
+  },
+  {
+    id: 'hello_darkness',
+    title: 'Hello Darkness',
+    description: "My old friend. Spin the wheel in Dark Mode.",
+    icon: '🌑',
+    condition: (stats) => stats.hasSpun && stats.isDark
+  },
+  {
+    id: 'taste_the_rainbow',
+    title: 'Taste the Rainbow',
+    description: "Spin using a custom color palette.",
+    icon: '🎨',
+    condition: (stats) => stats.hasSpun && stats.isCustomColors
+  },
+  {
     id: 'light_switch_rave',
     title: 'Light Switch Rave',
     description: "My eyes! Toggle between Light and Dark mode 10 times rapidly.",

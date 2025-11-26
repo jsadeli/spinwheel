@@ -1504,7 +1504,9 @@
           usedAI: usedAIRef.current,
           soundMuted: !soundEnabled,
           spinDuration: spinDuration,
-          winnerId: winItem // Pass winner text as ID for checks like @about
+          winnerId: winItem, // Pass winner text as ID for checks like @about
+          isDark: isDarkModeRef.current,
+          isCustomColors: colorSettings.type === 'custom'
         });
 
         if (newUnlocks.length > 0) {
