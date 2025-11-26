@@ -20,7 +20,7 @@ const ACHIEVEMENTS = [
     id: 'professional_procrastinator',
     title: 'Professional Procrastinator',
     description: "You could have made a decision by now, but this is more fun.",
-    icon: '⏳',
+    icon: '🐢️',
     condition: (stats) => stats.spins >= 50
   },
   {
