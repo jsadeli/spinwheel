@@ -5,7 +5,7 @@ const ACHIEVEMENTS = [
   {
     id: "hello_world",
     title: "Hello World",
-    description: "You pushed the button. We're so proud of you.",
+    description: "You pushed the button. We are so proud of you.",
     icon: "👋",
     bonusXp: 2,
     condition: (stats) => stats.spins >= 1,
@@ -13,7 +13,7 @@ const ACHIEVEMENTS = [
   {
     id: "decisions_decisions",
     title: "Decisions, Decisions",
-    description: "You're starting to get the hang of letting fate decide.",
+    description: "10 spins in and you are getting suspiciously comfortable with chaos.",
     icon: "🤔",
     bonusXp: 10,
     condition: (stats) => stats.spins >= 10,
@@ -21,7 +21,7 @@ const ACHIEVEMENTS = [
   {
     id: "professional_procrastinator",
     title: "Professional Procrastinator",
-    description: "You could have made a decision by now, but this is more fun.",
+    description: "After 50 spins, you have demonstrated a rare commitment to not committing",
     icon: "🐢️",
     bonusXp: 50,
     condition: (stats) => stats.spins >= 50,
@@ -29,7 +29,7 @@ const ACHIEVEMENTS = [
   {
     id: "centurion_of_chaos",
     title: "Centurion of Chaos",
-    description: "A hundred spins later, and you're still not sure what to eat for lunch.",
+    description: "A 100 spins later, and you are still not sure what to eat for lunch.",
     icon: "💯",
     bonusXp: 100,
     condition: (stats) => stats.spins >= 100,
@@ -96,7 +96,7 @@ const ACHIEVEMENTS = [
   {
     id: "into_the_void",
     title: "Into The Void",
-    description: "Null Pointer Exception waiting to happen. Delete all options and try to spin an empty wheel.",
+    description: "NullPointerException waiting to happen. Delete all options and try to spin an empty wheel.",
     icon: "👻",
     bonusXp: 10,
     condition: (stats) => stats.triedEmptySpin,
@@ -113,7 +113,7 @@ const ACHIEVEMENTS = [
   {
     id: "apprentice",
     title: "Apprentice",
-    description: "You have reached Level 1.",
+    description: "Welcome to Level 1, where the real beginners envy you.",
     icon: "🎓",
     bonusXp: 5,
     condition: (stats) => stats.level >= 1,
@@ -180,7 +180,7 @@ const ACHIEVEMENTS = [
   {
     id: "i_make_my_own_luck",
     title: "I Make My Own Luck",
-    description: "Create a wheel with only one option. (Spoiler: You won.)",
+    description: "Spin your handcrafted, 100-percent-win-rate masterpiece.",
     icon: "🍀",
     bonusXp: 5,
     condition: (stats) => stats.itemCount === 1 && stats.hasSpun,
