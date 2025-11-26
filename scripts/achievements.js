@@ -198,7 +198,6 @@ const ACHIEVEMENTS = [
     icon: '💾',
     condition: (stats) => stats.listCount >= 50
   },
-  // --- Time of Day ---
   {
     id: 'foreign_exchange',
     title: 'Foreign Exchange',
@@ -213,34 +212,75 @@ const ACHIEVEMENTS = [
     icon: '📤',
     condition: (stats) => stats.sharedList
   },
+  // --- Time of Day ---
   {
     id: 'night_owl',
     title: 'Night Owl',
-    description: "Spin the wheel between 1 AM and 6 AM. (Go to sleep!)",
+    description: "Go to sleep! Spin the wheel between midnight and sunrise.",
     icon: '🦉',
     condition: (stats) => {
       const h = new Date().getHours();
-      return stats.hasSpun && h >= 1 && h < 6;
+      return stats.hasSpun && h >= 0 && h < 3;
+    }
+  },
+  {
+    id: 'insomniac',
+    title: 'Insomniac',
+    description: "Who needs sleep when there are choices to be made?",
+    icon: '🥱',
+    condition: (stats) => {
+      const h = new Date().getHours();
+      return stats.hasSpun && h >= 3 && h < 6;
     }
   },
   {
     id: 'early_bird',
     title: 'Early Bird',
-    description: "Spin the wheel between 6 AM and 10 AM.",
-    icon: '🌅',
+    description: "Caught the worm (or at least a spin) before 10 AM.",
+    icon: '🐛',
     condition: (stats) => {
       const h = new Date().getHours();
       return stats.hasSpun && h >= 6 && h < 10;
     }
   },
   {
+    id: 'brunch_bunch',
+    title: 'Brunch Bunch',
+    description: "Spun the wheel when it was too late for breakfast, too early for lunch.",
+    icon: '🥑',
+    condition: (stats) => {
+      const h = new Date().getHours();
+      return stats.hasSpun && h >= 10 && h < 14;
+    }
+  },
+  {
     id: 'coffee_break',
     title: 'Coffee Break',
-    description: "Spin the wheel between 1 PM and 3 PM.",
+    description: "Beat the post-lunch slump with a spin.",
     icon: '☕',
     condition: (stats) => {
       const h = new Date().getHours();
-      return stats.hasSpun && h >= 13 && h < 15;
+      return stats.hasSpun && h >= 14 && h < 18;
+    }
+  },
+  {
+    id: 'sunset_spinner',
+    title: 'Sunset Spinner',
+    description: "Closed out the day as the sun went down.",
+    icon: '🌇',
+    condition: (stats) => {
+      const h = new Date().getHours();
+      return stats.hasSpun && h >= 18 && h < 22;
+    }
+  },
+  {
+    id: 'last_call',
+    title: 'Last Call',
+    description: "Getting one last spin in before tomorrow.",
+    icon: '🛏️',
+    condition: (stats) => {
+      const h = new Date().getHours();
+      return stats.hasSpun && h >= 22 && h < 0;
     }
   },
   // --- Theme features ---
