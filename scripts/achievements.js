@@ -7,7 +7,7 @@ const ACHIEVEMENTS = [
     title: 'Hello World',
     description: "You pushed the button. We're so proud of you.",
     icon: '👋',
-    bonusXp: 3,
+    bonusXp: 2,
     condition: (stats) => stats.spins >= 1
   },
   {
@@ -149,7 +149,7 @@ const ACHIEVEMENTS = [
     title: 'Double or Nothing',
     description: "Get the same result twice in a row.",
     icon: '👯‍♀️',
-    bonusXp: 10,
+    bonusXp: 20,
     condition: (stats) => stats.consecutiveWins >= 2
   },
   {
@@ -157,7 +157,7 @@ const ACHIEVEMENTS = [
     title: 'Déjà Vu',
     description: "Land on the same option 3 times in a row. (Glitch in the matrix?)",
     icon: '🐈',
-    bonusXp: 20,
+    bonusXp: 30,
     condition: (stats) => stats.consecutiveWins >= 3
   },
   {
@@ -165,7 +165,7 @@ const ACHIEVEMENTS = [
     title: 'Broken Record',
     description: "Spin the same result 5 consecutive times.",
     icon: '😵‍💫',
-    bonusXp: 30,
+    bonusXp: 50,
     condition: (stats) => stats.consecutiveWins >= 5
   },
   {
@@ -359,7 +359,7 @@ const ACHIEVEMENTS = [
     title: 'Flashbang',
     description: "My eyes! Spin the wheel in Light Mode.",
     icon: '😎',
-    bonusXp: 20,
+    bonusXp: 5,
     condition: (stats) => stats.hasSpun && !stats.isDark
   },
   {
@@ -367,7 +367,7 @@ const ACHIEVEMENTS = [
     title: 'Hello Darkness',
     description: "My old friend. Spin the wheel in Dark Mode.",
     icon: '🌑',
-    bonusXp: 10,
+    bonusXp: 5,
     condition: (stats) => stats.hasSpun && stats.isDark
   },
   {
@@ -407,10 +407,10 @@ const ACHIEVEMENTS = [
   {
     id: 'almost_there',
     title: 'Almost There',
-    description: "Unlocked 10 achievements. Keep going!",
+    description: "Unlocked 20 achievements. Keep going!",
     icon: '🎖️',
     bonusXp: 100,
-    condition: (stats) => stats.unlockedCount >= 10
+    condition: (stats) => stats.unlockedCount >= 20
   },
   {
     id: 'the_completionist',
