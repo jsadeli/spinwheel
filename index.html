@@ -327,6 +327,15 @@
             // Clean URL without reloading
             const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
             window.history.replaceState({ path: newUrl }, '', newUrl);
+
+            // Check for "Foreign Exchange" achievement
+            const newUnlocks = achievementManager.check({
+              importedList: true
+            });
+            if (newUnlocks.length > 0) {
+              newUnlocks.forEach(ach => addToast(`Achievement Unlocked: ${ach.title}`, 5000, ach.icon));
+              setAchievements(achievementManager.getAll());
+            }
           } catch (e) {
             console.error("Failed to decode list from URL", e);
           }
@@ -1740,7 +1749,16 @@
                         className="flex-grow p-2 text-sm border border-gray-300 dark:border-gray-600 rounded bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                       />
                       <button
-                        onClick={() => window.copyToClipboard(shareUrl, setIsCopied)}
+                        onClick={() => {
+                          window.copyToClipboard(shareUrl, setIsCopied);
+                          const newUnlocks = achievementManager.check({
+                            sharedList: true
+                          });
+                          if (newUnlocks.length > 0) {
+                            newUnlocks.forEach(ach => addToast(`Achievement Unlocked: ${ach.title}`, 5000, ach.icon));
+                            setAchievements(achievementManager.getAll());
+                          }
+                        }}
                         className={`p-2 rounded transition flex items-center justify-center ${isCopied ? 'bg-green-500 hover:bg-green-600 text-white' : 'bg-indigo-600 hover:bg-indigo-700 text-white'}`}
                         title={isCopied ? "Copied!" : "Copy to Clipboard"}
                       >

@@ -199,6 +199,20 @@ const ACHIEVEMENTS = [
   },
   // --- Time of Day ---
   {
+    id: 'foreign_exchange',
+    title: 'Foreign Exchange',
+    description: "Import a list from a shared URL.",
+    icon: '🌍',
+    condition: (stats) => stats.importedList
+  },
+  {
+    id: 'sharing_is_caring',
+    title: 'Sharing is Caring',
+    description: "Share a list with a friend (or yourself).",
+    icon: '📤',
+    condition: (stats) => stats.sharedList
+  },
+  {
     id: 'night_owl',
     title: 'Night Owl',
     description: "Spin the wheel between 1 AM and 6 AM. (Go to sleep!)",
