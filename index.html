@@ -1474,12 +1474,12 @@
         // We can check `winItem` against the PREVIOUS history item.
         const lastResult = history.length > 0 ? history[0].text : null;
         // Check for 3 in a row for "Deja Vu"
-        let consecutiveWins = 0;
-        if (lastResult === winItem) {
-          consecutiveWins = 2;
-          // Check one more back
-          if (history.length > 1 && history[1].text === winItem) {
-            consecutiveWins = 3;
+        let consecutiveWins = 1; // Start with 1 (current win)
+        for (let i = 0; i < history.length; i++) {
+          if (history[i].text === winItem) {
+            consecutiveWins++;
+          } else {
+            break;
           }
         }
 
