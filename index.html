@@ -218,7 +218,8 @@
         if (newUnlocks.length > 0) {
           let totalBonusXp = 0;
           newUnlocks.forEach(ach => {
-            addToast(`Achievement Unlocked: ${ach.title}`, 5000, ach.icon);
+            const xpMsg = ach.bonusXp ? ` (+${ach.bonusXp} XP)` : '';
+            addToast(`Achievement Unlocked: ${ach.title}${xpMsg}`, 5000, ach.icon);
             if (ach.bonusXp) totalBonusXp += ach.bonusXp;
           });
 
@@ -228,9 +229,7 @@
             setXp(prev => prev + totalBonusXp);
           }
         }
-      };
-
-      const levelInfo = getLevelProgress(xp);
+      };      const levelInfo = getLevelProgress(xp);
 
       // Level Up Toast Logic
       const prevLevelRef = useRef(levelInfo.level);
@@ -2134,12 +2133,19 @@
                           {/* Content */}
                           <div className="flex-grow">
                             <div className="flex justify-between items-start">
-                              <h5 className={`font-bold text-base ${ach.isUnlocked ? 'text-gray-800 dark:text-gray-100' : 'text-gray-500 dark:text-gray-400'}`}>
-                                {ach.title}
-                              </h5>
+                              <div className="flex flex-col">
+                                <h5 className={`font-bold text-base ${ach.isUnlocked ? 'text-gray-800 dark:text-gray-100' : 'text-gray-500 dark:text-gray-400'}`}>
+                                  {ach.title}
+                                </h5>
+                                {ach.bonusXp > 0 && (
+                                  <span className={`text-xs font-bold mt-0.5 ${ach.isUnlocked ? 'text-yellow-600 dark:text-yellow-400' : 'text-gray-400'}`}>
+                                    +{ach.bonusXp} XP
+                                  </span>
+                                )}
+                              </div>
                               {ach.isUnlocked && (
                                 <span
-                                  className="text-xs text-indigo-600 dark:text-indigo-400 font-medium bg-indigo-50 dark:bg-indigo-900/20 px-2 py-0.5 rounded-full"
+                                  className="text-xs text-indigo-600 dark:text-indigo-400 font-medium bg-indigo-50 dark:bg-indigo-900/20 px-2 py-0.5 rounded-full ml-2 whitespace-nowrap"
                                   title={ach.unlockedAt.toISOString()}
                                 >
                                   {ach.unlockedAt ? getRelativeTime(ach.unlockedAt) : 'Unlocked'}
