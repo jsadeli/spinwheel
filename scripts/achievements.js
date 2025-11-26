@@ -62,18 +62,25 @@ const ACHIEVEMENTS = [
     condition: (stats) => stats.maxPowerCharge
   },
   {
+    id: 'speed_demon',
+    title: 'Speed Demon',
+    description: "Ain't nobody got time for that. Complete and watch a quick spin.",
+    icon: '⚡',
+    condition: (stats) => stats.hasSpun && stats.spinDuration <= 5000
+  },
+  {
+    id: 'patience_is_a_virtue',
+    title: 'Patience is a Virtue',
+    description: "Good things come to those who wait. Complete and watch a long spin.",
+    icon: '🧘',
+    condition: (stats) => stats.hasSpun && stats.spinDuration >= 20000
+  },
+  {
     id: 'this_is_fine',
     title: 'This Is Fine',
     description: "Trigger the \"Overheating\" button effect 5 times in a row.",
     icon: '🔥',
     condition: (stats) => stats.consecutiveOverheats >= 5
-  },
-  {
-    id: 'marathon_runner',
-    title: 'Marathon Runner',
-    description: "Set the spin duration to \"Long (20s)\" and watch the whole thing.",
-    icon: '🏃',
-    condition: (stats) => stats.hasSpun && stats.spinDuration === 20000
   },
   {
     id: 'into_the_void',
