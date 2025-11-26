@@ -176,6 +176,7 @@ const ACHIEVEMENTS = [
     icon: '😩',
     condition: (stats) => stats.itemCount > 50
   },
+  // --- Lists ---
   {
     id: 'branching_out',
     title: 'Branching Out',
@@ -186,16 +187,16 @@ const ACHIEVEMENTS = [
   {
     id: 'the_more_the_merrier',
     title: 'The More the Merrier',
-    description: "Add 8 different lists to your collection.",
+    description: "Add 10 different lists to your collection.",
     icon: '🥳',
-    condition: (stats) => stats.listCount >= 8
+    condition: (stats) => stats.listCount >= 10
   },
   {
     id: 'data_hoarder',
     title: 'Data Hoarder',
-    description: "Save 10 different lists in your library.",
+    description: "Save 50 different lists in your library.",
     icon: '💾',
-    condition: (stats) => stats.listCount >= 10
+    condition: (stats) => stats.listCount >= 50
   },
   // --- Time of Day ---
   {
