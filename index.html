@@ -213,6 +213,23 @@
         setAchievements(achievementManager.getAll());
       }, []);
 
+      // Helper to handle achievement unlocks and XP gain
+      const handleAchievementUnlocks = (newUnlocks) => {
+        if (newUnlocks.length > 0) {
+          let totalBonusXp = 0;
+          newUnlocks.forEach(ach => {
+            addToast(`Achievement Unlocked: ${ach.title}`, 5000, ach.icon);
+            if (ach.bonusXp) totalBonusXp += ach.bonusXp;
+          });
+
+          setAchievements(achievementManager.getAll());
+
+          if (totalBonusXp > 0) {
+            setXp(prev => prev + totalBonusXp);
+          }
+        }
+      };
+
       const levelInfo = getLevelProgress(xp);
 
       // Level Up Toast Logic
@@ -222,7 +239,7 @@
         if (levelInfo.level > prevLevelRef.current) {
           addToast(`Level Up! You are now ${getLevelTitle(levelInfo.level)}!`, 5000);
           // Optional: Trigger confetti if not already triggered by something else
-          // fireConfetti(); 
+          // fireConfetti();
         }
         prevLevelRef.current = levelInfo.level;
       }, [levelInfo.level]);
@@ -333,10 +350,7 @@
             const newUnlocks = achievementManager.check({
               importedList: true
             });
-            if (newUnlocks.length > 0) {
-              newUnlocks.forEach(ach => addToast(`Achievement Unlocked: ${ach.title}`, 5000, ach.icon));
-              setAchievements(achievementManager.getAll());
-            }
+            handleAchievementUnlocks(newUnlocks);
           } catch (e) {
             console.error("Failed to decode list from URL", e);
           }
@@ -496,10 +510,7 @@
           const newUnlocks = achievementManager.check({
             rapidThemeToggles: themeToggleTimestampsRef.current.length
           });
-          if (newUnlocks.length > 0) {
-            newUnlocks.forEach(ach => addToast(`Achievement Unlocked: ${ach.title}`, 5000, ach.icon));
-            setAchievements(achievementManager.getAll());
-          }
+          handleAchievementUnlocks(newUnlocks);
         }
       }, [theme]);
 
@@ -571,10 +582,7 @@
         const newUnlocks = achievementManager.check({
           listCount: expectedLength
         });
-        if (newUnlocks.length > 0) {
-          newUnlocks.forEach(ach => addToast(`Achievement Unlocked: ${ach.title}`, 5000, ach.icon));
-          setAchievements(achievementManager.getAll());
-        }
+        handleAchievementUnlocks(newUnlocks);
       };
 
       const handleDeleteList = () => {
@@ -658,10 +666,7 @@
             const newUnlocks = achievementManager.check({
               usedAI: true
             });
-            if (newUnlocks.length > 0) {
-              newUnlocks.forEach(ach => addToast(`Achievement Unlocked: ${ach.title}`, 5000, ach.icon));
-              setAchievements(achievementManager.getAll());
-            }
+            handleAchievementUnlocks(newUnlocks);
           }
         } catch (error) {
           console.error("Generation failed", error);
@@ -725,10 +730,7 @@
               const newUnlocks = achievementManager.check({
                 usedAIAnnounce: true
               });
-              if (newUnlocks.length > 0) {
-                newUnlocks.forEach(ach => addToast(`Achievement Unlocked: ${ach.title}`, 5000, ach.icon));
-                setAchievements(achievementManager.getAll());
-              }
+              handleAchievementUnlocks(newUnlocks);
             });
 
             setTimeout(() => audio.play(), 500);
@@ -1155,10 +1157,7 @@
           const newUnlocks = achievementManager.check({
             triedEmptySpin: true
           });
-          if (newUnlocks.length > 0) {
-            newUnlocks.forEach(ach => addToast(`Achievement Unlocked: ${ach.title}`, 5000, ach.icon));
-            setAchievements(achievementManager.getAll());
-          }
+          handleAchievementUnlocks(newUnlocks);
           return;
         }
 
@@ -1242,10 +1241,7 @@
                 const newUnlocks = achievementManager.check({
                   isBroken: true
                 });
-                if (newUnlocks.length > 0) {
-                  newUnlocks.forEach(ach => addToast(`Achievement Unlocked: ${ach.title}`, 5000, ach.icon));
-                  setAchievements(achievementManager.getAll());
-                }
+                handleAchievementUnlocks(newUnlocks);
                 return;
               }
             }
@@ -1300,10 +1296,7 @@
             spins: totalSpins,
             level: levelInfo.level
           });
-          if (newUnlocks.length > 0) {
-            newUnlocks.forEach(ach => addToast(`Achievement Unlocked: ${ach.title}`, 5000, ach.icon));
-            setAchievements(achievementManager.getAll());
-          }
+          handleAchievementUnlocks(newUnlocks);
           return;
         }
       };
@@ -1527,18 +1520,14 @@
           unlockedCount: Object.keys(achievementManager.getUnlocked()).length
         });
 
-        if (newUnlocks.length > 0) {
-          newUnlocks.forEach(ach => addToast(`Achievement Unlocked: ${ach.title}`, 5000, ach.icon));
-          setAchievements(achievementManager.getAll());
+        handleAchievementUnlocks(newUnlocks);
 
+        if (newUnlocks.length > 0) {
           // Check for meta achievements after unlocking
           const metaUnlocks = achievementManager.check({
             unlockedCount: Object.keys(achievementManager.getUnlocked()).length
           });
-          if (metaUnlocks.length > 0) {
-            metaUnlocks.forEach(ach => addToast(`Achievement Unlocked: ${ach.title}`, 5000, ach.icon));
-            setAchievements(achievementManager.getAll());
-          }
+          handleAchievementUnlocks(metaUnlocks);
         }
 
         if (soundEnabled) {
@@ -1558,10 +1547,7 @@
         const newUnlocks = achievementManager.check({
           usedShuffle: true
         });
-        if (newUnlocks.length > 0) {
-          newUnlocks.forEach(ach => addToast(`Achievement Unlocked: ${ach.title}`, 5000, ach.icon));
-          setAchievements(achievementManager.getAll());
-        }
+        handleAchievementUnlocks(newUnlocks);
       };
 
       const handleClear = () => {
@@ -1792,10 +1778,7 @@
                           const newUnlocks = achievementManager.check({
                             sharedList: true
                           });
-                          if (newUnlocks.length > 0) {
-                            newUnlocks.forEach(ach => addToast(`Achievement Unlocked: ${ach.title}`, 5000, ach.icon));
-                            setAchievements(achievementManager.getAll());
-                          }
+                          handleAchievementUnlocks(newUnlocks);
                         }}
                         className={`p-2 rounded transition flex items-center justify-center ${isCopied ? 'bg-green-500 hover:bg-green-600 text-white' : 'bg-indigo-600 hover:bg-indigo-700 text-white'}`}
                         title={isCopied ? "Copied!" : "Copy to Clipboard"}
@@ -2072,10 +2055,7 @@
                           const newUnlocks = achievementManager.check({
                             clearedHistory: true
                           });
-                          if (newUnlocks.length > 0) {
-                            newUnlocks.forEach(ach => addToast(`Achievement Unlocked: ${ach.title}`, 5000, ach.icon));
-                            setAchievements(achievementManager.getAll());
-                          }
+                          handleAchievementUnlocks(newUnlocks);
                         }
                       }}
                       className="w-full flex items-center justify-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 font-medium transition shadow-sm"
@@ -2270,10 +2250,7 @@
                         const newUnlocks = achievementManager.check({
                           usedRemoveAndSpin: true
                         });
-                        if (newUnlocks.length > 0) {
-                          newUnlocks.forEach(ach => addToast(`Achievement Unlocked: ${ach.title}`, 5000, ach.icon));
-                          setAchievements(achievementManager.getAll());
-                        }
+                        handleAchievementUnlocks(newUnlocks);
                       }}
                       className="w-full py-3 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 rounded-xl font-bold hover:border-red-200 dark:hover:border-red-800 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition"
                     >
