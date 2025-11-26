@@ -327,6 +327,13 @@ const ACHIEVEMENTS = [
     icon: '🤖',
     condition: (stats) => stats.usedAI
   },
+  {
+    id: 'press_secretary',
+    title: 'Press Secretary',
+    description: "Let the AI do the talking. Use the AI Announce Winner feature.",
+    icon: '📢',
+    condition: (stats) => stats.usedAIAnnounce
+  },
   // --- Easter Eggs ---
   {
     id: 'voided_warranty',

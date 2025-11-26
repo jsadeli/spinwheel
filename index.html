@@ -716,7 +716,19 @@
 
             const blob = new Blob([wavHeader, audioBytes], { type: 'audio/wav' });
             const url = URL.createObjectURL(blob);
+
             const audio = new Audio(url);
+
+            // Check achievement after audio ends
+            audio.addEventListener('ended', () => {
+              const newUnlocks = achievementManager.check({
+                usedAIAnnounce: true
+              });
+              if (newUnlocks.length > 0) {
+                newUnlocks.forEach(ach => addToast(`Achievement Unlocked: ${ach.title}`, 5000, ach.icon));
+                setAchievements(achievementManager.getAll());
+              }
+            });
 
             setTimeout(() => audio.play(), 500);
           }
