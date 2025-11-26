@@ -42,7 +42,7 @@ const ACHIEVEMENTS = [
     id: 'jesus_take_the_wheel',
     title: 'Jesus Take The Wheel',
     description: "Spin the wheel while in \"Mystery Mode\" (labels hidden).",
-    icon: '🙈',
+    icon: '🙏',
     condition: (stats) => stats.mysteryMode && stats.hasSpun
   },
   // --- Muted Spin ---
@@ -58,14 +58,14 @@ const ACHIEVEMENTS = [
     id: 'power_overwhelming',
     title: 'Power Overwhelming',
     description: "Hold the charge until the button shakes in fear.",
-    icon: '⚡',
+    icon: '🔋',
     condition: (stats) => stats.maxPowerCharge
   },
   {
     id: 'speed_demon',
     title: 'Speed Demon',
     description: "Ain't nobody got time for that. Complete and watch a quick spin.",
-    icon: '⚡',
+    icon: '💨',
     condition: (stats) => stats.hasSpun && stats.spinDuration <= 5000
   },
   {
@@ -333,6 +333,13 @@ const ACHIEVEMENTS = [
     description: "Let the AI do the talking. Use the AI Announce Winner feature.",
     icon: '📢',
     condition: (stats) => stats.usedAIAnnounce
+  },
+  {
+    id: 'nothing_to_see_here',
+    title: 'Nothing to See Here',
+    description: "Cover your tracks. Clear the history.",
+    icon: '🙈',
+    condition: (stats) => stats.clearedHistory
   },
   // --- Easter Eggs ---
   {
