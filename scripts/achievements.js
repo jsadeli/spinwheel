@@ -3,448 +3,449 @@
 const ACHIEVEMENTS = [
   // --- Spins ---
   {
-    id: 'hello_world',
-    title: 'Hello World',
+    id: "hello_world",
+    title: "Hello World",
     description: "You pushed the button. We're so proud of you.",
-    icon: '👋',
+    icon: "👋",
     bonusXp: 2,
-    condition: (stats) => stats.spins >= 1
+    condition: (stats) => stats.spins >= 1,
   },
   {
-    id: 'decisions_decisions',
-    title: 'Decisions, Decisions',
+    id: "decisions_decisions",
+    title: "Decisions, Decisions",
     description: "You're starting to get the hang of letting fate decide.",
-    icon: '🤔',
+    icon: "🤔",
     bonusXp: 10,
-    condition: (stats) => stats.spins >= 10
+    condition: (stats) => stats.spins >= 10,
   },
   {
-    id: 'professional_procrastinator',
-    title: 'Professional Procrastinator',
+    id: "professional_procrastinator",
+    title: "Professional Procrastinator",
     description: "You could have made a decision by now, but this is more fun.",
-    icon: '🐢️',
+    icon: "🐢️",
     bonusXp: 50,
-    condition: (stats) => stats.spins >= 50
+    condition: (stats) => stats.spins >= 50,
   },
   {
-    id: 'centurion_of_chaos',
-    title: 'Centurion of Chaos',
+    id: "centurion_of_chaos",
+    title: "Centurion of Chaos",
     description: "A hundred spins later, and you're still not sure what to eat for lunch.",
-    icon: '💯',
+    icon: "💯",
     bonusXp: 100,
-    condition: (stats) => stats.spins >= 100
+    condition: (stats) => stats.spins >= 100,
   },
   {
-    id: 'analysis_paralysis',
-    title: 'Analysis Paralysis',
+    id: "analysis_paralysis",
+    title: "Analysis Paralysis",
     description: "Spin the wheel 5 times in under a minute. (Just pick one already.)",
-    icon: '🤯',
+    icon: "🤯",
     bonusXp: 50,
-    condition: (stats) => stats.spinsInLastMinute >= 5
+    condition: (stats) => stats.spinsInLastMinute >= 5,
   },
   // --- Mystery Spin ---
   {
-    id: 'jesus_take_the_wheel',
-    title: 'Jesus Take The Wheel',
-    description: "Spin the wheel while in \"Mystery Mode\" (labels hidden).",
-    icon: '🙏',
+    id: "jesus_take_the_wheel",
+    title: "Jesus Take The Wheel",
+    description: 'Spin the wheel while in "Mystery Mode" (labels hidden).',
+    icon: "🙏",
     bonusXp: 10,
-    condition: (stats) => stats.mysteryMode && stats.hasSpun
+    condition: (stats) => stats.mysteryMode && stats.hasSpun,
   },
   // --- Muted Spin ---
   {
-    id: 'silence_is_golden',
-    title: 'Silence is Golden',
+    id: "silence_is_golden",
+    title: "Silence is Golden",
     description: "Shhh, the wheel is thinking. Complete a spin with the sound muted.",
-    icon: '🔇',
+    icon: "🔇",
     bonusXp: 10,
-    condition: (stats) => stats.hasSpun && stats.soundMuted
+    condition: (stats) => stats.hasSpun && stats.soundMuted,
   },
   // --- Other Spins ---
   {
-    id: 'power_overwhelming',
-    title: 'Power Overwhelming',
+    id: "power_overwhelming",
+    title: "Power Overwhelming",
     description: "Hold the charge until the button shakes in fear.",
-    icon: '⚡',
+    icon: "⚡",
     bonusXp: 10,
-    condition: (stats) => stats.maxPowerCharge
+    condition: (stats) => stats.maxPowerCharge,
   },
   {
-    id: 'speed_demon',
-    title: 'Speed Demon',
+    id: "speed_demon",
+    title: "Speed Demon",
     description: "Ain't nobody got time for that. Complete and watch a quick spin.",
-    icon: '💨',
+    icon: "💨",
     bonusXp: 5,
-    condition: (stats) => stats.hasSpun && stats.spinDuration <= 5000
+    condition: (stats) => stats.hasSpun && stats.spinDuration <= 5000,
   },
   {
-    id: 'patience_is_a_virtue',
-    title: 'Patience is a Virtue',
+    id: "patience_is_a_virtue",
+    title: "Patience is a Virtue",
     description: "Good things come to those who wait. Complete and watch a long spin.",
-    icon: '🧘',
+    icon: "🧘",
     bonusXp: 20,
-    condition: (stats) => stats.hasSpun && stats.spinDuration >= 20000
+    condition: (stats) => stats.hasSpun && stats.spinDuration >= 20000,
   },
   {
-    id: 'this_is_fine',
-    title: 'This Is Fine',
+    id: "this_is_fine",
+    title: "This Is Fine",
     description: "Stress-test the fire supression system by spinning 5 consecutive overheats.",
-    icon: '🔥',
+    icon: "🔥",
     bonusXp: 50,
-    condition: (stats) => stats.consecutiveOverheats >= 5
+    condition: (stats) => stats.consecutiveOverheats >= 5,
   },
   {
-    id: 'into_the_void',
-    title: 'Into The Void',
+    id: "into_the_void",
+    title: "Into The Void",
     description: "Null Pointer Exception waiting to happen. Delete all options and try to spin an empty wheel.",
-    icon: '👻',
+    icon: "👻",
     bonusXp: 10,
-    condition: (stats) => stats.triedEmptySpin
+    condition: (stats) => stats.triedEmptySpin,
   },
   {
-    id: 'one_and_done',
-    title: 'One And Done',
+    id: "one_and_done",
+    title: "One And Done",
     description: "Remove a winning option from the pool. Only the best remains.",
-    icon: '🧹️',
+    icon: "🧹️",
     bonusXp: 5,
-    condition: (stats) => stats.usedRemoveAndSpin
+    condition: (stats) => stats.usedRemoveAndSpin,
   },
   // --- Level Ups ---
   {
-    id: 'apprentice',
-    title: 'Apprentice',
+    id: "apprentice",
+    title: "Apprentice",
     description: "You have reached Level 1.",
-    icon: '🎓',
+    icon: "🎓",
     bonusXp: 5,
-    condition: (stats) => stats.level >= 1
+    condition: (stats) => stats.level >= 1,
   },
   {
-    id: 'one_small_step',
-    title: 'One Small Step',
+    id: "one_small_step",
+    title: "One Small Step",
     description: "One giant leap for indecisive kind.",
-    icon: '🚀',
+    icon: "🚀",
     bonusXp: 10,
-    condition: (stats) => stats.level >= 2
+    condition: (stats) => stats.level >= 2,
   },
   {
-    id: 'the_chosen_one',
-    title: 'The Chosen One',
+    id: "the_chosen_one",
+    title: "The Chosen One",
     description: "You have reached Level 10. Please, go touch some grass.",
-    icon: '🌟',
+    icon: "🌟",
     bonusXp: 2000,
-    condition: (stats) => stats.level >= 10
+    condition: (stats) => stats.level >= 10,
   },
   // --- XP ---
   {
-    id: 'xp_miner',
-    title: 'XP Miner',
+    id: "xp_miner",
+    title: "XP Miner",
     description: "Earn 100 XP in a single session.",
-    icon: '⛏️',
+    icon: "⛏️",
     bonusXp: 100,
-    condition: (stats) => stats.sessionXP >= 100
+    condition: (stats) => stats.sessionXP >= 100,
   },
   // --- Consecutive Wins ---
   {
-    id: 'double_or_nothing',
-    title: 'Double or Nothing',
+    id: "double_or_nothing",
+    title: "Double or Nothing",
     description: "Get the same result twice in a row.",
-    icon: '👯‍♀️',
+    icon: "👯‍♀️",
     bonusXp: 20,
-    condition: (stats) => stats.consecutiveWins >= 2
+    condition: (stats) => stats.consecutiveWins >= 2,
   },
   {
-    id: 'deja_vu',
-    title: 'Déjà Vu',
+    id: "deja_vu",
+    title: "Déjà Vu",
     description: "Land on the same option 3 times in a row. (Glitch in the matrix?)",
-    icon: '🐈',
+    icon: "🐈",
     bonusXp: 30,
-    condition: (stats) => stats.consecutiveWins >= 3
+    condition: (stats) => stats.consecutiveWins >= 3,
   },
   {
-    id: 'broken_record',
-    title: 'Broken Record',
+    id: "broken_record",
+    title: "Broken Record",
     description: "Spin the same result 5 consecutive times.",
-    icon: '😵‍💫',
+    icon: "😵‍💫",
     bonusXp: 50,
-    condition: (stats) => stats.consecutiveWins >= 5
+    condition: (stats) => stats.consecutiveWins >= 5,
   },
   {
-    id: 'one_in_a_million',
-    title: 'One in a Million',
+    id: "one_in_a_million",
+    title: "One in a Million",
     description: "Defy the odds by hitting the same winner 100 times in a row!",
-    icon: '🦄',
+    icon: "🦄",
     bonusXp: 1000,
-    condition: (stats) => stats.consecutiveWins >= 100
+    condition: (stats) => stats.consecutiveWins >= 100,
   },
   // --- Inputs ---
   {
-    id: 'i_make_my_own_luck',
-    title: 'I Make My Own Luck',
+    id: "i_make_my_own_luck",
+    title: "I Make My Own Luck",
     description: "Create a wheel with only one option. (Spoiler: You won.)",
-    icon: '🍀',
+    icon: "🍀",
     bonusXp: 5,
-    condition: (stats) => stats.itemCount === 1 && stats.hasSpun
+    condition: (stats) => stats.itemCount === 1 && stats.hasSpun,
   },
   {
-    id: 'never_tell_me_the_odds',
-    title: 'Never Tell Me The Odds',
+    id: "never_tell_me_the_odds",
+    title: "Never Tell Me The Odds",
     description: "Win on a segment with 1 weight against a segment with 50+ weight.",
-    icon: '🏋️‍♂️',
+    icon: "🏋️‍♂️",
     bonusXp: 10,
-    condition: (stats) => stats.winnerWeight === 1 && stats.maxWeight >= 50
+    condition: (stats) => stats.winnerWeight === 1 && stats.maxWeight >= 50,
   },
   {
-    id: 'the_house_always_wins',
-    title: 'The House Always Wins',
+    id: "the_house_always_wins",
+    title: "The House Always Wins",
     description: "We all knew that was coming. Create a weighted item with 100 weight and win.",
-    icon: '🎲',
+    icon: "🎲",
     bonusXp: 10,
-    condition: (stats) => stats.winnerWeight >= 100
+    condition: (stats) => stats.winnerWeight >= 100,
   },
   {
-    id: 'tl_dr',
-    title: 'TL;DR',
+    id: "tl_dr",
+    title: "TL;DR",
     description: "Create a wheel option with more than 50 characters. (We're not reading that.)",
-    icon: '📜',
+    icon: "📜",
     bonusXp: 10,
-    condition: (stats) => stats.maxItemLength > 50
+    condition: (stats) => stats.maxItemLength > 50,
   },
   {
-    id: 'why_are_you_like_this',
-    title: 'Why Are You Like This?',
+    id: "why_are_you_like_this",
+    title: "Why Are You Like This?",
     description: "Create a single list with more than 50 items.",
-    icon: '😩',
+    icon: "😩",
     bonusXp: 10,
-    condition: (stats) => stats.itemCount > 50
+    condition: (stats) => stats.itemCount > 50,
   },
   {
-    id: 'trust_issues',
-    title: 'Trust Issues',
+    id: "trust_issues",
+    title: "Trust Issues",
     description: "Can't trust the order? Shuffle the list.",
-    icon: '🎰',
+    icon: "🎰",
     bonusXp: 5,
-    condition: (stats) => stats.usedShuffle && stats.itemCount >= 2
+    condition: (stats) => stats.usedShuffle && stats.itemCount >= 2,
   },
   // --- Lists ---
   {
-    id: 'branching_out',
-    title: 'Branching Out',
+    id: "branching_out",
+    title: "Branching Out",
     description: "Create a new list to organize a different category of items.",
-    icon: '🌱',
+    icon: "🌱",
     bonusXp: 5,
-    condition: (stats) => stats.listCount >= 2 // Assumed: Created at least one new list (default is 1)
+    condition: (stats) => stats.listCount >= 2, // Assumed: Created at least one new list (default is 1)
   },
   {
-    id: 'the_more_the_merrier',
-    title: 'The More the Merrier',
+    id: "the_more_the_merrier",
+    title: "The More the Merrier",
     description: "Add 10 different lists to your collection.",
-    icon: '🥳',
+    icon: "🥳",
     bonusXp: 10,
-    condition: (stats) => stats.listCount >= 10
+    condition: (stats) => stats.listCount >= 10,
   },
   {
-    id: 'data_hoarder',
-    title: 'Data Hoarder',
+    id: "data_hoarder",
+    title: "Data Hoarder",
     description: "Save 50 different lists in your library.",
-    icon: '💾',
+    icon: "💾",
     bonusXp: 10,
-    condition: (stats) => stats.listCount >= 50
+    condition: (stats) => stats.listCount >= 50,
   },
   {
-    id: 'foreign_exchange',
-    title: 'Foreign Exchange',
+    id: "foreign_exchange",
+    title: "Foreign Exchange",
     description: "Import a list from a shared URL.",
-    icon: '🌍',
+    icon: "🌍",
     bonusXp: 20,
-    condition: (stats) => stats.importedList
+    condition: (stats) => stats.importedList,
   },
   {
-    id: 'sharing_is_caring',
-    title: 'Sharing is Caring',
+    id: "sharing_is_caring",
+    title: "Sharing is Caring",
     description: "Share a list with a friend (or yourself).",
-    icon: '🫶',
+    icon: "🫶",
     bonusXp: 30,
-    condition: (stats) => stats.sharedList
+    condition: (stats) => stats.sharedList,
   },
   // --- History ---
   {
-    id: 'nothing_to_see_here',
-    title: 'Nothing to See Here',
+    id: "nothing_to_see_here",
+    title: "Nothing to See Here",
     description: "Cover your tracks. Clear the history.",
-    icon: '🙈',
+    icon: "🙈",
     bonusXp: 10,
-    condition: (stats) => stats.clearedHistory
+    condition: (stats) => stats.clearedHistory,
   },
   // --- Time of Day ---
   {
-    id: 'night_owl',
-    title: 'Night Owl',
+    id: "night_owl",
+    title: "Night Owl",
     description: "Go to sleep! Spin the wheel between midnight and sunrise.",
-    icon: '🦉',
+    icon: "🦉",
     bonusXp: 50,
     condition: (stats) => {
       const h = new Date().getHours();
       return stats.hasSpun && h >= 0 && h < 3;
-    }
+    },
   },
   {
-    id: 'insomniac',
-    title: 'Insomniac',
+    id: "insomniac",
+    title: "Insomniac",
     description: "Who needs sleep when there are choices to be made?",
-    icon: '🥱',
+    icon: "🥱",
     bonusXp: 50,
     condition: (stats) => {
       const h = new Date().getHours();
       return stats.hasSpun && h >= 3 && h < 6;
-    }
+    },
   },
   {
-    id: 'early_bird',
-    title: 'Early Bird',
+    id: "early_bird",
+    title: "Early Bird",
     description: "Caught the worm (or at least a spin) before 10 AM.",
-    icon: '🐛',
+    icon: "🐛",
     bonusXp: 50,
     condition: (stats) => {
       const h = new Date().getHours();
       return stats.hasSpun && h >= 6 && h < 10;
-    }
+    },
   },
   {
-    id: 'brunch_bunch',
-    title: 'Brunch Bunch',
+    id: "brunch_bunch",
+    title: "Brunch Bunch",
     description: "Spun the wheel when it was too late for breakfast, too early for lunch.",
-    icon: '🥑',
+    icon: "🥑",
     bonusXp: 10,
     condition: (stats) => {
       const h = new Date().getHours();
       return stats.hasSpun && h >= 10 && h < 14;
-    }
+    },
   },
   {
-    id: 'coffee_break',
-    title: 'Coffee Break',
+    id: "coffee_break",
+    title: "Coffee Break",
     description: "Beat the post-lunch slump with a spin.",
-    icon: '☕',
+    icon: "☕",
     bonusXp: 10,
     condition: (stats) => {
       const h = new Date().getHours();
       return stats.hasSpun && h >= 14 && h < 18;
-    }
+    },
   },
   {
-    id: 'sunset_spinner',
-    title: 'Sunset Spinner',
+    id: "sunset_spinner",
+    title: "Sunset Spinner",
     description: "Closed out the day as the sun went down.",
-    icon: '🌙',
+    icon: "🌙",
     bonusXp: 10,
     condition: (stats) => {
       const h = new Date().getHours();
       return stats.hasSpun && h >= 18 && h < 22;
-    }
+    },
   },
   {
-    id: 'last_call',
-    title: 'Last Call',
+    id: "last_call",
+    title: "Last Call",
     description: "Getting one last spin in before tomorrow.",
-    icon: '🛏️',
+    icon: "🛏️",
     bonusXp: 20,
     condition: (stats) => {
       const h = new Date().getHours();
       return stats.hasSpun && h >= 22 && h < 0;
-    }
+    },
   },
   // --- Theme features ---
   {
-    id: 'flashbang',
-    title: 'Flashbang',
+    id: "flashbang",
+    title: "Flashbang",
     description: "My eyes! Spin the wheel in Light Mode.",
-    icon: '😎',
+    icon: "😎",
     bonusXp: 5,
-    condition: (stats) => stats.hasSpun && !stats.isDark
+    condition: (stats) => stats.hasSpun && !stats.isDark,
   },
   {
-    id: 'hello_darkness',
-    title: 'Hello Darkness',
+    id: "hello_darkness",
+    title: "Hello Darkness",
     description: "My old friend. Spin the wheel in Dark Mode.",
-    icon: '🌑',
+    icon: "🌑",
     bonusXp: 5,
-    condition: (stats) => stats.hasSpun && stats.isDark
+    condition: (stats) => stats.hasSpun && stats.isDark,
   },
   {
-    id: 'taste_the_rainbow',
-    title: 'Taste the Rainbow',
+    id: "taste_the_rainbow",
+    title: "Taste the Rainbow",
     description: "Spin using a custom color palette.",
-    icon: '🌈',
+    icon: "🌈",
     bonusXp: 10,
-    condition: (stats) => stats.hasSpun && stats.isCustomColors
+    condition: (stats) => stats.hasSpun && stats.isCustomColors,
   },
   {
-    id: 'light_switch_rave',
-    title: 'Light Switch Rave',
+    id: "light_switch_rave",
+    title: "Light Switch Rave",
     description: "My eyes! Toggle between Light and Dark mode 10 times rapidly.",
-    icon: '💡',
+    icon: "💡",
     bonusXp: 10,
-    condition: (stats) => stats.rapidThemeToggles >= 10
+    condition: (stats) => stats.rapidThemeToggles >= 10,
   },
   // --- AI features ---
   {
-    id: 'ghost_in_the_machine',
-    title: 'Ghost in the Machine',
+    id: "ghost_in_the_machine",
+    title: "Ghost in the Machine",
     description: "Robots are deciding your lunch now. Generate a list using the AI Sparkle button.",
-    icon: '🤖',
+    icon: "🤖",
     bonusXp: 50,
-    condition: (stats) => stats.usedAI
+    condition: (stats) => stats.usedAI,
   },
   {
-    id: 'press_secretary',
-    title: 'Press Secretary',
+    id: "press_secretary",
+    title: "Press Secretary",
     description: "Let the AI do the talking. Use the AI Announce Winner feature.",
-    icon: '📢',
+    icon: "📢",
     bonusXp: 50,
-    condition: (stats) => stats.usedAIAnnounce
+    condition: (stats) => stats.usedAIAnnounce,
   },
   // --- Meta Achievements ---
   {
-    id: 'almost_there',
-    title: 'Almost There',
+    id: "almost_there",
+    title: "Almost There",
     description: "Unlocked 20 achievements. Keep going!",
-    icon: '🎖️',
+    icon: "🎖️",
     bonusXp: 100,
-    condition: (stats) => stats.unlockedCount >= 20
+    condition: (stats) => stats.unlockedCount >= 20,
   },
   {
-    id: 'the_completionist',
-    title: 'The Completionist',
-    description: "You did it! All achievements unlocked! The ultimate reward for the ultimate player.",
-    icon: '💎',
+    id: "the_completionist",
+    title: "The Completionist",
+    description:
+      "You did it! All achievements unlocked! The ultimate reward for the ultimate player.",
+    icon: "💎",
     bonusXp: 5000,
-    condition: (stats) => stats.unlockedCount >= 50
+    condition: (stats) => stats.unlockedCount >= 50,
   },
   // --- Easter Eggs ---
   {
-    id: 'voided_warranty',
-    title: 'Voided Warranty',
+    id: "voided_warranty",
+    title: "Voided Warranty",
     description: "You pushed the limits and paid the price.",
-    icon: '💀',
+    icon: "💀",
     bonusXp: 100,
-    condition: (stats) => stats.isBroken
+    condition: (stats) => stats.isBroken,
   },
   {
-    id: 'credit_where_due',
-    title: 'Credit Where Due',
+    id: "credit_where_due",
+    title: "Credit Where Due",
     description: "Discovered the maker of the app.",
-    icon: '🥚',
+    icon: "🥚",
     bonusXp: 200,
-    condition: (stats) => stats.winnerId === '@author'
+    condition: (stats) => stats.winnerId === "@author",
   },
   {
-    id: 'lore_master',
-    title: 'Lore Master',
+    id: "lore_master",
+    title: "Lore Master",
     description: "You actually read the backstory? Impressive.",
-    icon: '📖',
+    icon: "📖",
     bonusXp: 300,
-    condition: (stats) => stats.winnerId === '@about'
-  }
+    condition: (stats) => stats.winnerId === "@about",
+  },
 ];
 
 class AchievementManager {
