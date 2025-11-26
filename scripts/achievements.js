@@ -262,7 +262,7 @@ const ACHIEVEMENTS = [
     id: 'sharing_is_caring',
     title: 'Sharing is Caring',
     description: "Share a list with a friend (or yourself).",
-    icon: '📤',
+    icon: '🫶',
     bonusXp: 10,
     condition: (stats) => stats.sharedList
   },
