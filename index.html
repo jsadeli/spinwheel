@@ -2092,7 +2092,18 @@
                         barGradient: 'from-yellow-400 via-amber-500 to-yellow-500',
                         shadow: 'shadow-[0_0_15px_rgba(245,158,11,0.3)]'
                       };
-                      if (level >= 6) return { // Silver
+                      if (level >= 8) return { // Ruby (New)
+                        border: 'bg-gradient-to-br from-rose-400 via-red-500 to-rose-400',
+                        cardBg: 'bg-rose-50 dark:bg-gray-900',
+                        iconBg: 'bg-rose-100 dark:bg-rose-900/30',
+                        iconColor: 'text-rose-600 dark:text-rose-400',
+                        titleGradient: 'from-rose-600 to-red-600 dark:from-rose-400 dark:to-red-400',
+                        textColor: 'text-rose-900 dark:text-rose-100',
+                        accentColor: 'text-rose-400',
+                        barGradient: 'from-rose-400 via-red-500 to-rose-400',
+                        shadow: 'shadow-md'
+                      };
+                      if (level >= 7) return { // Silver (Shifted)
                         border: 'bg-gradient-to-br from-slate-300 via-slate-400 to-slate-300',
                         cardBg: 'bg-slate-50 dark:bg-gray-900',
                         iconBg: 'bg-slate-200 dark:bg-slate-800',
@@ -2102,6 +2113,17 @@
                         accentColor: 'text-slate-400',
                         barGradient: 'from-slate-400 via-gray-500 to-slate-400',
                         shadow: 'shadow-md'
+                      };
+                      if (level >= 5) return { // Emerald (New)
+                        border: 'bg-gradient-to-br from-emerald-300 via-teal-400 to-emerald-300',
+                        cardBg: 'bg-emerald-50 dark:bg-gray-900',
+                        iconBg: 'bg-emerald-100 dark:bg-emerald-900/30',
+                        iconColor: 'text-emerald-600 dark:text-emerald-400',
+                        titleGradient: 'from-emerald-600 to-teal-600 dark:from-emerald-400 dark:to-teal-400',
+                        textColor: 'text-emerald-900 dark:text-emerald-100',
+                        accentColor: 'text-emerald-400',
+                        barGradient: 'from-emerald-400 via-teal-500 to-emerald-400',
+                        shadow: 'shadow-sm'
                       };
                       if (level >= 3) return { // Bronze
                         border: 'bg-gradient-to-br from-orange-200 via-orange-300 to-orange-200',
