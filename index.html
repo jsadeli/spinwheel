@@ -1259,6 +1259,7 @@
           pressTimerRef.current = null;
 
           // Trigger Full Power Spin
+          consecutiveOverheatsRef.current = 0; // Reset consecutive overheats on normal spin
           spinWheel(1.0);
           return;
         }
@@ -1342,7 +1343,7 @@
         idleVelocityRef.current = 0; // Reset idle velocity for gradual startup after spin
 
         // Reset consecutive overheats on successful spin
-        consecutiveOverheatsRef.current = 0;
+        // REMOVED: consecutiveOverheatsRef.current = 0; // Moved to handlePointerUpOrLeave to allow streaks
 
         // Track Spin Timestamp for "Analysis Paralysis"
         const now = Date.now();
