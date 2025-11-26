@@ -123,7 +123,7 @@ const ACHIEVEMENTS = [
     id: 'double_or_nothing',
     title: 'Double or Nothing',
     description: "Get the same result twice in a row.",
-    icon: '🎲',
+    icon: '👯‍♀️',
     condition: (stats) => stats.consecutiveWins >= 2
   },
   {
@@ -159,14 +159,14 @@ const ACHIEVEMENTS = [
     id: 'never_tell_me_the_odds',
     title: 'Never Tell Me The Odds',
     description: "Win on a segment with 1 weight against a segment with 50+ weight.",
-    icon: '🎲',
+    icon: '🤑',
     condition: (stats) => stats.winnerWeight === 1 && stats.maxWeight >= 50
   },
   {
     id: 'the_house_always_wins',
     title: 'The House Always Wins',
     description: "We all knew that was coming. Create a weighted item with 100 weight and win.",
-    icon: '🎰',
+    icon: '🎲',
     condition: (stats) => stats.winnerWeight >= 100
   },
   {
@@ -182,6 +182,13 @@ const ACHIEVEMENTS = [
     description: "Create a single list with more than 50 items.",
     icon: '😩',
     condition: (stats) => stats.itemCount > 50
+  },
+  {
+    id: 'trust_issues',
+    title: 'Trust Issues',
+    description: "Can't trust the order? Shuffle the list.",
+    icon: '🎰',
+    condition: (stats) => stats.usedShuffle
   },
   // --- Lists ---
   {
@@ -218,6 +225,14 @@ const ACHIEVEMENTS = [
     description: "Share a list with a friend (or yourself).",
     icon: '📤',
     condition: (stats) => stats.sharedList
+  },
+  // --- History ---
+  {
+    id: 'nothing_to_see_here',
+    title: 'Nothing to See Here',
+    description: "Cover your tracks. Clear the history.",
+    icon: '🙈',
+    condition: (stats) => stats.clearedHistory
   },
   // --- Time of Day ---
   {
@@ -333,13 +348,6 @@ const ACHIEVEMENTS = [
     description: "Let the AI do the talking. Use the AI Announce Winner feature.",
     icon: '📢',
     condition: (stats) => stats.usedAIAnnounce
-  },
-  {
-    id: 'nothing_to_see_here',
-    title: 'Nothing to See Here',
-    description: "Cover your tracks. Clear the history.",
-    icon: '🙈',
-    condition: (stats) => stats.clearedHistory
   },
   // --- Easter Eggs ---
   {

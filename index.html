@@ -1539,6 +1539,15 @@
       const handleShuffle = () => {
         const shuffled = [...items].sort(() => Math.random() - 0.5);
         setInputText(itemsToString(shuffled));
+
+        // Check "Trust Issues" achievement
+        const newUnlocks = achievementManager.check({
+          usedShuffle: true
+        });
+        if (newUnlocks.length > 0) {
+          newUnlocks.forEach(ach => addToast(`Achievement Unlocked: ${ach.title}`, 5000, ach.icon));
+          setAchievements(achievementManager.getAll());
+        }
       };
 
       const handleClear = () => {
