@@ -204,6 +204,7 @@
       const [sessionXP, setSessionXP] = useState(0); // Track XP earned in this session (not persisted)
       const [totalSpins, setTotalSpins] = useState(() => loadState('spinWheel_totalSpins', 0)); // Track total spins
       const [achievements, setAchievements] = useState([]); // Store achievement objects with status
+      const [achievementFilter, setAchievementFilter] = useState('all'); // 'all', 'unlocked', 'locked'
 
       // Initialize Achievement Manager
       const achievementManager = useMemo(() => new window.AchievementManager(), []);
@@ -2097,10 +2098,39 @@
 
                   {/* Bottom Section: Achievements List */}
                   <div className="space-y-3">
-                    <h4 className="font-bold text-gray-700 dark:text-gray-300 text-sm uppercase tracking-wider mb-2">
-                      Achievements ({achievements.filter(a => a.isUnlocked).length}/{achievements.length})
-                    </h4>
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 gap-2">
+                      <h4 className="font-bold text-gray-700 dark:text-gray-300 text-sm uppercase tracking-wider">
+                        Achievements ({achievements.filter(a => a.isUnlocked).length}/{achievements.length})
+                      </h4>
+
+                      {/* Filter Controls */}
+                      <div className="flex bg-gray-200 dark:bg-gray-700 rounded-lg p-1 self-start sm:self-auto">
+                        <button
+                          onClick={() => setAchievementFilter('all')}
+                          className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${achievementFilter === 'all' ? 'bg-white dark:bg-gray-600 text-indigo-600 dark:text-indigo-400 shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'}`}
+                        >
+                          All
+                        </button>
+                        <button
+                          onClick={() => setAchievementFilter('unlocked')}
+                          className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${achievementFilter === 'unlocked' ? 'bg-white dark:bg-gray-600 text-indigo-600 dark:text-indigo-400 shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'}`}
+                        >
+                          Unlocked
+                        </button>
+                        <button
+                          onClick={() => setAchievementFilter('locked')}
+                          className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${achievementFilter === 'locked' ? 'bg-white dark:bg-gray-600 text-indigo-600 dark:text-indigo-400 shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'}`}
+                        >
+                          Locked
+                        </button>
+                      </div>
+                    </div>
                     {achievements
+                      .filter(ach => {
+                        if (achievementFilter === 'unlocked') return ach.isUnlocked;
+                        if (achievementFilter === 'locked') return !ach.isUnlocked;
+                        return true;
+                      })
                       .sort((a, b) => {
                         // 1. Unlocked comes first
                         if (a.isUnlocked && !b.isUnlocked) return -1;
