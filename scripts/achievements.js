@@ -239,11 +239,18 @@ const ACHIEVEMENTS = [
   },
   // --- Easter Eggs ---
   {
-    id: '0xdead_wheel',
-    title: '0xDEAD_WHEEL',
-    description: "Overcharge the spinner until it reached the overheating/out-of-order state.",
+    id: 'voided_warranty',
+    title: 'Voided Warranty',
+    description: "You pushed the limits and paid the price.",
     icon: '💀',
     condition: (stats) => stats.isBroken
+  },
+  {
+    id: 'credit_where_due',
+    title: 'Credit Where Due',
+    description: "Discovered the maker of the app.",
+    icon: '📝',
+    condition: (stats) => stats.winnerId === '@author'
   },
   {
     id: 'lore_master',
