@@ -2260,8 +2260,8 @@
                           return new Date(b.unlockedAt) - new Date(a.unlockedAt);
                         }
 
-                        // 3. If both locked, keep original order (based on ID/index)
-                        return 0;
+                        // 3. If both locked, sort by bonusXp (smallest first)
+                        return (a.bonusXp || 0) - (b.bonusXp || 0);
                       })
                       .map((ach) => (
                         <div
