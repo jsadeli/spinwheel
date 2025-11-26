@@ -2081,6 +2081,17 @@
                         barGradient: 'from-pink-500 via-purple-500 to-indigo-500',
                         shadow: 'shadow-[0_0_20px_rgba(139,92,246,0.3)]'
                       };
+                      if (level >= 10) return { // Diamond
+                        border: 'bg-gradient-to-br from-cyan-400 via-indigo-500 to-purple-400 animate-pulse',
+                        cardBg: 'bg-indigo-50 dark:bg-gray-900',
+                        iconBg: 'bg-indigo-100 dark:bg-indigo-900/30',
+                        iconColor: 'text-indigo-600 dark:text-indigo-400',
+                        titleGradient: 'from-indigo-600 via-purple-600 to-pink-600 dark:from-indigo-400 dark:via-purple-400 dark:to-pink-400',
+                        textColor: 'text-indigo-900 dark:text-indigo-100',
+                        accentColor: 'text-indigo-400',
+                        barGradient: 'from-cyan-500 via-indigo-500 to-purple-500',
+                        shadow: 'shadow-[0_0_15px_rgba(99,102,241,0.4)]'
+                      };
                       if (level >= 9) return { // Gold
                         border: 'bg-gradient-to-br from-yellow-300 via-amber-500 to-yellow-300 animate-pulse',
                         cardBg: 'bg-yellow-50 dark:bg-gray-900',
