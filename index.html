@@ -1536,7 +1536,11 @@
             announceWinner(winItem); // Call Gemini TTS only if enabled and key exists
           }
         }
-        fireConfetti();
+
+        // Only trigger confetti if level is at least 7 ("Lord of the Spins")
+        if (newLevelInfo.level >= 7) {
+          fireConfetti();
+        }
       };
 
       const handleShuffle = () => {
