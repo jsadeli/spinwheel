@@ -58,7 +58,7 @@ const ACHIEVEMENTS = [
     id: 'power_overwhelming',
     title: 'Power Overwhelming',
     description: "Hold the charge until the button shakes in fear.",
-    icon: '🔋',
+    icon: '⚡',
     condition: (stats) => stats.maxPowerCharge
   },
   {
@@ -86,7 +86,7 @@ const ACHIEVEMENTS = [
     id: 'into_the_void',
     title: 'Into The Void',
     description: "Null Pointer Exception waiting to happen. Delete all options and try to spin an empty wheel.",
-    icon: '🕳️',
+    icon: '👻',
     condition: (stats) => stats.triedEmptySpin
   },
   {
@@ -159,7 +159,7 @@ const ACHIEVEMENTS = [
     id: 'never_tell_me_the_odds',
     title: 'Never Tell Me The Odds',
     description: "Win on a segment with 1 weight against a segment with 50+ weight.",
-    icon: '🤑',
+    icon: '🏋️‍♂️',
     condition: (stats) => stats.winnerWeight === 1 && stats.maxWeight >= 50
   },
   {
@@ -289,7 +289,7 @@ const ACHIEVEMENTS = [
     id: 'sunset_spinner',
     title: 'Sunset Spinner',
     description: "Closed out the day as the sun went down.",
-    icon: '🌇',
+    icon: '🌙',
     condition: (stats) => {
       const h = new Date().getHours();
       return stats.hasSpun && h >= 18 && h < 22;
@@ -324,7 +324,7 @@ const ACHIEVEMENTS = [
     id: 'taste_the_rainbow',
     title: 'Taste the Rainbow',
     description: "Spin using a custom color palette.",
-    icon: '🎨',
+    icon: '🌈',
     condition: (stats) => stats.hasSpun && stats.isCustomColors
   },
   {
@@ -361,7 +361,7 @@ const ACHIEVEMENTS = [
     id: 'credit_where_due',
     title: 'Credit Where Due',
     description: "Discovered the maker of the app.",
-    icon: '📝',
+    icon: '🥚',
     condition: (stats) => stats.winnerId === '@author'
   },
   {
