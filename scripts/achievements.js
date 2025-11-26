@@ -7,7 +7,7 @@ const ACHIEVEMENTS = [
     title: 'Hello World',
     description: "You pushed the button. We're so proud of you.",
     icon: '👋',
-    bonusXp: 5,
+    bonusXp: 3,
     condition: (stats) => stats.spins >= 1
   },
   {
@@ -281,7 +281,7 @@ const ACHIEVEMENTS = [
     title: 'Night Owl',
     description: "Go to sleep! Spin the wheel between midnight and sunrise.",
     icon: '🦉',
-    bonusXp: 10,
+    bonusXp: 50,
     condition: (stats) => {
       const h = new Date().getHours();
       return stats.hasSpun && h >= 0 && h < 3;
@@ -292,7 +292,7 @@ const ACHIEVEMENTS = [
     title: 'Insomniac',
     description: "Who needs sleep when there are choices to be made?",
     icon: '🥱',
-    bonusXp: 10,
+    bonusXp: 50,
     condition: (stats) => {
       const h = new Date().getHours();
       return stats.hasSpun && h >= 3 && h < 6;
@@ -303,7 +303,7 @@ const ACHIEVEMENTS = [
     title: 'Early Bird',
     description: "Caught the worm (or at least a spin) before 10 AM.",
     icon: '🐛',
-    bonusXp: 10,
+    bonusXp: 50,
     condition: (stats) => {
       const h = new Date().getHours();
       return stats.hasSpun && h >= 6 && h < 10;
@@ -347,7 +347,7 @@ const ACHIEVEMENTS = [
     title: 'Last Call',
     description: "Getting one last spin in before tomorrow.",
     icon: '🛏️',
-    bonusXp: 10,
+    bonusXp: 20,
     condition: (stats) => {
       const h = new Date().getHours();
       return stats.hasSpun && h >= 22 && h < 0;
@@ -359,7 +359,7 @@ const ACHIEVEMENTS = [
     title: 'Flashbang',
     description: "My eyes! Spin the wheel in Light Mode.",
     icon: '😎',
-    bonusXp: 10,
+    bonusXp: 20,
     condition: (stats) => stats.hasSpun && !stats.isDark
   },
   {
@@ -392,7 +392,7 @@ const ACHIEVEMENTS = [
     title: 'Ghost in the Machine',
     description: "Robots are deciding your lunch now. Generate a list using the AI Sparkle button.",
     icon: '🤖',
-    bonusXp: 20,
+    bonusXp: 50,
     condition: (stats) => stats.usedAI
   },
   {
@@ -400,7 +400,7 @@ const ACHIEVEMENTS = [
     title: 'Press Secretary',
     description: "Let the AI do the talking. Use the AI Announce Winner feature.",
     icon: '📢',
-    bonusXp: 20,
+    bonusXp: 50,
     condition: (stats) => stats.usedAIAnnounce
   },
   // --- Meta Achievements ---
@@ -417,7 +417,7 @@ const ACHIEVEMENTS = [
     title: 'The Completionist',
     description: "You did it! All achievements unlocked! The ultimate reward for the ultimate player.",
     icon: '💎',
-    bonusXp: 1000,
+    bonusXp: 5000,
     condition: (stats) => stats.unlockedCount >= 50
   },
   // --- Easter Eggs ---
@@ -434,7 +434,7 @@ const ACHIEVEMENTS = [
     title: 'Credit Where Due',
     description: "Discovered the maker of the app.",
     icon: '🥚',
-    bonusXp: 100,
+    bonusXp: 200,
     condition: (stats) => stats.winnerId === '@author'
   },
   {
@@ -442,7 +442,7 @@ const ACHIEVEMENTS = [
     title: 'Lore Master',
     description: "You actually read the backstory? Impressive.",
     icon: '📖',
-    bonusXp: 100,
+    bonusXp: 300,
     condition: (stats) => stats.winnerId === '@about'
   }
 ];
