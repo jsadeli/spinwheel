@@ -13,7 +13,7 @@ window.Toast = ({ message, onClose, duration = 5000, title = "Notification", ico
 
   return (
     <div
-      className={`fixed bottom-12 left-1/2 transform -translate-x-1/2 z-[10000] flex items-center justify-center rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.5)] min-w-[320px] overflow-hidden ${isSpecial ? 'p-[3px]' : 'bg-white dark:bg-gray-900 border border-indigo-100 dark:border-indigo-900'}`}
+      className={`fixed bottom-12 left-1/2 transform -translate-x-1/2 z-[10000] flex items-center justify-center rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.5)] min-w-[340px] overflow-hidden ${isSpecial ? 'p-[3px]' : 'bg-white dark:bg-gray-900 border border-indigo-100 dark:border-indigo-900'}`}
       style={{ animation: 'xboxPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards' }}
     >
       {isLevelUp && (
