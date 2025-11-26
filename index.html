@@ -2219,6 +2219,15 @@
                           setInputText(itemsToString(newItems));
                           setWinner(null);
                         }
+
+                        // Check "One More Time" achievement
+                        const newUnlocks = achievementManager.check({
+                          usedRemoveAndSpin: true
+                        });
+                        if (newUnlocks.length > 0) {
+                          newUnlocks.forEach(ach => addToast(`Achievement Unlocked: ${ach.title}`, 5000, ach.icon));
+                          setAchievements(achievementManager.getAll());
+                        }
                       }}
                       className="w-full py-3 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 rounded-xl font-bold hover:border-red-200 dark:hover:border-red-800 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition"
                     >

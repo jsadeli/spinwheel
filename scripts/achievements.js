@@ -89,6 +89,13 @@ const ACHIEVEMENTS = [
     icon: '🕳️',
     condition: (stats) => stats.triedEmptySpin
   },
+  {
+    id: 'one_and_done',
+    title: 'One And Done',
+    description: "Remove a winning option from the pool. Only the best remains.",
+    icon: '🧹️',
+    condition: (stats) => stats.usedRemoveAndSpin
+  },
   // --- Level Ups ---
   {
     id: 'apprentice',
