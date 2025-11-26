@@ -129,16 +129,16 @@ const ACHIEVEMENTS = [
   {
     id: 'broken_record',
     title: 'Broken Record',
-    description: "Spin the same result 4 consecutive times.",
+    description: "Spin the same result 5 consecutive times.",
     icon: '😵‍💫',
-    condition: (stats) => stats.consecutiveWins >= 4
+    condition: (stats) => stats.consecutiveWins >= 5
   },
   {
     id: 'one_in_a_million',
     title: 'One in a Million',
-    description: "Defy the odds by hitting the same winner 5 times in a row!",
+    description: "Defy the odds by hitting the same winner 100 times in a row!",
     icon: '🦄',
-    condition: (stats) => stats.consecutiveWins >= 5
+    condition: (stats) => stats.consecutiveWins >= 100
   },
   // --- Inputs ---
   {
