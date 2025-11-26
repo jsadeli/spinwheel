@@ -426,7 +426,7 @@ const ACHIEVEMENTS = [
     title: 'Voided Warranty',
     description: "You pushed the limits and paid the price.",
     icon: '💀',
-    bonusXp: 50,
+    bonusXp: 100,
     condition: (stats) => stats.isBroken
   },
   {
