@@ -1523,12 +1523,22 @@
           spinDuration: spinDuration,
           winnerId: winItem, // Pass winner text as ID for checks like @about
           isDark: isDarkModeRef.current,
-          isCustomColors: colorSettings.type === 'custom'
+          isCustomColors: colorSettings.type === 'custom',
+          unlockedCount: Object.keys(achievementManager.getUnlocked()).length
         });
 
         if (newUnlocks.length > 0) {
           newUnlocks.forEach(ach => addToast(`Achievement Unlocked: ${ach.title}`, 5000, ach.icon));
           setAchievements(achievementManager.getAll());
+
+          // Check for meta achievements after unlocking
+          const metaUnlocks = achievementManager.check({
+            unlockedCount: Object.keys(achievementManager.getUnlocked()).length
+          });
+          if (metaUnlocks.length > 0) {
+            metaUnlocks.forEach(ach => addToast(`Achievement Unlocked: ${ach.title}`, 5000, ach.icon));
+            setAchievements(achievementManager.getAll());
+          }
         }
 
         if (soundEnabled) {

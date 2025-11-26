@@ -357,6 +357,21 @@ const ACHIEVEMENTS = [
     icon: '📢',
     condition: (stats) => stats.usedAIAnnounce
   },
+  // --- Meta Achievements ---
+  {
+    id: 'almost_there',
+    title: 'Almost There',
+    description: "Unlocked 10 achievements. Keep going!",
+    icon: '🎖️',
+    condition: (stats) => stats.unlockedCount >= 10
+  },
+  {
+    id: 'the_completionist',
+    title: 'The Completionist',
+    description: "You did it! All achievements unlocked! The ultimate reward for the ultimate player.",
+    icon: '💎',
+    condition: (stats) => stats.unlockedCount >= 50
+  },
   // --- Easter Eggs ---
   {
     id: 'voided_warranty',
