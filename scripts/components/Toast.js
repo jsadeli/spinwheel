@@ -1,5 +1,5 @@
 // Toast Component
-window.Toast = ({ message, onClose, duration = 5000, title = "Notification" }) => {
+window.Toast = ({ message, onClose, duration = 5000, title = "Notification", icon = null }) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       onClose();
@@ -14,7 +14,7 @@ window.Toast = ({ message, onClose, duration = 5000, title = "Notification" }) =
     >
       {/* Icon Circle */}
       <div className="flex-shrink-0 w-12 h-12 rounded-full bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center">
-        <TrophyIcon size={24} className="text-yellow-500 animate-pulse" />
+        {icon ? <span className="text-2xl">{icon}</span> : <TrophyIcon size={24} className="text-yellow-500 animate-pulse" />}
       </div>
 
       {/* Text Content */}

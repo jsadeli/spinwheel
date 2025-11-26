@@ -187,12 +187,12 @@
       // Toast State (Queue System)
       const [toastQueue, setToastQueue] = useState([]);
 
-      const addToast = (message, duration = 5000) => {
+      const addToast = (message, duration = 5000, icon = null) => {
         let title = "Notification";
         if (message.startsWith("Level Up!")) title = "Level Up!";
         else if (message.startsWith("Achievement Unlocked")) title = "Achievement Unlocked";
 
-        setToastQueue(prev => [...prev, { message, duration, title, id: Date.now() + Math.random() }]);
+        setToastQueue(prev => [...prev, { message, duration, title, icon, id: Date.now() + Math.random() }]);
       };
 
       const closeToast = () => {
@@ -487,7 +487,7 @@
             rapidThemeToggles: themeToggleTimestampsRef.current.length
           });
           if (newUnlocks.length > 0) {
-            newUnlocks.forEach(ach => addToast(`Achievement Unlocked: ${ach.title}`, 5000));
+            newUnlocks.forEach(ach => addToast(`Achievement Unlocked: ${ach.title}`, 5000, ach.icon));
             setAchievements(achievementManager.getAll());
           }
         }
@@ -562,7 +562,7 @@
           listCount: expectedLength
         });
         if (newUnlocks.length > 0) {
-          newUnlocks.forEach(ach => addToast(`Achievement Unlocked: ${ach.title}`, 5000));
+          newUnlocks.forEach(ach => addToast(`Achievement Unlocked: ${ach.title}`, 5000, ach.icon));
           setAchievements(achievementManager.getAll());
         }
       };
@@ -649,7 +649,7 @@
               usedAI: true
             });
             if (newUnlocks.length > 0) {
-              newUnlocks.forEach(ach => addToast(`Achievement Unlocked: ${ach.title}`, 5000));
+              newUnlocks.forEach(ach => addToast(`Achievement Unlocked: ${ach.title}`, 5000, ach.icon));
               setAchievements(achievementManager.getAll());
             }
           }
@@ -1134,7 +1134,7 @@
             triedEmptySpin: true
           });
           if (newUnlocks.length > 0) {
-            newUnlocks.forEach(ach => addToast(`Achievement Unlocked: ${ach.title}`, 5000));
+            newUnlocks.forEach(ach => addToast(`Achievement Unlocked: ${ach.title}`, 5000, ach.icon));
             setAchievements(achievementManager.getAll());
           }
           return;
@@ -1221,7 +1221,7 @@
                   isBroken: true
                 });
                 if (newUnlocks.length > 0) {
-                  newUnlocks.forEach(ach => addToast(`Achievement Unlocked: ${ach.title}`, 5000));
+                  newUnlocks.forEach(ach => addToast(`Achievement Unlocked: ${ach.title}`, 5000, ach.icon));
                   setAchievements(achievementManager.getAll());
                 }
                 return;
@@ -1278,7 +1278,7 @@
             level: levelInfo.level
           });
           if (newUnlocks.length > 0) {
-            newUnlocks.forEach(ach => addToast(`Achievement Unlocked: ${ach.title}`, 5000));
+            newUnlocks.forEach(ach => addToast(`Achievement Unlocked: ${ach.title}`, 5000, ach.icon));
             setAchievements(achievementManager.getAll());
           }
           return;
@@ -1499,7 +1499,7 @@
         });
 
         if (newUnlocks.length > 0) {
-          newUnlocks.forEach(ach => addToast(`Achievement Unlocked: ${ach.title}`, 5000));
+          newUnlocks.forEach(ach => addToast(`Achievement Unlocked: ${ach.title}`, 5000, ach.icon));
           setAchievements(achievementManager.getAll());
         }
 
@@ -2423,6 +2423,7 @@
                 message={toastQueue[0].message}
                 duration={toastQueue[0].duration}
                 title={toastQueue[0].title}
+                icon={toastQueue[0].icon}
                 onClose={closeToast}
               />
             )
