@@ -223,7 +223,7 @@ const ACHIEVEMENTS = [
     description: "Can't trust the order? Shuffle the list.",
     icon: '🎰',
     bonusXp: 5,
-    condition: (stats) => stats.usedShuffle
+    condition: (stats) => stats.usedShuffle && stats.itemCount >= 2
   },
   // --- Lists ---
   {

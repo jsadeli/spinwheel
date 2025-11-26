@@ -230,7 +230,7 @@
             setXp(prev => prev + totalBonusXp);
           }
         }
-      };      const levelInfo = getLevelProgress(xp);
+      }; const levelInfo = getLevelProgress(xp);
 
       // Level Up Toast Logic
       const prevLevelRef = useRef(levelInfo.level);
@@ -1545,7 +1545,8 @@
 
         // Check "Trust Issues" achievement
         const newUnlocks = achievementManager.check({
-          usedShuffle: true
+          usedShuffle: true,
+          itemCount: items.length
         });
         handleAchievementUnlocks(newUnlocks);
       };
