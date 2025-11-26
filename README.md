@@ -28,7 +28,8 @@ Screenshot:
     (visual snapping and audio ticks).
   - **List Management**: Create, rename, delete, and auto save multiple distinct lists
     (e.g., "Lunch Options", "Daily Standup", "Movie Night").
-  - **Progress**: Track your XP progress and level up. Earn points for every spin!
+  - **Progress**: Track your XP progress, levels, and achievements. Earn XP points and unlock various
+    achievements on every spin!
 - 🎨 Visuals & UI
   - **3D Confetti**: Physics-based confetti engine with wind resistance, tumbling, and
     semi-transparent paper effects.
