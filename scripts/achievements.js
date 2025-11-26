@@ -255,7 +255,7 @@ const ACHIEVEMENTS = [
     title: 'Foreign Exchange',
     description: "Import a list from a shared URL.",
     icon: '🌍',
-    bonusXp: 10,
+    bonusXp: 20,
     condition: (stats) => stats.importedList
   },
   {
@@ -263,7 +263,7 @@ const ACHIEVEMENTS = [
     title: 'Sharing is Caring',
     description: "Share a list with a friend (or yourself).",
     icon: '🫶',
-    bonusXp: 10,
+    bonusXp: 30,
     condition: (stats) => stats.sharedList
   },
   // --- History ---
