@@ -7,6 +7,7 @@ const ACHIEVEMENTS = [
     title: 'Hello World',
     description: "You pushed the button. We're so proud of you.",
     icon: '👋',
+    bonusXp: 5,
     condition: (stats) => stats.spins >= 1
   },
   {
@@ -14,6 +15,7 @@ const ACHIEVEMENTS = [
     title: 'Decisions, Decisions',
     description: "You're starting to get the hang of letting fate decide.",
     icon: '🤔',
+    bonusXp: 10,
     condition: (stats) => stats.spins >= 10
   },
   {
@@ -21,6 +23,7 @@ const ACHIEVEMENTS = [
     title: 'Professional Procrastinator',
     description: "You could have made a decision by now, but this is more fun.",
     icon: '🐢️',
+    bonusXp: 50,
     condition: (stats) => stats.spins >= 50
   },
   {
@@ -28,6 +31,7 @@ const ACHIEVEMENTS = [
     title: 'Centurion of Chaos',
     description: "A hundred spins later, and you're still not sure what to eat for lunch.",
     icon: '💯',
+    bonusXp: 100,
     condition: (stats) => stats.spins >= 100
   },
   {
@@ -35,6 +39,7 @@ const ACHIEVEMENTS = [
     title: 'Analysis Paralysis',
     description: "Spin the wheel 5 times in under a minute. (Just pick one already.)",
     icon: '🤯',
+    bonusXp: 50,
     condition: (stats) => stats.spinsInLastMinute >= 5
   },
   // --- Mystery Spin ---
@@ -43,6 +48,7 @@ const ACHIEVEMENTS = [
     title: 'Jesus Take The Wheel',
     description: "Spin the wheel while in \"Mystery Mode\" (labels hidden).",
     icon: '🙏',
+    bonusXp: 10,
     condition: (stats) => stats.mysteryMode && stats.hasSpun
   },
   // --- Muted Spin ---
@@ -51,6 +57,7 @@ const ACHIEVEMENTS = [
     title: 'Silence is Golden',
     description: "Shhh, the wheel is thinking. Complete a spin with the sound muted.",
     icon: '🔇',
+    bonusXp: 10,
     condition: (stats) => stats.hasSpun && stats.soundMuted
   },
   // --- Other Spins ---
@@ -59,6 +66,7 @@ const ACHIEVEMENTS = [
     title: 'Power Overwhelming',
     description: "Hold the charge until the button shakes in fear.",
     icon: '⚡',
+    bonusXp: 10,
     condition: (stats) => stats.maxPowerCharge
   },
   {
@@ -66,6 +74,7 @@ const ACHIEVEMENTS = [
     title: 'Speed Demon',
     description: "Ain't nobody got time for that. Complete and watch a quick spin.",
     icon: '💨',
+    bonusXp: 5,
     condition: (stats) => stats.hasSpun && stats.spinDuration <= 5000
   },
   {
@@ -73,6 +82,7 @@ const ACHIEVEMENTS = [
     title: 'Patience is a Virtue',
     description: "Good things come to those who wait. Complete and watch a long spin.",
     icon: '🧘',
+    bonusXp: 20,
     condition: (stats) => stats.hasSpun && stats.spinDuration >= 20000
   },
   {
@@ -80,6 +90,7 @@ const ACHIEVEMENTS = [
     title: 'This Is Fine',
     description: "Trigger the \"Overheating\" button effect 5 times in a row.",
     icon: '🔥',
+    bonusXp: 50,
     condition: (stats) => stats.consecutiveOverheats >= 5
   },
   {
@@ -87,6 +98,7 @@ const ACHIEVEMENTS = [
     title: 'Into The Void',
     description: "Null Pointer Exception waiting to happen. Delete all options and try to spin an empty wheel.",
     icon: '👻',
+    bonusXp: 10,
     condition: (stats) => stats.triedEmptySpin
   },
   {
@@ -94,6 +106,7 @@ const ACHIEVEMENTS = [
     title: 'One And Done',
     description: "Remove a winning option from the pool. Only the best remains.",
     icon: '🧹️',
+    bonusXp: 5,
     condition: (stats) => stats.usedRemoveAndSpin
   },
   // --- Level Ups ---
@@ -102,6 +115,7 @@ const ACHIEVEMENTS = [
     title: 'Apprentice',
     description: "You have reached Level 1.",
     icon: '🎓',
+    bonusXp: 5,
     condition: (stats) => stats.level >= 1
   },
   {
@@ -109,6 +123,7 @@ const ACHIEVEMENTS = [
     title: 'One Small Step',
     description: "One giant leap for indecisive kind.",
     icon: '🚀',
+    bonusXp: 10,
     condition: (stats) => stats.level >= 2
   },
   {
@@ -116,6 +131,7 @@ const ACHIEVEMENTS = [
     title: 'The Chosen One',
     description: "You have reached Level 10. Please, go touch some grass.",
     icon: '🌟',
+    bonusXp: 2000,
     condition: (stats) => stats.level >= 10
   },
   // --- XP ---
@@ -124,6 +140,7 @@ const ACHIEVEMENTS = [
     title: 'XP Miner',
     description: "Earn 100 XP in a single session.",
     icon: '⛏️',
+    bonusXp: 100,
     condition: (stats) => stats.sessionXP >= 100
   },
   // --- Consecutive Wins ---
@@ -132,6 +149,7 @@ const ACHIEVEMENTS = [
     title: 'Double or Nothing',
     description: "Get the same result twice in a row.",
     icon: '👯‍♀️',
+    bonusXp: 10,
     condition: (stats) => stats.consecutiveWins >= 2
   },
   {
@@ -139,6 +157,7 @@ const ACHIEVEMENTS = [
     title: 'Déjà Vu',
     description: "Land on the same option 3 times in a row. (Glitch in the matrix?)",
     icon: '🐈',
+    bonusXp: 20,
     condition: (stats) => stats.consecutiveWins >= 3
   },
   {
@@ -146,6 +165,7 @@ const ACHIEVEMENTS = [
     title: 'Broken Record',
     description: "Spin the same result 5 consecutive times.",
     icon: '😵‍💫',
+    bonusXp: 30,
     condition: (stats) => stats.consecutiveWins >= 5
   },
   {
@@ -153,6 +173,7 @@ const ACHIEVEMENTS = [
     title: 'One in a Million',
     description: "Defy the odds by hitting the same winner 100 times in a row!",
     icon: '🦄',
+    bonusXp: 1000,
     condition: (stats) => stats.consecutiveWins >= 100
   },
   // --- Inputs ---
@@ -161,6 +182,7 @@ const ACHIEVEMENTS = [
     title: 'I Make My Own Luck',
     description: "Create a wheel with only one option. (Spoiler: You won.)",
     icon: '🍀',
+    bonusXp: 5,
     condition: (stats) => stats.itemCount === 1 && stats.hasSpun
   },
   {
@@ -168,6 +190,7 @@ const ACHIEVEMENTS = [
     title: 'Never Tell Me The Odds',
     description: "Win on a segment with 1 weight against a segment with 50+ weight.",
     icon: '🏋️‍♂️',
+    bonusXp: 10,
     condition: (stats) => stats.winnerWeight === 1 && stats.maxWeight >= 50
   },
   {
@@ -175,6 +198,7 @@ const ACHIEVEMENTS = [
     title: 'The House Always Wins',
     description: "We all knew that was coming. Create a weighted item with 100 weight and win.",
     icon: '🎲',
+    bonusXp: 10,
     condition: (stats) => stats.winnerWeight >= 100
   },
   {
@@ -182,6 +206,7 @@ const ACHIEVEMENTS = [
     title: 'TL;DR',
     description: "Create a wheel option with more than 50 characters. (We're not reading that.)",
     icon: '📜',
+    bonusXp: 10,
     condition: (stats) => stats.maxItemLength > 50
   },
   {
@@ -189,6 +214,7 @@ const ACHIEVEMENTS = [
     title: 'Why Are You Like This?',
     description: "Create a single list with more than 50 items.",
     icon: '😩',
+    bonusXp: 10,
     condition: (stats) => stats.itemCount > 50
   },
   {
@@ -196,6 +222,7 @@ const ACHIEVEMENTS = [
     title: 'Trust Issues',
     description: "Can't trust the order? Shuffle the list.",
     icon: '🎰',
+    bonusXp: 5,
     condition: (stats) => stats.usedShuffle
   },
   // --- Lists ---
@@ -204,6 +231,7 @@ const ACHIEVEMENTS = [
     title: 'Branching Out',
     description: "Create a new list to organize a different category of items.",
     icon: '🌱',
+    bonusXp: 5,
     condition: (stats) => stats.listCount >= 2 // Assumed: Created at least one new list (default is 1)
   },
   {
@@ -211,6 +239,7 @@ const ACHIEVEMENTS = [
     title: 'The More the Merrier',
     description: "Add 10 different lists to your collection.",
     icon: '🥳',
+    bonusXp: 10,
     condition: (stats) => stats.listCount >= 10
   },
   {
@@ -218,6 +247,7 @@ const ACHIEVEMENTS = [
     title: 'Data Hoarder',
     description: "Save 50 different lists in your library.",
     icon: '💾',
+    bonusXp: 10,
     condition: (stats) => stats.listCount >= 50
   },
   {
@@ -225,6 +255,7 @@ const ACHIEVEMENTS = [
     title: 'Foreign Exchange',
     description: "Import a list from a shared URL.",
     icon: '🌍',
+    bonusXp: 10,
     condition: (stats) => stats.importedList
   },
   {
@@ -232,6 +263,7 @@ const ACHIEVEMENTS = [
     title: 'Sharing is Caring',
     description: "Share a list with a friend (or yourself).",
     icon: '📤',
+    bonusXp: 10,
     condition: (stats) => stats.sharedList
   },
   // --- History ---
@@ -240,6 +272,7 @@ const ACHIEVEMENTS = [
     title: 'Nothing to See Here',
     description: "Cover your tracks. Clear the history.",
     icon: '🙈',
+    bonusXp: 10,
     condition: (stats) => stats.clearedHistory
   },
   // --- Time of Day ---
@@ -248,6 +281,7 @@ const ACHIEVEMENTS = [
     title: 'Night Owl',
     description: "Go to sleep! Spin the wheel between midnight and sunrise.",
     icon: '🦉',
+    bonusXp: 10,
     condition: (stats) => {
       const h = new Date().getHours();
       return stats.hasSpun && h >= 0 && h < 3;
@@ -258,6 +292,7 @@ const ACHIEVEMENTS = [
     title: 'Insomniac',
     description: "Who needs sleep when there are choices to be made?",
     icon: '🥱',
+    bonusXp: 10,
     condition: (stats) => {
       const h = new Date().getHours();
       return stats.hasSpun && h >= 3 && h < 6;
@@ -268,6 +303,7 @@ const ACHIEVEMENTS = [
     title: 'Early Bird',
     description: "Caught the worm (or at least a spin) before 10 AM.",
     icon: '🐛',
+    bonusXp: 10,
     condition: (stats) => {
       const h = new Date().getHours();
       return stats.hasSpun && h >= 6 && h < 10;
@@ -278,6 +314,7 @@ const ACHIEVEMENTS = [
     title: 'Brunch Bunch',
     description: "Spun the wheel when it was too late for breakfast, too early for lunch.",
     icon: '🥑',
+    bonusXp: 10,
     condition: (stats) => {
       const h = new Date().getHours();
       return stats.hasSpun && h >= 10 && h < 14;
@@ -288,6 +325,7 @@ const ACHIEVEMENTS = [
     title: 'Coffee Break',
     description: "Beat the post-lunch slump with a spin.",
     icon: '☕',
+    bonusXp: 10,
     condition: (stats) => {
       const h = new Date().getHours();
       return stats.hasSpun && h >= 14 && h < 18;
@@ -298,6 +336,7 @@ const ACHIEVEMENTS = [
     title: 'Sunset Spinner',
     description: "Closed out the day as the sun went down.",
     icon: '🌙',
+    bonusXp: 10,
     condition: (stats) => {
       const h = new Date().getHours();
       return stats.hasSpun && h >= 18 && h < 22;
@@ -308,6 +347,7 @@ const ACHIEVEMENTS = [
     title: 'Last Call',
     description: "Getting one last spin in before tomorrow.",
     icon: '🛏️',
+    bonusXp: 10,
     condition: (stats) => {
       const h = new Date().getHours();
       return stats.hasSpun && h >= 22 && h < 0;
@@ -319,6 +359,7 @@ const ACHIEVEMENTS = [
     title: 'Flashbang',
     description: "My eyes! Spin the wheel in Light Mode.",
     icon: '😎',
+    bonusXp: 10,
     condition: (stats) => stats.hasSpun && !stats.isDark
   },
   {
@@ -326,6 +367,7 @@ const ACHIEVEMENTS = [
     title: 'Hello Darkness',
     description: "My old friend. Spin the wheel in Dark Mode.",
     icon: '🌑',
+    bonusXp: 10,
     condition: (stats) => stats.hasSpun && stats.isDark
   },
   {
@@ -333,6 +375,7 @@ const ACHIEVEMENTS = [
     title: 'Taste the Rainbow',
     description: "Spin using a custom color palette.",
     icon: '🌈',
+    bonusXp: 10,
     condition: (stats) => stats.hasSpun && stats.isCustomColors
   },
   {
@@ -340,6 +383,7 @@ const ACHIEVEMENTS = [
     title: 'Light Switch Rave',
     description: "My eyes! Toggle between Light and Dark mode 10 times rapidly.",
     icon: '💡',
+    bonusXp: 10,
     condition: (stats) => stats.rapidThemeToggles >= 10
   },
   // --- AI features ---
@@ -348,6 +392,7 @@ const ACHIEVEMENTS = [
     title: 'Ghost in the Machine',
     description: "Robots are deciding your lunch now. Generate a list using the AI Sparkle button.",
     icon: '🤖',
+    bonusXp: 20,
     condition: (stats) => stats.usedAI
   },
   {
@@ -355,6 +400,7 @@ const ACHIEVEMENTS = [
     title: 'Press Secretary',
     description: "Let the AI do the talking. Use the AI Announce Winner feature.",
     icon: '📢',
+    bonusXp: 20,
     condition: (stats) => stats.usedAIAnnounce
   },
   // --- Meta Achievements ---
@@ -363,6 +409,7 @@ const ACHIEVEMENTS = [
     title: 'Almost There',
     description: "Unlocked 10 achievements. Keep going!",
     icon: '🎖️',
+    bonusXp: 100,
     condition: (stats) => stats.unlockedCount >= 10
   },
   {
@@ -370,6 +417,7 @@ const ACHIEVEMENTS = [
     title: 'The Completionist',
     description: "You did it! All achievements unlocked! The ultimate reward for the ultimate player.",
     icon: '💎',
+    bonusXp: 1000,
     condition: (stats) => stats.unlockedCount >= 50
   },
   // --- Easter Eggs ---
@@ -378,6 +426,7 @@ const ACHIEVEMENTS = [
     title: 'Voided Warranty',
     description: "You pushed the limits and paid the price.",
     icon: '💀',
+    bonusXp: 50,
     condition: (stats) => stats.isBroken
   },
   {
@@ -385,6 +434,7 @@ const ACHIEVEMENTS = [
     title: 'Credit Where Due',
     description: "Discovered the maker of the app.",
     icon: '🥚',
+    bonusXp: 100,
     condition: (stats) => stats.winnerId === '@author'
   },
   {
@@ -392,6 +442,7 @@ const ACHIEVEMENTS = [
     title: 'Lore Master',
     description: "You actually read the backstory? Impressive.",
     icon: '📖',
+    bonusXp: 100,
     condition: (stats) => stats.winnerId === '@about'
   }
 ];
