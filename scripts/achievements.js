@@ -142,12 +142,20 @@ const ACHIEVEMENTS = [
     condition: (stats) => stats.usedRemoveAndSpin,
   },
   {
-    id: "first_cancel",
-    title: "First Cancel",
-    description: "Changed your mind? Cancelled a spin mid-way.",
+    id: "abort_mission",
+    title: "Abort Mission",
+    description: "Canceled a spin mid-animation. Not all heroes wear capes.",
     icon: "❌️",
     bonusXp: 5,
     condition: (stats) => stats.cancelledSpins >= 1,
+  },
+  {
+    id: "cancel_culture",
+    title: "Cancel Culture",
+    description: "100 canceled spins. The wheel bows to your indecision. Subjects tremble.",
+    icon: "🛑",
+    bonusXp: 100,
+    condition: (stats) => stats.cancelledSpin >= 100,
   },
   {
     id: "duel_mode",
