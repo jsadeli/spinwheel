@@ -142,6 +142,14 @@ const ACHIEVEMENTS = [
     condition: (stats) => stats.usedRemoveAndSpin,
   },
   {
+    id: "first_cancel",
+    title: "First Cancel",
+    description: "Changed your mind? Cancelled a spin mid-way.",
+    icon: "❌️",
+    bonusXp: 5,
+    condition: (stats) => stats.cancelledSpins >= 1,
+  },
+  {
     id: "duel_mode",
     title: "Duel Mode",
     description: "Face the wheel in a perfect 50-50 showdown.",

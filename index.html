@@ -203,6 +203,7 @@
       const [xp, setXp] = useState(() => loadState('spinWheel_xp', 0));
       const [sessionSpin, setSessionSpin] = useState(0); // Track spins in this session (not persisted)
       const [totalSpins, setTotalSpins] = useState(() => loadState('spinWheel_totalSpins', 0)); // Track total spins
+      const [cancelledSpins, setCancelledSpins] = useState(() => loadState('spinWheel_cancelledSpins', 0)); // Track total cancelled spins
       const [achievements, setAchievements] = useState([]); // Store achievement objects with status
       const [achievementFilter, setAchievementFilter] = useState('all'); // 'all', 'unlocked', 'locked'
 
@@ -434,6 +435,10 @@
       useEffect(() => {
         localStorage.setItem('spinWheel_totalSpins', JSON.stringify(totalSpins));
       }, [totalSpins]);
+
+      useEffect(() => {
+        localStorage.setItem('spinWheel_cancelledSpins', JSON.stringify(cancelledSpins));
+      }, [cancelledSpins]);
 
       // Color Logic
       useEffect(() => {
@@ -1470,6 +1475,19 @@
         setIsSpinning(false);
 
         velocityRef.current = 0;
+
+        // Increment cancelled spins
+        setCancelledSpins(prev => prev + 1);
+
+        // We can't rely on 'cancelledSpins' state being updated immediately for the check below.
+        // So we calculate it.
+        const newCancelledCount = cancelledSpins + 1;
+
+        // Check "First Cancel" achievement
+        const newUnlocks = achievementManager.check({
+          cancelledSpins: newCancelledCount
+        });
+        handleAchievementUnlocks(newUnlocks);
       };
 
       const calculateWinner = (finalRotation) => {
