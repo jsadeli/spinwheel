@@ -59,6 +59,14 @@ const ACHIEVEMENTS = [
     condition: (stats) => stats.spinsInLastMinute >= 120,
   },
   {
+    id: "a_taste_of_fortune",
+    title: "A Taste of Fortune",
+    description: "50 spins in one session. The cookie says: 'Your fate is in motion. Keep spinning.'",
+    icon: "🥠",
+    bonusXp: 50,
+    condition: (stats) => stats.sessionSpin >= 50,
+  },
+  {
     id: "champion_of_chance",
     title: "Champion of Chance",
     description: "100 spins in one session. Fortune favors your relentless fingers.",
