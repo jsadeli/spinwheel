@@ -1,4 +1,4 @@
-const CACHE_NAME = 'spinwheel-v16';
+const CACHE_NAME = 'spinwheel-v17';
 const ASSETS = [
     './',
     './index.html',
