@@ -151,6 +151,14 @@ const ACHIEVEMENTS = [
     condition: (stats) => stats.level >= 2,
   },
   {
+    id: "spinaholic",
+    title: "Spinaholic",
+    description: "Your fingers are in a committed relationship with the spin button.",
+    icon: "🎡",
+    bonusXp: 10,
+    condition: (stats) => stats.level >= 4,
+  },
+  {
     id: "phd_in_roundabout_solutions",
     title: "PhD in Roundabout Solutions",
     description: "Level 5 unlocked. You now specialize in complicated ways to avoid decisions.",
