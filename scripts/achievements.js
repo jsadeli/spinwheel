@@ -226,10 +226,10 @@ const ACHIEVEMENTS = [
   {
     id: "xp_miner",
     title: "XP Miner",
-    description: "Earn 100 XP in a single session.",
+    description: "Earn 500 XP in a single session.",
     icon: "⛏️",
     bonusXp: 100,
-    condition: (stats) => stats.sessionXP >= 100,
+    condition: (stats) => stats.sessionXP >= 500,
   },
   // --- Consecutive Wins ---
   {
