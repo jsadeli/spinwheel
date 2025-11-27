@@ -139,7 +139,7 @@ const ACHIEVEMENTS = [
     title: "Apprentice",
     description: "Welcome to Level 1, where the real beginners envy you.",
     icon: "🐣",
-    bonusXp: 5,
+    bonusXp: 2,
     condition: (stats) => stats.level >= 1,
   },
   {
@@ -147,8 +147,16 @@ const ACHIEVEMENTS = [
     title: "One Small Step",
     description: "One giant leap for indecisive kind.",
     icon: "🚀",
-    bonusXp: 10,
+    bonusXp: 5,
     condition: (stats) => stats.level >= 2,
+  },
+  {
+    id: "spinner_adept",
+    title: "Spinner Adept",
+    description: "Your skill in the spin arts grows with each rotation.",
+    icon: "🎯",
+    bonusXp: 10,
+    condition: (stats) => stats.level >= 3,
   },
   {
     id: "spinaholic",
