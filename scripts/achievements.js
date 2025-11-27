@@ -54,7 +54,7 @@ const ACHIEVEMENTS = [
   // --- Muted Spin ---
   {
     id: "silence_is_golden",
-    title: "Silence is Golden",
+    title: "Silence Is Golden",
     description: "Shhh, the wheel is thinking. Complete a spin with the sound muted.",
     icon: "🔇",
     bonusXp: 10,
@@ -79,7 +79,7 @@ const ACHIEVEMENTS = [
   },
   {
     id: "patience_is_a_virtue",
-    title: "Patience is a Virtue",
+    title: "Patience Is a Virtue",
     description: "Good things come to those who wait. Complete and watch a long spin.",
     icon: "🧘",
     bonusXp: 20,
@@ -95,7 +95,7 @@ const ACHIEVEMENTS = [
   },
   {
     id: "into_the_void",
-    title: "Into The Void",
+    title: "Into the Void",
     description: "NullPointerException waiting to happen. Tried spinning an empty wheel.",
     icon: "👻",
     bonusXp: 10,
@@ -103,7 +103,7 @@ const ACHIEVEMENTS = [
   },
   {
     id: "one_and_done",
-    title: "One And Done",
+    title: "One and Done",
     description: "Remove a winning option from the pool. Only the best remains.",
     icon: "🧹️",
     bonusXp: 5,
@@ -187,7 +187,7 @@ const ACHIEVEMENTS = [
   },
   {
     id: "never_tell_me_the_odds",
-    title: "Never Tell Me The Odds",
+    title: "Never Tell Me the Odds",
     description: "Win on a segment with 1 weight against a segment with 50+ weight.",
     icon: "🏋️‍♂️",
     bonusXp: 10,
