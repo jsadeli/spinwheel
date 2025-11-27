@@ -243,7 +243,7 @@ const ACHIEVEMENTS = [
     title: "The Chosen One",
     description: "You have reached Level 10. Please, go touch some grass.",
     icon: "🌟",
-    bonusXp: 2000,
+    bonusXp: 3000,
     condition: (stats) => stats.level >= 10,
   },
   {
@@ -251,7 +251,7 @@ const ACHIEVEMENTS = [
     title: "Transcendence Protocol",
     description: "All parameters exceeded. Divinity attained.",
     icon: "♾️",
-    bonusXp: 3000,
+    bonusXp: 5000,
     condition: (stats) => stats.level >= 11,
   },
   // --- Consecutive Wins ---
@@ -588,7 +588,7 @@ const ACHIEVEMENTS = [
     description:
       "You did it! All achievements unlocked! The ultimate reward for the ultimate player.",
     icon: "💎",
-    bonusXp: 5000,
+    bonusXp: 9999,
     condition: (stats) => stats.unlockedCount >= ACHIEVEMENTS.length - 1,
   },
   // --- Easter Eggs ---
