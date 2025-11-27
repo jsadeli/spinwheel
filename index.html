@@ -181,6 +181,7 @@
       // Power Meter State
       const [isCharging, setIsCharging] = useState(false);
       const [chargePower, setChargePower] = useState(0);
+      const [overchargeState, setOverchargeState] = useState(0); // New state for overcharge animation
       const [isOutOfOrder, setIsOutOfOrder] = useState(false); // NEW: Broken state
       const [deferredPrompt, setDeferredPrompt] = useState(null);
 
@@ -1224,6 +1225,7 @@
         // Reset power refs
         chargePowerRef.current = 0;
         setChargePower(0);
+        setOverchargeState(0);
         isChargingRef.current = false;
         overchargeRef.current = 0; // Reset overcharge
 
@@ -1254,6 +1256,7 @@
             // If fully charged, start counting overcharge time
             if (power >= 1) {
               overchargeRef.current += 16; // Add ~16ms per frame
+              setOverchargeState(overchargeRef.current); // Trigger re-render for heat animation
               window.spawnSmoke(smokeContainerRef, overchargeRef, () => window.playFireCrackle(audioCtxRef, soundEnabled, isOutOfOrder));
 
               // Track Overheats for "This Is Fine"
@@ -1290,6 +1293,7 @@
 
                 setIsCharging(false);
                 setChargePower(0);
+                setOverchargeState(0);
                 isChargingRef.current = false;
 
                 setIsOutOfOrder(true); // TRIGGER BROKEN STATE
@@ -1383,6 +1387,7 @@
         setChargePower(0);
         chargePowerRef.current = 0;
         overchargeRef.current = 0; // Reset smoke timer logic immediately
+        setOverchargeState(0);
       };
 
       const cancelCharging = () => {
@@ -1755,6 +1760,27 @@
 
       const prestigeTheme = getPrestigeTheme(levelInfo.level);
 
+      // Calculate Heat Progress for Animation
+      const overchargeTime = overchargeState;
+      const heatThreshold = 3000;
+      const maxHeatTime = 18000;
+      let heatProgress = 0;
+      if (overchargeTime > heatThreshold) {
+        heatProgress = Math.min((overchargeTime - heatThreshold) / (maxHeatTime - heatThreshold), 1);
+      }
+
+      // Helper for color interpolation
+      const lerpColor = (a, b, amount) => {
+        const ah = parseInt(a.replace(/#/g, ''), 16),
+          ar = ah >> 16, ag = ah >> 8 & 0xff, ab = ah & 0xff,
+          bh = parseInt(b.replace(/#/g, ''), 16),
+          br = bh >> 16, bg = bh >> 8 & 0xff, bb = bh & 0xff,
+          rr = ar + amount * (br - ar),
+          rg = ag + amount * (bg - ag),
+          rb = ab + amount * (bb - ab);
+        return '#' + ((1 << 24) + (rr << 16) + (rg << 8) + rb | 0).toString(16).slice(1);
+      };
+
       return (
         // CHANGED: Added md:h-screen and md:overflow-hidden to lock desktop layout to viewport
         <div className="min-h-screen md:h-screen md:overflow-hidden bg-gray-100 dark:bg-gray-900 flex flex-col font-sans text-gray-800 dark:text-gray-100 transition-colors duration-300">
@@ -2042,9 +2068,9 @@
                         <circle cx="50" cy="50" r="46" fill="none" stroke="url(#powerGradient)" strokeWidth="8" strokeDasharray="289.02" strokeDashoffset={289.02 * (1 - chargePower)} strokeLinecap="round" className="transition-all duration-75 ease-linear" />
                         <defs>
                           <linearGradient id="powerGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                            <stop offset="0%" stopColor="#3b82f6" />
-                            <stop offset="50%" stopColor="#8b5cf6" />
-                            <stop offset="100%" stopColor="#ef4444" />
+                            <stop offset="0%" stopColor={lerpColor('#3b82f6', '#ef4444', heatProgress)} />
+                            <stop offset="50%" stopColor={lerpColor('#8b5cf6', '#ef4444', heatProgress)} />
+                            <stop offset="100%" stopColor={lerpColor('#ef4444', '#ff0000', heatProgress)} />
                           </linearGradient>
                         </defs>
                       </svg>
@@ -2068,7 +2094,9 @@
                             transition-all duration-200
                         `}
                       style={{
-                        boxShadow: isCharging ? `0 0 ${10 + chargePower * 20}px ${chargePower > 0.8 ? '#ef4444' : '#6366f1'}` : ''
+                        boxShadow: isCharging
+                          ? `0 0 ${10 + chargePower * 20 + heatProgress * 20}px ${heatProgress > 0 ? lerpColor('#ef4444', '#ff0000', heatProgress) : (chargePower > 0.8 ? '#ef4444' : '#6366f1')}`
+                          : ''
                       }}
                     >
                       <span className={`
