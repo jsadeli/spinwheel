@@ -225,6 +225,14 @@ const ACHIEVEMENTS = [
     bonusXp: 5,
     condition: (stats) => stats.usedShuffle && stats.itemCount >= 2,
   },
+  {
+    id: "illusionist",
+    title: "Illusionist",
+    description: "Spin a list where every option is the same. (We admire your commitment to the illusion of choice.)",
+    icon: "🪄",
+    bonusXp: 20,
+    condition: (stats) => stats.allIdentical && stats.itemCount >= 2,
+  },
   // --- Lists ---
   {
     id: "branching_out",

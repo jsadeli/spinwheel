@@ -1497,6 +1497,7 @@
         const winnerWeight = winnerObj ? winnerObj.weight : 1;
         const maxWeight = Math.max(...currentItems.map(i => i.weight));
         const maxItemLength = Math.max(...currentItems.map(i => i.text.length));
+        const allIdentical = currentItems.length > 0 && currentItems.every(item => item.text === currentItems[0].text);
 
         const newUnlocks = achievementManager.check({
           spins: newTotalSpins,
@@ -1509,6 +1510,7 @@
           winnerWeight: winnerWeight,
           maxWeight: maxWeight,
           maxItemLength: maxItemLength,
+          allIdentical: allIdentical,
           mysteryMode: hideLabels,
           listCount: savedLists.length,
           usedAI: usedAIRef.current,
