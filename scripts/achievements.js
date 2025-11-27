@@ -109,6 +109,14 @@ const ACHIEVEMENTS = [
     bonusXp: 5,
     condition: (stats) => stats.usedRemoveAndSpin,
   },
+  {
+    id: "duel_mode",
+    title: "Duel Mode",
+    description: "Face the wheel in a perfect 50-50 showdown.",
+    icon: "🤺",
+    bonusXp: 5,
+    condition: (stats) => stats.itemCount === 2 && stats.hasSpun,
+  },
   // --- Level Ups ---
   {
     id: "apprentice",
