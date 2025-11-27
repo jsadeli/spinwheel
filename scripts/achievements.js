@@ -315,6 +315,14 @@ const ACHIEVEMENTS = [
     bonusXp: 10,
     condition: (stats) => stats.clearedHistory,
   },
+  {
+    id: "progress_enthusiast",
+    title: "Progress Enthusiast",
+    description: "More than 100 visits to your records. You inspect that tab like it owes you money.",
+    icon: "📈",
+    bonusXp: 20,
+    condition: (stats) => stats.progressTabViews >= 100,
+  },
   // --- Time of Day ---
   {
     id: "night_owl",

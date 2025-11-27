@@ -165,7 +165,7 @@
       const [showListDropdown, setShowListDropdown] = useState(false);
       const [showColorModal, setShowColorModal] = useState(false);
       const [shareUrl, setShareUrl] = useState('');
-      const [activeTab, setActiveTab] = useState('inputs'); // 'inputs' or 'history'
+      const [activeTab, setActiveTab] = useState('inputs'); // 'inputs', 'history', or 'progress'
       const [isCopied, setIsCopied] = useState(false);
       const [showGenModal, setShowGenModal] = useState(false);
       const [showHelpModal, setShowHelpModal] = useState(false);
@@ -205,6 +205,11 @@
       const [totalSpins, setTotalSpins] = useState(() => loadState('spinWheel_totalSpins', 0)); // Track total spins
       const [achievements, setAchievements] = useState([]); // Store achievement objects with status
       const [achievementFilter, setAchievementFilter] = useState('all'); // 'all', 'unlocked', 'locked'
+
+      // Track Tab Views for "Lorekeeper's Review"
+      const [inputsTabViews, setInputsTabViews] = useState(() => loadState('spinWheel_inputsTabViews', 0));
+      const [historyTabViews, setHistoryTabViews] = useState(() => loadState('spinWheel_historyTabViews', 0));
+      const [progressTabViews, setProgressTabViews] = useState(() => loadState('spinWheel_progressTabViews', 0));
 
       // Initialize Achievement Manager
       const achievementManager = useMemo(() => new window.AchievementManager(), []);
@@ -523,6 +528,39 @@
           handleAchievementUnlocks(newUnlocks);
         }
       }, [theme]);
+
+      // Track Tab Views
+      useEffect(() => {
+        if (activeTab === 'inputs') {
+          setInputsTabViews(prev => {
+            const newVal = prev + 1;
+            localStorage.setItem('spinWheel_inputsTabViews', JSON.stringify(newVal));
+            return newVal;
+          });
+        } else if (activeTab === 'history') {
+          setHistoryTabViews(prev => {
+            const newVal = prev + 1;
+            localStorage.setItem('spinWheel_historyTabViews', JSON.stringify(newVal));
+            return newVal;
+          });
+        } else if (activeTab === 'progress') {
+          setProgressTabViews(prev => {
+            const newVal = prev + 1;
+            localStorage.setItem('spinWheel_progressTabViews', JSON.stringify(newVal));
+            return newVal;
+          });
+        }
+      }, [activeTab]);
+
+      // Check Lorekeeper Achievement
+      useEffect(() => {
+        const newUnlocks = achievementManager.check({
+          inputsTabViews: inputsTabViews,
+          historyTabViews: historyTabViews,
+          progressTabViews: progressTabViews
+        });
+        handleAchievementUnlocks(newUnlocks);
+      }, [inputsTabViews, historyTabViews, progressTabViews]);
 
       // Click outside to close dropdowns
       useEffect(() => {
