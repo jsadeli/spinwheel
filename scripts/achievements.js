@@ -166,6 +166,14 @@ const ACHIEVEMENTS = [
     bonusXp: 2000,
     condition: (stats) => stats.level >= 10,
   },
+  {
+    id: "transcendence_protocol",
+    title: "Transcendence Protocol",
+    description: "All parameters exceeded. Divinity attained.",
+    icon: "♾️",
+    bonusXp: 3000,
+    condition: (stats) => stats.level >= 11,
+  },
   // --- XP ---
   {
     id: "xp_miner",
