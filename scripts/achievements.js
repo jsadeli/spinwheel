@@ -268,7 +268,7 @@ const ACHIEVEMENTS = [
   },
   {
     id: "sharing_is_caring",
-    title: "Sharing is Caring",
+    title: "Sharing Is Caring",
     description: "Share a list with a friend (or yourself).",
     icon: "🫶",
     bonusXp: 30,
