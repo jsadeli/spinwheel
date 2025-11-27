@@ -151,6 +151,14 @@ const ACHIEVEMENTS = [
     condition: (stats) => stats.level >= 2,
   },
   {
+    id: "confetti",
+    title: "Party Mode",
+    description: "Only those of Level 7 or higher may wield the sacred celebratory storm.",
+    icon: "🎊",
+    bonusXp: 50,
+    condition: (stats) => stats.level >= 7,
+  },
+  {
     id: "the_chosen_one",
     title: "The Chosen One",
     description: "You have reached Level 10. Please, go touch some grass.",
