@@ -77,11 +77,19 @@ const ACHIEVEMENTS = [
   // --- Mystery Spin ---
   {
     id: "jesus_take_the_wheel",
-    title: "Jesus Take The Wheel",
+    title: "Jesus Take the Wheel",
     description: 'Spin the wheel while in "Mystery Mode".',
     icon: "🙏",
     bonusXp: 10,
     condition: (stats) => stats.mysteryMode && stats.hasSpun,
+  },
+  {
+    id: "devil_take_the_wheel",
+    title: "Devil Take the Wheel",
+    description: "Temptation wins this round. Could not wait for the reveal and peeked.",
+    icon: "😈",
+    bonusXp: 66,
+    condition: (stats) => stats.mysteryModeCancelledDuringSpin,
   },
   // --- Muted Spin ---
   {

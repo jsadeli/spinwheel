@@ -290,6 +290,7 @@
       const consecutiveOverheatsRef = useRef(0); // Track consecutive overheats for "This Is Fine"
       const usedAIRef = useRef(false); // Track if AI was used for "Ghost in the Machine"
       const consecutiveShufflesRef = useRef(0); // Track consecutive shuffles for "Certified Paranoid"
+      const mysteryModeCancelledDuringSpinRef = useRef(false); // Track if mystery mode was cancelled during spin
 
       // State to force re-render for relative time updates
       const [, setTick] = useState(0);
@@ -1404,6 +1405,7 @@
 
         // Reset consecutive shuffles on spin
         consecutiveShufflesRef.current = 0;
+        mysteryModeCancelledDuringSpinRef.current = false;
 
         // Reset consecutive overheats on successful spin
         // REMOVED: consecutiveOverheatsRef.current = 0; // Moved to handlePointerUpOrLeave to allow streaks
@@ -1582,6 +1584,7 @@
           maxItemLength: maxItemLength,
           allIdentical: allIdentical,
           mysteryMode: hideLabels,
+          mysteryModeCancelledDuringSpin: mysteryModeCancelledDuringSpinRef.current,
           listCount: savedLists.length,
           usedAI: usedAIRef.current,
           soundMuted: !soundEnabled,
@@ -2001,7 +2004,12 @@
 
                 {/* Mystery Toggle Button */}
                 <button
-                  onClick={() => setHideLabels(!hideLabels)}
+                  onClick={() => {
+                    if (hideLabels && isSpinningRef.current) {
+                      mysteryModeCancelledDuringSpinRef.current = true;
+                    }
+                    setHideLabels(!hideLabels);
+                  }}
                   className="absolute bottom-2 right-2 p-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-full shadow-md hover:bg-gray-50 dark:hover:bg-gray-700 transition text-gray-600 dark:text-gray-300 z-30"
                   title={hideLabels ? "Show Items" : "Hide Items (Mystery Mode)"}
                 >
