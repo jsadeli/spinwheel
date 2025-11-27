@@ -39,7 +39,7 @@ const ACHIEVEMENTS = [
     title: "Millennium of Mayhem",
     description: "1000 spins. Zero progress. Peak indecision achieved.",
     icon: "🌀",
-    bonusXp: 100,
+    bonusXp: 1000,
     condition: (stats) => stats.spins >= 1000,
   },
   {
