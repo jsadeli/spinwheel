@@ -126,6 +126,14 @@ const ACHIEVEMENTS = [
     condition: (stats) => stats.hasSpun && stats.spinDuration >= 20000,
   },
   {
+    id: "afk",
+    title: "AFK",
+    description: "Welcome back! You spun the wheel after being away for 10 minutes.",
+    icon: "💤",
+    bonusXp: 20,
+    condition: (stats) => stats.timeSinceLastSpin >= 600000, // milliseconds
+  },
+  {
     id: "this_is_fine",
     title: "This Is Fine",
     description: "Stress-test the fire supression system by spinning 5 consecutive overheats.",

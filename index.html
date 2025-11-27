@@ -291,6 +291,8 @@
       const usedAIRef = useRef(false); // Track if AI was used for "Ghost in the Machine"
       const consecutiveShufflesRef = useRef(0); // Track consecutive shuffles for "Certified Paranoid"
       const mysteryModeCancelledDuringSpinRef = useRef(false); // Track if mystery mode was cancelled during spin
+      const lastSpinTimeRef = useRef(null); // Track time of last spin for "AFK"
+      const timeSinceLastSpinRef = useRef(0); // Track duration since last spin
 
       // State to force re-render for relative time updates
       const [, setTick] = useState(0);
@@ -1393,6 +1395,15 @@
         // CHANGED: Check Ref here too for safety
         if (isSpinningRef.current || items.length === 0) return;
 
+        // Track time since last spin for "AFK"
+        const now = Date.now();
+        if (lastSpinTimeRef.current) {
+          timeSinceLastSpinRef.current = now - lastSpinTimeRef.current;
+        } else {
+          timeSinceLastSpinRef.current = 0;
+        }
+        lastSpinTimeRef.current = now;
+
         initAudio();
 
         // CHANGED: Update Ref synchronously BEFORE state
@@ -1411,7 +1422,6 @@
         // REMOVED: consecutiveOverheatsRef.current = 0; // Moved to handlePointerUpOrLeave to allow streaks
 
         // Track Spin Timestamp for "Analysis Paralysis"
-        const now = Date.now();
         spinTimestampsRef.current = [...spinTimestampsRef.current, now].filter(t => now - t < 60000); // Keep last minute
 
         const baseSpeed = Math.random() * 0.2 + 0.5;
@@ -1585,6 +1595,7 @@
           allIdentical: allIdentical,
           mysteryMode: hideLabels,
           mysteryModeCancelledDuringSpin: mysteryModeCancelledDuringSpinRef.current,
+          timeSinceLastSpin: timeSinceLastSpinRef.current,
           listCount: savedLists.length,
           usedAI: usedAIRef.current,
           soundMuted: !soundEnabled,
