@@ -401,6 +401,17 @@ const ACHIEVEMENTS = [
       return stats.hasSpun && h >= 22 && h < 0;
     },
   },
+  {
+    id: "tgif",
+    title: "TGIF",
+    description: "Spin the wheel on a Friday after 5pm. Weekend vibes!",
+    icon: "🎉️",
+    bonusXp: 20,
+    condition: (stats) => {
+      const d = new Date();
+      return stats.hasSpun && d.getDay() === 5 && d.getHours() >= 17;
+    },
+  },
   // --- Theme features ---
   {
     id: "flashbang",
