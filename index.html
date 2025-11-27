@@ -2405,100 +2405,105 @@
           {
             winner && (
               <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 backdrop-blur-sm animate-in fade-in duration-300">
-                <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center transform scale-100 animate-in zoom-in-95 duration-300 relative overflow-hidden border dark:border-gray-700">
+                {/* Prestige Modal Wrapper */}
+                <div className={`relative w-full max-w-sm transform scale-100 animate-in zoom-in-95 duration-300 group ${prestigeTheme.shadow} rounded-2xl`}>
 
-                  {/* Conditional Content Based on Winner Name (Easter Eggs) */}
-                  {winner === '@author' ? (
-                    <>
-                      {/* Author Easter Egg */}
-                      <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500"></div>
-                      <div className="mx-auto w-16 h-16 bg-indigo-100 dark:bg-indigo-900/30 rounded-full flex items-center justify-center mb-4 text-indigo-600 dark:text-indigo-400">
-                        <CodeIcon size={32} />
-                      </div>
-                      <h3 className="text-gray-500 dark:text-gray-400 uppercase tracking-widest text-xs font-bold mb-2">Developer Revealed!</h3>
-                      <div className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 mb-4 break-words">
-                        PT Samuel Kripto Indonesia
-                      </div>
-                      <p className="text-sm text-gray-600 dark:text-gray-300 mb-8 italic">
-                        We turn caffeine into code and panic into features, all proudly debugged with console.log. ☕😱💻🔍🚀
-                      </p>
-                    </>
-                  ) : winner === '@about' ? (
-                    <>
-                      {/* About Easter Egg */}
-                      <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500"></div>
-                      <div className="mx-auto w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mb-4 text-blue-600 dark:text-blue-400">
-                        <ScrollIcon size={32} />
-                      </div>
-                      <h3 className="text-gray-500 dark:text-gray-400 uppercase tracking-widest text-xs font-bold mb-2">The Secret Origin</h3>
-                      <div className="text-2xl font-black text-gray-800 dark:text-white mb-4 break-words">
-                        Why does this exist?
-                      </div>
-                      <div className="text-sm text-gray-600 dark:text-gray-300 mb-8 leading-relaxed text-left space-y-4 max-h-60 overflow-y-auto pr-2">
-                        <p>
-                          Originally developed by the Samuel Kripto technical team to solve a very real operational crisis: choosing the next weekly meeting host without triggering mass avoidance behavior. Manual selection had become an undeniable productivity sink, often followed by five minutes of awkward silence, sudden bursts of “urgent” typing, and at least one person staring intently at logs that absolutely did not require immediate attention.
-                        </p>
-                        <p>
-                          Over time, the process evolved into something resembling a workplace survival game. Cameras mysteriously turned off, microphones instantly muted, and several team members perfected the art of blending into the background like highly trained corporate chameleons. In extreme cases, strategic “BRB” bathroom breaks were deployed the moment the question “Who wants to host next week?” appeared.
-                        </p>
-                        <p>
-                          To restore order (and dignity), this wheel was built. A tool of fairness, efficiency, and cold, impartial randomness—because if fate chooses the host, at least no one can be blamed.
-                        </p>
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      {/* Standard Winner */}
-                      <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
-                      <div className="mx-auto w-16 h-16 bg-yellow-100 dark:bg-yellow-900/30 rounded-full flex items-center justify-center mb-4 text-yellow-600 dark:text-yellow-500">
-                        <TrophyIcon size={32} />
-                      </div>
-                      <h3 className="text-gray-500 dark:text-gray-400 uppercase tracking-widest text-sm font-bold mb-2">We have a winner!</h3>
-                      <div className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 mb-8 break-words">
-                        {winner}
-                      </div>
-                    </>
-                  )}
+                  {/* Dynamic Border/Background */}
+                  <div className={`absolute inset-0 ${prestigeTheme.border} opacity-100 dark:opacity-80 rounded-2xl`}></div>
 
-                  <div className="grid grid-cols-1 gap-3">
-                    <button
-                      onClick={() => setWinner(null)}
-                      className="w-full py-3 bg-gray-900 dark:bg-gray-700 text-white rounded-xl font-bold hover:bg-gray-800 dark:hover:bg-gray-600 transition shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-                    >
-                      Close
-                    </button>
-                    <button
-                      onClick={() => {
-                        // Remove winner logic with animation
-                        const winnerIndex = items.findIndex(i => i.text === winner);
-                        if (winnerIndex !== -1) {
-                          removingItemRef.current = {
-                            index: winnerIndex,
-                            text: winner,
-                            startTime: Date.now(),
-                            duration: 750 // 0.75 seconds
-                          };
-                          setWinner(null);
-                          // Ensure loop continues if it was paused (though idle spin usually handles it)
-                          // If idle spin is disabled or something, we might need to kick it.
-                          // But our idle spin logic now checks removingItemRef, so it should auto-start/continue.
-                        } else {
-                          // Fallback if not found
-                          const newItems = items.filter(i => i.text !== winner);
-                          setInputText(itemsToString(newItems));
-                          setWinner(null);
-                        }
+                  <div className={`relative m-[2px] ${prestigeTheme.cardBg} rounded-[14px] p-8 text-center transition-colors duration-300 overflow-hidden`}>
 
-                        // Check "One More Time" achievement
-                        const newUnlocks = achievementManager.check({
-                          usedRemoveAndSpin: true
-                        });
-                        handleAchievementUnlocks(newUnlocks);
-                      }}
-                      className="w-full py-3 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 rounded-xl font-bold hover:border-red-200 dark:hover:border-red-800 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition"
-                    >
-                      Remove & Spin Again
-                    </button>
+                    {/* Conditional Content Based on Winner Name (Easter Eggs) */}
+                    {winner === '@author' ? (
+                      <>
+                        {/* Author Easter Egg - Keep original colors for identity */}
+                        <div className="mx-auto w-16 h-16 bg-indigo-100 dark:bg-indigo-900/30 rounded-full flex items-center justify-center mb-4 text-indigo-600 dark:text-indigo-400">
+                          <CodeIcon size={32} />
+                        </div>
+                        <h3 className="text-gray-500 dark:text-gray-400 uppercase tracking-widest text-xs font-bold mb-2">Developer Revealed!</h3>
+                        <div className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 mb-4 break-words">
+                          PT Samuel Kripto Indonesia
+                        </div>
+                        <p className="text-sm text-gray-600 dark:text-gray-300 mb-8 italic">
+                          We turn caffeine into code and panic into features, all proudly debugged with console.log. ☕😱💻🔍🚀
+                        </p>
+                      </>
+                    ) : winner === '@about' ? (
+                      <>
+                        {/* About Easter Egg - Keep original colors for identity */}
+                        <div className="mx-auto w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mb-4 text-blue-600 dark:text-blue-400">
+                          <ScrollIcon size={32} />
+                        </div>
+                        <h3 className="text-gray-500 dark:text-gray-400 uppercase tracking-widest text-xs font-bold mb-2">The Secret Origin</h3>
+                        <div className="text-2xl font-black text-gray-800 dark:text-white mb-4 break-words">
+                          Why does this exist?
+                        </div>
+                        <div className="text-sm text-gray-600 dark:text-gray-300 mb-8 leading-relaxed text-left space-y-4 max-h-60 overflow-y-auto pr-2">
+                          <p>
+                            Originally developed by the Samuel Kripto technical team to solve a very real operational crisis: choosing the next weekly meeting host without triggering mass avoidance behavior. Manual selection had become an undeniable productivity sink, often followed by five minutes of awkward silence, sudden bursts of “urgent” typing, and at least one person staring intently at logs that absolutely did not require immediate attention.
+                          </p>
+                          <p>
+                            Over time, the process evolved into something resembling a workplace survival game. Cameras mysteriously turned off, microphones instantly muted, and several team members perfected the art of blending into the background like highly trained corporate chameleons. In extreme cases, strategic “BRB” bathroom breaks were deployed the moment the question “Who wants to host next week?” appeared.
+                          </p>
+                          <p>
+                            To restore order (and dignity), this wheel was built. A tool of fairness, efficiency, and cold, impartial randomness—because if fate chooses the host, at least no one can be blamed.
+                          </p>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        {/* Standard Winner - Uses Prestige Theme */}
+                        <div className={`mx-auto w-16 h-16 ${prestigeTheme.iconBg} rounded-full flex items-center justify-center mb-4 ${prestigeTheme.iconColor} transition-colors duration-300`}>
+                          <TrophyIcon size={32} className={levelInfo.level >= 9 ? 'animate-bounce' : ''} />
+                        </div>
+                        <h3 className={`uppercase tracking-widest text-sm font-bold mb-2 ${prestigeTheme.textColor} opacity-80`}>We have a winner!</h3>
+                        <div className={`text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r ${prestigeTheme.titleGradient} mb-8 break-words`}>
+                          {winner}
+                        </div>
+                      </>
+                    )}
+
+                    <div className="grid grid-cols-1 gap-3">
+                      <button
+                        onClick={() => setWinner(null)}
+                        className={`w-full py-3 bg-gradient-to-r ${prestigeTheme.barGradient} text-white rounded-xl font-bold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200`}
+                      >
+                        Close
+                      </button>
+                      <button
+                        onClick={() => {
+                          // Remove winner logic with animation
+                          const winnerIndex = items.findIndex(i => i.text === winner);
+                          if (winnerIndex !== -1) {
+                            removingItemRef.current = {
+                              index: winnerIndex,
+                              text: winner,
+                              startTime: Date.now(),
+                              duration: 750 // 0.75 seconds
+                            };
+                            setWinner(null);
+                            // Ensure loop continues if it was paused (though idle spin usually handles it)
+                            // If idle spin is disabled or something, we might need to kick it.
+                            // But our idle spin logic now checks removingItemRef, so it should auto-start/continue.
+                          } else {
+                            // Fallback if not found
+                            const newItems = items.filter(i => i.text !== winner);
+                            setInputText(itemsToString(newItems));
+                            setWinner(null);
+                          }
+
+                          // Check "One More Time" achievement
+                          const newUnlocks = achievementManager.check({
+                            usedRemoveAndSpin: true
+                          });
+                          handleAchievementUnlocks(newUnlocks);
+                        }}
+                        className="w-full py-3 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 rounded-xl font-bold hover:border-red-200 dark:hover:border-red-800 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition"
+                      >
+                        Remove & Spin Again
+                      </button>
+                    </div>
+
                   </div>
                 </div>
               </div>
