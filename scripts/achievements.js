@@ -427,7 +427,7 @@ const ACHIEVEMENTS = [
       "You did it! All achievements unlocked! The ultimate reward for the ultimate player.",
     icon: "💎",
     bonusXp: 5000,
-    condition: (stats) => stats.unlockedCount >= 50,
+    condition: (stats) => stats.unlockedCount >= ACHIEVEMENTS.length - 1,
   },
   // --- Easter Eggs ---
   {
