@@ -1,16 +1,67 @@
 // Confetti Logic - Fireworks Style Physics
-window.fireConfetti = () => {
-  const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
-  const confettiCount = 250; // Increased count slightly for explosion effect
-  const container = document.createElement('div');
-  container.style.position = 'fixed';
-  container.style.top = '0';
-  container.style.left = '0';
-  container.style.width = '100%';
-  container.style.height = '100%';
-  container.style.pointerEvents = 'none';
-  container.style.zIndex = '9999';
-  container.style.perspective = '1000px'; // Depth for 3D
+window.fireConfetti = (level = 0) => {
+  // Configuration for each prestige tier
+  let config = {
+    colors: ["#ff0000", "#00ff00", "#0000ff", "#ffff00", "#ff00ff", "#00ffff"],
+    shapes: ["rect"], // rect, circle, diamond, star
+    count: 50,
+    gravity: 0.07,
+    drag: 0.96,
+    force: 1.0,
+    glow: false,
+    sizeMod: 1.0,
+  };
+
+  if (level >= 11) {
+    // Cosmic - Stars & Planets, floaty, glowing
+    config.colors = ["#ec4899", "#8b5cf6", "#3b82f6", "#6366f1", "#d946ef", "#ffffff"];
+    config.shapes = ["circle", "star"];
+    config.count = 200;
+    config.gravity = 0.04; // Very floaty
+    config.force = 1.3;
+    config.glow = true;
+    config.sizeMod = 1.2;
+  } else if (level >= 10) {
+    // Diamond - Sharp diamonds, high energy
+    config.colors = ["#22d3ee", "#6366f1", "#c084fc", "#818cf8", "#e0e7ff"];
+    config.shapes = ["diamond"];
+    config.count = 150;
+    config.gravity = 0.08;
+    config.force = 1.2;
+    config.glow = true;
+  } else if (level >= 9) {
+    // Gold - Coins (circles), heavy but bouncy
+    config.colors = ["#fcd34d", "#f59e0b", "#fbbf24", "#d97706", "#fffbeb"];
+    config.shapes = ["circle"];
+    config.count = 100;
+    config.gravity = 0.09; // Heavier
+    config.force = 1.1;
+  } else if (level >= 8) {
+    // Ruby - Intense reds, mixed shapes
+    config.colors = ["#fb7185", "#ef4444", "#e11d48", "#f43f5e", "#ffe4e6"];
+    config.shapes = ["rect", "diamond"];
+    config.count = 75;
+    config.gravity = 0.07;
+  } else if (level >= 7) {
+    // Topaz - Blue/Cyan, shards (triangles)
+    config.colors = ["#67e8f9", "#38bdf8", "#93c5fd", "#0ea5e9", "#e0f2fe"];
+    config.shapes = ["triangle", "rect"];
+    config.count = 50;
+  } else if (level >= 5) {
+    // Emerald - Green, standard confetti
+    config.colors = ["#34d399", "#2dd4bf", "#10b981", "#059669", "#d1fae5"];
+    config.shapes = ["rect"];
+  }
+
+  const container = document.createElement("div");
+  container.style.position = "fixed";
+  container.style.top = "0";
+  container.style.left = "0";
+  container.style.width = "100%";
+  container.style.height = "100%";
+  container.style.pointerEvents = "none";
+  container.style.zIndex = "9999";
+  container.style.perspective = "1000px"; // Depth for 3D
   document.body.appendChild(container);
 
   const particles = [];
@@ -18,29 +69,56 @@ window.fireConfetti = () => {
   // Start slightly below center to align better with the modal center
   const startY = window.innerHeight / 2 + 50;
 
-  for (let i = 0; i < confettiCount; i++) {
-    const el = document.createElement('div');
-    el.style.position = 'absolute';
-    el.style.left = '0'; // Positioning handled by translate3d
-    el.style.top = '0';
+  for (let i = 0; i < config.count; i++) {
+    const el = document.createElement("div");
+    el.style.position = "absolute";
+    el.style.left = "0"; // Positioning handled by translate3d
+    el.style.top = "0";
 
-    // Random size and shape
-    const size = Math.random() * 8 + 6 + 'px';
+    // Size
+    const baseSize = Math.random() * 8 + 6;
+    const size = baseSize * config.sizeMod + "px";
     el.style.width = size;
-    el.style.height = Math.random() > 0.5 ? size : (Math.random() * 4 + 4 + 'px'); // Square or rectangle
+    el.style.height = size;
 
-    const colorHex = colors[Math.floor(Math.random() * colors.length)];
+    // Shape Logic
+    const shape = config.shapes[Math.floor(Math.random() * config.shapes.length)];
+
+    if (shape === "circle") {
+      el.style.borderRadius = "50%";
+    } else if (shape === "diamond") {
+      // Use clip-path for diamond to allow independent rotation
+      el.style.clipPath = "polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)";
+      el.style.background = config.colors[Math.floor(Math.random() * config.colors.length)];
+    } else if (shape === "star") {
+      el.style.clipPath =
+        "polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)";
+    } else if (shape === "triangle") {
+      el.style.clipPath = "polygon(50% 0%, 0% 100%, 100% 100%)";
+      // Triangles look better if they are taller
+      el.style.height = baseSize * 1.5 * config.sizeMod + "px";
+    } else {
+      // Rect (default)
+      el.style.height = Math.random() > 0.5 ? size : Math.random() * 4 + 4 + "px";
+    }
+
+    const colorHex = config.colors[Math.floor(Math.random() * config.colors.length)];
     el.style.backgroundColor = colorHex;
-    const startOpacity = 0.7 + Math.random() * 0.2; // Semi-transparent (70-90%)
+
+    // Glow effect for high tiers
+    if (config.glow) {
+      el.style.boxShadow = `0 0 ${Math.random() * 6 + 2}px ${colorHex}`;
+    }
+
+    const startOpacity = 0.7 + Math.random() * 0.3;
     el.style.opacity = startOpacity.toString();
-    el.style.willChange = 'transform, opacity'; // Optimization
+    el.style.willChange = "transform, opacity";
 
     container.appendChild(el);
 
-    // Physics Initialization
-    // Explosion mechanics: random angle, random upward force
+    // Physics
     const angle = Math.random() * Math.PI * 2; // Random direction around center
-    const explosionForce = Math.random() * 15 + 10; // Random power
+    const explosionForce = (Math.random() * 15 + 10) * config.force;
 
     // Initial velocities based on angle and force
     // Ensure a strong upward bias (negative Y) for the "pop"
@@ -53,8 +131,8 @@ window.fireConfetti = () => {
       y: startY,
       vx: vx,
       vy: vy,
-      gravity: 0.07 + Math.random() * 0.05, // Reduced gravity (was ~0.5) for floaty fall
-      drag: 0.96, // Increased drag (was 0.98) for air resistance
+      gravity: config.gravity + Math.random() * 0.05,
+      drag: config.drag,
       rotX: Math.random() * 360,
       rotY: Math.random() * 360,
       rotZ: Math.random() * 360,
@@ -62,7 +140,7 @@ window.fireConfetti = () => {
       rotSpeedY: (Math.random() - 0.5) * 15,
       rotSpeedZ: (Math.random() - 0.5) * 10,
       opacity: startOpacity,
-      fadeStart: Date.now() + 3000 + Math.random() * 2000 // Start fading later (after 3-5s)
+      fadeStart: Date.now() + 3000 + Math.random() * 2000, // Start fading later (after 3-5s)
     });
   }
 
@@ -74,10 +152,10 @@ window.fireConfetti = () => {
     const now = Date.now();
     let activeParticles = 0;
 
-    particles.forEach(p => {
+    particles.forEach((p) => {
       // Apply physics
       p.vy += p.gravity; // Apply gravity
-      p.vx *= p.drag;    // Apply air resistance
+      p.vx *= p.drag; // Apply air resistance
       p.vy *= p.drag;
 
       p.x += p.vx;
@@ -105,7 +183,7 @@ window.fireConfetti = () => {
     });
 
     // Continue animation if particles are active and under time limit (increased to 20s)
-    if (activeParticles > 0 && (now - startTime < 20000)) {
+    if (activeParticles > 0 && now - startTime < 20000) {
       animationFrameId = requestAnimationFrame(animate);
     } else {
       // Cleanup
