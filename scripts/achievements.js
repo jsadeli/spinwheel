@@ -159,6 +159,14 @@ const ACHIEVEMENTS = [
     condition: (stats) => stats.level >= 7,
   },
   {
+    id: "mission_probability",
+    title: "Mission: Probability",
+    description: "Level 8 reached. Your mission, should you choose to accept it, is to discreetly influence outcomes.",
+    icon: "🕶️",
+    bonusXp: 80,
+    condition: (stats) => stats.level >= 8,
+  },
+  {
     id: "wheel_whisperer",
     title: "Wheel Whisperer",
     description: "Reaching Level 9 officially qualifies you to talk to spinning objects.",
