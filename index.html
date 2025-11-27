@@ -2099,7 +2099,9 @@
                           : ''
                       }}
                     >
-                      <span className={`
+                      <span
+                        key={isSpinning ? 'stop' : 'spin'}
+                        className={`
                             block transition-transform duration-75
                             ${isCharging && chargePower > 0.8 ? 'animate-[shake_0.2s_ease-in-out_infinite]' : ''}
                             ${isCharging ? 'scale-90' : ''}
