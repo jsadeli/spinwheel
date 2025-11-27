@@ -155,8 +155,16 @@ const ACHIEVEMENTS = [
     title: "PhD in Roundabout Solutions",
     description: "Level 5 unlocked. You now specialize in complicated ways to avoid decisions.",
     icon: "🎓",
-    bonusXp: 25,
+    bonusXp: 20,
     condition: (stats) => stats.level >= 5,
+  },
+  {
+    id: "chaos_technician",
+    title: "Chaos Technician",
+    description: "Level 6 achieved. You can manipulate entropy without understanding thermodynamics.",
+    icon: "👷",
+    bonusXp: 30,
+    condition: (stats) => stats.level >= 6,
   },
   {
     id: "confetti",
