@@ -159,6 +159,14 @@ const ACHIEVEMENTS = [
     condition: (stats) => stats.level >= 7,
   },
   {
+    id: "wheel_whisperer",
+    title: "Wheel Whisperer",
+    description: "Reaching Level 9 officially qualifies you to talk to spinning objects.",
+    icon: "🛞️",
+    bonusXp: 100,
+    condition: (stats) => stats.level >= 9,
+  },
+  {
     id: "the_chosen_one",
     title: "The Chosen One",
     description: "You have reached Level 10. Please, go touch some grass.",
