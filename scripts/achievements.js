@@ -62,7 +62,7 @@ const ACHIEVEMENTS = [
   {
     id: "jesus_take_the_wheel",
     title: "Jesus Take The Wheel",
-    description: 'Spin the wheel while in "Mystery Mode" (labels hidden).',
+    description: 'Spin the wheel while in "Mystery Mode".',
     icon: "🙏",
     bonusXp: 10,
     condition: (stats) => stats.mysteryMode && stats.hasSpun,
