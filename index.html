@@ -346,9 +346,19 @@
             const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
             window.history.replaceState({ path: newUrl }, '', newUrl);
 
-            // Check for "Foreign Exchange" achievement
+            // Track unique imports for "Loot Box"
+            const importedCodes = loadState('spinWheel_importedCodes', []);
+            let uniqueCount = importedCodes.length;
+            if (!importedCodes.includes(encodedList)) {
+              importedCodes.push(encodedList);
+              localStorage.setItem('spinWheel_importedCodes', JSON.stringify(importedCodes));
+              uniqueCount = importedCodes.length;
+            }
+
+            // Check for "Foreign Exchange" and "Loot Box" achievements
             const newUnlocks = achievementManager.check({
-              importedList: true
+              importedList: true,
+              uniqueImportCount: uniqueCount
             });
             handleAchievementUnlocks(newUnlocks);
           } catch (e) {

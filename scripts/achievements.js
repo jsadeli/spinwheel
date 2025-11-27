@@ -291,6 +291,14 @@ const ACHIEVEMENTS = [
     condition: (stats) => stats.importedList,
   },
   {
+    id: "loot_box",
+    title: "Loot Box",
+    description: "Import 5 unique lists from shared URLs. Contents may be enchanted (or useless).",
+    icon: "🎁",
+    bonusXp: 50,
+    condition: (stats) => stats.uniqueImportCount >= 5,
+  },
+  {
     id: "sharing_is_caring",
     title: "Sharing Is Caring",
     description: "Share a list with a friend (or yourself).",
