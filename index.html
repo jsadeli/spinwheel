@@ -201,7 +201,7 @@
 
       // XP System State
       const [xp, setXp] = useState(() => loadState('spinWheel_xp', 0));
-      const [sessionXP, setSessionXP] = useState(0); // Track XP earned in this session (not persisted)
+      const [sessionSpin, setSessionSpin] = useState(0); // Track spins in this session (not persisted)
       const [totalSpins, setTotalSpins] = useState(() => loadState('spinWheel_totalSpins', 0)); // Track total spins
       const [achievements, setAchievements] = useState([]); // Store achievement objects with status
       const [achievementFilter, setAchievementFilter] = useState('all'); // 'all', 'unlocked', 'locked'
@@ -1516,14 +1516,14 @@
 
         // Award XP
         setXp(prev => prev + 1);
-        setSessionXP(prev => prev + 1); // Track session XP
+        setSessionSpin(prev => prev + 1); // Track session spins
         setTotalSpins(prev => prev + 1);
 
         // Check Achievements
         // We need the NEW total spins and level.
         // Since state updates are async, we calculate expected values.
         const newTotalSpins = totalSpins + 1;
-        const newSessionXP = sessionXP + 1;
+        const newSessionSpin = sessionSpin + 1;
         // Level might change if XP crosses threshold.
         // Current XP is `xp`, new is `xp + 1`.
         const newLevelInfo = getLevelProgress(xp + 1);
@@ -1554,7 +1554,7 @@
         const newUnlocks = achievementManager.check({
           spins: newTotalSpins,
           level: newLevelInfo.level,
-          sessionXP: newSessionXP,
+          sessionSpin: newSessionSpin,
           consecutiveWins: consecutiveWins,
           hasSpun: true,
           itemCount: currentItems.length,

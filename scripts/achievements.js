@@ -58,6 +58,14 @@ const ACHIEVEMENTS = [
     bonusXp: 100,
     condition: (stats) => stats.spinsInLastMinute >= 120,
   },
+  {
+    id: "champion_of_chance",
+    title: "Champion of Chance",
+    description: "100 spins in one session. Fortune favors your relentless fingers.",
+    icon: "🏹",
+    bonusXp: 100,
+    condition: (stats) => stats.sessionSpin >= 100,
+  },
   // --- Mystery Spin ---
   {
     id: "jesus_take_the_wheel",
@@ -221,15 +229,6 @@ const ACHIEVEMENTS = [
     icon: "♾️",
     bonusXp: 3000,
     condition: (stats) => stats.level >= 11,
-  },
-  // --- XP ---
-  {
-    id: "xp_miner",
-    title: "XP Miner",
-    description: "Earn 500 XP in a single session.",
-    icon: "⛏️",
-    bonusXp: 100,
-    condition: (stats) => stats.sessionXP >= 500,
   },
   // --- Consecutive Wins ---
   {
