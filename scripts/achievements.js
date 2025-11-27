@@ -50,6 +50,14 @@ const ACHIEVEMENTS = [
     bonusXp: 50,
     condition: (stats) => stats.spinsInLastMinute >= 5,
   },
+  {
+    id: "speedrun",
+    title: "Speedrun Any%",
+    description: "Over 120 spins in 60 seconds. Glitches allowed, decisions optional.",
+    icon: "🎮",
+    bonusXp: 100,
+    condition: (stats) => stats.spinsInLastMinute >= 120,
+  },
   // --- Mystery Spin ---
   {
     id: "jesus_take_the_wheel",
