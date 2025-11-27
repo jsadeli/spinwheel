@@ -250,6 +250,14 @@ const ACHIEVEMENTS = [
     condition: (stats) => stats.usedShuffle && stats.itemCount >= 2,
   },
   {
+    id: "certified_paranoid",
+    title: "Certified Paranoid",
+    description: "Shuffle 100 times straight. Truly, you trust nothing. Not even math.",
+    icon: "🕵️‍♀️",
+    bonusXp: 20,
+    condition: (stats) => stats.consecutiveShuffles >= 100,
+  },
+  {
     id: "illusionist",
     title: "Illusionist",
     description: "Spin a list where every option is the same. (We admire your commitment to the illusion of choice.)",

@@ -288,6 +288,7 @@
       const themeToggleTimestampsRef = useRef([]); // Track theme toggles for "Light Switch Rave"
       const consecutiveOverheatsRef = useRef(0); // Track consecutive overheats for "This Is Fine"
       const usedAIRef = useRef(false); // Track if AI was used for "Ghost in the Machine"
+      const consecutiveShufflesRef = useRef(0); // Track consecutive shuffles for "Certified Paranoid"
 
       // State to force re-render for relative time updates
       const [, setTick] = useState(0);
@@ -1396,6 +1397,9 @@
         lastTickRef.current = rotationRef.current;
         idleVelocityRef.current = 0; // Reset idle velocity for gradual startup after spin
 
+        // Reset consecutive shuffles on spin
+        consecutiveShufflesRef.current = 0;
+
         // Reset consecutive overheats on successful spin
         // REMOVED: consecutiveOverheatsRef.current = 0; // Moved to handlePointerUpOrLeave to allow streaks
 
@@ -1594,12 +1598,14 @@
       };
 
       const handleShuffle = () => {
+        consecutiveShufflesRef.current += 1;
         const shuffled = [...items].sort(() => Math.random() - 0.5);
         setInputText(itemsToString(shuffled));
 
         // Check "Trust Issues" achievement
         const newUnlocks = achievementManager.check({
           usedShuffle: true,
+          consecutiveShuffles: consecutiveShufflesRef.current,
           itemCount: items.length
         });
         handleAchievementUnlocks(newUnlocks);
