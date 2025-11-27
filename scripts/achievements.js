@@ -96,7 +96,7 @@ const ACHIEVEMENTS = [
   {
     id: "into_the_void",
     title: "Into The Void",
-    description: "NullPointerException waiting to happen. Delete all options and try to spin an empty wheel.",
+    description: "NullPointerException waiting to happen. Tried spinning an empty wheel.",
     icon: "👻",
     bonusXp: 10,
     condition: (stats) => stats.triedEmptySpin,
