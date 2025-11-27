@@ -138,7 +138,7 @@ const ACHIEVEMENTS = [
     id: "apprentice",
     title: "Apprentice",
     description: "Welcome to Level 1, where the real beginners envy you.",
-    icon: "🎓",
+    icon: "🐣",
     bonusXp: 5,
     condition: (stats) => stats.level >= 1,
   },
@@ -149,6 +149,14 @@ const ACHIEVEMENTS = [
     icon: "🚀",
     bonusXp: 10,
     condition: (stats) => stats.level >= 2,
+  },
+  {
+    id: "phd_in_roundabout_solutions",
+    title: "PhD in Roundabout Solutions",
+    description: "Level 5 unlocked. You now specialize in complicated ways to avoid decisions.",
+    icon: "🎓",
+    bonusXp: 25,
+    condition: (stats) => stats.level >= 5,
   },
   {
     id: "confetti",
