@@ -288,6 +288,14 @@ const ACHIEVEMENTS = [
     condition: (stats) => stats.consecutiveWins >= 5,
   },
   {
+    id: "glitch_in_the_matrix",
+    title: "Glitch in the Matrix",
+    description: "Probability has been rewritten. The Architect approves your 50 identical outcomes.",
+    icon: "🐈‍⬛",
+    bonusXp: 500,
+    condition: (stats) => stats.consecutiveWins >= 50,
+  },
+  {
     id: "one_in_a_million",
     title: "One in a Million",
     description: "Defy the odds by hitting the same winner 100 times in a row!",
