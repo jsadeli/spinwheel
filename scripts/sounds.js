@@ -36,7 +36,7 @@ window.playTickSound = (audioCtxRef, soundEnabled, variant = 'default') => {
   if (!soundEnabled || !audioCtxRef.current) return;
 
   if (variant === 'crisp') return window.playCrispWoodTickSound(audioCtxRef, soundEnabled);
-  if (variant === 'mechanical') return window.playHeavyMechanicalTickSound(audioCtxRef, soundEnabled);
+  if (variant === 'metallic') return window.playMetallicClankTickSound(audioCtxRef, soundEnabled);
 
   return window.playDefaultTickSound(audioCtxRef, soundEnabled)
 };
@@ -167,8 +167,8 @@ window.playCrispWoodTickSound = (audioCtxRef, soundEnabled) => {
   noise.start(now);
 };
 
-// Tick Sound Logic - Heavy Mechanical Sound
-window.playHeavyMechanicalTickSound = (audioCtxRef, soundEnabled) => {
+// Tick Sound Logic - Metallic Clank Sound
+window.playMetallicClankTickSound = (audioCtxRef, soundEnabled) => {
   if (!soundEnabled || !audioCtxRef.current) return;
   const ctx = audioCtxRef.current;
   const now = ctx.currentTime;

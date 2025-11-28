@@ -134,10 +134,10 @@ const ACHIEVEMENTS = [
   {
     id: "heavy_metal",
     title: "Heavy Metal",
-    description: "Industrial grade decision making. Completed a spin with the heavy mechanical sound.",
+    description: "Industrial grade decision making. Completed a spin with the metallic clank sound.",
     icon: "⚙️",
     bonusXp: 10,
-    condition: (stats) => stats.hasSpun && !stats.soundMuted && stats.tickSound === 'mechanical',
+    condition: (stats) => stats.hasSpun && !stats.soundMuted && stats.tickSound === 'metallic',
   },
   // --- Other Spins ---
   {
