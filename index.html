@@ -1438,6 +1438,27 @@
         // CHANGED: Check Ref here too for safety
         if (isSpinningRef.current || items.length === 0) return;
 
+        // --- DEBUG / CHEAT CODE SYSTEM ---
+        const currentList = savedLists.find(l => l.id === activeListId);
+        if (currentList && currentList.name.toLowerCase() === 'debug') {
+          const lines = inputText.split('\n');
+          let commandExecuted = false;
+
+          for (const line of lines) {
+            const trimmed = line.trim();
+            if (trimmed.startsWith('toast:')) {
+              const message = trimmed.substring(6);
+              addToast(message);
+              commandExecuted = true;
+            }
+          }
+
+          if (commandExecuted) {
+            setInputText('');
+            return;
+          }
+        }
+
         // Track time since last spin for "AFK"
         const now = Date.now();
         if (lastSpinTimeRef.current) {
