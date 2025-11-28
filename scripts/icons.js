@@ -312,3 +312,30 @@ window.MusicIcon = (props) => (
     <circle cx="18" cy="16" r="3" />
   </Icon>
 );
+
+window.WoodIcon = (props) => (
+  <Icon {...props}>
+    <path d="M12 2l6 7H6z" />
+    <path d="M12 7l7 8H5z" />
+    <path d="M12 13l6 7H6z" />
+    <path d="M11 20v4h2v-4" />
+  </Icon>
+);
+
+window.MechanicalIcon = (props) => (
+  <Icon {...props}>
+    <path d="M5 4h14v3H5z" />
+    <path d="M12 7v10" />
+    <path d="M5 17h14v3H5z" />
+    <path d="M12 12l6 2" />
+    <path d="M18 11l1.5-.5" />
+    <path d="M18 13l1.5.5" />
+    <path d="M17 12l1.2 1.2" />
+  </Icon>
+);
+
+window.ElectricIcon = (props) => (
+  <Icon {...props}>
+    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+  </Icon>
+);
