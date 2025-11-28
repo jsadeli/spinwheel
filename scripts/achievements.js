@@ -211,7 +211,7 @@ const ACHIEVEMENTS = [
     description: "Welcome to Level 1, where the real beginners envy you.",
     icon: "🐣",
     bonusXp: 2,
-    condition: (stats) => stats.level >= 1,
+    condition: (stats) => stats.level >= 1 && stats.hasSpun,
   },
   {
     id: "one_small_step",
@@ -219,7 +219,7 @@ const ACHIEVEMENTS = [
     description: "One giant leap for indecisive kind.",
     icon: "🚀",
     bonusXp: 5,
-    condition: (stats) => stats.level >= 2,
+    condition: (stats) => stats.level >= 2 && stats.hasSpun,
   },
   {
     id: "spinner_adept",
@@ -227,7 +227,7 @@ const ACHIEVEMENTS = [
     description: "Your skill in the spin arts grows with each rotation.",
     icon: "🎯",
     bonusXp: 10,
-    condition: (stats) => stats.level >= 3,
+    condition: (stats) => stats.level >= 3 && stats.hasSpun,
   },
   {
     id: "spinaholic",
@@ -235,7 +235,7 @@ const ACHIEVEMENTS = [
     description: "Your fingers are in a committed relationship with the spin button.",
     icon: "🎡",
     bonusXp: 10,
-    condition: (stats) => stats.level >= 4,
+    condition: (stats) => stats.level >= 4 && stats.hasSpun,
   },
   {
     id: "phd_in_roundabout_solutions",
@@ -243,7 +243,7 @@ const ACHIEVEMENTS = [
     description: "Level 5 unlocked. You now specialize in complicated ways to avoid decisions.",
     icon: "🎓",
     bonusXp: 20,
-    condition: (stats) => stats.level >= 5,
+    condition: (stats) => stats.level >= 5 && stats.hasSpun,
   },
   {
     id: "chaos_technician",
@@ -251,7 +251,7 @@ const ACHIEVEMENTS = [
     description: "Level 6 achieved. You can manipulate entropy without understanding thermodynamics.",
     icon: "👷",
     bonusXp: 30,
-    condition: (stats) => stats.level >= 6,
+    condition: (stats) => stats.level >= 6 && stats.hasSpun,
   },
   {
     id: "confetti",
@@ -259,7 +259,7 @@ const ACHIEVEMENTS = [
     description: "Only those of Level 7 or higher may wield the sacred celebratory storm.",
     icon: "🎊",
     bonusXp: 50,
-    condition: (stats) => stats.level >= 7,
+    condition: (stats) => stats.level >= 7 && stats.hasSpun,
   },
   {
     id: "mission_probability",
@@ -267,7 +267,7 @@ const ACHIEVEMENTS = [
     description: "Level 8 reached. Your mission, should you choose to accept it, is to discreetly influence outcomes.",
     icon: "🕶️",
     bonusXp: 100,
-    condition: (stats) => stats.level >= 8,
+    condition: (stats) => stats.level >= 8 && stats.hasSpun,
   },
   {
     id: "wheel_whisperer",
@@ -275,7 +275,7 @@ const ACHIEVEMENTS = [
     description: "Reaching Level 9 officially qualifies you to talk to spinning objects.",
     icon: "🛞️",
     bonusXp: 200,
-    condition: (stats) => stats.level >= 9,
+    condition: (stats) => stats.level >= 9 && stats.hasSpun,
   },
   {
     id: "the_chosen_one",
@@ -283,7 +283,7 @@ const ACHIEVEMENTS = [
     description: "You have reached Level 10. Please, go touch some grass.",
     icon: "🌟",
     bonusXp: 3000,
-    condition: (stats) => stats.level >= 10,
+    condition: (stats) => stats.level >= 10 && stats.hasSpun,
   },
   {
     id: "transcendence_protocol",
@@ -291,7 +291,7 @@ const ACHIEVEMENTS = [
     description: "All parameters exceeded. Divinity attained.",
     icon: "♾️",
     bonusXp: 5000,
-    condition: (stats) => stats.level >= 11,
+    condition: (stats) => stats.level >= 11 && stats.hasSpun,
   },
   // --- Consecutive Wins ---
   {

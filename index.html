@@ -1601,7 +1601,8 @@
         const newSessionSpin = sessionSpin + 1;
         // Level might change if XP crosses threshold.
         // Current XP is `xp`, new is `xp + 1`.
-        const newLevelInfo = getLevelProgress(xp + 1);
+        const currentLevelInfo = getLevelProgress(xp); // Level at start of spin
+        const newLevelInfo = getLevelProgress(xp + 1); // Level at end of spin
 
         // Check for consecutive wins
         // History has the NEWEST result at index 0 (after update).
@@ -1629,7 +1630,8 @@
         const newUnlocks = achievementManager.check({
           spins: newTotalSpins,
           isCancelledSpin: false,
-          level: newLevelInfo.level,
+          level: currentLevelInfo.level, // current user level at the start of spin
+          newLevel: newLevelInfo.level, // new user level after this spin
           sessionSpin: newSessionSpin,
           consecutiveWins: consecutiveWins,
           hasSpun: true,
