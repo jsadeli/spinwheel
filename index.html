@@ -237,7 +237,17 @@
             setXp(prev => prev + totalBonusXp);
           }
         }
-      }; const levelInfo = getLevelProgress(xp);
+      };
+
+      // Check history achievements on mount
+      useEffect(() => {
+        const newUnlocks = achievementManager.check({
+          historyLength: history.length
+        });
+        handleAchievementUnlocks(newUnlocks);
+      }, []);
+
+      const levelInfo = getLevelProgress(xp);
 
       // Level Up Toast Logic
       const prevLevelRef = useRef(levelInfo.level);
@@ -1598,6 +1608,7 @@
           maxWeight: maxWeight,
           maxItemLength: maxItemLength,
           allIdentical: allIdentical,
+          historyLength: history.length + 1,
           mysteryMode: hideLabels,
           mysteryModeCancelledDuringSpin: mysteryModeCancelledDuringSpinRef.current,
           timeSinceLastSpin: timeSinceLastSpinRef.current,

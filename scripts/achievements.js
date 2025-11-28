@@ -435,6 +435,14 @@ const ACHIEVEMENTS = [
     condition: (stats) => stats.clearedHistory,
   },
   {
+    id: "history_hoarder",
+    title: "History Hoarder",
+    description: "You have kept 500 items in your history. Digital packrat status confirmed.",
+    icon: "📚",
+    bonusXp: 500,
+    condition: (stats) => stats.historyLength >= 500,
+  },
+  {
     id: "progress_enthusiast",
     title: "Progress Enthusiast",
     description: "More than 100 visits to your records. You inspect that tab like it owes you money.",
