@@ -306,6 +306,7 @@
       const timeSinceLastSpinRef = useRef(0); // Track duration since last spin
       const spinStartTimeRef = useRef(0); // Track spin start time for cancellation percentage
       const spinTargetDurationRef = useRef(0); // Track expected spin duration
+      const xpRef = useRef(xp); // Ref for XP to be used in animation loop
 
       // State to force re-render for relative time updates
       const [, setTick] = useState(0);
@@ -446,6 +447,7 @@
 
       useEffect(() => {
         localStorage.setItem('spinWheel_xp', JSON.stringify(xp));
+        xpRef.current = xp;
       }, [xp]);
 
       useEffect(() => {
@@ -1146,6 +1148,12 @@
             ctx.strokeStyle = '#333';
             ctx.lineWidth = 5;
             ctx.stroke();
+
+            // Draw Trail Effect
+            if (window.drawWheelTrail && (isSpinningRef.current || velocityRef.current > 0.005)) {
+               const currentLevel = window.calculateLevel ? window.calculateLevel(xpRef.current) : 0;
+               window.drawWheelTrail(ctx, centerX, centerY, radius, rotationRef.current, velocityRef.current, currentLevel, isDark);
+            }
 
             // Draw Pins
             const pinRadius = radius + 10; // Pins sit outside the main wheel
