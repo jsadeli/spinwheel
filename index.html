@@ -1772,6 +1772,20 @@
 
       const prestigeTheme = getPrestigeTheme(levelInfo.level);
 
+      // New: Get Tier Colors for Power Meter
+      const getTierColors = (level) => {
+        if (level >= 11) return { start: '#ec4899', mid: '#d946ef', end: '#8b5cf6' }; // Cosmic: Pink -> Fuchsia -> Violet
+        if (level >= 10) return { start: '#22d3ee', mid: '#6366f1', end: '#a855f7' }; // Diamond: Cyan -> Indigo -> Purple
+        if (level >= 9) return { start: '#fde047', mid: '#eab308', end: '#f59e0b' }; // Gold: Yellow -> Amber
+        if (level >= 8) return { start: '#fb7185', mid: '#f43f5e', end: '#e11d48' }; // Ruby: Rose
+        if (level >= 7) return { start: '#67e8f9', mid: '#06b6d4', end: '#3b82f6' }; // Topaz: Cyan -> Blue
+        if (level >= 5) return { start: '#34d399', mid: '#10b981', end: '#059669' }; // Emerald
+        if (level >= 3) return { start: '#fdba74', mid: '#f97316', end: '#ea580c' }; // Bronze/Orange
+        return { start: '#94a3b8', mid: '#64748b', end: '#475569' }; // Default: Silver
+      };
+      const tierColors = getTierColors(levelInfo.level);
+      const isCosmic = levelInfo.level >= 11;
+
       // Calculate Heat Progress for Animation
       const overchargeTime = overchargeState;
       const heatThreshold = 3000;
@@ -2073,16 +2087,44 @@
                   <div ref={smokeContainerRef} className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-40 h-40 pointer-events-none z-10"></div>
 
                   {/* Power Meter Ring */}
-                  {isCharging && (
-                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-28 h-28 pointer-events-none z-20">
-                      <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
-                        <circle cx="50" cy="50" r="46" fill="none" stroke="#e5e7eb" strokeWidth="8" className="dark:stroke-gray-700" />
+                  {(isCharging || chargePower > 0) && (
+                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-28 h-28 z-20 flex items-center justify-center pointer-events-none">
+                      <svg width="100%" height="100%" viewBox="0 0 100 100" className="transform -rotate-90"
+                        style={{
+                          filter: `drop-shadow(${isCharging
+                            ? `0 0 ${10 + chargePower * 20 + heatProgress * 20}px ${heatProgress > 0 ? lerpColor('#ef4444', '#ff0000', heatProgress) : (chargePower > 0.8 ? '#ef4444' : (isCosmic ? '#d946ef' : tierColors.mid))}`
+                            : '0 0 0px transparent'
+                            })`
+                        }}
+                      >
+                        {/* Background Track */}
+                        <circle cx="50" cy="50" r="46" fill="none" stroke="currentColor" strokeWidth="8" className={`opacity-20 ${prestigeTheme.textColor}`} />
+
+                        {/* Cosmic Glow Ring (Extra Layer) */}
+                        {isCosmic && isCharging && heatProgress === 0 && (
+                          <circle cx="50" cy="50" r="46" fill="none" stroke="url(#powerGradient)" strokeWidth="12" strokeLinecap="round" className="opacity-40 animate-pulse blur-sm" />
+                        )}
+
+                        {/* Progress Ring */}
                         <circle cx="50" cy="50" r="46" fill="none" stroke="url(#powerGradient)" strokeWidth="8" strokeDasharray="289.02" strokeDashoffset={289.02 * (1 - chargePower)} strokeLinecap="round" className="transition-all duration-75 ease-linear" />
+
                         <defs>
                           <linearGradient id="powerGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                            <stop offset="0%" stopColor={lerpColor('#3b82f6', '#ef4444', heatProgress)} />
-                            <stop offset="50%" stopColor={lerpColor('#8b5cf6', '#ef4444', heatProgress)} />
-                            <stop offset="100%" stopColor={lerpColor('#ef4444', '#ff0000', heatProgress)} />
+                            <stop offset="0%" stopColor={lerpColor(tierColors.start, '#ef4444', heatProgress)}>
+                              {isCosmic && heatProgress === 0 && (
+                                <animate attributeName="stop-color" values={`${tierColors.start};${tierColors.end};${tierColors.start}`} dur="2s" repeatCount="indefinite" />
+                              )}
+                            </stop>
+                            <stop offset="50%" stopColor={lerpColor(tierColors.mid, '#ef4444', heatProgress)}>
+                              {isCosmic && heatProgress === 0 && (
+                                <animate attributeName="stop-color" values={`${tierColors.mid};${tierColors.start};${tierColors.mid}`} dur="2s" repeatCount="indefinite" />
+                              )}
+                            </stop>
+                            <stop offset="100%" stopColor={lerpColor(tierColors.end, '#ff0000', heatProgress)}>
+                              {isCosmic && heatProgress === 0 && (
+                                <animate attributeName="stop-color" values={`${tierColors.end};${tierColors.mid};${tierColors.end}`} dur="2s" repeatCount="indefinite" />
+                              )}
+                            </stop>
                           </linearGradient>
                         </defs>
                       </svg>
