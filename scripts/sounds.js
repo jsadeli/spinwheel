@@ -180,7 +180,7 @@ window.playMetallicClankTickSound = (audioCtxRef, soundEnabled) => {
   impact.type = 'square'; // Square wave for a harder, metallic edge
   impact.frequency.setValueAtTime(150, now);
   impact.frequency.exponentialRampToValueAtTime(40, now + 0.1);
-  impactGain.gain.setValueAtTime(0.4, now);
+  impactGain.gain.setValueAtTime(0.25, now);
   impactGain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
   impact.connect(impactGain);
   impactGain.connect(ctx.destination);
@@ -201,7 +201,7 @@ window.playMetallicClankTickSound = (audioCtxRef, soundEnabled) => {
   ratchetFilter.frequency.value = 1200;
   ratchetFilter.Q.value = 2; // Resonant peak for metallic character
 
-  ratchetGain.gain.setValueAtTime(0.2, now);
+  ratchetGain.gain.setValueAtTime(0.12, now);
   ratchetGain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
 
   ratchet.connect(ratchetFilter);
@@ -237,7 +237,7 @@ window.playMetallicClankTickSound = (audioCtxRef, soundEnabled) => {
   noiseFilter.frequency.value = 1000; // Remove mud
 
   const noiseGain = ctx.createGain();
-  noiseGain.gain.setValueAtTime(0.15, now);
+  noiseGain.gain.setValueAtTime(0.08, now);
   noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
 
   noise.connect(noiseFilter);
@@ -257,7 +257,7 @@ window.playCrystalGlassTickSound = (audioCtxRef, soundEnabled) => {
   const fundamentalGain = ctx.createGain();
   fundamental.type = 'sine';
   fundamental.frequency.setValueAtTime(1800, now); // High pitch for crystal
-  fundamentalGain.gain.setValueAtTime(0.15, now);
+  fundamentalGain.gain.setValueAtTime(0.3, now);
   fundamentalGain.gain.exponentialRampToValueAtTime(0.001, now + 0.6); // Long, clear decay
   fundamental.connect(fundamentalGain);
   fundamentalGain.connect(ctx.destination);
@@ -269,7 +269,7 @@ window.playCrystalGlassTickSound = (audioCtxRef, soundEnabled) => {
   const harmonicGain = ctx.createGain();
   harmonic.type = 'sine';
   harmonic.frequency.setValueAtTime(3200, now); // Very high harmonic
-  harmonicGain.gain.setValueAtTime(0.05, now);
+  harmonicGain.gain.setValueAtTime(0.1, now);
   harmonicGain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
   harmonic.connect(harmonicGain);
   harmonicGain.connect(ctx.destination);
@@ -282,7 +282,7 @@ window.playCrystalGlassTickSound = (audioCtxRef, soundEnabled) => {
   tap.type = 'triangle';
   tap.frequency.setValueAtTime(2000, now);
   tap.frequency.exponentialRampToValueAtTime(1000, now + 0.02);
-  tapGain.gain.setValueAtTime(0.05, now);
+  tapGain.gain.setValueAtTime(0.1, now);
   tapGain.gain.exponentialRampToValueAtTime(0.001, now + 0.02);
   tap.connect(tapGain);
   tapGain.connect(ctx.destination);
