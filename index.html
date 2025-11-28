@@ -1476,6 +1476,15 @@
             } else if (trimmed === 'fix') {
               setIsOutOfOrder(false);
               commandExecuted = true;
+            } else if (trimmed.startsWith('theme:')) {
+              let newTheme = trimmed.substring(6).trim();
+              if (newTheme === 'system') newTheme = 'auto';
+
+              if (['auto', 'light', 'dark'].includes(newTheme)) {
+                setTheme(newTheme);
+                message = `Theme set to ${newTheme}`;
+                commandExecuted = true;
+              }
             } else if (trimmed === 'reset') {
               localStorage.clear();
               window.location.reload();
