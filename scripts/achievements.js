@@ -35,6 +35,14 @@ const ACHIEVEMENTS = [
     condition: (stats) => stats.spins >= 100,
   },
   {
+    id: "the_long_haul",
+    title: "The Long Haul",
+    description: "500 spins logged. Your wrist endurance is suspicious.",
+    icon: "🚚️",
+    bonusXp: 500,
+    condition: (stats) => stats.spins >= 500,
+  },
+  {
     id: "millennium_of_mayhem",
     title: "Millennium of Mayhem",
     description: "1000 spins. Zero progress. Peak indecision achieved.",
