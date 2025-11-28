@@ -66,14 +66,27 @@ window.itemsToString = (itemsArray) => {
   }).join('\n');
 };
 
+// XP Progress Constants
+window.XP_CONSTANTS = {
+  BASE_REQUIRED: 20,
+  MULTIPLIER: 10,
+  EXPONENT_GROWTH: 2,
+};
+
+// Helper to get required minimum XP for a specific level
+window.getRequiredXpForLevel = (level) => {
+  if (level === 0) return window.XP_CONSTANTS.BASE_REQUIRED;
+  return window.XP_CONSTANTS.MULTIPLIER * Math.pow(window.XP_CONSTANTS.EXPONENT_GROWTH, level);
+};
+
 // Helper to calculate XP level
 window.calculateLevel = (currentXp) => {
   let level = 0;
-  let required = 20;
+  let required = window.getRequiredXpForLevel(level);
   while (currentXp >= required) {
     currentXp -= required;
     level++;
-    required = 10 * Math.pow(2, level);
+    required = window.getRequiredXpForLevel(level);
   }
   return level;
 };
@@ -81,15 +94,13 @@ window.calculateLevel = (currentXp) => {
 // Helper to get XP level progress
 window.getLevelProgress = (currentXp) => {
   let level = 0;
-  let required = 20;
-  let accumulatedXp = 0;
+  let required = window.getRequiredXpForLevel(level);
 
   // Find current level base XP
   while (currentXp >= required) {
     currentXp -= required;
-    accumulatedXp += required;
     level++;
-    required = 10 * Math.pow(2, level); // adjust the multipler to make it more or less difficult to level up
+    required = window.getRequiredXpForLevel(level);
   }
 
   return {
