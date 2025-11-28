@@ -173,45 +173,74 @@ window.playHeavyMechanicalTickSound = (audioCtxRef, soundEnabled) => {
   const ctx = audioCtxRef.current;
   const now = ctx.currentTime;
 
-  // Layer 1: Low metallic impact (the "thunk")
+  // Layer 1: The "Clank" - Low frequency metallic impact
   const impact = ctx.createOscillator();
   const impactGain = ctx.createGain();
-  impact.type = 'sawtooth';
-  impact.frequency.setValueAtTime(180, now);
-  impact.frequency.exponentialRampToValueAtTime(60, now + 0.08);
-  impactGain.gain.setValueAtTime(0.3, now);
-  impactGain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+  impact.type = 'square'; // Square wave for a harder, metallic edge
+  impact.frequency.setValueAtTime(150, now);
+  impact.frequency.exponentialRampToValueAtTime(40, now + 0.1);
+  impactGain.gain.setValueAtTime(0.4, now);
+  impactGain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
   impact.connect(impactGain);
   impactGain.connect(ctx.destination);
   impact.start(now);
-  impact.stop(now + 0.08);
+  impact.stop(now + 0.1);
 
-  // Layer 2: Metallic resonance (the "ring")
-  const resonance = ctx.createOscillator();
-  const resonanceGain = ctx.createGain();
-  resonance.type = 'triangle';
-  resonance.frequency.setValueAtTime(1200, now);
-  resonance.frequency.exponentialRampToValueAtTime(900, now + 0.12);
-  resonanceGain.gain.setValueAtTime(0.12, now + 0.01);
-  resonanceGain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
-  resonance.connect(resonanceGain);
-  resonanceGain.connect(ctx.destination);
-  resonance.start(now + 0.01);
-  resonance.stop(now + 0.12);
+  // Layer 2: The "Ratchet" - High frequency gear scrape
+  // Using a bandpass filtered sawtooth for that "zipper" or "ratchet" quality
+  const ratchet = ctx.createOscillator();
+  const ratchetGain = ctx.createGain();
+  const ratchetFilter = ctx.createBiquadFilter();
 
-  // Layer 3: Brief noise burst for mechanical texture (the "click")
-  const bufferSize = ctx.sampleRate * 0.02;
+  ratchet.type = 'sawtooth';
+  ratchet.frequency.setValueAtTime(800, now);
+  ratchet.frequency.linearRampToValueAtTime(400, now + 0.05); // Pitch drop simulates friction
+
+  ratchetFilter.type = 'bandpass';
+  ratchetFilter.frequency.value = 1200;
+  ratchetFilter.Q.value = 2; // Resonant peak for metallic character
+
+  ratchetGain.gain.setValueAtTime(0.2, now);
+  ratchetGain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
+
+  ratchet.connect(ratchetFilter);
+  ratchetFilter.connect(ratchetGain);
+  ratchetGain.connect(ctx.destination);
+  ratchet.start(now);
+  ratchet.stop(now + 0.06);
+
+  // Layer 3: Metallic Ring/Ping - High pitched resonance
+  const ring = ctx.createOscillator();
+  const ringGain = ctx.createGain();
+  ring.type = 'sine';
+  ring.frequency.setValueAtTime(2400, now); // High metallic ping
+  ringGain.gain.setValueAtTime(0.08, now);
+  ringGain.gain.exponentialRampToValueAtTime(0.001, now + 0.15); // Longer decay for resonance
+  ring.connect(ringGain);
+  ringGain.connect(ctx.destination);
+  ring.start(now);
+  ring.stop(now + 0.15);
+
+  // Layer 4: Grinding Noise - Mechanical friction
+  const bufferSize = ctx.sampleRate * 0.04;
   const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
   const data = buffer.getChannelData(0);
   for (let i = 0; i < bufferSize; i++) {
-    data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.3));
+    data[i] = (Math.random() * 2 - 1);
   }
   const noise = ctx.createBufferSource();
   noise.buffer = buffer;
+
+  const noiseFilter = ctx.createBiquadFilter();
+  noiseFilter.type = 'highpass';
+  noiseFilter.frequency.value = 1000; // Remove mud
+
   const noiseGain = ctx.createGain();
   noiseGain.gain.setValueAtTime(0.15, now);
-  noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.02);
-  noise.connect(noiseGain);
+  noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+
+  noise.connect(noiseFilter);
+  noiseFilter.connect(noiseGain);
   noiseGain.connect(ctx.destination);
   noise.start(now);
 };
