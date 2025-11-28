@@ -304,6 +304,8 @@
       const mysteryModeCancelledDuringSpinRef = useRef(false); // Track if mystery mode was cancelled during spin
       const lastSpinTimeRef = useRef(null); // Track time of last spin for "AFK"
       const timeSinceLastSpinRef = useRef(0); // Track duration since last spin
+      const spinStartTimeRef = useRef(0); // Track spin start time for cancellation percentage
+      const spinTargetDurationRef = useRef(0); // Track expected spin duration
 
       // State to force re-render for relative time updates
       const [, setTick] = useState(0);
@@ -1446,6 +1448,9 @@
         const maxDuration = spinDuration;
         // CHANGED: Reduced minimum duration from 2000ms to 500ms for quick nudges
         const targetDuration = Math.max(500, maxDuration * powerFactor);
+
+        spinStartTimeRef.current = performance.now();
+        spinTargetDurationRef.current = targetDuration;
         const stopThreshold = 0.0001;
         const totalFrames = targetDuration / 16.667;
         const baseFriction = Math.pow(stopThreshold / velocityRef.current, 1 / totalFrames);
@@ -1510,9 +1515,15 @@
         // So we calculate it.
         const newCancelledCount = cancelledSpins + 1;
 
-        // Check "First Cancel" achievement
+        // Calculate cancellation percentage
+        const elapsed = performance.now() - spinStartTimeRef.current;
+        const percentage = spinTargetDurationRef.current > 0 ? (elapsed / spinTargetDurationRef.current) : 0;
+
+        // Check "First Cancel" achievement and "Premature Nope"
         const newUnlocks = achievementManager.check({
-          cancelledSpins: newCancelledCount
+          isCancelledSpin: true,
+          cancelledSpins: newCancelledCount,
+          spinPercentage: percentage
         });
         handleAchievementUnlocks(newUnlocks);
       };
@@ -1598,6 +1609,7 @@
 
         const newUnlocks = achievementManager.check({
           spins: newTotalSpins,
+          isCancelledSpin: false,
           level: newLevelInfo.level,
           sessionSpin: newSessionSpin,
           consecutiveWins: consecutiveWins,

@@ -190,6 +190,14 @@ const ACHIEVEMENTS = [
     condition: (stats) => stats.cancelledSpins >= 500,
   },
   {
+    id: "premature_nope",
+    title: "Premature Nope",
+    description: "Ruined a perfectly good spin just before the climax, because... nope.",
+    icon: "🏃",
+    bonusXp: 20,
+    condition: (stats) => stats.isCancelledSpin && stats.spinPercentage >= 0.8,
+  },
+  {
     id: "duel_mode",
     title: "Duel Mode",
     description: "Face the wheel in a perfect 50-50 showdown.",
