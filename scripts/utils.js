@@ -125,3 +125,53 @@ window.copyToClipboard = (text, setIsCopied) => {
     setTimeout(() => setIsCopied(false), 2000);
   });
 };
+
+// Helper to check if a string is likely just an emoji
+window.isEmoji = (str) => {
+  if (!str) return false;
+  // If it contains any letters, treat as text (apply gradient)
+  if (/\p{L}/u.test(str)) return false;
+
+  // Check if it contains emoji-like characters
+  // \p{Emoji_Presentation}: Standard emojis
+  // \p{Extended_Pictographic}: Newer emojis
+  // \u20E3: Keycap combining character (for 1️⃣, #️⃣, etc)
+  const emojiLikeRegex = /(\p{Emoji_Presentation}|\p{Extended_Pictographic}|\u20E3)/u;
+  return emojiLikeRegex.test(str);
+};
+
+// Helper to parse winner string into text and emoji segments
+window.parseWinnerString = (text) => {
+  if (!text) return [];
+
+  // Use Intl.Segmenter if available (Modern Browsers)
+  if (typeof Intl.Segmenter !== 'undefined') {
+    const segmenter = new Intl.Segmenter([], { granularity: 'grapheme' });
+    const segments = Array.from(segmenter.segment(text));
+
+    const parts = [];
+    let currentPart = { text: '', isEmoji: null };
+
+    for (const { segment } of segments) {
+      const isEmo = window.isEmoji(segment);
+
+      if (currentPart.isEmoji === null) {
+        currentPart = { text: segment, isEmoji: isEmo };
+      } else if (currentPart.isEmoji === isEmo) {
+        currentPart.text += segment;
+      } else {
+        parts.push(currentPart);
+        currentPart = { text: segment, isEmoji: isEmo };
+      }
+    }
+    if (currentPart.text) {
+      parts.push(currentPart);
+    }
+    return parts;
+  }
+
+  // Fallback for older browsers: Check the whole string
+  // If it's mixed, we can't easily split without a complex regex,
+  // so we default to treating it as text (gradient) unless it's purely emoji.
+  return [{ text: text, isEmoji: window.isEmoji(text) }];
+};

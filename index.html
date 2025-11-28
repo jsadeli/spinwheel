@@ -2635,8 +2635,16 @@
                               <TrophyIcon size={32} className={levelInfo.level >= 9 ? 'animate-bounce' : ''} />
                             </div>
                             <h3 className={`relative z-10 uppercase tracking-widest text-sm font-bold mb-2 ${prestigeTheme.textColor} opacity-80`}>We have a winner!</h3>
-                            <div className={`relative z-10 text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r ${prestigeTheme.titleGradient} mb-8 break-words`}>
-                              {winner}
+                            <div className="relative z-10 text-4xl font-black mb-8 break-words">
+                              {/* normal text (gradient) and emojis (full-color) */}
+                              {window.parseWinnerString(winner).map((part, i) => (
+                                <span
+                                  key={i}
+                                  className={part.isEmoji ? 'text-gray-800 dark:text-white' : `text-transparent bg-clip-text bg-gradient-to-r ${prestigeTheme.titleGradient}`}
+                                >
+                                  {part.text}
+                                </span>
+                              ))}
                             </div>
                           </>
                         )}
