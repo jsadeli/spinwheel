@@ -1,4 +1,3 @@
-
 // Achievement Definitions
 const ACHIEVEMENTS = [
   // --- Spins ---
@@ -595,6 +594,30 @@ const ACHIEVEMENTS = [
     icon: "💡",
     bonusXp: 10,
     condition: (stats) => stats.rapidThemeToggles >= 10,
+  },
+  {
+    id: "trailblazer",
+    title: "Trailblazer",
+    description: "Spin with the trail effect enabled. Leaving your mark on the wheel.",
+    icon: "✨",
+    bonusXp: 10,
+    condition: (stats) => stats.hasSpun && stats.trailEnabled && stats.level >= 3,
+  },
+  {
+    id: "golden_slipstream",
+    title: "Golden Slipstream",
+    description: "Spun with the Level-9 golden trail. The wheel now recognizes royalty when it sees it.",
+    icon: "💫",
+    bonusXp: 100,
+    condition: (stats) => stats.hasSpun && stats.trailEnabled && stats.level >= 9,
+  },
+  {
+    id: "quantum_wake",
+    title: "Quantum Wake",
+    description: "Your spin left a quantum distortion trail behind. Probability is filing a complaint.",
+    icon: "⚛️",
+    bonusXp: 500,
+    condition: (stats) => stats.hasSpun && stats.trailEnabled && stats.level >= 10,
   },
   // --- AI features ---
   {
