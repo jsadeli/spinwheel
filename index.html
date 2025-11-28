@@ -144,6 +144,7 @@
       const [spinDuration, setSpinDuration] = useState(() => loadState('spinWheel_duration', 10000));
       const [hideLabels, setHideLabels] = useState(() => loadState('spinWheel_hideLabels', false));
       const [aiVoiceEnabled, setAiVoiceEnabled] = useState(() => loadState('spinWheel_aiVoice', false));
+      const [trailEnabled, setTrailEnabled] = useState(() => loadState('spinWheel_trailEnabled', false));
       const [geminiApiKey, setGeminiApiKey] = useState(() => loadState('spinWheel_apiKey', ''));
 
       // Color Settings
@@ -307,6 +308,7 @@
       const spinStartTimeRef = useRef(0); // Track spin start time for cancellation percentage
       const spinTargetDurationRef = useRef(0); // Track expected spin duration
       const xpRef = useRef(xp); // Ref for XP to be used in animation loop
+      const trailEnabledRef = useRef(trailEnabled); // Ref for trail setting
 
       // State to force re-render for relative time updates
       const [, setTick] = useState(0);
@@ -327,6 +329,11 @@
       useEffect(() => {
         isOutOfOrderRef.current = isOutOfOrder;
       }, [isOutOfOrder]);
+
+      // Sync trail enabled ref
+      useEffect(() => {
+        trailEnabledRef.current = trailEnabled;
+      }, [trailEnabled]);
 
       // PWA Install Prompt Listener
       useEffect(() => {
@@ -436,6 +443,10 @@
       useEffect(() => {
         localStorage.setItem('spinWheel_aiVoice', JSON.stringify(aiVoiceEnabled));
       }, [aiVoiceEnabled]);
+
+      useEffect(() => {
+        localStorage.setItem('spinWheel_trailEnabled', JSON.stringify(trailEnabled));
+      }, [trailEnabled]);
 
       useEffect(() => {
         localStorage.setItem('spinWheel_apiKey', JSON.stringify(geminiApiKey));
@@ -1150,7 +1161,7 @@
             ctx.stroke();
 
             // Draw Trail Effect
-            if (window.drawWheelTrail && (isSpinningRef.current || velocityRef.current > 0.005)) {
+            if (trailEnabledRef.current && window.drawWheelTrail && (isSpinningRef.current || velocityRef.current > 0.005)) {
                const currentLevel = window.calculateLevel ? window.calculateLevel(xpRef.current) : 0;
                window.drawWheelTrail(ctx, centerX, centerY, radius, rotationRef.current, velocityRef.current, currentLevel, isDark);
             }
@@ -1982,6 +1993,14 @@
                       >
                         <span className="mr-3"><CirclePlusIcon size={16} /></span>
                         Item Colors: <span className="ml-1 font-semibold">{colorAssignment === 'dynamic' ? 'Dynamic' : 'Fixed'}</span>
+                      </button>
+                      <button
+                        onClick={() => setTrailEnabled(!trailEnabled)}
+                        className={`flex items-center w-full px-4 py-2 text-sm text-left ${trailEnabled ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
+                      >
+                        <span className="mr-3"><TrailIcon size={16} /></span>
+                        Spin Trail Effect
+                        {trailEnabled && <span className="ml-auto"><CheckIcon size={16} /></span>}
                       </button>
                     </div>
 
