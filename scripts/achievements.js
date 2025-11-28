@@ -216,7 +216,7 @@ const ACHIEVEMENTS = [
   {
     id: "one_small_step",
     title: "One Small Step",
-    description: "One giant leap for indecisive kind.",
+    description: "Lift-off achieved. Your spinning career has officially cleared the tutorial zone.",
     icon: "🚀",
     bonusXp: 5,
     condition: (stats) => stats.level >= 2 && stats.hasSpun,
@@ -224,7 +224,7 @@ const ACHIEVEMENTS = [
   {
     id: "spinner_adept",
     title: "Spinner Adept",
-    description: "Your skill in the spin arts grows with each rotation.",
+    description: "Your skill in the spin arts grows with each rotation. You now live in the 3rd circle of spinner knowledge.",
     icon: "🎯",
     bonusXp: 10,
     condition: (stats) => stats.level >= 3 && stats.hasSpun,
@@ -232,7 +232,7 @@ const ACHIEVEMENTS = [
   {
     id: "spinaholic",
     title: "Spinaholic",
-    description: "Your fingers are in a committed relationship with the spin button.",
+    description: "Crossed the threshold where casuals stop and enthusiasts begin. 4th gear engaged.",
     icon: "🎡",
     bonusXp: 10,
     condition: (stats) => stats.level >= 4 && stats.hasSpun,
@@ -240,7 +240,7 @@ const ACHIEVEMENTS = [
   {
     id: "phd_in_roundabout_solutions",
     title: "PhD in Roundabout Solutions",
-    description: "Level 5 unlocked. You now specialize in complicated ways to avoid decisions.",
+    description: "Risen high enough to qualify for advanced coursework. Only 5% survive this syllabus.",
     icon: "🎓",
     bonusXp: 20,
     condition: (stats) => stats.level >= 5 && stats.hasSpun,
@@ -248,7 +248,7 @@ const ACHIEVEMENTS = [
   {
     id: "chaos_technician",
     title: "Chaos Technician",
-    description: "Level 6 achieved. You can manipulate entropy without understanding thermodynamics.",
+    description: "Reached the domain where only 6 hands are steady enough to manage this much entropy.",
     icon: "👷",
     bonusXp: 30,
     condition: (stats) => stats.level >= 6 && stats.hasSpun,
@@ -256,7 +256,7 @@ const ACHIEVEMENTS = [
   {
     id: "confetti",
     title: "Party Mode",
-    description: "Only those of Level 7 or higher may wield the sacred celebratory storm.",
+    description: "Authorized to trigger premium celebration protocols reserved for the 7th tier.",
     icon: "🎊",
     bonusXp: 50,
     condition: (stats) => stats.level >= 7 && stats.hasSpun,
@@ -264,7 +264,7 @@ const ACHIEVEMENTS = [
   {
     id: "mission_probability",
     title: "Mission: Probability",
-    description: "Level 8 reached. Your mission, should you choose to accept it, is to discreetly influence outcomes.",
+    description: "Your mission, should you choose to accept it, is to get the 8th file.",
     icon: "🕶️",
     bonusXp: 100,
     condition: (stats) => stats.level >= 8 && stats.hasSpun,
@@ -272,7 +272,7 @@ const ACHIEVEMENTS = [
   {
     id: "wheel_whisperer",
     title: "Wheel Whisperer",
-    description: "Reaching Level 9 officially qualifies you to talk to spinning objects.",
+    description: "Ascended to the 9th rank, officially qualifies you to talk to spinning objects.",
     icon: "🛞️",
     bonusXp: 200,
     condition: (stats) => stats.level >= 9 && stats.hasSpun,
@@ -280,7 +280,7 @@ const ACHIEVEMENTS = [
   {
     id: "the_chosen_one",
     title: "The Chosen One",
-    description: "You have reached Level 10. Please, go touch some grass.",
+    description: "Stepped into the 10th circle of legend. Please, go touch some grass.",
     icon: "🌟",
     bonusXp: 3000,
     condition: (stats) => stats.level >= 10 && stats.hasSpun,
@@ -288,7 +288,7 @@ const ACHIEVEMENTS = [
   {
     id: "transcendence_protocol",
     title: "Transcendence Protocol",
-    description: "All parameters exceeded. Divinity attained.",
+    description: "All parameters exceeded. Divinity attained. You now exist in the 11th echelon.",
     icon: "♾️",
     bonusXp: 5000,
     condition: (stats) => stats.level >= 11 && stats.hasSpun,
