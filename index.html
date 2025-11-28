@@ -1476,6 +1476,10 @@
             } else if (trimmed === 'fix') {
               setIsOutOfOrder(false);
               commandExecuted = true;
+            } else if (trimmed === 'reset') {
+              localStorage.clear();
+              window.location.reload();
+              return;
             }
 
             if (commandExecuted) {
