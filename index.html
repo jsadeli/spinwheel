@@ -1439,23 +1439,43 @@
         if (currentList && currentList.name.toLowerCase() === 'debug') {
           const lines = inputText.split('\n');
           let commandExecutedCount = 0;
+          let currentXp = xp;
 
           for (const line of lines) {
             let commandExecuted = false;
-            let message = "CMD";
-
+            let message = line.trim();
             const trimmed = line.trim();
             if (trimmed.startsWith('toast:')) {
               addToast(trimmed.substring(6));
-              message = trimmed;
               commandExecuted = true;
             } else if (trimmed.startsWith('xp:')) {
               const amount = parseInt(trimmed.substring(3), 10);
               if (!isNaN(amount)) {
                 setXp(prev => prev + amount);
-                message = `${amount} XP`;
+                currentXp += amount;
+                message = `${amount > 0 ? '+' : ''}${amount} XP`;
                 commandExecuted = true;
               }
+            } else if (trimmed === 'levelup') {
+              const info = getLevelProgress(currentXp);
+              const needed = info.requiredLevelXp - info.currentLevelXp;
+              // Ensure we add at least 1 XP if somehow we are at the boundary,
+              // though the logic implies we are at start of next level if currentLevelXp is 0.
+              // Actually if currentLevelXp is 0, we are at start of level.
+              // To go to NEXT level, we need requiredLevelXp.
+              // If we are at 19/20. Needed = 1.
+              // If we are at 0/20. Needed = 20.
+              // So needed is always > 0.
+              setXp(prev => prev + needed);
+              currentXp += needed;
+              message = `Leveled Up! (+${Math.round(needed)} XP)`;
+              commandExecuted = true;
+            } else if (trimmed === 'break') {
+              setIsOutOfOrder(true);
+              commandExecuted = true;
+            } else if (trimmed === 'fix') {
+              setIsOutOfOrder(false);
+              commandExecuted = true;
             }
 
             if (commandExecuted) {
