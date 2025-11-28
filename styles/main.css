@@ -156,3 +156,26 @@ textarea::-webkit-scrollbar-thumb:hover {
     transform: translate(-50%, 0) scale(1);
   }
 }
+
+/* Shimmer Animation for XP Bar */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%) skewX(-12deg);
+  }
+  100% {
+    transform: translateX(200%) skewX(-12deg);
+  }
+}
+
+/* Liquid Flow Animation for XP Bar */
+@keyframes liquidFlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
