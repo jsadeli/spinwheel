@@ -185,6 +185,7 @@
       const [chargePower, setChargePower] = useState(0);
       const [overchargeState, setOverchargeState] = useState(0); // New state for overcharge animation
       const [isOutOfOrder, setIsOutOfOrder] = useState(false); // NEW: Broken state
+      const [isCorrupted, setIsCorrupted] = useState(() => loadState('spinWheel_isCorrupted', false)); // NEW: Corrupted state
       const [deferredPrompt, setDeferredPrompt] = useState(null);
 
       // Toast State (Queue System)
@@ -1457,6 +1458,8 @@
                   currentXp += amount;
                   message = `${amount > 0 ? '+' : ''}${amount} XP`;
                   commandExecuted = true;
+                  setIsCorrupted(true);
+                  localStorage.setItem('spinWheel_isCorrupted', 'true');
                 }
               } else if (trimmed === 'levelup') {
                 const info = getLevelProgress(currentXp);
@@ -1472,6 +1475,8 @@
                 currentXp += needed;
                 message = `Leveled Up! (+${Math.round(needed)} XP)`;
                 commandExecuted = true;
+                setIsCorrupted(true);
+                localStorage.setItem('spinWheel_isCorrupted', 'true');
               } else if (trimmed === 'break') {
                 setIsOutOfOrder(true);
                 commandExecuted = true;
@@ -2367,7 +2372,7 @@
                   className={`flex-1 p-3 font-bold text-sm flex items-center justify-center transition-colors relative ${activeTab === 'progress' ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800'}`}
                 >
                   <TrendingUpIcon size={16} className="mr-2" />
-                  Progress <span className="ml-1 text-xs bg-gray-200 dark:bg-gray-700 px-1.5 py-0.5 rounded-full">{levelInfo.level}</span>
+                  {isCorrupted ? <span className="font-mono tracking-widest">Prσgreʂʂ</span> : "Progress"} <span className="ml-1 text-xs bg-gray-200 dark:bg-gray-700 px-1.5 py-0.5 rounded-full">{levelInfo.level}</span>
                   {activeTab === 'progress' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-indigo-600 dark:bg-indigo-400"></div>}
                 </button>
               </div>
@@ -2540,6 +2545,51 @@
                   {/* Top Section: XP Header */}
                   {(() => {
                     const isCosmic = levelInfo.level >= 11;
+
+                    // Corrupted State Override
+                    if (isCorrupted) {
+                       return (
+                         <div className="relative overflow-hidden rounded-xl mb-4 group shadow-[0_0_15px_rgba(239,68,68,0.6)] border-2 border-red-500/50">
+                            <div className="absolute inset-0 bg-black/90 z-0"></div>
+                            {/* Glitch Effect Background */}
+                            <div className="absolute inset-0 opacity-20 pointer-events-none overflow-hidden">
+                                <div className="absolute top-0 left-0 w-full h-full bg-[repeating-linear-gradient(45deg,transparent,transparent_10px,#ff0000_10px,#ff0000_11px)] animate-[pulse_0.1s_infinite]"></div>
+                            </div>
+
+                            <div className="relative z-10 p-5 text-left">
+                                <div className="flex items-center justify-start mb-4 space-x-3">
+                                    <div className="p-2 bg-red-900/50 rounded-full shadow-sm animate-pulse">
+                                        <AlertTriangleIcon size={24} className="text-red-500" />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-2xl font-black text-red-500 font-mono tracking-tighter animate-[pulse_2s_infinite]">
+                                            SYSTEM COMPROMISED
+                                        </h3>
+                                        <p className="text-xs text-red-400 font-mono font-bold mt-1 uppercase tracking-widest">
+                                            Level {levelInfo.level} <span className="mx-2 text-red-600">•</span> {xp} XP [MODDED]
+                                        </p>
+                                    </div>
+                                </div>
+
+                                {/* Corrupted Progress Bar */}
+                                <div className="relative z-10 h-5 w-full bg-red-900/30 rounded-full overflow-hidden border border-red-500/30">
+                                    <div
+                                        className="absolute top-0 left-0 h-full bg-red-600 transition-all duration-1000 ease-out"
+                                        style={{ width: `${levelInfo.progressPercent}%` }}
+                                    >
+                                        <div className="absolute inset-0 w-full h-full bg-[repeating-linear-gradient(90deg,transparent,transparent_2px,#000_2px,#000_4px)] opacity-20"></div>
+                                    </div>
+                                </div>
+
+                                <div className="relative z-10 flex justify-between text-[10px] font-bold text-red-500 font-mono opacity-80 mt-2 px-1 uppercase tracking-wider">
+                                    <span>ERR_OVERFLOW: {Math.floor(levelInfo.currentLevelXp)}</span>
+                                    <span>TARGET: {Math.floor(levelInfo.requiredLevelXp)}</span>
+                                </div>
+                            </div>
+                         </div>
+                       );
+                    }
+
                     return (
                       <div className={`relative overflow-hidden rounded-xl mb-4 group ${isCosmic ? 'shadow-[0_0_60px_rgba(139,92,246,0.4)] dark:shadow-[0_0_60px_rgba(139,92,246,0.6)]' : prestigeTheme.shadow}`}>
                         {/* Dynamic Border/Background */}
@@ -2567,7 +2617,7 @@
                             </div>
                           )}
 
-                          <div className="relative z-10 flex items-center justify-start mb-4 space-x-3">
+                          <div className={`relative z-10 flex items-center justify-start mb-4 space-x-3`}>
                             <div className={`p-2 ${prestigeTheme.iconBg} rounded-full shadow-sm transition-colors duration-300`}>
                               <TrophyIcon size={24} className={`${prestigeTheme.iconColor} ${levelInfo.level >= 9 ? 'animate-bounce' : ''}`} />
                             </div>
