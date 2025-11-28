@@ -2008,6 +2008,14 @@
                         Metallic Clank
                         {tickSound === 'metallic' && <span className="ml-auto"><CheckIcon size={16} /></span>}
                       </button>
+                      <button
+                        onClick={() => { setTickSound('crystal'); setShowSettingsMenu(false) }}
+                        className={`flex items-center w-full px-4 py-2 text-sm text-left ${tickSound === 'crystal' ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
+                      >
+                        <span className="mr-3"><CrystalGlassIcon size={16} /></span>
+                        Crystal Glass
+                        {tickSound === 'crystal' && <span className="ml-auto"><CheckIcon size={16} /></span>}
+                      </button>
                     </div>
 
                     <div className="p-2 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/30">

@@ -139,6 +139,14 @@ const ACHIEVEMENTS = [
     bonusXp: 10,
     condition: (stats) => stats.hasSpun && !stats.soundMuted && stats.tickSound === 'metallic',
   },
+  {
+    id: "crystal_glass",
+    title: "Crystal Glass",
+    description: "Luxurious decision making. Completed a spin with the crystal glass sound.",
+    icon: "🍷️",
+    bonusXp: 10,
+    condition: (stats) => stats.hasSpun && !stats.soundMuted && stats.tickSound === 'crystal',
+  },
   // --- Other Spins ---
   {
     id: "power_overwhelming",

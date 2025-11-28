@@ -37,6 +37,7 @@ window.playTickSound = (audioCtxRef, soundEnabled, variant = 'default') => {
 
   if (variant === 'crisp') return window.playCrispWoodTickSound(audioCtxRef, soundEnabled);
   if (variant === 'metallic') return window.playMetallicClankTickSound(audioCtxRef, soundEnabled);
+  if (variant === 'crystal') return window.playCrystalGlassTickSound(audioCtxRef, soundEnabled);
 
   return window.playDefaultTickSound(audioCtxRef, soundEnabled)
 };
@@ -243,6 +244,50 @@ window.playMetallicClankTickSound = (audioCtxRef, soundEnabled) => {
   noiseFilter.connect(noiseGain);
   noiseGain.connect(ctx.destination);
   noise.start(now);
+};
+
+// Tick Sound Logic - Crystal Glass Sound
+window.playCrystalGlassTickSound = (audioCtxRef, soundEnabled) => {
+  if (!soundEnabled || !audioCtxRef.current) return;
+  const ctx = audioCtxRef.current;
+  const now = ctx.currentTime;
+
+  // Layer 1: The "Ping" - Pure sine wave for the fundamental glass tone
+  const fundamental = ctx.createOscillator();
+  const fundamentalGain = ctx.createGain();
+  fundamental.type = 'sine';
+  fundamental.frequency.setValueAtTime(1800, now); // High pitch for crystal
+  fundamentalGain.gain.setValueAtTime(0.15, now);
+  fundamentalGain.gain.exponentialRampToValueAtTime(0.001, now + 0.6); // Long, clear decay
+  fundamental.connect(fundamentalGain);
+  fundamentalGain.connect(ctx.destination);
+  fundamental.start(now);
+  fundamental.stop(now + 0.6);
+
+  // Layer 2: The "Shimmer" - High harmonic for fragility
+  const harmonic = ctx.createOscillator();
+  const harmonicGain = ctx.createGain();
+  harmonic.type = 'sine';
+  harmonic.frequency.setValueAtTime(3200, now); // Very high harmonic
+  harmonicGain.gain.setValueAtTime(0.05, now);
+  harmonicGain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+  harmonic.connect(harmonicGain);
+  harmonicGain.connect(ctx.destination);
+  harmonic.start(now);
+  harmonic.stop(now + 0.4);
+
+  // Layer 3: The "Tap" - Initial impact
+  const tap = ctx.createOscillator();
+  const tapGain = ctx.createGain();
+  tap.type = 'triangle';
+  tap.frequency.setValueAtTime(2000, now);
+  tap.frequency.exponentialRampToValueAtTime(1000, now + 0.02);
+  tapGain.gain.setValueAtTime(0.05, now);
+  tapGain.gain.exponentialRampToValueAtTime(0.001, now + 0.02);
+  tap.connect(tapGain);
+  tapGain.connect(ctx.destination);
+  tap.start(now);
+  tap.stop(now + 0.02);
 };
 
 // Fire Crackle Sound Logic
