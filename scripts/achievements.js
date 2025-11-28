@@ -168,10 +168,10 @@ const ACHIEVEMENTS = [
   {
     id: "cancel_culture",
     title: "Cancel Culture",
-    description: "100 canceled spins. The wheel bows to your indecision. Subjects tremble.",
+    description: "500 canceled spins. The wheel bows to your indecision. Subjects tremble.",
     icon: "🛑",
-    bonusXp: 100,
-    condition: (stats) => stats.cancelledSpin >= 100,
+    bonusXp: 500,
+    condition: (stats) => stats.cancelledSpins >= 500,
   },
   {
     id: "duel_mode",
