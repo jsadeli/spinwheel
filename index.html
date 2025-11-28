@@ -1073,11 +1073,11 @@
             ctx.lineWidth = 2;
             ctx.stroke();
 
-            ctx.fillStyle = isDark ? '#94a3b8' : '#888';
+            ctx.fillStyle = isDark ? '#5c5f77' : '#C0C0C0';
             ctx.font = '20px sans-serif';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.fillText('Add items to spin!', centerX, centerY);
+            ctx.fillText('Add items to spin!', centerX, centerY + 120); // shifted down to prevent text from being obscured by the spin button
           } else {
             // Calculate Total Weight
             // Modified for animation: if removing, reduce weight of that item
@@ -1162,8 +1162,8 @@
 
             // Draw Trail Effect
             if (trailEnabledRef.current && window.drawWheelTrail && (isSpinningRef.current || velocityRef.current > 0.005)) {
-               const currentLevel = window.calculateLevel ? window.calculateLevel(xpRef.current) : 0;
-               window.drawWheelTrail(ctx, centerX, centerY, radius, rotationRef.current, velocityRef.current, currentLevel, isDark);
+              const currentLevel = window.calculateLevel ? window.calculateLevel(xpRef.current) : 0;
+              window.drawWheelTrail(ctx, centerX, centerY, radius, rotationRef.current, velocityRef.current, currentLevel, isDark);
             }
 
             // Draw Pins
