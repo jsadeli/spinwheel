@@ -190,11 +190,7 @@
       // Toast State (Queue System)
       const [toastQueue, setToastQueue] = useState([]);
 
-      const addToast = (message, duration = 5000, icon = null) => {
-        let title = "Notification";
-        if (message.startsWith("Level Up!")) title = "Level Up!";
-        else if (message.startsWith("Achievement Unlocked")) title = "Achievement Unlocked";
-
+      const addToast = (message, title = "Notification", icon = null, duration = 5000) => {
         setToastQueue(prev => [...prev, { message, duration, title, icon, id: Date.now() + Math.random() }]);
       };
 
@@ -229,7 +225,7 @@
           let totalBonusXp = 0;
           newUnlocks.forEach(ach => {
             const xpMsg = ach.bonusXp ? ` (+${ach.bonusXp} XP)` : '';
-            addToast(`Achievement Unlocked: ${ach.title}${xpMsg}`, 5000, ach.icon);
+            addToast(`Achievement Unlocked: ${ach.title}${xpMsg}`, "Achievement Unlocked", ach.icon, 5000);
             if (ach.bonusXp) totalBonusXp += ach.bonusXp;
           });
 
@@ -256,7 +252,7 @@
 
       useEffect(() => {
         if (levelInfo.level > prevLevelRef.current) {
-          addToast(`Level Up! You are now ${getLevelTitle(levelInfo.level)}!`, 5000);
+          addToast(`Level Up! You are now ${getLevelTitle(levelInfo.level)}!`, "Level Up!", null, 5000);
           // Optional: Trigger confetti if not already triggered by something else
           // fireConfetti();
         }
@@ -1443,13 +1439,21 @@
         if (currentList && currentList.name.toLowerCase() === 'debug') {
           const lines = inputText.split('\n');
           let commandExecuted = false;
+          const toastTitle = "DEBUG COMMAND";
 
           for (const line of lines) {
             const trimmed = line.trim();
             if (trimmed.startsWith('toast:')) {
               const message = trimmed.substring(6);
-              addToast(message);
+              addToast(message, toastTitle);
               commandExecuted = true;
+            } else if (trimmed.startsWith('addxp:')) {
+              const amount = parseInt(trimmed.substring(6), 10);
+              if (!isNaN(amount)) {
+                setXp(prev => prev + amount);
+                addToast(`+${amount} XP`, toastTitle);
+                commandExecuted = true;
+              }
             }
           }
 
@@ -3003,10 +3007,10 @@
             toastQueue.length > 0 && (
               <Toast
                 key={toastQueue[0].id}
+                icon={toastQueue[0].icon}
+                title={toastQueue[0].title}
                 message={toastQueue[0].message}
                 duration={toastQueue[0].duration}
-                title={toastQueue[0].title}
-                icon={toastQueue[0].icon}
                 onClose={closeToast}
               />
             )
