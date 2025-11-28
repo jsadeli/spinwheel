@@ -649,6 +649,14 @@ const ACHIEVEMENTS = [
     condition: (stats) => stats.isBroken,
   },
   {
+    id: "the_cake_is_a_lie",
+    title: "The Cake Is a Lie",
+    description: "You have discovered the truth: there is no cake.",
+    icon: "🍰️",
+    bonusXp: 100,
+    condition: (stats) => stats.winnerId === "cake",
+  },
+  {
     id: "credit_where_due",
     title: "Credit Where Due",
     description: "Discovered the maker of the app.",
