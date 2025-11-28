@@ -106,7 +106,7 @@ const ACHIEVEMENTS = [
     bonusXp: 66,
     condition: (stats) => stats.mysteryModeCancelledDuringSpin,
   },
-  // --- Muted Spin ---
+  // --- Spin Sounds ---
   {
     id: "silence_is_golden",
     title: "Silence Is Golden",
@@ -114,6 +114,30 @@ const ACHIEVEMENTS = [
     icon: "🔇",
     bonusXp: 10,
     condition: (stats) => stats.hasSpun && stats.soundMuted,
+  },
+  {
+    id: "click_clack",
+    title: "Click Clack",
+    description: "Keeping it classic. Completed a spin with the default electric click.",
+    icon: "🖱️",
+    bonusXp: 10,
+    condition: (stats) => stats.hasSpun && !stats.soundMuted && stats.tickSound === 'default',
+  },
+  {
+    id: "knock_on_wood",
+    title: "Knock on Wood",
+    description: "Superstitious? Completed a spin with the crisp wooden sound.",
+    icon: "🪵",
+    bonusXp: 10,
+    condition: (stats) => stats.hasSpun && !stats.soundMuted && stats.tickSound === 'crisp',
+  },
+  {
+    id: "heavy_metal",
+    title: "Heavy Metal",
+    description: "Industrial grade decision making. Completed a spin with the heavy mechanical sound.",
+    icon: "⚙️",
+    bonusXp: 10,
+    condition: (stats) => stats.hasSpun && !stats.soundMuted && stats.tickSound === 'mechanical',
   },
   // --- Other Spins ---
   {
