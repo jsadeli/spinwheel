@@ -1436,8 +1436,8 @@
         // Reset consecutive overheats on successful spin
         // REMOVED: consecutiveOverheatsRef.current = 0; // Moved to handlePointerUpOrLeave to allow streaks
 
-        // Track Spin Timestamp for "Analysis Paralysis"
-        spinTimestampsRef.current = [...spinTimestampsRef.current, now].filter(t => now - t < 60000); // Keep last minute
+        // Track Spin Timestamp for "Analysis Paralysis" and "Button Masher"
+        spinTimestampsRef.current = [...spinTimestampsRef.current, now].filter(t => now - t < 3600000); // Keep last hour
 
         const baseSpeed = Math.random() * 0.2 + 0.5;
         // CHANGED: Adjusted scaling to allow much slower speeds (5% to 100% instead of 20% to 100%)
@@ -1603,7 +1603,8 @@
           consecutiveWins: consecutiveWins,
           hasSpun: true,
           itemCount: currentItems.length,
-          spinsInLastMinute: spinTimestampsRef.current.length,
+          spinsInLastMinute: spinTimestampsRef.current.filter(t => (spinTimestampsRef.current[spinTimestampsRef.current.length - 1] || Date.now()) - t < 60000).length,
+          spinsInLastHour: spinTimestampsRef.current.length,
           winnerWeight: winnerWeight,
           maxWeight: maxWeight,
           maxItemLength: maxItemLength,
