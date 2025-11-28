@@ -146,6 +146,7 @@
       const [aiVoiceEnabled, setAiVoiceEnabled] = useState(() => loadState('spinWheel_aiVoice', false));
       const [trailEnabled, setTrailEnabled] = useState(() => loadState('spinWheel_trailEnabled', false));
       const [geminiApiKey, setGeminiApiKey] = useState(() => loadState('spinWheel_apiKey', ''));
+      const [tickSound, setTickSound] = useState(() => loadState('spinWheel_tickSound', 'default'));
 
       // Color Settings
       const [colorSettings, setColorSettings] = useState(() => loadState('spinWheel_colorSettings', {
@@ -309,6 +310,7 @@
       const spinTargetDurationRef = useRef(0); // Track expected spin duration
       const xpRef = useRef(xp); // Ref for XP to be used in animation loop
       const trailEnabledRef = useRef(trailEnabled); // Ref for trail setting
+      const tickSoundRef = useRef(tickSound); // Ref for tick sound preference
 
       // State to force re-render for relative time updates
       const [, setTick] = useState(0);
@@ -451,6 +453,11 @@
       useEffect(() => {
         localStorage.setItem('spinWheel_apiKey', JSON.stringify(geminiApiKey));
       }, [geminiApiKey]);
+
+      useEffect(() => {
+        localStorage.setItem('spinWheel_tickSound', JSON.stringify(tickSound));
+        tickSoundRef.current = tickSound;
+      }, [tickSound]);
 
       useEffect(() => {
         localStorage.setItem('spinWheel_colorSettings', JSON.stringify(colorSettings));
@@ -1497,7 +1504,7 @@
           const lastStep = Math.floor(lastTickRef.current / pinSpacing);
 
           if (currentStep !== lastStep) {
-            window.playTickSound(audioCtxRef, soundEnabled);
+            window.playTickSound(audioCtxRef, soundEnabled, tickSoundRef.current);
           }
           lastTickRef.current = rotationRef.current;
 
@@ -1969,6 +1976,36 @@
                         <span className="mr-3"><HourglassIcon size={16} /></span>
                         Long (20s)
                         {spinDuration === 20000 && <span className="ml-auto"><CheckIcon size={16} /></span>}
+                      </button>
+                    </div>
+
+                    <div className="p-2 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/30">
+                      <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Tick Sound</span>
+                    </div>
+                    <div className="py-1 border-b border-gray-100 dark:border-gray-700">
+                      <button
+                        onClick={() => { setTickSound('default'); setShowSettingsMenu(false) }}
+                        className={`flex items-center w-full px-4 py-2 text-sm text-left ${tickSound === 'default' ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
+                      >
+                        <span className="mr-3"><Volume2Icon size={16} /></span>
+                        Default Electric
+                        {tickSound === 'default' && <span className="ml-auto"><CheckIcon size={16} /></span>}
+                      </button>
+                      <button
+                        onClick={() => { setTickSound('crisp'); setShowSettingsMenu(false) }}
+                        className={`flex items-center w-full px-4 py-2 text-sm text-left ${tickSound === 'crisp' ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
+                      >
+                        <span className="mr-3"><MusicIcon size={16} /></span>
+                        Crisp Wooden
+                        {tickSound === 'crisp' && <span className="ml-auto"><CheckIcon size={16} /></span>}
+                      </button>
+                      <button
+                        onClick={() => { setTickSound('mechanical'); setShowSettingsMenu(false) }}
+                        className={`flex items-center w-full px-4 py-2 text-sm text-left ${tickSound === 'mechanical' ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
+                      >
+                        <span className="mr-3"><SettingsIcon size={16} /></span>
+                        Heavy Mechanical
+                        {tickSound === 'mechanical' && <span className="ml-auto"><CheckIcon size={16} /></span>}
                       </button>
                     </div>
 
