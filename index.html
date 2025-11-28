@@ -225,7 +225,7 @@
           let totalBonusXp = 0;
           newUnlocks.forEach(ach => {
             const xpMsg = ach.bonusXp ? ` (+${ach.bonusXp} XP)` : '';
-            addToast(`Achievement Unlocked: ${ach.title}${xpMsg}`, "Achievement Unlocked", ach.icon, 5000);
+            addToast(`${ach.title}${xpMsg}`, "Achievement Unlocked", ach.icon, 5000);
             if (ach.bonusXp) totalBonusXp += ach.bonusXp;
           });
 
@@ -252,7 +252,7 @@
 
       useEffect(() => {
         if (levelInfo.level > prevLevelRef.current) {
-          addToast(`Level Up! You are now ${getLevelTitle(levelInfo.level)}!`, "Level Up!", null, 5000);
+          addToast(`You are now ${getLevelTitle(levelInfo.level)}!`, "Level Up!", null, 5000);
           // Optional: Trigger confetti if not already triggered by something else
           // fireConfetti();
         }

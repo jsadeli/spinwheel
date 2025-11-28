@@ -65,7 +65,7 @@ window.Toast = ({ onClose, message, title = "Notification", icon = null, duratio
             {title}
           </span>
           <span className="text-sm font-bold text-indigo-900 dark:text-indigo-100 leading-tight">
-            {message.replace("Level Up! ", "").replace("Achievement Unlocked: ", "")}
+            {message}
           </span>
         </div>
 
