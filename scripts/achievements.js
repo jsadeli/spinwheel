@@ -723,9 +723,12 @@ const ACHIEVEMENTS = [
     id: "the_cake_is_a_lie",
     title: "The Cake Is a Lie",
     description: "You have discovered the truth: there is no cake.",
-    icon: "🍰️",
+    icon: "🍰",
     bonusXp: 100,
-    condition: (stats) => stats.winnerId === "🍰️",
+    condition: (stats) => {
+      const cakeEmojis = ["🍰", "🎂", "🧁", "🍥"];
+      return cakeEmojis.some(emoji => stats.winnerId && stats.winnerId.includes(emoji));
+    },
   },
   {
     id: "credit_where_due",
