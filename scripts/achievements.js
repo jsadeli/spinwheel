@@ -662,7 +662,7 @@ const ACHIEVEMENTS = [
     description: "You have discovered the truth: there is no cake.",
     icon: "🍰️",
     bonusXp: 100,
-    condition: (stats) => stats.winnerId === "cake",
+    condition: (stats) => stats.winnerId === "🍰️",
   },
   {
     id: "credit_where_due",
