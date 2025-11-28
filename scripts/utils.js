@@ -69,7 +69,7 @@ window.itemsToString = (itemsArray) => {
 // Helper to calculate XP level
 window.calculateLevel = (currentXp) => {
   let level = 0;
-  let required = 10;
+  let required = 20;
   while (currentXp >= required) {
     currentXp -= required;
     level++;
