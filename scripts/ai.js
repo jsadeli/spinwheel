@@ -11,7 +11,11 @@ window.generateListFromGemini = async (apiKey, prompt) => {
     })
   });
   const data = await response.json();
-  if (data.error) throw new Error(data.error.message);
+  if (data.error) {
+    const error = new Error(data.error.message);
+    error.status = data.error.status;
+    throw error;
+  }
   return data.candidates?.[0]?.content?.parts?.[0]?.text;
 };
 
@@ -32,6 +36,10 @@ window.generateSpeechFromGemini = async (apiKey, text, voiceName = window.AIVoic
     }
   );
   const data = await response.json();
-  if (data.error) throw new Error(data.error.message);
+  if (data.error) {
+    const error = new Error(data.error.message);
+    error.status = data.error.status;
+    throw error;
+  }
   return data.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
 };

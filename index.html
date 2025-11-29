@@ -742,7 +742,8 @@
           }
         } catch (error) {
           console.error("Generation failed", error);
-          alert(`Failed to generate list: ${error.message || "Unknown error"}`);
+          const message = error.status ? `Error: ${error.status}` : (error.message.length > 60 ? error.message.substring(0, 60) + "..." : error.message);
+          addToast(message, "AI Generation Failed", <AlertTriangleIcon size={18} />, window.TOAST_DURATION);
         } finally {
           setIsGenerating(false);
         }
@@ -771,6 +772,8 @@
           }
         } catch (error) {
           console.error("TTS failed", error);
+          const message = error.status ? `Error: ${error.status}` : (error.message.length > 60 ? error.message.substring(0, 60) + "..." : error.message);
+          addToast(message, "AI Voice Failed", <AlertTriangleIcon size={18} />, window.TOAST_DURATION);
         }
       };
 
