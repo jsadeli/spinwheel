@@ -46,6 +46,12 @@ window.themes = {
   DARK: 'dark'
 };
 
-window.TOAST_DURATION = 5000; // milliseconds
+window.TOAST_DURATION = 5000;
+
+window.TabNames = {
+  INPUTS: 'inputs',
+  HISTORY: 'history',
+  PROGRESS: 'progress'
+};
 
 window.GITHUB_LINK = "https://github.com/samuelkripto/spinwheel";

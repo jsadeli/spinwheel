@@ -169,7 +169,7 @@
       const [showListDropdown, setShowListDropdown] = useState(false);
       const [showColorModal, setShowColorModal] = useState(false);
       const [shareUrl, setShareUrl] = useState('');
-      const [activeTab, setActiveTab] = useState('inputs'); // 'inputs', 'history', or 'progress'
+      const [activeTab, setActiveTab] = useState(window.TabNames.INPUTS); // 'inputs', 'history', or 'progress'
       const [isCopied, setIsCopied] = useState(false);
       const [showGenModal, setShowGenModal] = useState(false);
       const [showHelpModal, setShowHelpModal] = useState(false);
@@ -567,19 +567,19 @@
 
       // Track Tab Views
       useEffect(() => {
-        if (activeTab === 'inputs') {
+        if (activeTab === window.TabNames.INPUTS) {
           setInputsTabViews(prev => {
             const newVal = prev + 1;
             localStorage.setItem(window.storageKeys.INPUTS_TAB_VIEWS, JSON.stringify(newVal));
             return newVal;
           });
-        } else if (activeTab === 'history') {
+        } else if (activeTab === window.TabNames.HISTORY) {
           setHistoryTabViews(prev => {
             const newVal = prev + 1;
             localStorage.setItem(window.storageKeys.HISTORY_TAB_VIEWS, JSON.stringify(newVal));
             return newVal;
           });
-        } else if (activeTab === 'progress') {
+        } else if (activeTab === window.TabNames.PROGRESS) {
           setProgressTabViews(prev => {
             const newVal = prev + 1;
             localStorage.setItem(window.storageKeys.PROGRESS_TAB_VIEWS, JSON.stringify(newVal));
@@ -2196,33 +2196,33 @@
               {/* Tabs */}
               <div className="flex border-b border-gray-200 dark:border-gray-700 relative">
                 <button
-                  onClick={() => setActiveTab('inputs')}
-                  className={`flex-1 p-3 font-bold text-sm flex items-center justify-center transition-colors relative ${activeTab === 'inputs' ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800'}`}
+                  onClick={() => setActiveTab(window.TabNames.INPUTS)}
+                  className={`flex-1 p-3 font-bold text-sm flex items-center justify-center transition-colors relative ${activeTab === window.TabNames.INPUTS ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800'}`}
                 >
                   <SettingsIcon size={16} className="mr-2" />
                   Inputs <span className="ml-1 text-xs bg-gray-200 dark:bg-gray-700 px-1.5 py-0.5 rounded-full">{items.length}</span>
-                  {activeTab === 'inputs' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-indigo-600 dark:bg-indigo-400"></div>}
+                  {activeTab === window.TabNames.INPUTS && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-indigo-600 dark:bg-indigo-400"></div>}
                 </button>
                 <button
-                  onClick={() => setActiveTab('history')}
-                  className={`flex-1 p-3 font-bold text-sm flex items-center justify-center transition-colors relative ${activeTab === 'history' ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800'}`}
+                  onClick={() => setActiveTab(window.TabNames.HISTORY)}
+                  className={`flex-1 p-3 font-bold text-sm flex items-center justify-center transition-colors relative ${activeTab === window.TabNames.HISTORY ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800'}`}
                 >
                   <ClockIcon size={16} className="mr-2" />
                   History <span className="ml-1 text-xs bg-gray-200 dark:bg-gray-700 px-1.5 py-0.5 rounded-full">{history.length}</span>
-                  {activeTab === 'history' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-indigo-600 dark:bg-indigo-400"></div>}
+                  {activeTab === window.TabNames.HISTORY && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-indigo-600 dark:bg-indigo-400"></div>}
                 </button>
                 <button
-                  onClick={() => setActiveTab('progress')}
-                  className={`flex-1 p-3 font-bold text-sm flex items-center justify-center transition-colors relative ${activeTab === 'progress' ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800'}`}
+                  onClick={() => setActiveTab(window.TabNames.PROGRESS)}
+                  className={`flex-1 p-3 font-bold text-sm flex items-center justify-center transition-colors relative ${activeTab === window.TabNames.PROGRESS ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800'}`}
                 >
                   <TrendingUpIcon size={16} className="mr-2" />
                   {isCorrupted ? <span className="font-mono tracking-widest">Proɢʀεss</span> : "Progress"} <span className="ml-1 text-xs bg-gray-200 dark:bg-gray-700 px-1.5 py-0.5 rounded-full">{levelInfo.level}</span>
-                  {activeTab === 'progress' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-indigo-600 dark:bg-indigo-400"></div>}
+                  {activeTab === window.TabNames.PROGRESS && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-indigo-600 dark:bg-indigo-400"></div>}
                 </button>
               </div>
 
               {/* Content Area */}
-              {activeTab === 'inputs' ? (
+              {activeTab === window.TabNames.INPUTS ? (
                 <>
                   <div className="flex-grow p-4 overflow-hidden flex flex-col relative">
 
@@ -2339,7 +2339,7 @@
                     </button>
                   </div>
                 </>
-              ) : activeTab === 'history' ? (
+              ) : activeTab === window.TabNames.HISTORY ? (
                 <>
                   <div className="flex-grow overflow-y-auto p-4">
                     {history.length === 0 ? (
