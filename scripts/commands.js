@@ -7,6 +7,7 @@ window.processCommandCodes = (listName, inputText, {
   setTheme,
   setInputText,
   addToast,
+  setWinner,
   windowObjects
 }) => {
   if (!listName || listName.toLowerCase() !== '@console') return false;
@@ -50,6 +51,10 @@ window.processCommandCodes = (listName, inputText, {
       commandExecuted = true;
     } else if (command.startsWith('toast:')) {
       addToast(command.substring(6));
+      commandExecuted = true;
+    } else if (command.startsWith('winner:')) {
+      const name = command.substring(7);
+      setWinner(name);
       commandExecuted = true;
     } else if (command === 'confetti') {
       const level = getLevelProgress(currentXp).level;
