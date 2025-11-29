@@ -1,6 +1,7 @@
-const CACHE_NAME = "spinwheel-v30";
+const CACHE_NAME = "spinwheel-v31";
 const ASSETS = [
   "./",
+  "./scripts/components/LevelCard.js",
   "./scripts/components/Modal.js",
   "./scripts/components/OutOfOrderOverlay.js",
   "./scripts/components/ThemeIcon.js",
