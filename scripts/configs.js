@@ -39,3 +39,9 @@ window.storageKeys = {
   IMPORTED_CODES: 'spinWheel_importedCodes',
   ACHIEVEMENTS: 'spinWheel_achievements'
 };
+
+window.themes = {
+  AUTO: 'auto',
+  LIGHT: 'light',
+  DARK: 'dark'
+};

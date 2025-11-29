@@ -138,7 +138,7 @@
         }));
       });
       const [soundEnabled, setSoundEnabled] = useState(() => loadState(window.storageKeys.SOUND_ENABLED, true));
-      const [theme, setTheme] = useState(() => loadState(window.storageKeys.THEME, 'auto'));
+      const [theme, setTheme] = useState(() => loadState(window.storageKeys.THEME, window.themes.AUTO));
       const [spinDuration, setSpinDuration] = useState(() => loadState(window.storageKeys.SPIN_DURATION, 10000));
       const [hideLabels, setHideLabels] = useState(() => loadState(window.storageKeys.HIDE_LABELS, false));
       const [aiVoiceEnabled, setAiVoiceEnabled] = useState(() => loadState(window.storageKeys.AI_VOICE_ENABLED, false));
@@ -537,9 +537,9 @@
 
         let isDark = false;
 
-        if (theme === 'dark') {
+        if (theme === window.themes.DARK) {
           isDark = true;
-        } else if (theme === 'light') {
+        } else if (theme === window.themes.LIGHT) {
           isDark = false;
         } else {
           isDark = checkSystemTheme();
@@ -701,8 +701,8 @@
       };
 
       const getThemeIcon = () => {
-        if (theme === 'auto') return <MonitorIcon size={24} />;
-        if (theme === 'light') return <SunIcon size={24} />;
+        if (theme === window.themes.AUTO) return <MonitorIcon size={24} />;
+        if (theme === window.themes.LIGHT) return <SunIcon size={24} />;
         return <MoonIcon size={24} />;
       };
 
@@ -1486,9 +1486,9 @@
                 commandExecuted = true;
               } else if (command.startsWith('theme:')) {
                 let newTheme = command.substring(6).trim();
-                if (newTheme === 'system') newTheme = 'auto';
+                if (newTheme === 'system') newTheme = window.themes.AUTO;
 
-                if (['auto', 'light', 'dark'].includes(newTheme)) {
+                if (Object.values(window.themes).includes(newTheme)) {
                   setTheme(newTheme);
                   message = `Theme set to ${newTheme}`;
                   commandExecuted = true;
@@ -1990,28 +1990,28 @@
                   <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 z-50 overflow-hidden animate-[fade-in_0.2s_ease-out]">
                     <div className="py-1">
                       <button
-                        onClick={() => { setTheme('auto'); setShowThemeMenu(false) }}
-                        className={`flex items-center w-full px-4 py-2 text-sm text-left ${theme === 'auto' ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
+                        onClick={() => { setTheme(window.themes.AUTO); setShowThemeMenu(false) }}
+                        className={`flex items-center w-full px-4 py-2 text-sm text-left ${theme === window.themes.AUTO ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
                       >
                         <span className="mr-3"><MonitorIcon size={16} /></span>
                         Auto
-                        {theme === 'auto' && <span className="ml-auto"><CheckIcon size={16} /></span>}
+                        {theme === window.themes.AUTO && <span className="ml-auto"><CheckIcon size={16} /></span>}
                       </button>
                       <button
-                        onClick={() => { setTheme('light'); setShowThemeMenu(false) }}
-                        className={`flex items-center w-full px-4 py-2 text-sm text-left ${theme === 'light' ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
+                        onClick={() => { setTheme(window.themes.LIGHT); setShowThemeMenu(false) }}
+                        className={`flex items-center w-full px-4 py-2 text-sm text-left ${theme === window.themes.LIGHT ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
                       >
                         <span className="mr-3"><SunIcon size={16} /></span>
                         Light
-                        {theme === 'light' && <span className="ml-auto"><CheckIcon size={16} /></span>}
+                        {theme === window.themes.LIGHT && <span className="ml-auto"><CheckIcon size={16} /></span>}
                       </button>
                       <button
-                        onClick={() => { setTheme('dark'); setShowThemeMenu(false) }}
-                        className={`flex items-center w-full px-4 py-2 text-sm text-left ${theme === 'dark' ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
+                        onClick={() => { setTheme(window.themes.DARK); setShowThemeMenu(false) }}
+                        className={`flex items-center w-full px-4 py-2 text-sm text-left ${theme === window.themes.DARK ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
                       >
                         <span className="mr-3"><MoonIcon size={16} /></span>
                         Dark
-                        {theme === 'dark' && <span className="ml-auto"><CheckIcon size={16} /></span>}
+                        {theme === window.themes.DARK && <span className="ml-auto"><CheckIcon size={16} /></span>}
                       </button>
                     </div>
                   </div>
