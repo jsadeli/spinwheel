@@ -346,3 +346,34 @@ window.playBreakdownSound = (audioCtxRef, soundEnabled) => {
   osc.start();
   osc.stop(ctx.currentTime + 1);
 };
+
+// Helper to convert base64 PCM data to WAV Blob
+window.base64ToWavBlob = (base64Data) => {
+  const audioBytes = Uint8Array.from(atob(base64Data), c => c.charCodeAt(0));
+  // Basic WAV header construction for PCM data
+  const wavHeader = new ArrayBuffer(44);
+  const view = new DataView(wavHeader);
+  const sampleRate = 24000;
+  const numChannels = 1;
+  const bitsPerSample = 16;
+
+  const writeString = (offset, string) => {
+    for (let i = 0; i < string.length; i++) view.setUint8(offset + i, string.charCodeAt(i));
+  };
+
+  writeString(0, 'RIFF');
+  view.setUint32(4, 36 + audioBytes.length, true);
+  writeString(8, 'WAVE');
+  writeString(12, 'fmt ');
+  view.setUint32(16, 16, true);
+  view.setUint16(20, 1, true);
+  view.setUint16(22, numChannels, true);
+  view.setUint32(24, sampleRate, true);
+  view.setUint32(28, sampleRate * numChannels * 2, true);
+  view.setUint16(32, numChannels * 2, true);
+  view.setUint16(34, bitsPerSample, true);
+  writeString(36, 'data');
+  view.setUint32(40, audioBytes.length, true);
+
+  return new Blob([wavHeader, audioBytes], { type: 'audio/wav' });
+};
