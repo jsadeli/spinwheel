@@ -761,7 +761,8 @@
             // Check achievement after audio ends
             audio.addEventListener('ended', () => {
               const newUnlocks = achievementManager.check({
-                usedAIAnnounce: true
+                usedAIAnnounce: true,
+                aiVoice: aiVoiceSelection
               });
               handleAchievementUnlocks(newUnlocks);
             });

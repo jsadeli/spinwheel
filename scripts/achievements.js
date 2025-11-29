@@ -714,6 +714,22 @@ const ACHIEVEMENTS = [
     bonusXp: 100,
     condition: (stats) => stats.usedAIAnnounce,
   },
+  {
+    id: "her_voice",
+    title: "Her Voice",
+    description: "Let Aoede speak. She sounds nice, doesn't she?",
+    icon: "👩‍🎤",
+    bonusXp: 10,
+    condition: (stats) => stats.usedAIAnnounce && stats.aiVoice === window.AIVoices.AOEDE,
+  },
+  {
+    id: "his_voice",
+    title: "His Voice",
+    description: "Let Iapetus speak. Deep, resonant, and slightly judgmental.",
+    icon: "👨‍🎤",
+    bonusXp: 10,
+    condition: (stats) => stats.usedAIAnnounce && stats.aiVoice === window.AIVoices.IAPETUS,
+  },
   // --- Meta Achievements ---
   {
     id: "almost_there",
