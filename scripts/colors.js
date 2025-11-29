@@ -24,3 +24,13 @@ window.parseCustomColors = (input) => {
     .map((c) => c.trim())
     .filter((c) => /^#([0-9A-F]{3}){1,2}$/i.test(c));
 };
+
+// Helper for deterministic colors
+window.getItemColor = (text, colors) => {
+  let hash = 0;
+  for (let i = 0; i < text.length; i++) {
+    hash = text.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const index = Math.abs(hash) % colors.length;
+  return colors[index];
+};

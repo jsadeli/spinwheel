@@ -83,6 +83,7 @@
   <script type="text/javascript" src="scripts/ai.js"></script>
   <script type="text/javascript" src="scripts/animations.js"></script>
   <script type="text/javascript" src="scripts/colors.js"></script>
+  <script type="text/javascript" src="scripts/wheel.js"></script>
   <script type="text/javascript" src="scripts/commands.js"></script>
   <script type="text/javascript" src="scripts/sounds.js"></script>
   <script type="text/javascript" src="scripts/utils.js"></script>
@@ -819,37 +820,19 @@
         const ctx = canvas.getContext('2d');
         let animationFrameId;
 
-        const NUM_PINS = 30; // Fixed number of pins for the game show feel
-
-        // Helper for deterministic colors
-        const getItemColor = (text, colors) => {
-          let hash = 0;
-          for (let i = 0; i < text.length; i++) {
-            hash = text.charCodeAt(i) + ((hash << 5) - hash);
-          }
-          const index = Math.abs(hash) % colors.length;
-          return colors[index];
-        };
-
         const render = () => {
           const width = canvas.width;
           const height = canvas.height;
-          const centerX = width / 2;
-          const centerY = height / 2;
-          const radius = Math.min(width, height) / 2 - 20; // Leave room for pins
           const currentItems = itemsRef.current;
-          const currentColors = colorsRef.current; // Use ref for current colors
+          const currentColors = colorsRef.current;
           const isDark = isDarkModeRef.current;
           const shouldHide = hideLabelsRef.current;
 
           // --- Idle Spin Logic ---
-          // Added !isOutOfOrderRef.current to stop idle spin when broken
-          // Stop idle spin if removing an item (static wheel during animation)
           if (!isSpinningRef.current && !isChargingRef.current && !isOutOfOrderRef.current && !removingItemRef.current && currentItems.length > 0 && velocityRef.current === 0 && !winnerRef.current) {
             const targetIdleSpeed = 0.002;
-            const acceleration = 0.00001; // Gradual acceleration rate
+            const acceleration = 0.00001;
 
-            // Gradually accelerate to target idle speed
             if (idleVelocityRef.current < targetIdleSpeed) {
               idleVelocityRef.current = Math.min(idleVelocityRef.current + acceleration, targetIdleSpeed);
             }
@@ -860,218 +843,42 @@
 
           // --- Removing Item Animation Logic ---
           if (removingItemRef.current) {
-            const { startTime, duration, index } = removingItemRef.current;
+            const { startTime, duration } = removingItemRef.current;
             const now = Date.now();
-            const elapsed = now - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-
-            // Ease in out cubic
-            const ease = progress < 0.5 ? 4 * progress * progress * progress : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+            const progress = Math.min((now - startTime) / duration, 1);
 
             if (progress >= 1) {
-              // Animation complete: actually remove the item
               const itemToRemove = removingItemRef.current.text;
               const newItems = currentItems.filter(i => i.text !== itemToRemove);
-
-              // We need to update state, but we are in a ref-based loop.
-              // We can't easily call setInputText/setItems from here without causing issues or needing to wait for next render.
-              // BUT, we can force a state update which will trigger a re-render.
-              // To avoid race conditions, we'll dispatch a custom event or just call the state setter.
-              // Since this is inside useEffect, calling state setter is fine, it will schedule re-render.
-
-              // However, we need to be careful not to loop.
-              // We'll clear the ref FIRST.
               removingItemRef.current = null;
-
-              // Trigger the removal in React state
-              // We need to access the LATEST itemsToString and setInputText from the closure or refs if they are stable.
-              // Actually, we can just use the helper we defined outside.
-              // But we need to call setInputText. We have access to it in the closure.
-              // We also need to update itemsRef immediately for the next frame if possible,
-              // but React state update is async.
-
-              // Let's use a helper function exposed via ref or just call the setter.
-              // We need to make sure we don't get into an infinite loop of updates.
-              // The check `if (removingItemRef.current)` protects us.
-
-              // We need to find the item in the ORIGINAL list to remove it properly?
-              // No, currentItems is good.
-
-              // Wait, we need to update the TEXT AREA input, which drives the items.
-              // So we need to convert newItems back to string.
-              // We can't use `itemsToString` easily if it's not in scope or if it relies on something.
-              // It is in scope of App.
-
-              // We'll use a timeout to break out of the render loop stack just in case, though not strictly necessary.
               setTimeout(() => {
                 setInputText(itemsToString(newItems));
-                // items state will update via useEffect on inputText
               }, 0);
-
-            } else {
-              // Animation in progress: Adjust effective weights for rendering ONLY
-              // We don't change the actual items array, just how we calculate angles.
             }
           }
 
           // --- Drawing ---
-          ctx.clearRect(0, 0, width, height);
-
-          if (currentItems.length === 0) {
-            // Empty State
-            ctx.beginPath();
-            ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
-            ctx.fillStyle = isDark ? '#334155' : '#f0f0f0';
-            ctx.fill();
-            ctx.strokeStyle = isDark ? '#475569' : '#ddd';
-            ctx.lineWidth = 2;
-            ctx.stroke();
-
-            ctx.fillStyle = isDark ? '#5c5f77' : '#C0C0C0';
-            ctx.font = '20px sans-serif';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText('Add items to spin!', centerX, centerY + 120); // shifted down to prevent text from being obscured by the spin button
-          } else {
-            // Calculate Total Weight
-            // Modified for animation: if removing, reduce weight of that item
-            let effectiveItems = [...currentItems];
-            if (removingItemRef.current) {
-              const { index, startTime, duration } = removingItemRef.current;
-              const now = Date.now();
-              const progress = Math.min((now - startTime) / duration, 1);
-              // Ease in out
-              const ease = progress < 0.5 ? 4 * progress * progress * progress : 1 - Math.pow(-2 * progress + 2, 3) / 2;
-
-              // We need to identify the item by index or text. Index is safer if text is not unique?
-              // But items list might have changed? No, we blocked interaction.
-              // Let's use the index stored in ref.
-              if (effectiveItems[index]) {
-                // Clone the item to not mutate ref
-                effectiveItems[index] = { ...effectiveItems[index], weight: effectiveItems[index].weight * (1 - ease) };
-              }
-            }
-
-            const totalWeight = effectiveItems.reduce((sum, item) => sum + item.weight, 0);
-
-            // Draw Wheel Slices
-            let currentAngle = rotationRef.current;
-
-            effectiveItems.forEach((item, index) => {
-              // Calculate slice size based on weight
-              const sliceAngle = (item.weight / totalWeight) * (2 * Math.PI);
-
-              const startAngle = currentAngle;
-              const endAngle = currentAngle + sliceAngle;
-
-              ctx.beginPath();
-              ctx.moveTo(centerX, centerY);
-              ctx.arc(centerX, centerY, radius, startAngle, endAngle);
-              ctx.closePath();
-
-              ctx.closePath();
-
-              if (colorAssignmentRef.current === 'deterministic') {
-                ctx.fillStyle = getItemColor(item.text, currentColors); // Deterministic colors
-              } else {
-                ctx.fillStyle = currentColors[index % currentColors.length]; // Dynamic colors
-              }
-
-              ctx.fill();
-              ctx.stroke();
-
-              // Draw text
-              ctx.save();
-              ctx.translate(centerX, centerY);
-              // Rotate to center of the weighted slice
-              ctx.rotate(startAngle + sliceAngle / 2);
-              ctx.textAlign = "right";
-              ctx.fillStyle = "#fff";
-              ctx.font = currentItems.length > 12 ? "bold 14px Arial" : "bold 18px Arial";
-
-              const displayText = shouldHide ? "?" : (item.text.substring(0, 18) + (item.text.length > 18 ? '...' : ''));
-
-              ctx.fillText(displayText, radius - 20, 5);
-              ctx.restore();
-
-              // Advance angle for next item
-              currentAngle += sliceAngle;
-            });
-
-            // Hub
-            ctx.beginPath();
-            ctx.arc(centerX, centerY, 30, 0, 2 * Math.PI);
-            ctx.fillStyle = isDark ? '#1e293b' : 'white';
-            ctx.fill();
-            ctx.strokeStyle = '#333';
-            ctx.lineWidth = 4;
-            ctx.stroke();
-
-            // Border
-            ctx.beginPath();
-            ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
-            ctx.strokeStyle = '#333';
-            ctx.lineWidth = 5;
-            ctx.stroke();
-
-            // Draw Trail Effect
-            if (trailEnabledRef.current && window.drawWheelTrail && (isSpinningRef.current || velocityRef.current > 0.005)) {
-              const currentLevel = window.calculateLevel ? window.calculateLevel(xpRef.current) : 0;
-              window.drawWheelTrail(ctx, centerX, centerY, radius, rotationRef.current, velocityRef.current, currentLevel, isDark);
-            }
-
-            // Draw Pins
-            const pinRadius = radius + 10; // Pins sit outside the main wheel
-            for (let i = 0; i < NUM_PINS; i++) {
-              const angle = (i * 2 * Math.PI / NUM_PINS) + rotationRef.current;
-              const px = centerX + Math.cos(angle) * pinRadius;
-              const py = centerY + Math.sin(angle) * pinRadius;
-
-              ctx.beginPath();
-              ctx.arc(px, py, 4, 0, 2 * Math.PI);
-              ctx.fillStyle = '#C0C0C0'; // Silver pins
-              ctx.fill();
-              ctx.strokeStyle = '#666';
-              ctx.lineWidth = 1;
-              ctx.stroke();
-            }
+          if (window.drawWheel) {
+            window.drawWheel(
+              ctx,
+              width,
+              height,
+              currentItems,
+              currentColors,
+              rotationRef.current,
+              isDark,
+              shouldHide,
+              trailEnabledRef.current,
+              velocityRef.current,
+              removingItemRef.current,
+              colorAssignmentRef.current,
+              xpRef.current
+            );
           }
 
           // --- Pointer Animation Logic ---
-          if (pointerRef.current) {
-            const pinSpacing = (2 * Math.PI) / NUM_PINS;
-            const pinPhase = (rotationRef.current % pinSpacing) / pinSpacing;
-
-            let pointerAngle = 0;
-
-            // Physics Parameters
-            // Dynamic max angle based on velocity
-            // Cap velocity influence to avoid 360 spins
-            const velocityFactor = Math.min(velocityRef.current * 800, 40);
-            const maxAngle = 30 + velocityFactor;
-
-            const pushThreshold = 0.65; // Earlier contact for smoother push
-
-            if (pinPhase > pushThreshold) {
-              // PUSH PHASE: Pin contacts pointer and pushes it down (Clockwise)
-              // Map range [0.85, 1.0] to [0, maxAngle]
-              const t = (pinPhase - pushThreshold) / (pushThreshold - 1);
-              // Use a slight curve for weight
-              pointerAngle = t * maxAngle;
-            } else {
-              // SPRING/SNAP PHASE: Pin releases, pointer snaps back
-              // Damped harmonic oscillator: A * e^(-ct) * cos(wt)
-              const t = pinPhase;
-
-              // Tune these for "snapiness"
-              const decay = 10; // How fast energy is lost
-              const freq = 120;  // Wiggle speed
-
-              // Start at maxAngle (t=0), decay to 0
-              pointerAngle = maxAngle * Math.exp(-decay * t) * Math.cos(freq * t);
-            }
-
-            pointerRef.current.style.transform = `rotate(${pointerAngle}deg)`;
+          if (pointerRef.current && window.updatePointer) {
+            window.updatePointer(pointerRef.current, rotationRef.current, velocityRef.current);
           }
 
           animationFrameId = requestAnimationFrame(render);

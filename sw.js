@@ -21,6 +21,7 @@ const ASSETS = [
   "./scripts/sounds.js",
   "./scripts/themes.js",
   "./scripts/utils.js",
+  "./scripts/wheel.js",
   "./styles/main.css",
   "./icon.png",
   "./index.html",
