@@ -144,16 +144,16 @@ textarea::-webkit-scrollbar-thumb:hover {
 @keyframes xboxPop {
   0% {
     opacity: 0;
-    transform: translate(-50%, 50px) scale(0.8);
+    transform: translate(0, 50px) scale(0.8);
   }
 
   50% {
-    transform: translate(-50%, -10px) scale(1.05);
+    transform: translate(0, -10px) scale(1.05);
   }
 
   100% {
     opacity: 1;
-    transform: translate(-50%, 0) scale(1);
+    transform: translate(0, 0) scale(1);
   }
 }
 
