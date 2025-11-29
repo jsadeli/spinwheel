@@ -113,3 +113,15 @@ window.getPrestigeTheme = (level) => {
     shadow: 'shadow-sm'
   };
 };
+
+// Get Tier Colors for Power Meter
+window.getTierColors = (level) => {
+  if (level >= 11) return { start: '#ec4899', mid: '#d946ef', end: '#8b5cf6' }; // Cosmic: Pink -> Fuchsia -> Violet
+  if (level >= 10) return { start: '#22d3ee', mid: '#6366f1', end: '#a855f7' }; // Diamond: Cyan -> Indigo -> Purple
+  if (level >= 9) return { start: '#fde047', mid: '#eab308', end: '#f59e0b' }; // Gold: Yellow -> Amber
+  if (level >= 8) return { start: '#fb7185', mid: '#f43f5e', end: '#e11d48' }; // Ruby: Rose
+  if (level >= 7) return { start: '#67e8f9', mid: '#06b6d4', end: '#3b82f6' }; // Topaz: Cyan -> Blue
+  if (level >= 5) return { start: '#34d399', mid: '#10b981', end: '#059669' }; // Emerald
+  if (level >= 3) return { start: '#fdba74', mid: '#f97316', end: '#ea580c' }; // Bronze/Orange
+  return { start: '#94a3b8', mid: '#64748b', end: '#475569' }; // Default: Silver
+};
