@@ -1,4 +1,10 @@
 // Achievement Definitions
+window.AchievementFilters = {
+  ALL: 'all',
+  UNLOCKED: 'unlocked',
+  LOCKED: 'locked'
+};
+
 const ACHIEVEMENTS = [
   // --- Spins ---
   {
