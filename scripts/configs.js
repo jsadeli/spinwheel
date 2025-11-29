@@ -45,3 +45,5 @@ window.themes = {
   LIGHT: 'light',
   DARK: 'dark'
 };
+
+window.GITHUB_LINK = "https://github.com/samuelkripto/spinwheel";
