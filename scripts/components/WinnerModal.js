@@ -1,8 +1,18 @@
 window.WinnerModal = ({ winner, levelInfo, prestigeTheme, onClose, onRemoveAndSpin }) => {
   if (!winner) return null;
 
-  const { CodeIcon, ScrollIcon, TrophyIcon } = window;
+  const { useEffect } = React;
+  const { CodeIcon, ScrollIcon, TrophyIcon, CloseIcon } = window;
   const isCosmic = levelInfo.level >= 11;
+
+  // Close on Escape key
+  useEffect(() => {
+    const handleEsc = (e) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, [onClose]);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 backdrop-blur-sm animate-in fade-in duration-300">
@@ -23,6 +33,15 @@ window.WinnerModal = ({ winner, levelInfo, prestigeTheme, onClose, onRemoveAndSp
             )}
 
             <div className={`relative m-[2px] ${isCosmic ? 'bg-indigo-50 dark:bg-gray-900' : prestigeTheme.cardBg} rounded-[14px] p-8 text-center transition-colors duration-300 overflow-hidden`}>
+
+              {/* Close Button (Top Right) */}
+              <button
+                onClick={onClose}
+                className="absolute top-4 right-4 z-20 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                aria-label="Close"
+              >
+                <CloseIcon size={20} />
+              </button>
 
               {/* Cosmic Background Effects */}
               {isCosmic && (

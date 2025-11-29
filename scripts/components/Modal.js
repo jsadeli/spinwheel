@@ -3,7 +3,7 @@ window.Modal = ({ isOpen, onClose, title, icon, children, footer, className = ""
   if (!isOpen) return null;
 
   const { useEffect } = React;
-  const Icon = window.Icon; // Access global Icon component
+  const { CloseIcon } = window; // Access global Icon component
 
   // Close on Escape key
   useEffect(() => {
@@ -43,10 +43,7 @@ window.Modal = ({ isOpen, onClose, title, icon, children, footer, className = ""
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
           >
-            <Icon size={20}>
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </Icon>
+            <CloseIcon size={20} />
           </button>
         </div>
 
