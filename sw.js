@@ -16,6 +16,7 @@ const ASSETS = [
   "./scripts/colors.js",
   "./scripts/configs.js",
   "./scripts/icons.js",
+  "./scripts/levels.js",
   "./scripts/sounds.js",
   "./scripts/themes.js",
   "./scripts/utils.js",

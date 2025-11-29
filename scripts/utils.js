@@ -66,69 +66,6 @@ window.itemsToString = (itemsArray) => {
   }).join('\n');
 };
 
-// XP Progress Constants
-window.XP_CONSTANTS = {
-  BASE_REQUIRED: 20,
-  MULTIPLIER: 10,
-  EXPONENT_GROWTH: 2,
-};
-
-// Helper to get required minimum XP for a specific level
-window.getRequiredXpForLevel = (level) => {
-  if (level === 0) return window.XP_CONSTANTS.BASE_REQUIRED;
-  return window.XP_CONSTANTS.MULTIPLIER * Math.pow(window.XP_CONSTANTS.EXPONENT_GROWTH, level);
-};
-
-// Helper to calculate XP level
-window.calculateLevel = (currentXp) => {
-  let level = 0;
-  let required = window.getRequiredXpForLevel(level);
-  while (currentXp >= required) {
-    currentXp -= required;
-    level++;
-    required = window.getRequiredXpForLevel(level);
-  }
-  return level;
-};
-
-// Helper to get XP level progress
-window.getLevelProgress = (currentXp) => {
-  let level = 0;
-  let required = window.getRequiredXpForLevel(level);
-
-  // Find current level base XP
-  while (currentXp >= required) {
-    currentXp -= required;
-    level++;
-    required = window.getRequiredXpForLevel(level);
-  }
-
-  return {
-    level,
-    currentLevelXp: currentXp,
-    requiredLevelXp: required,
-    progressPercent: (currentXp / required) * 100
-  };
-};
-
-// Helper to get XP level title
-window.getLevelTitle = (level) => {
-  const titles = [
-    "Novice Spinner",              // 0: 0 XP
-    "Casual Clicker",              // 1: 20 XP
-    "Spin Enthusiast",             // 2: 40 XP
-    "Professional Procrastinator", // 3: 80 XP
-    "Frequent Spinner",            // 4: 160 XP
-    "Spin Doctor",                 // 5: 320 XP
-    "Entropy Engineer",            // 6: 640 XP
-    "Lord of the Spins",           // 7: 1280 XP
-    "Agent of Probability",        // 8: 2560 XP
-    "Wheel Master",                // 9: 5120 XP
-    "Oracle of Spin"               // 10: 10240 XP
-  ];
-  return titles[level] || "God of Wheel"; // 11+: 20480 XP
-};
-
 // Helper to copy text to clipboard
 window.copyToClipboard = (text, setIsCopied) => {
   navigator.clipboard.writeText(text).then(() => {
