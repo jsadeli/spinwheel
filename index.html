@@ -193,7 +193,7 @@
       // Toast State (Queue System)
       const [toastQueue, setToastQueue] = useState([]);
 
-      const addToast = (message, title = "Notification", icon = null, duration = 5000) => {
+      const addToast = (message, title = "Notification", icon = null, duration = window.TOAST_DURATION) => {
         setToastQueue(prev => [...prev, { message, duration, title, icon, id: Date.now() + Math.random() }]);
       };
 
@@ -228,7 +228,7 @@
           let totalBonusXp = 0;
           newUnlocks.forEach(ach => {
             const xpMsg = ach.bonusXp ? ` (+${ach.bonusXp} XP)` : '';
-            addToast(`${ach.title}${xpMsg}`, "Achievement Unlocked", ach.icon, 5000);
+            addToast(`${ach.title}${xpMsg}`, "Achievement Unlocked", ach.icon, window.TOAST_DURATION);
             if (ach.bonusXp) totalBonusXp += ach.bonusXp;
           });
 
@@ -255,7 +255,7 @@
 
       useEffect(() => {
         if (levelInfo.level > prevLevelRef.current) {
-          addToast(`You are now ${getLevelTitle(levelInfo.level)}!`, "Level Up!", null, 5000);
+          addToast(`You are now ${getLevelTitle(levelInfo.level)}!`, "Level Up!", null, window.TOAST_DURATION);
           // Optional: Trigger confetti if not already triggered by something else
           // fireConfetti();
         }

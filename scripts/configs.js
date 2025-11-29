@@ -46,4 +46,6 @@ window.themes = {
   DARK: 'dark'
 };
 
+window.TOAST_DURATION = 5000; // milliseconds
+
 window.GITHUB_LINK = "https://github.com/samuelkripto/spinwheel";
