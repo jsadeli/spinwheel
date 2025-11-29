@@ -697,7 +697,7 @@ const ACHIEVEMENTS = [
     title: "Ghost in the Machine",
     description: "Robots are deciding your lunch now. Generate a list using the AI Sparkle button.",
     icon: "🤖",
-    bonusXp: 50,
+    bonusXp: 100,
     condition: (stats) => stats.usedAI,
   },
   {
@@ -705,7 +705,7 @@ const ACHIEVEMENTS = [
     title: "Press Secretary",
     description: "Let the AI do the talking. Use the AI Announce Winner feature.",
     icon: "📢",
-    bonusXp: 50,
+    bonusXp: 100,
     condition: (stats) => stats.usedAIAnnounce,
   },
   // --- Meta Achievements ---
