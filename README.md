@@ -1,13 +1,15 @@
 # Spin Wheel
 
-An interactive spin wheel web application built as a single HTML page. This app allows users to
-create customizable spinning wheels for random selection and decision making.
+An interactive spin wheel progressive web application with a user progression system. Perfect for
+making random selections, choosing winners, or making decisions in a fun and interactive way.
 
 ## About
 
-This is a simple, lightweight spin wheel application that runs entirely in the browser. Perfect for
-making random selections, choosing winners, or making decisions in a fun and interactive way.
-Vibe coding a Spin Wheel app into existence with the assistance of Gemini 3 Pro...
+This app allows users to create customizable spinning wheels for random selection and decision
+making, while having fun doing so. Built as a single HTML page using pure HTML, Javascript, and CSS.
+It is a lightweight spin wheel application that runs entirely in the browser. With the assistance of
+Gemini 3 Pro, this app was built as to solve a real operational crisis of the technical team at
+Samuel Kripto.
 
 Screenshot:
 
@@ -62,10 +64,10 @@ Screenshot:
 
 ## Usage
 
-1. Open the `index.html` file in your web browser
-2. Add your custom options to the wheel
-3. Click the spin button to make a random selection
-4. The wheel will spin and land on one of your options
+1. Open the app [SpinWheel](https://samuelkripto.github.io/spinwheel/) in your web browser.
+2. Add your custom options to the wheel.
+3. Click the spin button to make a random selection.
+4. The wheel will spin and land on one of your options.
 
 ### Weighted Items
 
@@ -93,6 +95,42 @@ Salad  :  1
 
 Get your Gemini API key from [Google AI Studio](https://aistudio.google.com/app/api-keys).
 
+### Console Mode
+
+The application supports a lightweight console mode for diagnostics and rapid testing.
+
+- This mode is activated by creating a special list named `@console`.
+- Commands are processed sequentially from top to bottom.
+- Execution requires elevated permission, so this list must begin with the `#!sudo` directive before
+  any command entries are executed.
+
+Within console mode, you can issue several debugging commands/instructions:
+
+| Command         | Description                                                                                     |
+|-----------------|-------------------------------------------------------------------------------------------------|
+| `toast:message` | `message` can be surfaced through the toast notification system by using the syntax.            |
+| `break`         | Intentionally trigger an application failure.                                                   |
+| `theme:mode`    | Adjust the global theme. The enum value for `mode` is `auto` (or `system`), `light`, or `dark`. |
+| `reset`         | Restore the application to its default (factory) settings.                                      |
+
+Cheats (intended solely for testing, _obviously_) can be enabled by executing `#!enable-cheats`
+command to elevate permissions, before inputting any of the cheat commands. Once activated, the
+following commands allow you to manipulate progression state:
+
+| Command     | Description                                                               |
+|-------------|---------------------------------------------------------------------------|
+| `xp:amount` | Modify experience points. The `amount` value may be positive or negative. |
+| `levelup`   | Jump directly to the next level threshold.                                |
+
+### Special Keywords
+
+The application includes a small set of special keywords that reveal additional contextual
+information when discovered through normal gameplay. When these keywords appear and you successfully
+spin to obtain them, they unlock brief informational panels.
+
+- `@about` reveals the app’s background and purpose.
+- `@author` provides details about the creator behind the project.
+
 ## How It Works
 
 The spin wheel uses HTML5 Canvas or CSS animations to create a smooth spinning effect.
@@ -104,8 +142,9 @@ randomization algorithm for fair results.
 You can customize:
 
 - Theme (auto, light-mode, or dark-mode)
-- Sound effects (on or off)
+- Sound effects (on or off, classic, wooden, metallic, crystal)
 - Spin duration (quick 5s, normal 10s, or long 20s)
+- Spin trail effects (on or off)
 - Spin labels visibility (set it to hidden for a little bit of a "mystery" spin)
 
 ## Inspiration
@@ -115,8 +154,7 @@ bringing the same functionality in a simple, self-contained format.
 
 ## Getting Started
 
-Simply clone this repository and open the HTML file in any modern web browser.
-No installation or build process required.
+Simply clone this repository. No installation or build process required.
 
 ```bash
 git clone https://github.com/samuelkripto/spinwheel.git
@@ -131,7 +169,7 @@ python3 -m http.server
 
 ## License
 
-This project is open source and available for personal and educational use.
+This project is open source and available for personal, commercial, and educational use.
 
 ## Contributing
 
