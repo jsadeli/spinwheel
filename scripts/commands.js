@@ -8,6 +8,8 @@ window.processCommandCodes = (listName, inputText, {
   setInputText,
   addToast,
   setWinner,
+  achievementManager,
+  setAchievements,
   windowObjects
 }) => {
   if (!listName || listName.toLowerCase() !== '@console') return false;
@@ -78,6 +80,15 @@ window.processCommandCodes = (listName, inputText, {
         message = `Theme set to ${newTheme}`;
         commandExecuted = true;
       }
+    } else if (command === 'reset:achievements') {
+      achievementManager.reset();
+      setAchievements(achievementManager.getAll());
+      message = "Achievements reset!";
+      commandExecuted = true;
+    } else if (command === 'reset:level') {
+      setXp(() => 0);
+      commandExecuted = true;
+      message = "Level reset!";
     } else if (command === 'reset') {
       localStorage.clear();
       window.location.reload();

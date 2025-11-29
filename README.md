@@ -106,15 +106,17 @@ The application supports a lightweight console mode for diagnostics and rapid te
 
 Within console mode, you can issue several debugging commands/instructions:
 
-| Command         | Description                                                                                     |
-|-----------------|-------------------------------------------------------------------------------------------------|
-| `toast:message` | `message` can be surfaced through the toast notification system by using the syntax.            |
-| `winner:name`   | `name` can be surfaced through the winner modal by using the syntax.                            |
-| `confetti`      | Triggers the confetti animation at the current user's level.                                    |
-| `confetti:level`| Triggers the confetti animation at the specified `level`.                                       |
-| `break`         | Intentionally trigger a system failure (overheat).                                              |
-| `theme:mode`    | Adjust the global theme. The enum value for `mode` is `auto` (or `system`), `light`, or `dark`. |
-| `reset`         | Restore the application to its default (factory) settings.                                      |
+| Command              | Description                                                                                     |
+|----------------------|-------------------------------------------------------------------------------------------------|
+| `toast:message`      | `message` can be surfaced through the toast notification system by using the syntax.            |
+| `winner:name`        | `name` can be surfaced through the winner modal by using the syntax.                            |
+| `confetti`           | Triggers the confetti animation at the current user's level.                                    |
+| `confetti:level`     | Triggers the confetti animation at the specified `level`.                                       |
+| `break`              | Intentionally trigger a system failure (overheat).                                              |
+| `theme:mode`         | Adjust the global theme. The enum value for `mode` is `auto` (or `system`), `light`, or `dark`. |
+| `reset:achievements` | Reset all unlocked achievements.                                                                |
+| `reset:level`        | Reset the user level to 0.                                                                      |
+| `reset`              | Restore the application to its default (factory) settings.                                      |
 
 Cheats (intended solely for testing, _obviously_) can be enabled by executing `#!enable-cheats`
 command to elevate permissions, before inputting any of the cheat commands. Once activated, the

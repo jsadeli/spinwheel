@@ -839,6 +839,11 @@ class AchievementManager {
     }
   }
 
+  reset() {
+    this.unlocked = {};
+    this.save();
+  }
+
   getUnlocked() {
     return this.unlocked;
   }
