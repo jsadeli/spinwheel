@@ -1736,6 +1736,23 @@
                   className="max-w-full h-auto max-h-[60vh] md:max-h-[80vh] w-full object-contain filter drop-shadow-xl"
                 />
 
+                {/* Work-in-Progress Feature Toggle Button (Bottom Left) */}
+                {/*
+                <button
+                  onClick={() => {
+                    if (hideLabels && isSpinningRef.current) {
+                      mysteryModeCancelledDuringSpinRef.current = true;
+                    }
+                    setHideLabels(!hideLabels);
+                  }}
+                  disabled={isSpinning}
+                  className={`absolute bottom-2 left-2 p-2 border rounded-full shadow-md transition z-30 ${hideLabels ? 'bg-red-100 dark:bg-red-900/30 border-red-200 dark:border-red-800 text-red-600 dark:text-red-400' : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'}`}
+                  title={hideLabels ? "State ON" : "State OFF"}
+                >
+                  <SkullIcon size={20} />
+                </button>
+                */}
+
                 {/* Mystery Toggle Button */}
                 <button
                   onClick={() => {
@@ -2045,46 +2062,46 @@
 
                     // Corrupted State Override
                     if (isCorrupted) {
-                       return (
-                         <div className="relative overflow-hidden rounded-xl mb-4 group shadow-[0_0_15px_rgba(239,68,68,0.6)] border-2 border-red-500/50">
-                            <div className="absolute inset-0 bg-black/90 z-0"></div>
-                            {/* Glitch Effect Background */}
-                            <div className="absolute inset-0 opacity-20 pointer-events-none overflow-hidden">
-                                <div className="absolute top-0 left-0 w-full h-full bg-[repeating-linear-gradient(45deg,transparent,transparent_10px,#ff0000_10px,#ff0000_11px)] animate-[pulse_0.1s_infinite]"></div>
+                      return (
+                        <div className="relative overflow-hidden rounded-xl mb-4 group shadow-[0_0_15px_rgba(239,68,68,0.6)] border-2 border-red-500/50">
+                          <div className="absolute inset-0 bg-black/90 z-0"></div>
+                          {/* Glitch Effect Background */}
+                          <div className="absolute inset-0 opacity-20 pointer-events-none overflow-hidden">
+                            <div className="absolute top-0 left-0 w-full h-full bg-[repeating-linear-gradient(45deg,transparent,transparent_10px,#ff0000_10px,#ff0000_11px)] animate-[pulse_0.1s_infinite]"></div>
+                          </div>
+
+                          <div className="relative z-10 p-5 text-left">
+                            <div className="flex items-center justify-start mb-4 space-x-3">
+                              <div className="p-2 bg-red-900/50 rounded-full shadow-sm animate-pulse">
+                                <AlertTriangleIcon size={24} className="text-red-500" />
+                              </div>
+                              <div>
+                                <h3 className="text-2xl font-black text-red-500 font-mono tracking-tighter animate-[pulse_2s_infinite]">
+                                  SYSTEM COMPROMISED
+                                </h3>
+                                <p className="text-xs text-red-400 font-mono font-bold mt-1 uppercase tracking-widest">
+                                  Level {levelInfo.level} <span className="mx-2 text-red-600">•</span> {xp} XP [MODDED]
+                                </p>
+                              </div>
                             </div>
 
-                            <div className="relative z-10 p-5 text-left">
-                                <div className="flex items-center justify-start mb-4 space-x-3">
-                                    <div className="p-2 bg-red-900/50 rounded-full shadow-sm animate-pulse">
-                                        <AlertTriangleIcon size={24} className="text-red-500" />
-                                    </div>
-                                    <div>
-                                        <h3 className="text-2xl font-black text-red-500 font-mono tracking-tighter animate-[pulse_2s_infinite]">
-                                            SYSTEM COMPROMISED
-                                        </h3>
-                                        <p className="text-xs text-red-400 font-mono font-bold mt-1 uppercase tracking-widest">
-                                            Level {levelInfo.level} <span className="mx-2 text-red-600">•</span> {xp} XP [MODDED]
-                                        </p>
-                                    </div>
-                                </div>
-
-                                {/* Corrupted Progress Bar */}
-                                <div className="relative z-10 h-5 w-full bg-red-900/30 rounded-full overflow-hidden border border-red-500/30">
-                                    <div
-                                        className="absolute top-0 left-0 h-full bg-red-600 transition-all duration-1000 ease-out"
-                                        style={{ width: `${levelInfo.progressPercent}%` }}
-                                    >
-                                        <div className="absolute inset-0 w-full h-full bg-[repeating-linear-gradient(90deg,transparent,transparent_2px,#000_2px,#000_4px)] opacity-20"></div>
-                                    </div>
-                                </div>
-
-                                <div className="relative z-10 flex justify-between text-[10px] font-bold text-red-500 font-mono opacity-80 mt-2 px-1 uppercase tracking-wider">
-                                    <span>ERR_OVERFLOW: {Math.floor(levelInfo.currentLevelXp)}</span>
-                                    <span>TARGET: {Math.floor(levelInfo.requiredLevelXp)}</span>
-                                </div>
+                            {/* Corrupted Progress Bar */}
+                            <div className="relative z-10 h-5 w-full bg-red-900/30 rounded-full overflow-hidden border border-red-500/30">
+                              <div
+                                className="absolute top-0 left-0 h-full bg-red-600 transition-all duration-1000 ease-out"
+                                style={{ width: `${levelInfo.progressPercent}%` }}
+                              >
+                                <div className="absolute inset-0 w-full h-full bg-[repeating-linear-gradient(90deg,transparent,transparent_2px,#000_2px,#000_4px)] opacity-20"></div>
+                              </div>
                             </div>
-                         </div>
-                       );
+
+                            <div className="relative z-10 flex justify-between text-[10px] font-bold text-red-500 font-mono opacity-80 mt-2 px-1 uppercase tracking-wider">
+                              <span>ERR_OVERFLOW: {Math.floor(levelInfo.currentLevelXp)}</span>
+                              <span>TARGET: {Math.floor(levelInfo.requiredLevelXp)}</span>
+                            </div>
+                          </div>
+                        </div>
+                      );
                     }
 
                     return (
