@@ -1440,19 +1440,22 @@
         if (currentList && currentList.name.toLowerCase() === '@console') {
           const lines = inputText.split('\n');
 
-          if (lines.length > 0 && lines[0].trim() === '#!sudo-enable-cheats') {
+          if (lines.length > 0 && lines[0].trim() === '#!sudo') {
             let commandExecutedCount = 0;
+            let isCheatsEnabled = false;
             let currentXp = xp;
 
             for (const line of lines.slice(1)) {
               let commandExecuted = false;
+              const command = line.trim();
               let message = line.trim();
-              const trimmed = line.trim();
-              if (trimmed.startsWith('toast:')) {
-                addToast(trimmed.substring(6));
+
+              if (command === '#!enable-cheats') {
+                isCheatsEnabled = true;
+                message = "Cheat mode enabled!";
                 commandExecuted = true;
-              } else if (trimmed.startsWith('xp:')) {
-                const amount = parseInt(trimmed.substring(3), 10);
+              } else if (command.startsWith('xp:') && isCheatsEnabled) {
+                const amount = parseInt(command.substring(3), 10);
                 if (!isNaN(amount)) {
                   setXp(prev => prev + amount);
                   currentXp += amount;
@@ -1461,7 +1464,7 @@
                   setIsCorrupted(true);
                   localStorage.setItem('spinWheel_isCorrupted', 'true');
                 }
-              } else if (trimmed === 'levelup') {
+              } else if (command === 'levelup' && isCheatsEnabled) {
                 const info = getLevelProgress(currentXp);
                 const needed = info.requiredLevelXp - info.currentLevelXp;
                 // Ensure we add at least 1 XP if somehow we are at the boundary,
@@ -1477,14 +1480,14 @@
                 commandExecuted = true;
                 setIsCorrupted(true);
                 localStorage.setItem('spinWheel_isCorrupted', 'true');
-              } else if (trimmed === 'break') {
+              } else if (command.startsWith('toast:')) {
+                addToast(command.substring(6));
+                commandExecuted = true;
+              } else if (command === 'break') {
                 setIsOutOfOrder(true);
                 commandExecuted = true;
-              } else if (trimmed === 'fix') {
-                setIsOutOfOrder(false);
-                commandExecuted = true;
-              } else if (trimmed.startsWith('theme:')) {
-                let newTheme = trimmed.substring(6).trim();
+              } else if (command.startsWith('theme:')) {
+                let newTheme = command.substring(6).trim();
                 if (newTheme === 'system') newTheme = 'auto';
 
                 if (['auto', 'light', 'dark'].includes(newTheme)) {
@@ -1492,7 +1495,7 @@
                   message = `Theme set to ${newTheme}`;
                   commandExecuted = true;
                 }
-              } else if (trimmed === 'reset') {
+              } else if (command === 'reset') {
                 localStorage.clear();
                 window.location.reload();
                 return;
