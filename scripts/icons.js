@@ -367,3 +367,19 @@ window.SkullIcon = (props) => (
     <path d="M14 21v-2" />
   </Icon>
 );
+
+window.MaleIcon = (props) => (
+  <Icon {...props}>
+    <circle cx="10" cy="10" r="7" />
+    <line x1="21" y1="3" x2="15" y2="9" />
+    <polyline points="16 3 21 3 21 8" />
+  </Icon>
+);
+
+window.FemaleIcon = (props) => (
+  <Icon {...props}>
+    <circle cx="12" cy="10" r="7" />
+    <line x1="12" y1="17" x2="12" y2="23" />
+    <line x1="9" y1="20" x2="15" y2="20" />
+  </Icon>
+);

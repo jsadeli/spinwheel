@@ -152,6 +152,7 @@
       const [aiVoiceEnabled, setAiVoiceEnabled] = useState(() => loadState(window.storageKeys.AI_VOICE_ENABLED, false));
       const [trailEnabled, setTrailEnabled] = useState(() => loadState(window.storageKeys.TRAIL_ENABLED, false));
       const [geminiApiKey, setGeminiApiKey] = useState(() => loadState(window.storageKeys.GEMINI_API_KEY, ''));
+      const [aiVoiceSelection, setAiVoiceSelection] = useState(() => loadState(window.storageKeys.AI_VOICE_SELECTION, window.AIVoices.AOEDE));
       const [tickSound, setTickSound] = useState(() => loadState(window.storageKeys.TICK_SOUND, 'default'));
 
       // Color Settings
@@ -441,6 +442,10 @@
       useEffect(() => {
         localStorage.setItem(window.storageKeys.AI_VOICE_ENABLED, JSON.stringify(aiVoiceEnabled));
       }, [aiVoiceEnabled]);
+
+      useEffect(() => {
+        localStorage.setItem(window.storageKeys.AI_VOICE_SELECTION, JSON.stringify(aiVoiceSelection));
+      }, [aiVoiceSelection]);
 
       useEffect(() => {
         localStorage.setItem(window.storageKeys.TRAIL_ENABLED, JSON.stringify(trailEnabled));
@@ -746,7 +751,7 @@
       const announceWinner = async (winnerText) => {
         if (!aiVoiceEnabled || !geminiApiKey) return;
         try {
-          const audioContent = await window.generateSpeechFromGemini(geminiApiKey, `The winner is... ${winnerText}!`);
+          const audioContent = await window.generateSpeechFromGemini(geminiApiKey, `The winner is... ${winnerText}!`, aiVoiceSelection);
           if (audioContent) {
             const blob = window.base64ToWavBlob(audioContent);
             const url = URL.createObjectURL(blob);
@@ -1563,7 +1568,7 @@
                     </div>
                     <div className="py-1 border-b border-gray-100 dark:border-gray-700">
                       <button
-                        onClick={() => { setTickSound('default'); setShowSettingsMenu(false) }}
+                        onClick={() => { setTickSound('default') }}
                         className={`flex items-center w-full px-4 py-2 text-sm text-left ${tickSound === 'default' ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
                       >
                         <span className="mr-3"><ElectricIcon size={16} /></span>
@@ -1571,7 +1576,7 @@
                         {tickSound === 'default' && <span className="ml-auto"><CheckIcon size={16} /></span>}
                       </button>
                       <button
-                        onClick={() => { setTickSound('crisp'); setShowSettingsMenu(false) }}
+                        onClick={() => { setTickSound('crisp') }}
                         className={`flex items-center w-full px-4 py-2 text-sm text-left ${tickSound === 'crisp' ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
                       >
                         <span className="mr-3"><WoodIcon size={16} /></span>
@@ -1579,7 +1584,7 @@
                         {tickSound === 'crisp' && <span className="ml-auto"><CheckIcon size={16} /></span>}
                       </button>
                       <button
-                        onClick={() => { setTickSound('metallic'); setShowSettingsMenu(false) }}
+                        onClick={() => { setTickSound('metallic') }}
                         className={`flex items-center w-full px-4 py-2 text-sm text-left ${tickSound === 'metallic' ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
                       >
                         <span className="mr-3"><MechanicalIcon size={16} /></span>
@@ -1587,7 +1592,7 @@
                         {tickSound === 'metallic' && <span className="ml-auto"><CheckIcon size={16} /></span>}
                       </button>
                       <button
-                        onClick={() => { setTickSound('crystal'); setShowSettingsMenu(false) }}
+                        onClick={() => { setTickSound('crystal') }}
                         className={`flex items-center w-full px-4 py-2 text-sm text-left ${tickSound === 'crystal' ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
                       >
                         <span className="mr-3"><CrystalGlassIcon size={16} /></span>
@@ -1663,6 +1668,24 @@
                         <span className="mr-3"><BotIcon size={16} /></span>
                         Announce Winner
                         {aiVoiceEnabled && geminiApiKey && <span className="ml-auto"><CheckIcon size={16} /></span>}
+                      </button>
+                      <button
+                        onClick={() => { setAiVoiceSelection(window.AIVoices.AOEDE); setShowSettingsMenu(false) }}
+                        disabled={!aiVoiceEnabled}
+                        className={`flex items-center w-full px-4 py-2 text-sm text-left ${aiVoiceEnabled && aiVoiceSelection === window.AIVoices.AOEDE ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'} ${!aiVoiceEnabled ? 'opacity-50' : ''}`}
+                      >
+                        <span className="mr-3"><FemaleIcon size={16} /></span>
+                        {window.AIVoices.AOEDE} (Female)
+                        {aiVoiceSelection === window.AIVoices.AOEDE && <span className="ml-auto"><CheckIcon size={16} /></span>}
+                      </button>
+                      <button
+                        onClick={() => { setAiVoiceSelection(window.AIVoices.IAPETUS); setShowSettingsMenu(false) }}
+                        disabled={!aiVoiceEnabled}
+                        className={`flex items-center w-full px-4 py-2 text-sm text-left ${aiVoiceEnabled && aiVoiceSelection === window.AIVoices.IAPETUS ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'} ${!aiVoiceEnabled ? 'opacity-50' : ''}`}
+                      >
+                        <span className="mr-3"><MaleIcon size={16} /></span>
+                        {window.AIVoices.IAPETUS} (Male)
+                        {aiVoiceSelection === window.AIVoices.IAPETUS && <span className="ml-auto"><CheckIcon size={16} /></span>}
                       </button>
                     </div>
                   </div>

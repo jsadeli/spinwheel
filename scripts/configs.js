@@ -37,13 +37,19 @@ window.storageKeys = {
   HISTORY_TAB_VIEWS: 'spinWheel_historyTabViews',
   PROGRESS_TAB_VIEWS: 'spinWheel_progressTabViews',
   IMPORTED_CODES: 'spinWheel_importedCodes',
-  ACHIEVEMENTS: 'spinWheel_achievements'
+  ACHIEVEMENTS: 'spinWheel_achievements',
+  AI_VOICE_SELECTION: 'spinWheel_aiVoiceSelection'
 };
 
 window.themes = {
   AUTO: 'auto',
   LIGHT: 'light',
   DARK: 'dark'
+};
+
+window.AIVoices = {
+  AOEDE: 'Aoede',
+  IAPETUS: 'Iapetus'
 };
 
 window.TOAST_DURATION = 5000;
