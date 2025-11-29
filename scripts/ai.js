@@ -16,7 +16,7 @@ window.generateListFromGemini = async (apiKey, prompt) => {
 };
 
 // voice options: https://docs.cloud.google.com/text-to-speech/docs/gemini-tts#voice_options
-window.generateSpeechFromGemini = async (apiKey, text) => {
+window.generateSpeechFromGemini = async (apiKey, text, voiceName = "Aoede") => {
   const response = await fetch(
     `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`,
     {
@@ -26,7 +26,7 @@ window.generateSpeechFromGemini = async (apiKey, text) => {
         contents: [{ parts: [{ text: text }] }],
         generationConfig: {
           responseModalities: ["AUDIO"],
-          speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: "Aoede" } } },
+          speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: voiceName } } },
         },
       }),
     }
