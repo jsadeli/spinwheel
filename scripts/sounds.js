@@ -377,3 +377,113 @@ window.base64ToWavBlob = (base64Data) => {
 
   return new Blob([wavHeader, audioBytes], { type: 'audio/wav' });
 };
+
+// Charge Sound Logic Class
+window.ChargeSound = class {
+  constructor(audioCtx) {
+    this.ctx = audioCtx;
+    this.osc = null;
+    this.gain = null;
+    this.filter = null;
+  }
+
+  start() {
+    if (!this.ctx) return;
+    this.stop(); // Ensure clean start
+
+    const ctx = this.ctx;
+    this.osc = ctx.createOscillator();
+    this.gain = ctx.createGain();
+    this.filter = ctx.createBiquadFilter();
+
+    // Sawtooth gives a buzzy, mechanical "motor" sound
+    this.osc.type = 'sawtooth';
+    this.osc.frequency.setValueAtTime(150, ctx.currentTime);
+
+    // Configure Lowpass Filter to muffle the digital harshness
+    this.filter.type = 'lowpass';
+    this.filter.frequency.setValueAtTime(400, ctx.currentTime); // Start quite muffled (400Hz)
+
+    // Fade in to avoid clicking
+    this.gain.gain.setValueAtTime(0, ctx.currentTime);
+    this.gain.gain.linearRampToValueAtTime(0.1, ctx.currentTime + 0.1);
+
+    // Connect: Oscillator -> Filter -> Gain -> Output
+    this.osc.connect(this.filter);
+    this.filter.connect(this.gain);
+    this.gain.connect(ctx.destination);
+    this.osc.start();
+  }
+
+  update(power, overchargeTime = 0) {
+    if (!this.osc) return;
+    const ctx = this.ctx;
+
+    // Base: Ramp pitch from 150Hz to 500Hz based on power (0 to 1)
+    let targetFreq = 150 + (power * 350);
+
+    // Overcharge Logic: If smoke is appearing (>3000ms overcharge), ramp pitch higher
+    // Breakdown happens at ~18000ms. We ramp from 3000ms to 18000ms.
+    if (overchargeTime > 3000) {
+      // Normalize progress from 0.0 to 1.0 based on the danger zone duration (15s)
+      const dangerProgress = Math.min((overchargeTime - 3000) / 15000, 1);
+
+      // Add extra pitch (up to +800Hz) to reach ~1300Hz screaming
+      targetFreq += (dangerProgress * 800);
+
+      // Open the filter wide to let the harsh high frequencies through
+      if (this.filter) {
+        const filterFreq = 1000 + (dangerProgress * 5000); // Open up to 6000Hz
+        this.filter.frequency.setTargetAtTime(filterFreq, ctx.currentTime, 0.1);
+      }
+
+      // Increase volume slightly
+      if (this.gain) {
+        this.gain.gain.setTargetAtTime(0.15 + (dangerProgress * 0.1), ctx.currentTime, 0.1);
+      }
+    } else {
+      // Normal charging behavior
+      if (this.filter) {
+        const filterFreq = 400 + (power * 600); // Cap at 1000Hz for heavy feel
+        this.filter.frequency.setTargetAtTime(filterFreq, ctx.currentTime, 0.1);
+      }
+      if (this.gain) {
+        this.gain.gain.setTargetAtTime(0.1 + (power * 0.05), ctx.currentTime, 0.1);
+      }
+    }
+
+    this.osc.frequency.setTargetAtTime(targetFreq, ctx.currentTime, 0.1);
+  }
+
+  stop() {
+    if (this.osc) {
+      try {
+        const ctx = this.ctx;
+        const gain = this.gain;
+        const osc = this.osc;
+        const filter = this.filter;
+
+        // Fade out quickly
+        if (gain) {
+          gain.gain.cancelScheduledValues(ctx.currentTime);
+          gain.gain.setValueAtTime(gain.gain.value, ctx.currentTime);
+          gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.15);
+        }
+
+        setTimeout(() => {
+          if (osc) {
+            osc.stop();
+            osc.disconnect();
+          }
+          if (filter) filter.disconnect();
+          if (gain) gain.disconnect();
+        }, 200);
+
+      } catch (e) { }
+
+      this.osc = null;
+      this.gain = null;
+      this.filter = null;
+    }
+  }
+};
