@@ -782,7 +782,7 @@ const ACHIEVEMENTS = [
 
 class AchievementManager {
   constructor() {
-    this.storageKey = 'spinWheel_achievements';
+    this.storageKey = window.storageKeys.ACHIEVEMENTS;
     this.unlocked = this.load();
   }
 

@@ -101,11 +101,11 @@
       // We now manage a list of lists.
       // Legacy migration: if 'spinWheel_inputs' exists but 'spinWheel_savedLists' doesn't, migrate it.
       const [savedLists, setSavedLists] = useState(() => {
-        const storedLists = loadState('spinWheel_savedLists', null);
+        const storedLists = loadState(window.storageKeys.SAVED_LISTS, null);
         if (storedLists) return storedLists;
 
         // Migration / Default
-        const legacyInput = loadState('spinWheel_inputs', null);
+        const legacyInput = loadState(window.storageKeys.INPUTS, null);
         const initialContent = legacyInput !== null ? legacyInput : window.defaultListItems.join('\n');
 
         return [{
@@ -115,7 +115,7 @@
         }];
       });
 
-      const [activeListId, setActiveListId] = useState(() => loadState('spinWheel_activeListId', 'default'));
+      const [activeListId, setActiveListId] = useState(() => loadState(window.storageKeys.ACTIVE_LIST_ID, 'default'));
 
       // Helper to get content safely
       const getActiveListContent = (lists, id) => {
@@ -130,30 +130,30 @@
       const [items, setItems] = useState(() => parseItems(inputText));
 
       const [history, setHistory] = useState(() => {
-        const storedHistory = loadState('spinWheel_history', []);
+        const storedHistory = loadState(window.storageKeys.HISTORY, []);
         // Rehydrate timestamp strings back to Date objects
         return storedHistory.map(item => ({
           ...item,
           timestamp: new Date(item.timestamp)
         }));
       });
-      const [soundEnabled, setSoundEnabled] = useState(() => loadState('spinWheel_sound', true));
-      const [theme, setTheme] = useState(() => loadState('spinWheel_theme', 'auto'));
-      const [spinDuration, setSpinDuration] = useState(() => loadState('spinWheel_duration', 10000));
-      const [hideLabels, setHideLabels] = useState(() => loadState('spinWheel_hideLabels', false));
-      const [aiVoiceEnabled, setAiVoiceEnabled] = useState(() => loadState('spinWheel_aiVoice', false));
-      const [trailEnabled, setTrailEnabled] = useState(() => loadState('spinWheel_trailEnabled', false));
-      const [geminiApiKey, setGeminiApiKey] = useState(() => loadState('spinWheel_apiKey', ''));
-      const [tickSound, setTickSound] = useState(() => loadState('spinWheel_tickSound', 'default'));
+      const [soundEnabled, setSoundEnabled] = useState(() => loadState(window.storageKeys.SOUND_ENABLED, true));
+      const [theme, setTheme] = useState(() => loadState(window.storageKeys.THEME, 'auto'));
+      const [spinDuration, setSpinDuration] = useState(() => loadState(window.storageKeys.SPIN_DURATION, 10000));
+      const [hideLabels, setHideLabels] = useState(() => loadState(window.storageKeys.HIDE_LABELS, false));
+      const [aiVoiceEnabled, setAiVoiceEnabled] = useState(() => loadState(window.storageKeys.AI_VOICE_ENABLED, false));
+      const [trailEnabled, setTrailEnabled] = useState(() => loadState(window.storageKeys.TRAIL_ENABLED, false));
+      const [geminiApiKey, setGeminiApiKey] = useState(() => loadState(window.storageKeys.GEMINI_API_KEY, ''));
+      const [tickSound, setTickSound] = useState(() => loadState(window.storageKeys.TICK_SOUND, 'default'));
 
       // Color Settings
-      const [colorSettings, setColorSettings] = useState(() => loadState('spinWheel_colorSettings', {
+      const [colorSettings, setColorSettings] = useState(() => loadState(window.storageKeys.COLOR_SETTINGS, {
         type: 'default',
         customColors: '#FF6B6B, #4ECDC4, #45B7D1'
       }));
 
       // New: Color Assignment Mode (Dynamic vs Deterministic)
-      const [colorAssignment, setColorAssignment] = useState(() => loadState('spinWheel_colorAssignment', 'dynamic'));
+      const [colorAssignment, setColorAssignment] = useState(() => loadState(window.storageKeys.COLOR_ASSIGNMENT, 'dynamic'));
 
       const [activeColors, setActiveColors] = useState(defaultColors);
 
@@ -183,7 +183,7 @@
       const [chargePower, setChargePower] = useState(0);
       const [overchargeState, setOverchargeState] = useState(0); // New state for overcharge animation
       const [isOutOfOrder, setIsOutOfOrder] = useState(false); // NEW: Broken state
-      const [isCorrupted, setIsCorrupted] = useState(() => loadState('spinWheel_isCorrupted', false)); // NEW: Corrupted state
+      const [isCorrupted, setIsCorrupted] = useState(() => loadState(window.storageKeys.IS_CORRUPTED, false)); // NEW: Corrupted state
       const [deferredPrompt, setDeferredPrompt] = useState(null);
 
       // Toast State (Queue System)
@@ -198,17 +198,17 @@
       };
 
       // XP System State
-      const [xp, setXp] = useState(() => loadState('spinWheel_xp', 0));
+      const [xp, setXp] = useState(() => loadState(window.storageKeys.XP, 0));
       const [sessionSpin, setSessionSpin] = useState(0); // Track spins in this session (not persisted)
-      const [totalSpins, setTotalSpins] = useState(() => loadState('spinWheel_totalSpins', 0)); // Track total spins
-      const [cancelledSpins, setCancelledSpins] = useState(() => loadState('spinWheel_cancelledSpins', 0)); // Track total cancelled spins
+      const [totalSpins, setTotalSpins] = useState(() => loadState(window.storageKeys.TOTAL_SPINS, 0)); // Track total spins
+      const [cancelledSpins, setCancelledSpins] = useState(() => loadState(window.storageKeys.CANCELLED_SPINS, 0)); // Track total cancelled spins
       const [achievements, setAchievements] = useState([]); // Store achievement objects with status
       const [achievementFilter, setAchievementFilter] = useState('all'); // 'all', 'unlocked', 'locked'
 
       // Track Tab Views for "Lorekeeper's Review"
-      const [inputsTabViews, setInputsTabViews] = useState(() => loadState('spinWheel_inputsTabViews', 0));
-      const [historyTabViews, setHistoryTabViews] = useState(() => loadState('spinWheel_historyTabViews', 0));
-      const [progressTabViews, setProgressTabViews] = useState(() => loadState('spinWheel_progressTabViews', 0));
+      const [inputsTabViews, setInputsTabViews] = useState(() => loadState(window.storageKeys.INPUTS_TAB_VIEWS, 0));
+      const [historyTabViews, setHistoryTabViews] = useState(() => loadState(window.storageKeys.HISTORY_TAB_VIEWS, 0));
+      const [progressTabViews, setProgressTabViews] = useState(() => loadState(window.storageKeys.PROGRESS_TAB_VIEWS, 0));
 
       // Initialize Achievement Manager
       const achievementManager = useMemo(() => new window.AchievementManager(), []);
@@ -375,11 +375,11 @@
             window.history.replaceState({ path: newUrl }, '', newUrl);
 
             // Track unique imports for "Loot Box"
-            const importedCodes = loadState('spinWheel_importedCodes', []);
+            const importedCodes = loadState(window.storageKeys.IMPORTED_CODES, []);
             let uniqueCount = importedCodes.length;
             if (!importedCodes.includes(encodedList)) {
               importedCodes.push(encodedList);
-              localStorage.setItem('spinWheel_importedCodes', JSON.stringify(importedCodes));
+              localStorage.setItem(window.storageKeys.IMPORTED_CODES, JSON.stringify(importedCodes));
               uniqueCount = importedCodes.length;
             }
 
@@ -397,11 +397,11 @@
 
       // List Persistence Effects
       useEffect(() => {
-        localStorage.setItem('spinWheel_savedLists', JSON.stringify(savedLists));
+        localStorage.setItem(window.storageKeys.SAVED_LISTS, JSON.stringify(savedLists));
       }, [savedLists]);
 
       useEffect(() => {
-        localStorage.setItem('spinWheel_activeListId', JSON.stringify(activeListId));
+        localStorage.setItem(window.storageKeys.ACTIVE_LIST_ID, JSON.stringify(activeListId));
       }, [activeListId]);
 
       // Auto-save content to current list when typing
@@ -418,57 +418,57 @@
       }, [activeListId]);
 
       useEffect(() => {
-        localStorage.setItem('spinWheel_history', JSON.stringify(history));
+        localStorage.setItem(window.storageKeys.HISTORY, JSON.stringify(history));
       }, [history]);
 
       useEffect(() => {
-        localStorage.setItem('spinWheel_sound', JSON.stringify(soundEnabled));
+        localStorage.setItem(window.storageKeys.SOUND_ENABLED, JSON.stringify(soundEnabled));
       }, [soundEnabled]);
 
       useEffect(() => {
-        localStorage.setItem('spinWheel_theme', JSON.stringify(theme));
+        localStorage.setItem(window.storageKeys.THEME, JSON.stringify(theme));
       }, [theme]);
 
       useEffect(() => {
-        localStorage.setItem('spinWheel_duration', JSON.stringify(spinDuration));
+        localStorage.setItem(window.storageKeys.SPIN_DURATION, JSON.stringify(spinDuration));
       }, [spinDuration]);
 
       useEffect(() => {
-        localStorage.setItem('spinWheel_hideLabels', JSON.stringify(hideLabels));
+        localStorage.setItem(window.storageKeys.HIDE_LABELS, JSON.stringify(hideLabels));
       }, [hideLabels]);
 
       useEffect(() => {
-        localStorage.setItem('spinWheel_aiVoice', JSON.stringify(aiVoiceEnabled));
+        localStorage.setItem(window.storageKeys.AI_VOICE_ENABLED, JSON.stringify(aiVoiceEnabled));
       }, [aiVoiceEnabled]);
 
       useEffect(() => {
-        localStorage.setItem('spinWheel_trailEnabled', JSON.stringify(trailEnabled));
+        localStorage.setItem(window.storageKeys.TRAIL_ENABLED, JSON.stringify(trailEnabled));
       }, [trailEnabled]);
 
       useEffect(() => {
-        localStorage.setItem('spinWheel_apiKey', JSON.stringify(geminiApiKey));
+        localStorage.setItem(window.storageKeys.GEMINI_API_KEY, JSON.stringify(geminiApiKey));
       }, [geminiApiKey]);
 
       useEffect(() => {
-        localStorage.setItem('spinWheel_tickSound', JSON.stringify(tickSound));
+        localStorage.setItem(window.storageKeys.TICK_SOUND, JSON.stringify(tickSound));
         tickSoundRef.current = tickSound;
       }, [tickSound]);
 
       useEffect(() => {
-        localStorage.setItem('spinWheel_colorSettings', JSON.stringify(colorSettings));
+        localStorage.setItem(window.storageKeys.COLOR_SETTINGS, JSON.stringify(colorSettings));
       }, [colorSettings]);
 
       useEffect(() => {
-        localStorage.setItem('spinWheel_xp', JSON.stringify(xp));
+        localStorage.setItem(window.storageKeys.XP, JSON.stringify(xp));
         xpRef.current = xp;
       }, [xp]);
 
       useEffect(() => {
-        localStorage.setItem('spinWheel_totalSpins', JSON.stringify(totalSpins));
+        localStorage.setItem(window.storageKeys.TOTAL_SPINS, JSON.stringify(totalSpins));
       }, [totalSpins]);
 
       useEffect(() => {
-        localStorage.setItem('spinWheel_cancelledSpins', JSON.stringify(cancelledSpins));
+        localStorage.setItem(window.storageKeys.CANCELLED_SPINS, JSON.stringify(cancelledSpins));
       }, [cancelledSpins]);
 
       // Color Logic
@@ -527,7 +527,7 @@
       // Sync color assignment ref & persist
       useEffect(() => {
         colorAssignmentRef.current = colorAssignment;
-        localStorage.setItem('spinWheel_colorAssignment', JSON.stringify(colorAssignment));
+        localStorage.setItem(window.storageKeys.COLOR_ASSIGNMENT, JSON.stringify(colorAssignment));
       }, [colorAssignment]);
 
       // Theme Logic
@@ -571,19 +571,19 @@
         if (activeTab === 'inputs') {
           setInputsTabViews(prev => {
             const newVal = prev + 1;
-            localStorage.setItem('spinWheel_inputsTabViews', JSON.stringify(newVal));
+            localStorage.setItem(window.storageKeys.INPUTS_TAB_VIEWS, JSON.stringify(newVal));
             return newVal;
           });
         } else if (activeTab === 'history') {
           setHistoryTabViews(prev => {
             const newVal = prev + 1;
-            localStorage.setItem('spinWheel_historyTabViews', JSON.stringify(newVal));
+            localStorage.setItem(window.storageKeys.HISTORY_TAB_VIEWS, JSON.stringify(newVal));
             return newVal;
           });
         } else if (activeTab === 'progress') {
           setProgressTabViews(prev => {
             const newVal = prev + 1;
-            localStorage.setItem('spinWheel_progressTabViews', JSON.stringify(newVal));
+            localStorage.setItem(window.storageKeys.PROGRESS_TAB_VIEWS, JSON.stringify(newVal));
             return newVal;
           });
         }
@@ -1460,7 +1460,7 @@
                   message = `${amount > 0 ? '+' : ''}${amount} XP`;
                   commandExecuted = true;
                   setIsCorrupted(true);
-                  localStorage.setItem('spinWheel_isCorrupted', 'true');
+                  localStorage.setItem(window.storageKeys.IS_CORRUPTED, 'true');
                 }
               } else if (command === 'levelup' && isCheatsEnabled) {
                 const info = getLevelProgress(currentXp);
@@ -1477,7 +1477,7 @@
                 message = `Leveled Up! (+${Math.round(needed)} XP)`;
                 commandExecuted = true;
                 setIsCorrupted(true);
-                localStorage.setItem('spinWheel_isCorrupted', 'true');
+                localStorage.setItem(window.storageKeys.IS_CORRUPTED, 'true');
               } else if (command.startsWith('toast:')) {
                 addToast(command.substring(6));
                 commandExecuted = true;
