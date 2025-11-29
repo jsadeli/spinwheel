@@ -10,6 +10,7 @@ const ASSETS = [
   "./scripts/lib/tailwindcss.js",
   "./scripts/achievements.js",
   "./scripts/animations.js",
+  "./scripts/configs.js",
   "./scripts/babel.min.js",
   "./scripts/icons.js",
   "./scripts/sounds.js",
