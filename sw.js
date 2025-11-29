@@ -1,4 +1,4 @@
-const CACHE_NAME = "spinwheel-v29";
+const CACHE_NAME = "spinwheel-v30";
 const ASSETS = [
   "./",
   "./scripts/components/Modal.js",
