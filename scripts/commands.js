@@ -35,9 +35,9 @@ window.processCommandCodes = (listName, inputText, {
         setXp(prev => prev + amount);
         currentXp += amount;
         message = `${amount > 0 ? '+' : ''}${amount} XP`;
-        commandExecuted = true;
         setIsCorrupted(true);
         localStorage.setItem(storageKeys.IS_CORRUPTED, 'true');
+        commandExecuted = true;
       }
     } else if (command === 'levelup' && isCheatsEnabled) {
       const info = getLevelProgress(currentXp);
@@ -45,12 +45,22 @@ window.processCommandCodes = (listName, inputText, {
       setXp(prev => prev + needed);
       currentXp += needed;
       message = `Leveled Up! (+${Math.round(needed)} XP)`;
-      commandExecuted = true;
       setIsCorrupted(true);
       localStorage.setItem(storageKeys.IS_CORRUPTED, 'true');
+      commandExecuted = true;
     } else if (command.startsWith('toast:')) {
       addToast(command.substring(6));
       commandExecuted = true;
+    } else if (command === 'confetti') {
+      const level = getLevelProgress(currentXp).level;
+      fireConfetti(level);
+      commandExecuted = true;
+    } else if (command.startsWith('confetti:')) {
+      const level = parseInt(command.substring(9), 10);
+      if (!isNaN(level)) {
+        window.fireConfetti(level);
+        commandExecuted = true;
+      }
     } else if (command === 'break') {
       setIsOutOfOrder(true);
       commandExecuted = true;
@@ -66,6 +76,7 @@ window.processCommandCodes = (listName, inputText, {
     } else if (command === 'reset') {
       localStorage.clear();
       window.location.reload();
+      commandExecuted = true;
       return true; // Stop everything
     }
 

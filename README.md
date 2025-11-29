@@ -109,6 +109,8 @@ Within console mode, you can issue several debugging commands/instructions:
 | Command         | Description                                                                                     |
 |-----------------|-------------------------------------------------------------------------------------------------|
 | `toast:message` | `message` can be surfaced through the toast notification system by using the syntax.            |
+| `confetti`      | Triggers the confetti animation at the current user's level.                                    |
+| `confetti:level`| Triggers the confetti animation at the specified `level`.                                       |
 | `break`         | Intentionally trigger an application failure.                                                   |
 | `theme:mode`    | Adjust the global theme. The enum value for `mode` is `auto` (or `system`), `light`, or `dark`. |
 | `reset`         | Restore the application to its default (factory) settings.                                      |
