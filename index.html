@@ -1569,7 +1569,9 @@
                     <div className="py-1 border-b border-gray-100 dark:border-gray-700">
                       <button
                         onClick={() => { setTickSound('default') }}
-                        className={`flex items-center w-full px-4 py-2 text-sm text-left ${tickSound === 'default' ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
+                        disabled={!soundEnabled}
+                        className={`flex items-center w-full px-4 py-2 text-sm text-left ${tickSound === 'default' ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'} ${!soundEnabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        title={!soundEnabled ? "Sound is Muted" : ""}
                       >
                         <span className="mr-3"><ElectricIcon size={16} /></span>
                         Default Electric
@@ -1577,7 +1579,9 @@
                       </button>
                       <button
                         onClick={() => { setTickSound('crisp') }}
-                        className={`flex items-center w-full px-4 py-2 text-sm text-left ${tickSound === 'crisp' ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
+                        disabled={!soundEnabled}
+                        className={`flex items-center w-full px-4 py-2 text-sm text-left ${tickSound === 'crisp' ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'} ${!soundEnabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        title={!soundEnabled ? "Sound is Muted" : ""}
                       >
                         <span className="mr-3"><WoodIcon size={16} /></span>
                         Crisp Wooden
@@ -1585,7 +1589,9 @@
                       </button>
                       <button
                         onClick={() => { setTickSound('metallic') }}
-                        className={`flex items-center w-full px-4 py-2 text-sm text-left ${tickSound === 'metallic' ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
+                        disabled={!soundEnabled}
+                        className={`flex items-center w-full px-4 py-2 text-sm text-left ${tickSound === 'metallic' ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'} ${!soundEnabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        title={!soundEnabled ? "Sound is Muted" : ""}
                       >
                         <span className="mr-3"><MechanicalIcon size={16} /></span>
                         Metallic Clank
@@ -1593,7 +1599,9 @@
                       </button>
                       <button
                         onClick={() => { setTickSound('crystal') }}
-                        className={`flex items-center w-full px-4 py-2 text-sm text-left ${tickSound === 'crystal' ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
+                        disabled={!soundEnabled}
+                        className={`flex items-center w-full px-4 py-2 text-sm text-left ${tickSound === 'crystal' ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'} ${!soundEnabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        title={!soundEnabled ? "Sound is Muted" : ""}
                       >
                         <span className="mr-3"><CrystalGlassIcon size={16} /></span>
                         Crystal Glass
@@ -1661,9 +1669,9 @@
                             setShowSettingsMenu(false);
                           }
                         }}
-                        disabled={!geminiApiKey}
-                        className={`flex items-center w-full px-4 py-2 text-sm text-left ${aiVoiceEnabled && geminiApiKey ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'} ${!geminiApiKey ? 'opacity-50' : ''}`}
-                        title={!geminiApiKey ? "Requires API Key" : ""}
+                        disabled={!geminiApiKey || !soundEnabled}
+                        className={`flex items-center w-full px-4 py-2 text-sm text-left ${aiVoiceEnabled && geminiApiKey ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'} ${(!geminiApiKey || !soundEnabled) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        title={!geminiApiKey ? "Requires API Key" : (!soundEnabled ? "Sound is Muted" : "")}
                       >
                         <span className="mr-3"><BotIcon size={16} /></span>
                         Announce Winner
@@ -1671,8 +1679,9 @@
                       </button>
                       <button
                         onClick={() => { setAiVoiceSelection(window.AIVoices.AOEDE); setShowSettingsMenu(false) }}
-                        disabled={!aiVoiceEnabled}
-                        className={`flex items-center w-full px-4 py-2 text-sm text-left ${aiVoiceEnabled && aiVoiceSelection === window.AIVoices.AOEDE ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'} ${!aiVoiceEnabled ? 'opacity-50' : ''}`}
+                        disabled={!aiVoiceEnabled || !soundEnabled}
+                        className={`flex items-center w-full px-4 py-2 text-sm text-left ${aiVoiceEnabled && aiVoiceSelection === window.AIVoices.AOEDE ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'} ${(!aiVoiceEnabled || !soundEnabled) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        title={!soundEnabled ? "Sound is Muted" : (!aiVoiceEnabled ? "Announce Winner is Disabled" : "")}
                       >
                         <span className="mr-3"><FemaleIcon size={16} /></span>
                         {window.AIVoices.AOEDE} (Female)
@@ -1680,8 +1689,9 @@
                       </button>
                       <button
                         onClick={() => { setAiVoiceSelection(window.AIVoices.IAPETUS); setShowSettingsMenu(false) }}
-                        disabled={!aiVoiceEnabled}
-                        className={`flex items-center w-full px-4 py-2 text-sm text-left ${aiVoiceEnabled && aiVoiceSelection === window.AIVoices.IAPETUS ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'} ${!aiVoiceEnabled ? 'opacity-50' : ''}`}
+                        disabled={!aiVoiceEnabled || !soundEnabled}
+                        className={`flex items-center w-full px-4 py-2 text-sm text-left ${aiVoiceEnabled && aiVoiceSelection === window.AIVoices.IAPETUS ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'} ${(!aiVoiceEnabled || !soundEnabled) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        title={!soundEnabled ? "Sound is Muted" : (!aiVoiceEnabled ? "Announce Winner is Disabled" : "")}
                       >
                         <span className="mr-3"><MaleIcon size={16} /></span>
                         {window.AIVoices.IAPETUS} (Male)
