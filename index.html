@@ -1801,17 +1801,7 @@
         heatProgress = Math.min((overchargeTime - heatThreshold) / (maxHeatTime - heatThreshold), 1);
       }
 
-      // Helper for color interpolation
-      const lerpColor = (a, b, amount) => {
-        const ah = parseInt(a.replace(/#/g, ''), 16),
-          ar = ah >> 16, ag = ah >> 8 & 0xff, ab = ah & 0xff,
-          bh = parseInt(b.replace(/#/g, ''), 16),
-          br = bh >> 16, bg = bh >> 8 & 0xff, bb = bh & 0xff,
-          rr = ar + amount * (br - ar),
-          rg = ag + amount * (bg - ag),
-          rb = ab + amount * (bb - ab);
-        return '#' + ((1 << 24) + (rr << 16) + (rg << 8) + rb | 0).toString(16).slice(1);
-      };
+
 
       const handleRemoveAndSpin = () => {
         // Remove winner logic with animation
@@ -2179,7 +2169,7 @@
                       <svg width="100%" height="100%" viewBox="0 0 100 100" className="transform -rotate-90"
                         style={{
                           filter: `drop-shadow(${isCharging
-                            ? `0 0 ${10 + chargePower * 20 + heatProgress * 20}px ${heatProgress > 0 ? lerpColor('#ef4444', '#ff0000', heatProgress) : (chargePower > 0.8 ? '#ef4444' : (isCosmic ? '#d946ef' : tierColors.mid))}`
+                            ? `0 0 ${10 + chargePower * 20 + heatProgress * 20}px ${heatProgress > 0 ? window.lerpColor('#ef4444', '#ff0000', heatProgress) : (chargePower > 0.8 ? '#ef4444' : (isCosmic ? '#d946ef' : tierColors.mid))}`
                             : '0 0 0px transparent'
                             })`
                         }}
@@ -2197,17 +2187,17 @@
 
                         <defs>
                           <linearGradient id="powerGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                            <stop offset="0%" stopColor={lerpColor(tierColors.start, '#ef4444', heatProgress)}>
+                            <stop offset="0%" stopColor={window.lerpColor(tierColors.start, '#ef4444', heatProgress)}>
                               {isCosmic && heatProgress === 0 && (
                                 <animate attributeName="stop-color" values={`${tierColors.start};${tierColors.end};${tierColors.start}`} dur="2s" repeatCount="indefinite" />
                               )}
                             </stop>
-                            <stop offset="50%" stopColor={lerpColor(tierColors.mid, '#ef4444', heatProgress)}>
+                            <stop offset="50%" stopColor={window.lerpColor(tierColors.mid, '#ef4444', heatProgress)}>
                               {isCosmic && heatProgress === 0 && (
                                 <animate attributeName="stop-color" values={`${tierColors.mid};${tierColors.start};${tierColors.mid}`} dur="2s" repeatCount="indefinite" />
                               )}
                             </stop>
-                            <stop offset="100%" stopColor={lerpColor(tierColors.end, '#ff0000', heatProgress)}>
+                            <stop offset="100%" stopColor={window.lerpColor(tierColors.end, '#ff0000', heatProgress)}>
                               {isCosmic && heatProgress === 0 && (
                                 <animate attributeName="stop-color" values={`${tierColors.end};${tierColors.mid};${tierColors.end}`} dur="2s" repeatCount="indefinite" />
                               )}
@@ -2236,7 +2226,7 @@
                         `}
                       style={{
                         boxShadow: isCharging
-                          ? `0 0 ${10 + chargePower * 20 + heatProgress * 20}px ${heatProgress > 0 ? lerpColor('#ef4444', '#ff0000', heatProgress) : (chargePower > 0.8 ? '#ef4444' : '#6366f1')}`
+                          ? `0 0 ${10 + chargePower * 20 + heatProgress * 20}px ${heatProgress > 0 ? window.lerpColor('#ef4444', '#ff0000', heatProgress) : (chargePower > 0.8 ? '#ef4444' : '#6366f1')}`
                           : ''
                       }}
                     >
