@@ -1,4 +1,5 @@
 import { AchievementFilters } from "/scripts/achievements.js";
+import { getRelativeTime } from "/scripts/utils.js";
 
 window.AchievementsList = ({ achievements, achievementFilter, setAchievementFilter }) => {
   return (
@@ -109,7 +110,7 @@ window.AchievementsList = ({ achievements, achievementFilter, setAchievementFilt
                     className="text-xs text-indigo-600 dark:text-indigo-400 font-medium bg-indigo-50 dark:bg-indigo-900/20 px-2 py-0.5 rounded-full ml-2 whitespace-nowrap"
                     title={ach.unlockedAt.toISOString()}
                   >
-                    {ach.unlockedAt ? window.getRelativeTime(ach.unlockedAt) : "Unlocked"}
+                    {ach.unlockedAt ? getRelativeTime(ach.unlockedAt) : "Unlocked"}
                   </span>
                 )}
               </div>

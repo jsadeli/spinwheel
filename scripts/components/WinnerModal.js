@@ -1,3 +1,5 @@
+import { parseWinnerString } from "/scripts/utils.js";
+
 window.WinnerModal = ({ winner, levelInfo, prestigeTheme, onClose, onRemoveAndSpin }) => {
   if (!winner) return null;
 
@@ -136,7 +138,7 @@ window.WinnerModal = ({ winner, levelInfo, prestigeTheme, onClose, onRemoveAndSp
                   </h3>
                   <div className="relative z-10 text-4xl font-black mb-8 break-words">
                     {/* normal text (gradient) and emojis (full-color) */}
-                    {window.parseWinnerString(winner).map((part, i) => (
+                    {parseWinnerString(winner).map((part, i) => (
                       <span
                         key={i}
                         className={

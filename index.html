@@ -92,14 +92,13 @@
   <script type="text/javascript" src="scripts/colors.js"></script>
   <script type="module" src="scripts/wheel.js"></script>
   <script type="text/javascript" src="scripts/sounds.js"></script>
-  <script type="text/javascript" src="scripts/utils.js"></script>
 
   <!-- Load Components (Modal, Toast, etc.) -->
   <script type="text/babel" src="scripts/components/Modal.js"></script>
   <script type="text/babel" src="scripts/components/OutOfOrderOverlay.js"></script>
   <script type="text/babel" src="scripts/components/ThemeIcon.js"></script>
   <script type="text/babel" src="scripts/components/Toast.js"></script>
-  <script type="text/babel" src="scripts/components/WinnerModal.js"></script>
+  <script type="text/babel" data-type="module" src="scripts/components/WinnerModal.js"></script>
   <script type="text/babel" data-type="module" src="scripts/components/LevelCard.js"></script>
   <script type="text/babel" data-type="module" src="scripts/components/AchievementsList.js"></script>
 
@@ -114,6 +113,7 @@
     import { defaultColors, beachColors, getPrestigeTheme, getTierColors } from './scripts/themes.js';
     import { fireConfetti, spawnSmoke } from './scripts/animations.js';
     import { processCommandCodes } from './scripts/commands.js';
+    import { loadState, getRelativeTime, parseItems, itemsToString, copyToClipboard, isEmoji, parseWinnerString } from './scripts/utils.js';
 
     const { useState, useEffect, useRef, useMemo } = React;
     const apiKey = ""; // Provided by environment
@@ -1776,7 +1776,7 @@
                       />
                       <button
                         onClick={() => {
-                          window.copyToClipboard(shareUrl, setIsCopied);
+                          copyToClipboard(shareUrl, setIsCopied);
                           const newUnlocks = achievementManager.check({
                             sharedList: true
                           });

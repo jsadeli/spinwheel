@@ -1,5 +1,5 @@
 // Helper function to load state from localStorage
-const loadState = (key, defaultValue) => {
+export const loadState = (key, defaultValue) => {
   if (typeof window === "undefined") return defaultValue;
   try {
     const stored = localStorage.getItem(key);
@@ -11,7 +11,7 @@ const loadState = (key, defaultValue) => {
 };
 
 // Helper for relative time
-const getRelativeTime = (date) => {
+export const getRelativeTime = (date) => {
   if (!date) return "";
   const now = new Date();
   const diffInSeconds = Math.floor((now - new Date(date)) / 1000);
@@ -40,7 +40,7 @@ const getRelativeTime = (date) => {
 };
 
 // Helper to parse text into objects { text, weight }
-const parseItems = (text) => {
+export const parseItems = (text) => {
   return text
     .split("\n")
     .filter((line) => line.trim() !== "")
@@ -59,7 +59,7 @@ const parseItems = (text) => {
 };
 
 // Helper to convert item objects back to string ("Text:Number") for text area
-const itemsToString = (itemsArray) => {
+export const itemsToString = (itemsArray) => {
   return itemsArray
     .map((i) => {
       // If the current parsed text + weight matches the original input format, preserve it
@@ -70,7 +70,7 @@ const itemsToString = (itemsArray) => {
 };
 
 // Helper to copy text to clipboard
-const copyToClipboard = (text, setIsCopied) => {
+export const copyToClipboard = (text, setIsCopied) => {
   navigator.clipboard.writeText(text).then(() => {
     setIsCopied(true);
     setTimeout(() => setIsCopied(false), 2000);
@@ -78,7 +78,7 @@ const copyToClipboard = (text, setIsCopied) => {
 };
 
 // Helper to check if a string is likely just an emoji
-const isEmoji = (str) => {
+export const isEmoji = (str) => {
   if (!str) return false;
   // If it contains any letters, treat as text (apply gradient)
   if (/\p{L}/u.test(str)) return false;
@@ -92,7 +92,7 @@ const isEmoji = (str) => {
 };
 
 // Helper to parse winner string into text and emoji segments
-const parseWinnerString = (text) => {
+export const parseWinnerString = (text) => {
   if (!text) return [];
 
   // Use Intl.Segmenter if available (Modern Browsers)
@@ -127,11 +127,3 @@ const parseWinnerString = (text) => {
   return [{ text: text, isEmoji: isEmoji(text) }];
 };
 
-// Expose to window
-window.loadState = loadState;
-window.getRelativeTime = getRelativeTime;
-window.parseItems = parseItems;
-window.itemsToString = itemsToString;
-window.copyToClipboard = copyToClipboard;
-window.isEmoji = isEmoji;
-window.parseWinnerString = parseWinnerString;
