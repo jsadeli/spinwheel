@@ -1,4 +1,8 @@
-// Helper to get XP level title
+/**
+ * Gets the title associated with a specific level.
+ * @param {number} level - The level number.
+ * @returns {string} The title for the level.
+ */
 const getLevelTitle = (level) => {
   const titles = [
     "Novice Spinner",                     // Lvl 0: 0 XP
@@ -16,20 +20,31 @@ const getLevelTitle = (level) => {
   return titles[level] || "God of Wheel"; // Lvl 11+: 20480 XP
 };
 
-// XP Progress Constants
+/**
+ * Constants used for XP calculation.
+ * @type {{BASE_REQUIRED: number, MULTIPLIER: number, EXPONENT_GROWTH: number}}
+ */
 const XP_CONSTANTS = {
   BASE_REQUIRED: 20,
   MULTIPLIER: 10,
   EXPONENT_GROWTH: 2,
 };
 
-// Helper to get required minimum XP for a specific level
+/**
+ * Calculates the minimum XP required to reach the next level from the current level.
+ * @param {number} level - The current level.
+ * @returns {number} The XP required for the level.
+ */
 const getRequiredXpForLevel = (level) => {
   if (level === 0) return XP_CONSTANTS.BASE_REQUIRED;
   return XP_CONSTANTS.MULTIPLIER * Math.pow(XP_CONSTANTS.EXPONENT_GROWTH, level);
 };
 
-// Helper to calculate XP level
+/**
+ * Calculates the current level based on total XP.
+ * @param {number} currentXp - The total accumulated XP.
+ * @returns {number} The calculated level.
+ */
 const calculateLevel = (currentXp) => {
   let level = 0;
   let required = getRequiredXpForLevel(level);
@@ -41,7 +56,11 @@ const calculateLevel = (currentXp) => {
   return level;
 };
 
-// Helper to get XP level progress
+/**
+ * Calculates the progress towards the next level.
+ * @param {number} currentXp - The total accumulated XP.
+ * @returns {{level: number, currentLevelXp: number, requiredLevelXp: number, progressPercent: number}} The progress details.
+ */
 const getLevelProgress = (currentXp) => {
   let level = 0;
   let required = getRequiredXpForLevel(level);
