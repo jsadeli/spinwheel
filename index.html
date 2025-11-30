@@ -88,10 +88,6 @@
   <script type="module" src="scripts/achievements.js"></script>
   <script type="module" src="scripts/levels.js"></script>
 
-  <!-- Load Utils -->
-  <script type="text/javascript" src="scripts/colors.js"></script>
-  <script type="module" src="scripts/wheel.js"></script>
-
   <!-- Load Components (Modal, Toast, etc.) -->
   <script type="text/babel" src="scripts/components/Modal.js"></script>
   <script type="text/babel" src="scripts/components/OutOfOrderOverlay.js"></script>
@@ -110,6 +106,7 @@
     import { GeminiError } from './scripts/core/GeminiError.js';
     import { generateListFromGemini, generateSpeechFromGemini } from './scripts/ai.js';
     import { defaultColors, beachColors, getPrestigeTheme, getTierColors } from './scripts/themes.js';
+    import { lerpColor, parseCustomColors } from './scripts/colors.js';
     import { fireConfetti, spawnSmoke } from './scripts/animations.js';
     import { processCommandCodes } from './scripts/commands.js';
     import { loadState, getRelativeTime, parseItems, itemsToString, copyToClipboard, isEmoji, parseWinnerString } from './scripts/utils.js';
@@ -336,7 +333,7 @@
 
       // Calculate custom preview colors in real-time for the modal
       const customColorPreview = useMemo(() => {
-        return window.parseCustomColors(tempCustomColors);
+        return parseCustomColors(tempCustomColors);
       }, [tempCustomColors]);
 
       const isCustomColorInvalid = tempCustomColors.trim().length > 0 && customColorPreview.length === 0;
@@ -1870,7 +1867,7 @@
                       <svg width="100%" height="100%" viewBox="0 0 100 100" className="transform -rotate-90"
                         style={{
                           filter: `drop-shadow(${isCharging
-                            ? `0 0 ${10 + chargePower * 20 + heatProgress * 20}px ${heatProgress > 0 ? window.lerpColor('#ef4444', '#ff0000', heatProgress) : (chargePower > 0.8 ? '#ef4444' : (isCosmic ? '#d946ef' : tierColors.mid))}`
+                            ? `0 0 ${10 + chargePower * 20 + heatProgress * 20}px ${heatProgress > 0 ? lerpColor('#ef4444', '#ff0000', heatProgress) : (chargePower > 0.8 ? '#ef4444' : (isCosmic ? '#d946ef' : tierColors.mid))}`
                             : '0 0 0px transparent'
                             })`
                         }}
@@ -1888,17 +1885,17 @@
 
                         <defs>
                           <linearGradient id="powerGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                            <stop offset="0%" stopColor={window.lerpColor(tierColors.start, '#ef4444', heatProgress)}>
+                            <stop offset="0%" stopColor={lerpColor(tierColors.start, '#ef4444', heatProgress)}>
                               {isCosmic && heatProgress === 0 && (
                                 <animate attributeName="stop-color" values={`${tierColors.start};${tierColors.end};${tierColors.start}`} dur="2s" repeatCount="indefinite" />
                               )}
                             </stop>
-                            <stop offset="50%" stopColor={window.lerpColor(tierColors.mid, '#ef4444', heatProgress)}>
+                            <stop offset="50%" stopColor={lerpColor(tierColors.mid, '#ef4444', heatProgress)}>
                               {isCosmic && heatProgress === 0 && (
                                 <animate attributeName="stop-color" values={`${tierColors.mid};${tierColors.start};${tierColors.mid}`} dur="2s" repeatCount="indefinite" />
                               )}
                             </stop>
-                            <stop offset="100%" stopColor={window.lerpColor(tierColors.end, '#ff0000', heatProgress)}>
+                            <stop offset="100%" stopColor={lerpColor(tierColors.end, '#ff0000', heatProgress)}>
                               {isCosmic && heatProgress === 0 && (
                                 <animate attributeName="stop-color" values={`${tierColors.end};${tierColors.mid};${tierColors.end}`} dur="2s" repeatCount="indefinite" />
                               )}
@@ -1927,7 +1924,7 @@
                         `}
                       style={{
                         boxShadow: isCharging
-                          ? `0 0 ${10 + chargePower * 20 + heatProgress * 20}px ${heatProgress > 0 ? window.lerpColor('#ef4444', '#ff0000', heatProgress) : (chargePower > 0.8 ? '#ef4444' : '#6366f1')}`
+                          ? `0 0 ${10 + chargePower * 20 + heatProgress * 20}px ${heatProgress > 0 ? lerpColor('#ef4444', '#ff0000', heatProgress) : (chargePower > 0.8 ? '#ef4444' : '#6366f1')}`
                           : ''
                       }}
                     >

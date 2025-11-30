@@ -1,5 +1,6 @@
+// Colors Utility Module
 // Helper for color interpolation
-const lerpColor = (a, b, amount) => {
+export const lerpColor = (a, b, amount) => {
   const ah = parseInt(a.replace(/#/g, ""), 16),
     ar = ah >> 16,
     ag = (ah >> 8) & 0xff,
@@ -15,7 +16,7 @@ const lerpColor = (a, b, amount) => {
 };
 
 // Helper to parse custom colors from string
-const parseCustomColors = (input) => {
+export const parseCustomColors = (input) => {
   if (!input) return [];
   // Clean input and extract valid hex codes
   const cleaned = input.replace(/[\[\]"']/g, "");
@@ -26,7 +27,7 @@ const parseCustomColors = (input) => {
 };
 
 // Helper for deterministic colors
-const getItemColor = (text, colors) => {
+export const getItemColor = (text, colors) => {
   let hash = 0;
   for (let i = 0; i < text.length; i++) {
     hash = text.charCodeAt(i) + ((hash << 5) - hash);
@@ -35,7 +36,3 @@ const getItemColor = (text, colors) => {
   return colors[index];
 };
 
-// Expose to window
-window.lerpColor = lerpColor;
-window.parseCustomColors = parseCustomColors;
-window.getItemColor = getItemColor;

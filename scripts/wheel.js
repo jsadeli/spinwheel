@@ -1,5 +1,6 @@
 import { calculateLevel } from "./levels.js";
 import { drawWheelTrail } from "./animations.js";
+import { getItemColor } from "./colors.js";
 
 export const drawWheel = (
   ctx,
@@ -85,7 +86,7 @@ export const drawWheel = (
       ctx.closePath();
 
       if (colorAssignment === "deterministic") {
-        ctx.fillStyle = window.getItemColor(item.text, colors); // Deterministic colors
+        ctx.fillStyle = getItemColor(item.text, colors); // Deterministic colors
       } else {
         ctx.fillStyle = colors[index % colors.length]; // Dynamic colors
       }
@@ -132,16 +133,7 @@ export const drawWheel = (
     // Draw Trail Effect
     if (trailEnabled && velocity > 0.005) {
       const currentLevel = calculateLevel(xp);
-      drawWheelTrail(
-        ctx,
-        centerX,
-        centerY,
-        radius,
-        rotation,
-        velocity,
-        currentLevel,
-        isDark
-      );
+      drawWheelTrail(ctx, centerX, centerY, radius, rotation, velocity, currentLevel, isDark);
     }
 
     // Draw Pins
