@@ -3,7 +3,7 @@
  * @param {number} level - The level number.
  * @returns {string} The title for the level.
  */
-const getLevelTitle = (level) => {
+export const getLevelTitle = (level) => {
   const titles = [
     "Novice Spinner",                     // Lvl 0: 0 XP
     "Casual Clicker",                     // Lvl 1: 20 XP
@@ -24,7 +24,7 @@ const getLevelTitle = (level) => {
  * Constants used for XP calculation.
  * @type {{BASE_REQUIRED: number, MULTIPLIER: number, EXPONENT_GROWTH: number}}
  */
-const XP_CONSTANTS = {
+export const XP_CONSTANTS = {
   BASE_REQUIRED: 20,
   MULTIPLIER: 10,
   EXPONENT_GROWTH: 2,
@@ -35,7 +35,7 @@ const XP_CONSTANTS = {
  * @param {number} level - The current level.
  * @returns {number} The XP required for the level.
  */
-const getRequiredXpForLevel = (level) => {
+export const getRequiredXpForLevel = (level) => {
   if (level === 0) return XP_CONSTANTS.BASE_REQUIRED;
   return XP_CONSTANTS.MULTIPLIER * Math.pow(XP_CONSTANTS.EXPONENT_GROWTH, level);
 };
@@ -45,7 +45,7 @@ const getRequiredXpForLevel = (level) => {
  * @param {number} currentXp - The total accumulated XP.
  * @returns {number} The calculated level.
  */
-const calculateLevel = (currentXp) => {
+export const calculateLevel = (currentXp) => {
   let level = 0;
   let required = getRequiredXpForLevel(level);
   while (currentXp >= required) {
@@ -61,7 +61,7 @@ const calculateLevel = (currentXp) => {
  * @param {number} currentXp - The total accumulated XP.
  * @returns {{level: number, currentLevelXp: number, requiredLevelXp: number, progressPercent: number}} The progress details.
  */
-const getLevelProgress = (currentXp) => {
+export const getLevelProgress = (currentXp) => {
   let level = 0;
   let required = getRequiredXpForLevel(level);
 
@@ -79,10 +79,3 @@ const getLevelProgress = (currentXp) => {
     progressPercent: (currentXp / required) * 100
   };
 };
-
-// Expose to window
-window.getLevelTitle = getLevelTitle;
-window.XP_CONSTANTS = XP_CONSTANTS;
-window.getRequiredXpForLevel = getRequiredXpForLevel;
-window.calculateLevel = calculateLevel;
-window.getLevelProgress = getLevelProgress;

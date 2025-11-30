@@ -1,3 +1,5 @@
+import { getLevelProgress } from './levels.js';
+
 const processCommandCodes = (listName, inputText, {
   xp,
   setXp,
@@ -20,7 +22,7 @@ const processCommandCodes = (listName, inputText, {
   let isCheatsEnabled = false;
   let currentXp = xp;
 
-  const { themes, storageKeys, getLevelProgress } = windowObjects;
+  const { themes, storageKeys } = windowObjects;
 
   for (const line of lines.slice(1)) {
     let commandExecuted = false;

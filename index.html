@@ -87,14 +87,14 @@
 
   <!-- Load Data -->
   <script type="text/javascript" src="scripts/achievements.js"></script>
-  <script type="text/javascript" src="scripts/levels.js"></script>
+  <script type="module" src="scripts/levels.js"></script>
 
   <!-- Load Utils -->
   <script type="text/javascript" src="scripts/ai.js"></script>
   <script type="text/javascript" src="scripts/animations.js"></script>
   <script type="text/javascript" src="scripts/colors.js"></script>
-  <script type="text/javascript" src="scripts/wheel.js"></script>
-  <script type="text/javascript" src="scripts/commands.js"></script>
+  <script type="module" src="scripts/wheel.js"></script>
+  <script type="module" src="scripts/commands.js"></script>
   <script type="text/javascript" src="scripts/sounds.js"></script>
   <script type="text/javascript" src="scripts/utils.js"></script>
 
@@ -104,13 +104,16 @@
   <script type="text/babel" src="scripts/components/ThemeIcon.js"></script>
   <script type="text/babel" src="scripts/components/Toast.js"></script>
   <script type="text/babel" src="scripts/components/WinnerModal.js"></script>
-  <script type="text/babel" src="scripts/components/LevelCard.js"></script>
+  <script type="text/babel" data-type="module" src="scripts/components/LevelCard.js"></script>
   <script type="text/babel" src="scripts/components/AchievementsList.js"></script>
 
   <!-- Load App -->
-  <script type="text/babel">
+  <script type="text/babel" data-type="module">
+    import { getLevelProgress, getLevelTitle } from './scripts/levels.js';
+
     const { useState, useEffect, useRef, useMemo } = React;
     const apiKey = ""; // Provided by environment
+    const LevelCard = window.LevelCard;
 
     const App = () => {
       // --- STATE MANAGEMENT ---
@@ -1160,7 +1163,7 @@
             windowObjects: {
               themes: window.themes,
               storageKeys: window.storageKeys,
-              getLevelProgress: window.getLevelProgress,
+              getLevelProgress: getLevelProgress,
             }
           });
           if (shouldStop) return;

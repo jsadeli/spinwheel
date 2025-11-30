@@ -1,3 +1,5 @@
+import { getLevelTitle } from '/scripts/levels.js';
+
 window.LevelCard = ({ levelInfo, xp, isCorrupted, prestigeTheme }) => {
   const isCosmic = levelInfo.level >= 11;
 
@@ -78,7 +80,7 @@ window.LevelCard = ({ levelInfo, xp, isCorrupted, prestigeTheme }) => {
           </div>
           <div>
             <h3 className={`text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r ${prestigeTheme.titleGradient} leading-none`}>
-              {window.getLevelTitle(levelInfo.level)}
+              {getLevelTitle(levelInfo.level)}
             </h3>
             <p className={`text-sm ${prestigeTheme.textColor} font-bold mt-1 uppercase tracking-widest text-xs`}>
               Level {levelInfo.level} <span className={`mx-2 ${prestigeTheme.accentColor}`}>•</span> {xp} XP

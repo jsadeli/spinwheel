@@ -1,3 +1,5 @@
+import { calculateLevel } from './levels.js';
+
 const drawWheel = (ctx, width, height, items, colors, rotation, isDark, hideLabels, trailEnabled, velocity, removingItem, colorAssignment, xp) => {
   const centerX = width / 2;
   const centerY = height / 2;
@@ -106,7 +108,7 @@ const drawWheel = (ctx, width, height, items, colors, rotation, isDark, hideLabe
 
     // Draw Trail Effect
     if (trailEnabled && window.drawWheelTrail && (velocity > 0.005)) {
-      const currentLevel = window.calculateLevel ? window.calculateLevel(xp) : 0;
+      const currentLevel = calculateLevel(xp);
       window.drawWheelTrail(ctx, centerX, centerY, radius, rotation, velocity, currentLevel, isDark);
     }
 

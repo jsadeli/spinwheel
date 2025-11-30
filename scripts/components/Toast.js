@@ -1,5 +1,6 @@
 // Toast Component
 window.Toast = ({ onClose, message, title = "Notification", icon = null, duration = window.TOAST_DURATION }) => {
+  const { useEffect } = React;
   useEffect(() => {
     const timer = setTimeout(() => {
       onClose();
