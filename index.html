@@ -83,7 +83,6 @@
 
   <!-- Load Resources (Inline Icons, Themes, Animations, etc.) -->
   <script type="text/babel" src="scripts/icons.js"></script>
-  <script type="text/babel" src="scripts/themes.js"></script>
 
   <!-- Load Data -->
   <script type="module" src="scripts/achievements.js"></script>
@@ -114,6 +113,7 @@
     import { AchievementManager } from './scripts/core/AchievementManager.js';
     import { GeminiError } from './scripts/core/GeminiError.js';
     import { generateListFromGemini, generateSpeechFromGemini } from './scripts/ai.js';
+    import { defaultColors, beachColors, getPrestigeTheme, getTierColors } from './scripts/themes.js';
 
     const { useState, useEffect, useRef, useMemo } = React;
     const apiKey = ""; // Provided by environment
@@ -1443,10 +1443,10 @@
       };
 
       // --- THEME & PRESTIGE LOGIC ---
-      const prestigeTheme = window.getPrestigeTheme(levelInfo.level);
+      const prestigeTheme = getPrestigeTheme(levelInfo.level);
 
       // Get Tier Colors for Power Meter
-      const tierColors = window.getTierColors(levelInfo.level);
+      const tierColors = getTierColors(levelInfo.level);
       const isCosmic = levelInfo.level >= 11;
 
       // Calculate Heat Progress for Animation
