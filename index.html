@@ -89,7 +89,6 @@
   <script type="module" src="scripts/levels.js"></script>
 
   <!-- Load Utils -->
-  <script type="text/javascript" src="scripts/animations.js"></script>
   <script type="text/javascript" src="scripts/colors.js"></script>
   <script type="module" src="scripts/wheel.js"></script>
   <script type="module" src="scripts/commands.js"></script>
@@ -114,6 +113,7 @@
     import { GeminiError } from './scripts/core/GeminiError.js';
     import { generateListFromGemini, generateSpeechFromGemini } from './scripts/ai.js';
     import { defaultColors, beachColors, getPrestigeTheme, getTierColors } from './scripts/themes.js';
+    import { fireConfetti, spawnSmoke } from './scripts/animations.js';
 
     const { useState, useEffect, useRef, useMemo } = React;
     const apiKey = ""; // Provided by environment
@@ -279,7 +279,7 @@
         if (levelInfo.level > prevLevelRef.current) {
           addToast(`You are now ${getLevelTitle(levelInfo.level)}!`, "Level Up!", null, window.TOAST_DURATION);
           // Optional: Trigger confetti if not already triggered by something else
-          // window.fireConfetti();
+          // fireConfetti();
         }
         prevLevelRef.current = levelInfo.level;
       }, [levelInfo.level]);
@@ -1007,7 +1007,7 @@
             if (power >= 1) {
               overchargeRef.current += 16; // Add ~16ms per frame
               setOverchargeState(overchargeRef.current); // Trigger re-render for heat animation
-              window.spawnSmoke(smokeContainerRef, overchargeRef, () => window.playFireCrackle(audioCtxRef, soundEnabled, isOutOfOrder));
+              spawnSmoke(smokeContainerRef, overchargeRef, () => window.playFireCrackle(audioCtxRef, soundEnabled, isOutOfOrder));
 
               // Track Overheats for "This Is Fine"
               // We only want to count this ONCE per "press" when it enters the danger zone.
@@ -1418,7 +1418,7 @@
 
         // Only trigger confetti if level is at least 7 ("Lord of the Spins")
         if (newLevelInfo.level >= 7) {
-          window.fireConfetti(newLevelInfo.level);
+          fireConfetti(newLevelInfo.level);
         }
       };
 

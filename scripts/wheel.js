@@ -1,4 +1,5 @@
 import { calculateLevel } from "./levels.js";
+import { drawWheelTrail } from "./animations.js";
 
 export const drawWheel = (
   ctx,
@@ -129,9 +130,9 @@ export const drawWheel = (
     ctx.stroke();
 
     // Draw Trail Effect
-    if (trailEnabled && window.drawWheelTrail && velocity > 0.005) {
+    if (trailEnabled && velocity > 0.005) {
       const currentLevel = calculateLevel(xp);
-      window.drawWheelTrail(
+      drawWheelTrail(
         ctx,
         centerX,
         centerY,

@@ -1,5 +1,5 @@
 // Confetti Logic - Fireworks Style Physics
-const fireConfetti = (level = 0) => {
+export const fireConfetti = (level = 0) => {
   // Configuration for each prestige tier
   let config = {
     colors: ["#ff0000", "#00ff00", "#0000ff", "#ffff00", "#ff00ff", "#00ffff"],
@@ -197,7 +197,7 @@ const fireConfetti = (level = 0) => {
 };
 
 // Smoke Effect Logic
-const spawnSmoke = (smokeContainerRef, overchargeRef, playFireCrackle) => {
+export const spawnSmoke = (smokeContainerRef, overchargeRef, playFireCrackle) => {
   if (!smokeContainerRef.current) return;
 
   const timeOver = overchargeRef.current;
@@ -311,7 +311,7 @@ const spawnSmoke = (smokeContainerRef, overchargeRef, playFireCrackle) => {
 };
 
 // Wheel Trail Animation
-const drawWheelTrail = (ctx, centerX, centerY, radius, rotation, velocity, level, isDark) => {
+export const drawWheelTrail = (ctx, centerX, centerY, radius, rotation, velocity, level, isDark) => {
   // Only draw when spinning fast enough
   if (velocity < 0.005) return;
 
@@ -465,7 +465,3 @@ const drawWheelTrail = (ctx, centerX, centerY, radius, rotation, velocity, level
   ctx.restore();
 };
 
-// Expose to window
-window.fireConfetti = fireConfetti;
-window.spawnSmoke = spawnSmoke;
-window.drawWheelTrail = drawWheelTrail;

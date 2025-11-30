@@ -1,4 +1,5 @@
 import { getLevelProgress } from "./levels.js";
+import { fireConfetti } from "./animations.js";
 
 const processCommandCodes = (
   listName,
@@ -65,12 +66,12 @@ const processCommandCodes = (
       commandExecuted = true;
     } else if (command === "confetti") {
       const level = getLevelProgress(currentXp).level;
-      window.fireConfetti(level);
+      fireConfetti(level);
       commandExecuted = true;
     } else if (command.startsWith("confetti:")) {
       const level = parseInt(command.substring(9), 10);
       if (!isNaN(level)) {
-        window.fireConfetti(level);
+        fireConfetti(level);
         commandExecuted = true;
       }
     } else if (command === "break") {
