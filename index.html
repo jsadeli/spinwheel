@@ -80,6 +80,7 @@
   <script type="text/javascript" src="scripts/configs.js"></script>
   <script type="text/javascript" src="scripts/achievements.js"></script>
   <script type="text/javascript" src="scripts/levels.js"></script>
+  <script type="text/javascript" src="scripts/core/GeminiError.js"></script>
   <script type="text/javascript" src="scripts/ai.js"></script>
   <script type="text/javascript" src="scripts/animations.js"></script>
   <script type="text/javascript" src="scripts/colors.js"></script>
@@ -742,7 +743,23 @@
           }
         } catch (error) {
           console.error("Generation failed", error);
-          const message = error.status ? `Error: ${error.status}` : (error.message.length > 60 ? error.message.substring(0, 60) + "..." : error.message);
+
+          // Format message based on error type
+          let message;
+          if (error instanceof window.GeminiError) {
+            const truncatedMessage = error.message.length > 60 ? error.message.substring(0, 60) + "..." : error.message;
+            message = `${error.code} ${error.status}: ${truncatedMessage}`;
+
+            // Clear API key if it's invalid
+            if (error.cause === 'API_KEY_INVALID') {
+              setGeminiApiKey('');
+              setShowGenModal(false); // Close the modal
+            }
+          } else {
+            // Generic error handling for non-Gemini errors
+            message = error.message;
+          }
+
           addToast(message, "AI Generation Failed", <AlertTriangleIcon size={18} />, window.TOAST_DURATION);
         } finally {
           setIsGenerating(false);
@@ -772,7 +789,22 @@
           }
         } catch (error) {
           console.error("TTS failed", error);
-          const message = error.status ? `Error: ${error.status}` : (error.message.length > 60 ? error.message.substring(0, 60) + "..." : error.message);
+
+          // Format message based on error type
+          let message;
+          if (error instanceof window.GeminiError) {
+            const truncatedMessage = error.message.length > 60 ? error.message.substring(0, 60) + "..." : error.message;
+            message = `${error.code} ${error.status}: ${truncatedMessage}`;
+
+            // Clear API key if it's invalid
+            if (error.cause === 'API_KEY_INVALID') {
+              setGeminiApiKey('');
+            }
+          } else {
+            // Generic error handling for non-Gemini errors
+            message = error.message;
+          }
+
           addToast(message, "AI Voice Failed", <AlertTriangleIcon size={18} />, window.TOAST_DURATION);
         }
       };

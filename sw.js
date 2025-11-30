@@ -8,6 +8,7 @@ const ASSETS = [
   "./scripts/components/ThemeIcon.js",
   "./scripts/components/Toast.js",
   "./scripts/components/WinnerModal.js",
+  "./scripts/core/GeminiError.js",
   "./scripts/lib/babel.min.js",
   "./scripts/lib/react-dom.production.min.js",
   "./scripts/lib/react.production.min.js",
