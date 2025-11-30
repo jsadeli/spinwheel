@@ -1,4 +1,4 @@
-window.generateListFromGemini = async (apiKey, prompt) => {
+const generateListFromGemini = async (apiKey, prompt) => {
   const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -18,7 +18,7 @@ window.generateListFromGemini = async (apiKey, prompt) => {
 };
 
 // voice options: https://docs.cloud.google.com/text-to-speech/docs/gemini-tts#voice_options
-window.generateSpeechFromGemini = async (apiKey, text, voiceName = window.AIVoices.AOEDE) => {
+const generateSpeechFromGemini = async (apiKey, text, voiceName = window.AIVoices.AOEDE) => {
   const response = await fetch(
     `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`,
     {
@@ -39,3 +39,7 @@ window.generateSpeechFromGemini = async (apiKey, text, voiceName = window.AIVoic
   }
   return data.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
 };
+
+// Expose to window
+window.generateListFromGemini = generateListFromGemini;
+window.generateSpeechFromGemini = generateSpeechFromGemini;
