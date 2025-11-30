@@ -1,17 +1,17 @@
 // Default Themes
-window.defaultColors = [
+const defaultColors = [
   '#F25F5C', '#FF9F1C', '#FFBF69', '#FFE066',
   '#70C1B3', '#21A0A0', '#247BA0', '#1B98E0',
   '#6C5B7B', '#C06C84', '#F67280', '#F8B195'
 ];
 
-window.beachColors = [
+const beachColors = [
   '#D98C8C', '#D9A679', '#D9BF6F', '#A8C686',
   '#7FB0A6', '#7FA6C6', '#A6A1C6', '#C6A1B5',
   '#C6C6A1', '#BFA58F', '#A6C6C6', '#D9A1A1'
 ];
 
-window.getPrestigeTheme = (level) => {
+const getPrestigeTheme = (level) => {
   if (level >= 11) return {
     border: 'bg-[conic-gradient(from_0deg,#ec4899,#8b5cf6,#3b82f6,#ec4899)] animate-[spin_4s_linear_infinite]',
     cardBg: 'bg-gray-50 dark:bg-gray-900',
@@ -125,3 +125,8 @@ window.getTierColors = (level) => {
   if (level >= 3) return { start: '#fdba74', mid: '#f97316', end: '#ea580c' }; // Bronze/Orange
   return { start: '#94a3b8', mid: '#64748b', end: '#475569' }; // Default: Silver
 };
+
+// Expose to window
+window.defaultColors = defaultColors;
+window.beachColors = beachColors;
+window.getPrestigeTheme = getPrestigeTheme;

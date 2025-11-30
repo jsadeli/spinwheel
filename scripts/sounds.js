@@ -1,5 +1,5 @@
 // Win Sound Logic
-window.playWinSound = (audioCtxRef, soundEnabled) => {
+const playWinSound = (audioCtxRef, soundEnabled) => {
   if (!soundEnabled || !audioCtxRef.current) return;
   const ctx = audioCtxRef.current;
   const now = ctx.currentTime;
@@ -32,18 +32,18 @@ window.playWinSound = (audioCtxRef, soundEnabled) => {
 };
 
 // Tick Sound Logic
-window.playTickSound = (audioCtxRef, soundEnabled, variant = 'default') => {
+const playTickSound = (audioCtxRef, soundEnabled, variant = 'default') => {
   if (!soundEnabled || !audioCtxRef.current) return;
 
-  if (variant === 'crisp') return window.playCrispWoodTickSound(audioCtxRef, soundEnabled);
-  if (variant === 'metallic') return window.playMetallicClankTickSound(audioCtxRef, soundEnabled);
-  if (variant === 'crystal') return window.playCrystalGlassTickSound(audioCtxRef, soundEnabled);
+  if (variant === 'crisp') return playCrispWoodTickSound(audioCtxRef, soundEnabled);
+  if (variant === 'metallic') return playMetallicClankTickSound(audioCtxRef, soundEnabled);
+  if (variant === 'crystal') return playCrystalGlassTickSound(audioCtxRef, soundEnabled);
 
-  return window.playDefaultTickSound(audioCtxRef, soundEnabled)
+  return playDefaultTickSound(audioCtxRef, soundEnabled)
 };
 
 // Tick Sound Logic - Electrical/Plastic Click Sound
-window.playDefaultTickSound = (audioCtxRef, soundEnabled) => {
+const playDefaultTickSound = (audioCtxRef, soundEnabled) => {
   if (!soundEnabled || !audioCtxRef.current) return;
   const ctx = audioCtxRef.current;
 
@@ -66,7 +66,7 @@ window.playDefaultTickSound = (audioCtxRef, soundEnabled) => {
 };
 
 // Tick Sound Logic - Crisp Wood Knock Sound
-window.playCrispWoodTickSound = (audioCtxRef, soundEnabled) => {
+const playCrispWoodTickSound = (audioCtxRef, soundEnabled) => {
   if (!soundEnabled || !audioCtxRef.current) return;
   const ctx = audioCtxRef.current;
   const now = ctx.currentTime;
@@ -169,7 +169,7 @@ window.playCrispWoodTickSound = (audioCtxRef, soundEnabled) => {
 };
 
 // Tick Sound Logic - Metallic Clank Sound
-window.playMetallicClankTickSound = (audioCtxRef, soundEnabled) => {
+const playMetallicClankTickSound = (audioCtxRef, soundEnabled) => {
   if (!soundEnabled || !audioCtxRef.current) return;
   const ctx = audioCtxRef.current;
   const now = ctx.currentTime;
@@ -247,7 +247,7 @@ window.playMetallicClankTickSound = (audioCtxRef, soundEnabled) => {
 };
 
 // Tick Sound Logic - Crystal Glass Sound
-window.playCrystalGlassTickSound = (audioCtxRef, soundEnabled) => {
+const playCrystalGlassTickSound = (audioCtxRef, soundEnabled) => {
   if (!soundEnabled || !audioCtxRef.current) return;
   const ctx = audioCtxRef.current;
   const now = ctx.currentTime;
@@ -291,7 +291,7 @@ window.playCrystalGlassTickSound = (audioCtxRef, soundEnabled) => {
 };
 
 // Fire Crackle Sound Logic
-window.playFireCrackle = (audioCtxRef, soundEnabled, isOutOfOrder) => {
+const playFireCrackle = (audioCtxRef, soundEnabled, isOutOfOrder) => {
   if (!soundEnabled || !audioCtxRef.current || isOutOfOrder) return;
   const ctx = audioCtxRef.current;
 
@@ -325,7 +325,7 @@ window.playFireCrackle = (audioCtxRef, soundEnabled, isOutOfOrder) => {
 };
 
 // Breakdown Sound Logic
-window.playBreakdownSound = (audioCtxRef, soundEnabled) => {
+const playBreakdownSound = (audioCtxRef, soundEnabled) => {
   if (!soundEnabled || !audioCtxRef.current) return;
   const ctx = audioCtxRef.current;
 
@@ -348,7 +348,7 @@ window.playBreakdownSound = (audioCtxRef, soundEnabled) => {
 };
 
 // Helper to convert base64 PCM data to WAV Blob
-window.base64ToWavBlob = (base64Data) => {
+const base64ToWavBlob = (base64Data) => {
   const audioBytes = Uint8Array.from(atob(base64Data), c => c.charCodeAt(0));
   // Basic WAV header construction for PCM data
   const wavHeader = new ArrayBuffer(44);
@@ -379,7 +379,7 @@ window.base64ToWavBlob = (base64Data) => {
 };
 
 // Charge Sound Logic Class
-window.ChargeSound = class {
+const ChargeSound = class {
   constructor(audioCtx) {
     this.ctx = audioCtx;
     this.osc = null;
@@ -487,3 +487,15 @@ window.ChargeSound = class {
     }
   }
 };
+
+// Expose to window
+window.playWinSound = playWinSound;
+window.playTickSound = playTickSound;
+window.playDefaultTickSound = playDefaultTickSound;
+window.playCrispWoodTickSound = playCrispWoodTickSound;
+window.playMetallicClankTickSound = playMetallicClankTickSound;
+window.playCrystalGlassTickSound = playCrystalGlassTickSound;
+window.playFireCrackle = playFireCrackle;
+window.playBreakdownSound = playBreakdownSound;
+window.base64ToWavBlob = base64ToWavBlob;
+window.ChargeSound = ChargeSound;

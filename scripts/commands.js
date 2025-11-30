@@ -1,5 +1,4 @@
-
-window.processCommandCodes = (listName, inputText, {
+const processCommandCodes = (listName, inputText, {
   xp,
   setXp,
   setIsCorrupted,
@@ -60,7 +59,7 @@ window.processCommandCodes = (listName, inputText, {
       commandExecuted = true;
     } else if (command === 'confetti') {
       const level = getLevelProgress(currentXp).level;
-      fireConfetti(level);
+      window.fireConfetti(level);
       commandExecuted = true;
     } else if (command.startsWith('confetti:')) {
       const level = parseInt(command.substring(9), 10);
@@ -113,3 +112,6 @@ window.processCommandCodes = (listName, inputText, {
 
   return false;
 };
+
+// Expose to window
+window.processCommandCodes = processCommandCodes;

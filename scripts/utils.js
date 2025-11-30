@@ -1,5 +1,5 @@
 // Helper function to load state from localStorage
-window.loadState = (key, defaultValue) => {
+const loadState = (key, defaultValue) => {
   if (typeof window === 'undefined') return defaultValue;
   try {
     const stored = localStorage.getItem(key);
@@ -11,7 +11,7 @@ window.loadState = (key, defaultValue) => {
 };
 
 // Helper for relative time
-window.getRelativeTime = (date) => {
+const getRelativeTime = (date) => {
   if (!date) return '';
   const now = new Date();
   const diffInSeconds = Math.floor((now - new Date(date)) / 1000);
@@ -40,7 +40,7 @@ window.getRelativeTime = (date) => {
 };
 
 // Helper to parse text into objects { text, weight }
-window.parseItems = (text) => {
+const parseItems = (text) => {
   return text.split('\n')
     .filter(line => line.trim() !== '')
     .map(line => {
@@ -58,7 +58,7 @@ window.parseItems = (text) => {
 };
 
 // Helper to convert item objects back to string ("Text:Number") for text area
-window.itemsToString = (itemsArray) => {
+const itemsToString = (itemsArray) => {
   return itemsArray.map(i => {
     // If the current parsed text + weight matches the original input format, preserve it
     // Otherwise reconstruct it
@@ -67,7 +67,7 @@ window.itemsToString = (itemsArray) => {
 };
 
 // Helper to copy text to clipboard
-window.copyToClipboard = (text, setIsCopied) => {
+const copyToClipboard = (text, setIsCopied) => {
   navigator.clipboard.writeText(text).then(() => {
     setIsCopied(true);
     setTimeout(() => setIsCopied(false), 2000);
@@ -75,7 +75,7 @@ window.copyToClipboard = (text, setIsCopied) => {
 };
 
 // Helper to check if a string is likely just an emoji
-window.isEmoji = (str) => {
+const isEmoji = (str) => {
   if (!str) return false;
   // If it contains any letters, treat as text (apply gradient)
   if (/\p{L}/u.test(str)) return false;
@@ -89,7 +89,7 @@ window.isEmoji = (str) => {
 };
 
 // Helper to parse winner string into text and emoji segments
-window.parseWinnerString = (text) => {
+const parseWinnerString = (text) => {
   if (!text) return [];
 
   // Use Intl.Segmenter if available (Modern Browsers)
@@ -101,7 +101,7 @@ window.parseWinnerString = (text) => {
     let currentPart = { text: '', isEmoji: null };
 
     for (const { segment } of segments) {
-      const isEmo = window.isEmoji(segment);
+      const isEmo = isEmoji(segment);
 
       if (currentPart.isEmoji === null) {
         currentPart = { text: segment, isEmoji: isEmo };
@@ -121,5 +121,14 @@ window.parseWinnerString = (text) => {
   // Fallback for older browsers: Check the whole string
   // If it's mixed, we can't easily split without a complex regex,
   // so we default to treating it as text (gradient) unless it's purely emoji.
-  return [{ text: text, isEmoji: window.isEmoji(text) }];
+  return [{ text: text, isEmoji: isEmoji(text) }];
 };
+
+// Expose to window
+window.loadState = loadState;
+window.getRelativeTime = getRelativeTime;
+window.parseItems = parseItems;
+window.itemsToString = itemsToString;
+window.copyToClipboard = copyToClipboard;
+window.isEmoji = isEmoji;
+window.parseWinnerString = parseWinnerString;

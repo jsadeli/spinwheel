@@ -1,5 +1,4 @@
-
-window.drawWheel = (ctx, width, height, items, colors, rotation, isDark, hideLabels, trailEnabled, velocity, removingItem, colorAssignment, xp) => {
+const drawWheel = (ctx, width, height, items, colors, rotation, isDark, hideLabels, trailEnabled, velocity, removingItem, colorAssignment, xp) => {
   const centerX = width / 2;
   const centerY = height / 2;
   const radius = Math.min(width, height) / 2 - 20; // Leave room for pins
@@ -129,7 +128,7 @@ window.drawWheel = (ctx, width, height, items, colors, rotation, isDark, hideLab
   }
 };
 
-window.updatePointer = (pointerElement, rotation, velocity) => {
+const updatePointer = (pointerElement, rotation, velocity) => {
   if (!pointerElement) return;
 
   const NUM_PINS = 30;
@@ -167,3 +166,7 @@ window.updatePointer = (pointerElement, rotation, velocity) => {
 
   pointerElement.style.transform = `rotate(${pointerAngle}deg)`;
 };
+
+// Expose to window
+window.drawWheel = drawWheel;
+window.updatePointer = updatePointer;
