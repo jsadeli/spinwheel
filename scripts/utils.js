@@ -1,4 +1,15 @@
-// Helper function to load state from localStorage
+/**
+ * Retrieves a value from localStorage and parses it as JSON.
+ * Returns the default value if the key doesn't exist or if parsing fails.
+ *
+ * @template T
+ * @param {string} key - The localStorage key to retrieve.
+ * @param {T} defaultValue - The value to return if the key is missing or invalid.
+ * @returns {T} The parsed value from localStorage or the default value.
+ * @example
+ * const items = loadState('spinItems', []);
+ * const settings = loadState('userSettings', { theme: 'dark' });
+ */
 export const loadState = (key, defaultValue) => {
   if (typeof window === "undefined") return defaultValue;
   try {
@@ -10,7 +21,16 @@ export const loadState = (key, defaultValue) => {
   }
 };
 
-// Helper for relative time
+/**
+ * Formats a date into a relative time string (e.g., "5 minutes ago", "just now").
+ *
+ * @param {Date|string|number} date - The date to format.
+ * @returns {string} The relative time string.
+ * @example
+ * getRelativeTime(new Date('2024-01-01')) // "3 months ago"
+ * getRelativeTime('2024-01-01T10:00:00Z') // "3 months ago"
+ * getRelativeTime(Date.now() - 3600000) // "1 hour ago"
+ */
 export const getRelativeTime = (date) => {
   if (!date) return "";
   const now = new Date();
@@ -39,7 +59,20 @@ export const getRelativeTime = (date) => {
   return rtf.format(-diffInYears, "year");
 };
 
-// Helper to parse text into objects { text, weight }
+/**
+ * Parses a multiline string into an array of item objects.
+ * Supports "Text:Weight" format (e.g., "Pizza: 10").
+ *
+ * @param {string} text - The input string to parse.
+ * @returns {Array<{text: string, weight: number, original: string}>} An array of item objects.
+ * @example
+ * parseItems("Pizza\nBurger:5\nTaco:2")
+ * // Returns: [
+ * //   { text: "Pizza", weight: 1, original: "Pizza" },
+ * //   { text: "Burger", weight: 5, original: "Burger:5" },
+ * //   { text: "Taco", weight: 2, original: "Taco:2" }
+ * // ]
+ */
 export const parseItems = (text) => {
   return text
     .split("\n")
@@ -58,7 +91,19 @@ export const parseItems = (text) => {
     });
 };
 
-// Helper to convert item objects back to string ("Text:Number") for text area
+/**
+ * Converts an array of item objects back into a string format suitable for a textarea.
+ * Preserves weights if they are greater than 1.
+ *
+ * @param {Array<{text: string, weight: number}>} itemsArray - The array of items to convert.
+ * @returns {string} A newline-separated string representation of the items.
+ * @example
+ * itemsToString([
+ *   { text: "Pizza", weight: 1, original: "Pizza" },
+ *   { text: "Burger", weight: 5, original: "Burger:5" }
+ * ])
+ * // Returns: "Pizza\nBurger:5"
+ */
 export const itemsToString = (itemsArray) => {
   return itemsArray
     .map((i) => {
@@ -69,7 +114,16 @@ export const itemsToString = (itemsArray) => {
     .join("\n");
 };
 
-// Helper to copy text to clipboard
+/**
+ * Copies text to the system clipboard and updates a state setter to indicate success.
+ *
+ * @param {string} text - The text to copy.
+ * @param {function(boolean): void} setIsCopied - A state setter function to update the "copied" status.
+ * @example
+ * copyToClipboard("Hello World", (copied) => {
+ *   console.log(copied ? "Copied!" : "Ready to copy again");
+ * });
+ */
 export const copyToClipboard = (text, setIsCopied) => {
   navigator.clipboard.writeText(text).then(() => {
     setIsCopied(true);
@@ -77,7 +131,19 @@ export const copyToClipboard = (text, setIsCopied) => {
   });
 };
 
-// Helper to check if a string is likely just an emoji
+/**
+ * Checks if a string consists primarily of emoji characters.
+ * Returns false if the string contains any letters.
+ *
+ * @param {string} str - The string to check.
+ * @returns {boolean} True if the string is likely an emoji, false otherwise.
+ * @example
+ * isEmoji("🎉") // true
+ * isEmoji("🎉🎊") // true
+ * isEmoji("Party 🎉") // false (contains letters)
+ * isEmoji("123") // true (no letters, contains emoji-like chars check)
+ * isEmoji("") // false
+ */
 export const isEmoji = (str) => {
   if (!str) return false;
   // If it contains any letters, treat as text (apply gradient)
@@ -91,7 +157,22 @@ export const isEmoji = (str) => {
   return emojiLikeRegex.test(str);
 };
 
-// Helper to parse winner string into text and emoji segments
+/**
+ * Parses a winner string into segments of text and emojis.
+ * Useful for rendering text with different styles (e.g., gradients for text, flat for emojis).
+ *
+ * @param {string} text - The winner text to parse.
+ * @returns {Array<{text: string, isEmoji: boolean|null}>} An array of segments.
+ * @example
+ * parseWinnerString("Pizza 🍕")
+ * // Modern browsers: [
+ * //   { text: "Pizza ", isEmoji: false },
+ * //   { text: "🍕", isEmoji: true }
+ * // ]
+ *
+ * parseWinnerString("🎉🎊")
+ * // Returns: [{ text: "🎉🎊", isEmoji: true }]
+ */
 export const parseWinnerString = (text) => {
   if (!text) return [];
 

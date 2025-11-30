@@ -29,6 +29,15 @@ export const beachColors = [
   "#D9A1A1",
 ];
 
+/**
+ * Retrieves the prestige theme configuration for a given level.
+ * Returns specific styles for borders, backgrounds, gradients, and shadows based on the level tier.
+ *
+ * @param {number} level - The user's current level.
+ * @returns {Object} An object containing Tailwind CSS class strings for various UI elements.
+ * @example
+ * const theme = getPrestigeTheme(11); // Returns Cosmic theme styles
+ */
 export const getPrestigeTheme = (level) => {
   if (level >= 11)
     return {
@@ -150,6 +159,14 @@ export const getPrestigeTheme = (level) => {
 };
 
 // Get Tier Colors for Power Meter
+/**
+ * Retrieves the color gradient stops for the power meter based on the level tier.
+ *
+ * @param {number} level - The user's current level.
+ * @returns {{start: string, mid: string, end: string}} An object containing start, mid, and end hex colors.
+ * @example
+ * const colors = getTierColors(10); // Returns Diamond tier colors
+ */
 export const getTierColors = (level) => {
   if (level >= 11) return { start: "#ec4899", mid: "#d946ef", end: "#8b5cf6" }; // Cosmic: Pink -> Fuchsia -> Violet
   if (level >= 10) return { start: "#22d3ee", mid: "#6366f1", end: "#a855f7" }; // Diamond: Cyan -> Indigo -> Purple

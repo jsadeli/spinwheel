@@ -1,4 +1,11 @@
 // Out of Order Overlay Component
+/**
+ * Displays a full-screen "Out of Order" overlay with glitch effects.
+ * Used when the wheel "breaks" due to overcharging or specific commands.
+ *
+ * @param {Object} props - Component props.
+ * @param {boolean} props.isVisible - Whether the overlay should be visible.
+ */
 const OutOfOrderOverlay = ({ isVisible }) => {
   if (!isVisible) return null;
 

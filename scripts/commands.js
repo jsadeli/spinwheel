@@ -2,6 +2,27 @@ import { getLevelProgress } from "./levels.js";
 import { fireConfetti } from "./animations.js";
 import { themes, storageKeys } from "./configs.js";
 
+/**
+ * Processes and executes console commands from the input text.
+ * Only executes if the list name is "@console" and the first line is "#!sudo".
+ *
+ * @param {string} listName - The name of the current list.
+ * @param {string} inputText - The full text content of the input area.
+ * @param {Object} context - The context object containing state setters and managers.
+ * @param {number} context.xp - Current XP.
+ * @param {function} context.setXp - State setter for XP.
+ * @param {function} context.setIsCorrupted - State setter for corruption status.
+ * @param {function} context.setIsOutOfOrder - State setter for out-of-order status.
+ * @param {function} context.setTheme - State setter for the theme.
+ * @param {function} context.setInputText - State setter for the input text.
+ * @param {function} context.addToast - Function to display toast notifications.
+ * @param {function} context.setWinner - State setter for the winner.
+ * @param {Object} context.achievementManager - The achievement manager instance.
+ * @param {function} context.setAchievements - State setter for achievements list.
+ * @returns {boolean} True if a command that stops execution (like reset) was run, false otherwise.
+ * @example
+ * processCommandCodes("@console", "#!sudo\n#!enable-cheats", { ...context });
+ */
 export const processCommandCodes = (
   listName,
   inputText,

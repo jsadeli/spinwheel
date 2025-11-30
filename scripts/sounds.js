@@ -1,6 +1,14 @@
 import { TickSounds } from "/scripts/configs.js";
 
-// Win Sound Logic
+/**
+ * Plays a celebratory fanfare sound when the wheel stops.
+ * Creates a C Major chord progression using Web Audio API.
+ *
+ * @param {Object} audioCtxRef - React ref containing the Web Audio API context.
+ * @param {boolean} soundEnabled - Whether sound effects are enabled.
+ * @example
+ * playWinSound(audioCtxRef, true);
+ */
 export const playWinSound = (audioCtxRef, soundEnabled) => {
   if (!soundEnabled || !audioCtxRef.current) return;
   const ctx = audioCtxRef.current;
@@ -33,7 +41,16 @@ export const playWinSound = (audioCtxRef, soundEnabled) => {
   playTone(1046.5, now + 0.3, 2.0, "sawtooth", 0.1); // C6 (Top Note, sharper)
 };
 
-// Tick Sound Logic
+/**
+ * Plays a tick sound as the wheel rotates.
+ * Supports multiple sound variants (default, crisp, metallic, crystal).
+ *
+ * @param {Object} audioCtxRef - React ref containing the Web Audio API context.
+ * @param {boolean} soundEnabled - Whether sound effects are enabled.
+ * @param {string} [variant=TickSounds.DEFAULT] - The tick sound variant to play.
+ * @example
+ * playTickSound(audioCtxRef, true, TickSounds.CRISP);
+ */
 export const playTickSound = (audioCtxRef, soundEnabled, variant = TickSounds.DEFAULT) => {
   if (!soundEnabled || !audioCtxRef.current) return;
 
@@ -44,7 +61,12 @@ export const playTickSound = (audioCtxRef, soundEnabled, variant = TickSounds.DE
   return playDefaultTickSound(audioCtxRef, soundEnabled);
 };
 
-// Tick Sound Logic - Electrical/Plastic Click Sound
+/**
+ * Plays the default electrical/plastic click tick sound.
+ *
+ * @param {Object} audioCtxRef - React ref containing the Web Audio API context.
+ * @param {boolean} soundEnabled - Whether sound effects are enabled.
+ */
 export const playDefaultTickSound = (audioCtxRef, soundEnabled) => {
   if (!soundEnabled || !audioCtxRef.current) return;
   const ctx = audioCtxRef.current;
@@ -67,7 +89,13 @@ export const playDefaultTickSound = (audioCtxRef, soundEnabled) => {
   osc.stop(ctx.currentTime + 0.05);
 };
 
-// Tick Sound Logic - Crisp Wood Knock Sound
+/**
+ * Plays a crisp wooden knock tick sound.
+ * Synthesizes a multi-layered wood percussion sound with clarity and presence.
+ *
+ * @param {Object} audioCtxRef - React ref containing the Web Audio API context.
+ * @param {boolean} soundEnabled - Whether sound effects are enabled.
+ */
 export const playCrispWoodTickSound = (audioCtxRef, soundEnabled) => {
   if (!soundEnabled || !audioCtxRef.current) return;
   const ctx = audioCtxRef.current;
@@ -170,7 +198,13 @@ export const playCrispWoodTickSound = (audioCtxRef, soundEnabled) => {
   noise.start(now);
 };
 
-// Tick Sound Logic - Metallic Clank Sound
+/**
+ * Plays a heavy metallic clank tick sound.
+ * Simulates the sound of metal gears or mechanical parts engaging.
+ *
+ * @param {Object} audioCtxRef - React ref containing the Web Audio API context.
+ * @param {boolean} soundEnabled - Whether sound effects are enabled.
+ */
 export const playMetallicClankTickSound = (audioCtxRef, soundEnabled) => {
   if (!soundEnabled || !audioCtxRef.current) return;
   const ctx = audioCtxRef.current;
@@ -248,7 +282,13 @@ export const playMetallicClankTickSound = (audioCtxRef, soundEnabled) => {
   noise.start(now);
 };
 
-// Tick Sound Logic - Crystal Glass Sound
+/**
+ * Plays a luxurious crystal glass tick sound.
+ * Creates a high-pitched, resonant tone reminiscent of fine crystal.
+ *
+ * @param {Object} audioCtxRef - React ref containing the Web Audio API context.
+ * @param {boolean} soundEnabled - Whether sound effects are enabled.
+ */
 export const playCrystalGlassTickSound = (audioCtxRef, soundEnabled) => {
   if (!soundEnabled || !audioCtxRef.current) return;
   const ctx = audioCtxRef.current;
@@ -292,7 +332,14 @@ export const playCrystalGlassTickSound = (audioCtxRef, soundEnabled) => {
   tap.stop(now + 0.02);
 };
 
-// Fire Crackle Sound Logic
+/**
+ * Plays a fire crackle sound effect during overcharge.
+ * Only plays if sound is enabled and the wheel is not broken.
+ *
+ * @param {Object} audioCtxRef - React ref containing the Web Audio API context.
+ * @param {boolean} soundEnabled - Whether sound effects are enabled.
+ * @param {boolean} isOutOfOrder - Whether the wheel is currently broken.
+ */
 export const playFireCrackle = (audioCtxRef, soundEnabled, isOutOfOrder) => {
   if (!soundEnabled || !audioCtxRef.current || isOutOfOrder) return;
   const ctx = audioCtxRef.current;
@@ -326,7 +373,13 @@ export const playFireCrackle = (audioCtxRef, soundEnabled, isOutOfOrder) => {
   noise.start();
 };
 
-// Breakdown Sound Logic
+/**
+ * Plays a breakdown sound when the wheel breaks from overcharging.
+ * Creates a descending "power down" effect.
+ *
+ * @param {Object} audioCtxRef - React ref containing the Web Audio API context.
+ * @param {boolean} soundEnabled - Whether sound effects are enabled.
+ */
 export const playBreakdownSound = (audioCtxRef, soundEnabled) => {
   if (!soundEnabled || !audioCtxRef.current) return;
   const ctx = audioCtxRef.current;
@@ -349,7 +402,13 @@ export const playBreakdownSound = (audioCtxRef, soundEnabled) => {
   osc.stop(ctx.currentTime + 1);
 };
 
-// Helper to convert base64 PCM data to WAV Blob
+/**
+ * Converts base64-encoded PCM audio data to a WAV Blob.
+ * Used for playing AI-generated voice announcements.
+ *
+ * @param {string} base64Data - Base64-encoded PCM audio data.
+ * @returns {Blob} A WAV audio Blob ready to be played.
+ */
 export const base64ToWavBlob = (base64Data) => {
   const audioBytes = Uint8Array.from(atob(base64Data), (c) => c.charCodeAt(0));
   // Basic WAV header construction for PCM data
@@ -380,8 +439,16 @@ export const base64ToWavBlob = (base64Data) => {
   return new Blob([wavHeader, audioBytes], { type: "audio/wav" });
 };
 
-// Charge Sound Logic Class
+/**
+ * Audio class for managing the charging/power-up sound effect.
+ * Creates a rising mechanical motor sound that intensifies during overcharge.
+ */
 export const ChargeSound = class {
+  /**
+   * Creates a new ChargeSound instance.
+   *
+   * @param {AudioContext} audioCtx - Web Audio API context.
+   */
   constructor(audioCtx) {
     this.ctx = audioCtx;
     this.osc = null;
@@ -389,6 +456,10 @@ export const ChargeSound = class {
     this.filter = null;
   }
 
+  /**
+   * Starts the charging sound effect.
+   * Creates oscillators, filters, and gain nodes for the motor sound.
+   */
   start() {
     if (!this.ctx) return;
     this.stop(); // Ensure clean start
@@ -417,6 +488,13 @@ export const ChargeSound = class {
     this.osc.start();
   }
 
+  /**
+   * Updates the charging sound based on power level and overcharge time.
+   * Increases pitch and intensity as power builds, and creates a "screaming" effect during overcharge.
+   *
+   * @param {number} power - Current power level (0-1).
+   * @param {number} [overchargeTime=0] - Time spent overcharging in milliseconds.
+   */
   update(power, overchargeTime = 0) {
     if (!this.osc) return;
     const ctx = this.ctx;
@@ -457,6 +535,10 @@ export const ChargeSound = class {
     this.osc.frequency.setTargetAtTime(targetFreq, ctx.currentTime, 0.1);
   }
 
+  /**
+   * Stops the charging sound with a quick fade-out.
+   * Cleans up all audio nodes to prevent memory leaks.
+   */
   stop() {
     if (this.osc) {
       try {
@@ -480,7 +562,7 @@ export const ChargeSound = class {
           if (filter) filter.disconnect();
           if (gain) gain.disconnect();
         }, 200);
-      } catch (e) {}
+      } catch (e) { }
 
       this.osc = null;
       this.gain = null;

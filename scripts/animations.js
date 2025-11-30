@@ -1,4 +1,12 @@
-// Confetti Logic - Fireworks Style Physics
+/**
+ * Fires a confetti animation with physics-based particle effects.
+ * Visual style varies based on user's XP level (different colors, shapes, and physics).
+ *
+ * @param {number} [level=0] - The current XP level (affects confetti appearance and behavior).
+ * @example
+ * fireConfetti(5); // Emerald tier confetti
+ * fireConfetti(11); // Cosmic tier with stars and glow effects
+ */
 export const fireConfetti = (level = 0) => {
   // Configuration for each prestige tier
   let config = {
@@ -196,7 +204,17 @@ export const fireConfetti = (level = 0) => {
   animate();
 };
 
-// Smoke Effect Logic
+/**
+ * Spawns smoke particles around the spin button during overcharge.
+ * Progressively darkens and intensifies, eventually adding fire particles.
+ * Phases: White → Grey → Dark Grey → Black + Fire (inferno)
+ *
+ * @param {Object} smokeContainerRef - React ref to the smoke container DOM element.
+ * @param {Object} overchargeRef - React ref containing the current overcharge time in milliseconds.
+ * @param {Function} playFireCrackle - Callback function to play fire crackle sound effects.
+ * @example
+ * spawnSmoke(smokeContainerRef, overchargeRef, playFireCrackle);
+ */
 export const spawnSmoke = (smokeContainerRef, overchargeRef, playFireCrackle) => {
   if (!smokeContainerRef.current) return;
 
@@ -310,7 +328,21 @@ export const spawnSmoke = (smokeContainerRef, overchargeRef, playFireCrackle) =>
   }, 2000);
 };
 
-// Wheel Trail Animation
+/**
+ * Draws a motion trail behind the spinning wheel.
+ * Trail appearance varies by XP level with different colors, glows, and sparkle effects.
+ *
+ * @param {CanvasRenderingContext2D} ctx - The 2D canvas rendering context.
+ * @param {number} centerX - X coordinate of the wheel center.
+ * @param {number} centerY - Y coordinate of the wheel center.
+ * @param {number} radius - Radius of the wheel.
+ * @param {number} rotation - Current rotation angle in radians.
+ * @param {number} velocity - Current rotation velocity (affects trail length).
+ * @param {number} level - Current XP level (affects trail appearance).
+ * @param {boolean} isDark - Whether dark mode is active.
+ * @example
+ * drawWheelTrail(ctx, 200, 200, 150, Math.PI, 0.5, 10, true);
+ */
 export const drawWheelTrail = (ctx, centerX, centerY, radius, rotation, velocity, level, isDark) => {
   // Only draw when spinning fast enough
   if (velocity < 0.005) return;

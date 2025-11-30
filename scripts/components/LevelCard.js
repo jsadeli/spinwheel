@@ -1,5 +1,15 @@
 import { getLevelTitle } from "/scripts/levels.js";
 
+/**
+ * Displays the user's current level, XP progress, and prestige theme effects.
+ * Handles special visual states for "Cosmic" levels (11+) and "Corrupted" (cheat) modes.
+ *
+ * @param {Object} props - Component props.
+ * @param {Object} props.levelInfo - Object containing level details (level, currentLevelXp, requiredLevelXp, progressPercent).
+ * @param {number} props.xp - Total accumulated XP.
+ * @param {boolean} props.isCorrupted - Whether the user has enabled cheats/corruption.
+ * @param {Object} props.prestigeTheme - Theme configuration object for the current level.
+ */
 const LevelCard = ({ levelInfo, xp, isCorrupted, prestigeTheme }) => {
   const isCosmic = levelInfo.level >= 11;
 

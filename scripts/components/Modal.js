@@ -1,4 +1,17 @@
 // Generic Reusable Modal Component
+/**
+ * A generic, reusable modal component with backdrop, animation, and close handlers.
+ * Supports custom headers, footers, and content.
+ *
+ * @param {Object} props - Component props.
+ * @param {boolean} props.isOpen - Whether the modal is currently visible.
+ * @param {function} props.onClose - Callback function to close the modal.
+ * @param {string} [props.title] - The title text displayed in the header.
+ * @param {React.ReactNode} [props.icon] - Optional icon to display next to the title.
+ * @param {React.ReactNode} props.children - The content to display inside the modal body.
+ * @param {React.ReactNode} [props.footer] - Optional content to display in the footer.
+ * @param {string} [props.className=""] - Additional CSS classes for the modal container.
+ */
 const Modal = ({ isOpen, onClose, title, icon, children, footer, className = "" }) => {
   if (!isOpen) return null;
 

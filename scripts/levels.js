@@ -1,7 +1,13 @@
 /**
  * Gets the title associated with a specific level.
- * @param {number} level - The level number.
+ * Levels 0-10 have unique titles, level 11+ returns "God of Wheel".
+ *
+ * @param {number} level - The level number (0-based).
  * @returns {string} The title for the level.
+ * @example
+ * getLevelTitle(0) // "Novice Spinner"
+ * getLevelTitle(5) // "Spin Doctor"
+ * getLevelTitle(15) // "God of Wheel"
  */
 export const getLevelTitle = (level) => {
   const titles = [
@@ -22,7 +28,12 @@ export const getLevelTitle = (level) => {
 
 /**
  * Constants used for XP calculation.
- * @type {{BASE_REQUIRED: number, MULTIPLIER: number, EXPONENT_GROWTH: number}}
+ * Formula: Level 0 = BASE_REQUIRED, Level N = MULTIPLIER * (EXPONENT_GROWTH ^ N)
+ *
+ * @type {Object}
+ * @property {number} BASE_REQUIRED - XP required for level 0 (20 XP).
+ * @property {number} MULTIPLIER - Multiplier for exponential growth (10).
+ * @property {number} EXPONENT_GROWTH - Base for exponential calculation (2).
  */
 export const XP_CONSTANTS = {
   BASE_REQUIRED: 20,

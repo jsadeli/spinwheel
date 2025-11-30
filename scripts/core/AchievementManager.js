@@ -6,11 +6,21 @@ import { storageKeys } from "/scripts/configs.js";
  * Handles checking conditions, unlocking, and storing achievements in localStorage
  */
 export class AchievementManager {
+  /**
+   * Creates a new AchievementManager instance.
+   * Automatically loads previously unlocked achievements from localStorage.
+   */
   constructor() {
     this.storageKey = storageKeys.ACHIEVEMENTS;
     this.unlocked = this.load();
   }
 
+  /**
+   * Loads achievement data from localStorage.
+   *
+   * @private
+   * @returns {Object<string, {unlockedAt: string}>} Object mapping achievement IDs to unlock data.
+   */
   load() {
     try {
       const stored = localStorage.getItem(this.storageKey);
@@ -21,6 +31,11 @@ export class AchievementManager {
     }
   }
 
+  /**
+   * Persists the current unlocked achievements to localStorage.
+   *
+   * @private
+   */
   save() {
     try {
       localStorage.setItem(this.storageKey, JSON.stringify(this.unlocked));
@@ -49,6 +64,14 @@ export class AchievementManager {
     return newUnlocks;
   }
 
+  /**
+   * Unlocks a specific achievement by ID.
+   * Records the unlock timestamp and persists to localStorage.
+   *
+   * @param {string} id - The unique achievement ID to unlock.
+   * @example
+   * achievementManager.unlock('first_spin');
+   */
   unlock(id) {
     if (!this.unlocked[id]) {
       this.unlocked[id] = {
@@ -58,15 +81,32 @@ export class AchievementManager {
     }
   }
 
+  /**
+   * Resets all unlocked achievements.
+   * Clears the in-memory state and persists the reset to localStorage.
+   */
   reset() {
     this.unlocked = {};
     this.save();
   }
 
+  /**
+   * Returns the raw unlocked achievements data.
+   *
+   * @returns {Object<string, {unlockedAt: string}>} Object mapping achievement IDs to unlock timestamps.
+   */
   getUnlocked() {
     return this.unlocked;
   }
 
+  /**
+   * Returns all achievements with their unlock status.
+   *
+   * @returns {Array<Object>} Array of achievement objects with isUnlocked and unlockedAt properties.
+   * @example
+   * const achievements = achievementManager.getAll();
+   * // Returns: [{ id: 'first_spin', name: '...', isUnlocked: true, unlockedAt: Date, ... }]
+   */
   getAll() {
     return ACHIEVEMENTS.map((ach) => ({
       ...ach,

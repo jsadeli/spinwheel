@@ -1,6 +1,16 @@
 import { GeminiError } from "/scripts/core/GeminiError.js";
 import { AIVoices } from "/scripts/configs.js";
 
+/**
+ * Generates a weighted list of items using the Gemini API based on a user prompt.
+ *
+ * @param {string} apiKey - The Gemini API key.
+ * @param {string} prompt - The user's prompt describing the desired list.
+ * @returns {Promise<string>} A promise that resolves to the generated text content.
+ * @throws {GeminiError} If the API returns an error.
+ * @example
+ * const listText = await generateListFromGemini("my-api-key", "pizza toppings");
+ */
 export const generateListFromGemini = async (apiKey, prompt) => {
   const response = await fetch(
     `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`,
@@ -28,6 +38,17 @@ export const generateListFromGemini = async (apiKey, prompt) => {
 };
 
 // voice options: https://docs.cloud.google.com/text-to-speech/docs/gemini-tts#voice_options
+/**
+ * Generates speech audio from text using the Gemini API.
+ *
+ * @param {string} apiKey - The Gemini API key.
+ * @param {string} text - The text to convert to speech.
+ * @param {string} [voiceName=AIVoices.AOEDE] - The voice to use (default: Aoede).
+ * @returns {Promise<string>} A promise that resolves to the base64-encoded audio data.
+ * @throws {GeminiError} If the API returns an error.
+ * @example
+ * const audioData = await generateSpeechFromGemini("my-api-key", "Hello world", AIVoices.IAPETUS);
+ */
 export const generateSpeechFromGemini = async (apiKey, text, voiceName = AIVoices.AOEDE) => {
   const response = await fetch(
     `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`,

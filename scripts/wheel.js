@@ -3,6 +3,24 @@ import { drawWheelTrail } from "./animations.js";
 import { getItemColor } from "./colors.js";
 import { ColorAssignmentMode } from "/scripts/configs.js";
 
+/**
+ * Draws the entire spin wheel on the canvas, including segments, text, hub, border, and trail.
+ * Handles empty state, item removal animation, and dynamic/deterministic coloring.
+ *
+ * @param {CanvasRenderingContext2D} ctx - The canvas 2D context.
+ * @param {number} width - The width of the canvas.
+ * @param {number} height - The height of the canvas.
+ * @param {Array<{text: string, weight: number}>} items - The list of items to draw.
+ * @param {string[]} colors - The array of colors to use for segments.
+ * @param {number} rotation - The current rotation angle in radians.
+ * @param {boolean} isDark - Whether dark mode is active.
+ * @param {boolean} hideLabels - Whether to hide text labels on segments.
+ * @param {boolean} trailEnabled - Whether to draw the motion trail.
+ * @param {number} velocity - The current rotation velocity.
+ * @param {Object|null} removingItem - State object for an item being removed (animation), or null.
+ * @param {string} colorAssignment - The color assignment mode (dynamic or deterministic).
+ * @param {number} xp - The current XP (used for trail effects).
+ */
 export const drawWheel = (
   ctx,
   width,
@@ -155,6 +173,14 @@ export const drawWheel = (
   }
 };
 
+/**
+ * Updates the rotation of the pointer element based on wheel rotation and velocity.
+ * Simulates physics interactions between the pins and the pointer (push and snap).
+ *
+ * @param {HTMLElement} pointerElement - The DOM element for the pointer.
+ * @param {number} rotation - The current wheel rotation in radians.
+ * @param {number} velocity - The current wheel velocity.
+ */
 export const updatePointer = (pointerElement, rotation, velocity) => {
   if (!pointerElement) return;
 

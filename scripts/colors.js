@@ -1,5 +1,12 @@
 // Colors Utility Module
-// Helper for color interpolation
+/**
+ * Linearly interpolates between two hex colors.
+ *
+ * @param {string} a - The start color in hex format (e.g., "#FF0000").
+ * @param {string} b - The end color in hex format (e.g., "#0000FF").
+ * @param {number} amount - The interpolation amount (0.0 to 1.0).
+ * @returns {string} The interpolated color in hex format.
+ */
 export const lerpColor = (a, b, amount) => {
   const ah = parseInt(a.replace(/#/g, ""), 16),
     ar = ah >> 16,
@@ -15,7 +22,13 @@ export const lerpColor = (a, b, amount) => {
   return "#" + (((1 << 24) + (rr << 16) + (rg << 8) + rb) | 0).toString(16).slice(1);
 };
 
-// Helper to parse custom colors from string
+/**
+ * Parses a string containing custom colors into an array of valid hex color strings.
+ * Handles various formats including comma-separated, newline-separated, and JSON-like strings.
+ *
+ * @param {string} input - The input string containing color codes.
+ * @returns {string[]} An array of valid hex color strings found in the input.
+ */
 export const parseCustomColors = (input) => {
   if (!input) return [];
   // Clean input and extract valid hex codes
@@ -26,7 +39,14 @@ export const parseCustomColors = (input) => {
     .filter((c) => /^#([0-9A-F]{3}){1,2}$/i.test(c));
 };
 
-// Helper for deterministic colors
+/**
+ * Deterministically selects a color from a palette based on the input text.
+ * Uses a hash function to ensure the same text always maps to the same color index.
+ *
+ * @param {string} text - The text to generate a color for.
+ * @param {string[]} colors - The array of available colors (palette).
+ * @returns {string} The selected hex color from the palette.
+ */
 export const getItemColor = (text, colors) => {
   let hash = 0;
   for (let i = 0; i < text.length; i++) {

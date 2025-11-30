@@ -1,12 +1,29 @@
 import { AIVoices, TickSounds } from "/scripts/configs.js";
 
 // Achievement Definitions
+/**
+ * Filter constants for the achievements list.
+ * @enum {string}
+ */
 export const AchievementFilters = {
   ALL: "all",
   UNLOCKED: "unlocked",
   LOCKED: "locked",
 };
 
+/**
+ * The complete list of available achievements.
+ * Each achievement object contains metadata and a condition function to check for unlock.
+ *
+ * @type {Array<{
+ *   id: string,
+ *   title: string,
+ *   description: string,
+ *   icon: string,
+ *   bonusXp: number,
+ *   condition: (stats: Object) => boolean
+ * }>}
+ */
 export const ACHIEVEMENTS = [
   // --- Spins ---
   {

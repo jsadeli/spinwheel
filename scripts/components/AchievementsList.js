@@ -1,6 +1,14 @@
 import { AchievementFilters } from "/scripts/achievements.js";
 import { getRelativeTime } from "/scripts/utils.js";
 
+/**
+ * Renders a list of achievements with filtering and sorting capabilities.
+ *
+ * @param {Object} props - Component props.
+ * @param {Array<Object>} props.achievements - List of achievement objects.
+ * @param {string} props.achievementFilter - Current filter state (all, unlocked, locked).
+ * @param {function} props.setAchievementFilter - State setter for the filter.
+ */
 const AchievementsList = ({ achievements, achievementFilter, setAchievementFilter }) => {
   return (
     <div className="space-y-3">

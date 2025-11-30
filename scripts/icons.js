@@ -1,3 +1,11 @@
+/**
+ * Generic Icon component wrapper for SVG icons.
+ *
+ * @param {Object} props - Component props.
+ * @param {React.ReactNode} props.children - The SVG path elements.
+ * @param {number} [props.size=24] - The width and height of the icon.
+ * @param {string} [props.className=""] - Additional CSS classes.
+ */
 const Icon = ({ children, size = 24, className = "" }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -15,6 +23,13 @@ const Icon = ({ children, size = 24, className = "" }) => (
   </svg>
 );
 
+/**
+ * The main logo component for the Spin Wheel application.
+ *
+ * @param {Object} props - Component props.
+ * @param {number} [props.size=24] - The size of the logo.
+ * @param {string} [props.className] - Additional CSS classes.
+ */
 const SpinWheelLogo = (props) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
