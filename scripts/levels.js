@@ -1,5 +1,5 @@
 // Helper to get XP level title
-window.getLevelTitle = (level) => {
+const getLevelTitle = (level) => {
   const titles = [
     "Novice Spinner",                     // Lvl 0: 0 XP
     "Casual Clicker",                     // Lvl 1: 20 XP
@@ -17,40 +17,40 @@ window.getLevelTitle = (level) => {
 };
 
 // XP Progress Constants
-window.XP_CONSTANTS = {
+const XP_CONSTANTS = {
   BASE_REQUIRED: 20,
   MULTIPLIER: 10,
   EXPONENT_GROWTH: 2,
 };
 
 // Helper to get required minimum XP for a specific level
-window.getRequiredXpForLevel = (level) => {
-  if (level === 0) return window.XP_CONSTANTS.BASE_REQUIRED;
-  return window.XP_CONSTANTS.MULTIPLIER * Math.pow(window.XP_CONSTANTS.EXPONENT_GROWTH, level);
+const getRequiredXpForLevel = (level) => {
+  if (level === 0) return XP_CONSTANTS.BASE_REQUIRED;
+  return XP_CONSTANTS.MULTIPLIER * Math.pow(XP_CONSTANTS.EXPONENT_GROWTH, level);
 };
 
 // Helper to calculate XP level
-window.calculateLevel = (currentXp) => {
+const calculateLevel = (currentXp) => {
   let level = 0;
-  let required = window.getRequiredXpForLevel(level);
+  let required = getRequiredXpForLevel(level);
   while (currentXp >= required) {
     currentXp -= required;
     level++;
-    required = window.getRequiredXpForLevel(level);
+    required = getRequiredXpForLevel(level);
   }
   return level;
 };
 
 // Helper to get XP level progress
-window.getLevelProgress = (currentXp) => {
+const getLevelProgress = (currentXp) => {
   let level = 0;
-  let required = window.getRequiredXpForLevel(level);
+  let required = getRequiredXpForLevel(level);
 
   // Find current level base XP
   while (currentXp >= required) {
     currentXp -= required;
     level++;
-    required = window.getRequiredXpForLevel(level);
+    required = getRequiredXpForLevel(level);
   }
 
   return {
@@ -60,3 +60,10 @@ window.getLevelProgress = (currentXp) => {
     progressPercent: (currentXp / required) * 100
   };
 };
+
+// Expose to window
+window.getLevelTitle = getLevelTitle;
+window.XP_CONSTANTS = XP_CONSTANTS;
+window.getRequiredXpForLevel = getRequiredXpForLevel;
+window.calculateLevel = calculateLevel;
+window.getLevelProgress = getLevelProgress;
