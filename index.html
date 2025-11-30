@@ -1513,6 +1513,13 @@
             currentItems.length > 0 &&
             currentItems.every((item) => item.text === currentItems[0].text);
 
+          const onlyEmojis =
+            currentItems.length > 0 && currentItems.every((item) => isEmoji(item.text));
+
+          const isUniqueList =
+            currentItems.length > 0 &&
+            new Set(currentItems.map((i) => i.text)).size === currentItems.length;
+
           const newUnlocks = achievementManager.check({
             spins: newTotalSpins,
             isCancelledSpin: false,
@@ -1528,6 +1535,8 @@
             maxWeight: maxWeight,
             maxItemLength: maxItemLength,
             allIdentical: allIdentical,
+            onlyEmojis: onlyEmojis,
+            isUniqueList: isUniqueList,
             historyLength: history.length + 1,
             mysteryMode: hideLabels,
             mysteryModeCancelledDuringSpin: mysteryModeCancelledDuringSpinRef.current,

@@ -465,6 +465,18 @@ export const ACHIEVEMENTS = [
     bonusXp: 20,
     condition: (stats) => stats.allIdentical && stats.itemCount >= 2,
   },
+  {
+    id: "emoji_eloquence",
+    title: "Emoji Eloquence",
+    description: "Words are overrated. Spun a list containing only emojis.",
+    icon: "🗿",
+    bonusXp: 10,
+    condition: (stats) =>
+      stats.onlyEmojis &&
+      stats.itemCount >= 2 &&
+      stats.hasSpun &&
+      stats.isUniqueList,
+  },
   // --- Lists ---
   {
     id: "branching_out",
