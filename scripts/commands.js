@@ -1,7 +1,7 @@
 import { getLevelProgress } from "./levels.js";
 import { fireConfetti } from "./animations.js";
 
-const processCommandCodes = (
+export const processCommandCodes = (
   listName,
   inputText,
   {
@@ -120,5 +120,3 @@ const processCommandCodes = (
   return false;
 };
 
-// Expose to window
-window.processCommandCodes = processCommandCodes;

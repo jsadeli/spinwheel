@@ -91,7 +91,6 @@
   <!-- Load Utils -->
   <script type="text/javascript" src="scripts/colors.js"></script>
   <script type="module" src="scripts/wheel.js"></script>
-  <script type="module" src="scripts/commands.js"></script>
   <script type="text/javascript" src="scripts/sounds.js"></script>
   <script type="text/javascript" src="scripts/utils.js"></script>
 
@@ -114,6 +113,7 @@
     import { generateListFromGemini, generateSpeechFromGemini } from './scripts/ai.js';
     import { defaultColors, beachColors, getPrestigeTheme, getTierColors } from './scripts/themes.js';
     import { fireConfetti, spawnSmoke } from './scripts/animations.js';
+    import { processCommandCodes } from './scripts/commands.js';
 
     const { useState, useEffect, useRef, useMemo } = React;
     const apiKey = ""; // Provided by environment
@@ -1153,7 +1153,7 @@
         // --- DEBUG / CHEAT CODE SYSTEM ---
         const currentList = savedLists.find(l => l.id === activeListId);
         if (currentList) {
-          const shouldStop = window.processCommandCodes(currentList.name, inputText, {
+          const shouldStop = processCommandCodes(currentList.name, inputText, {
             xp,
             setXp,
             setIsCorrupted,
