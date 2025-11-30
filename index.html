@@ -78,21 +78,21 @@
   <script type="module" src="scripts/core/AchievementManager.js"></script>
   <script type="module" src="scripts/core/GeminiError.js"></script>
 
-  <!-- Load Resources (Inline Icons, Themes, Animations, etc.) -->
-  <script type="text/babel" src="scripts/icons.js"></script>
-
   <!-- Load Data -->
   <script type="module" src="scripts/achievements.js"></script>
   <script type="module" src="scripts/levels.js"></script>
 
+  <!-- Load Resources (Inline Icons, Themes, Animations, etc.) -->
+  <script type="text/babel" data-type="module" src="scripts/icons.js"></script>
+
   <!-- Load Components (Modal, Toast, etc.) -->
-  <script type="text/babel" src="scripts/components/Modal.js"></script>
-  <script type="text/babel" src="scripts/components/OutOfOrderOverlay.js"></script>
   <script type="text/babel" data-type="module" src="scripts/components/ThemeIcon.js"></script>
-  <script type="text/babel" src="scripts/components/Toast.js"></script>
+  <script type="text/babel" data-type="module" src="scripts/components/Modal.js"></script>
   <script type="text/babel" data-type="module" src="scripts/components/WinnerModal.js"></script>
   <script type="text/babel" data-type="module" src="scripts/components/LevelCard.js"></script>
   <script type="text/babel" data-type="module" src="scripts/components/AchievementsList.js"></script>
+  <script type="text/babel" data-type="module" src="scripts/components/Toast.js"></script>
+  <script type="text/babel" data-type="module" src="scripts/components/OutOfOrderOverlay.js"></script>
 
   <!-- Load App -->
   <script type="text/babel" data-type="module">
@@ -112,8 +112,6 @@
 
     const { useState, useEffect, useRef, useMemo } = React;
     const apiKey = ""; // Provided by environment
-    const LevelCard = window.LevelCard;
-    const ThemeIcon = window.ThemeIcon;
 
     const App = () => {
       // --- STATE MANAGEMENT ---
