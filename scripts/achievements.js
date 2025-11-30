@@ -1,4 +1,4 @@
-import { AIVoices } from "/scripts/configs.js";
+import { AIVoices, TickSounds } from "/scripts/configs.js";
 
 // Achievement Definitions
 export const AchievementFilters = {
@@ -130,7 +130,7 @@ export const ACHIEVEMENTS = [
     description: "Keeping it classic. Completed a spin with the default electric click.",
     icon: "🖱️",
     bonusXp: 10,
-    condition: (stats) => stats.hasSpun && !stats.soundMuted && stats.tickSound === "default",
+    condition: (stats) => stats.hasSpun && !stats.soundMuted && stats.tickSound === TickSounds.DEFAULT,
   },
   {
     id: "knock_on_wood",
@@ -138,7 +138,7 @@ export const ACHIEVEMENTS = [
     description: "Superstitious? Completed a spin with the crisp wooden sound.",
     icon: "🪵",
     bonusXp: 10,
-    condition: (stats) => stats.hasSpun && !stats.soundMuted && stats.tickSound === "crisp",
+    condition: (stats) => stats.hasSpun && !stats.soundMuted && stats.tickSound === TickSounds.CRISP,
   },
   {
     id: "heavy_metal",
@@ -147,7 +147,7 @@ export const ACHIEVEMENTS = [
       "Industrial grade decision making. Completed a spin with the metallic clank sound.",
     icon: "⚙️",
     bonusXp: 10,
-    condition: (stats) => stats.hasSpun && !stats.soundMuted && stats.tickSound === "metallic",
+    condition: (stats) => stats.hasSpun && !stats.soundMuted && stats.tickSound === TickSounds.METALLIC,
   },
   {
     id: "crystal_glass",
@@ -155,7 +155,7 @@ export const ACHIEVEMENTS = [
     description: "Luxurious decision making. Completed a spin with the crystal glass sound.",
     icon: "🍷️",
     bonusXp: 10,
-    condition: (stats) => stats.hasSpun && !stats.soundMuted && stats.tickSound === "crystal",
+    condition: (stats) => stats.hasSpun && !stats.soundMuted && stats.tickSound === TickSounds.CRYSTAL,
   },
   // --- Other Spins ---
   {
