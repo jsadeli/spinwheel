@@ -1,10 +1,10 @@
-import { ACHIEVEMENTS } from '/scripts/achievements.js';
+import { ACHIEVEMENTS } from "/scripts/achievements.js";
 
 /**
  * AchievementManager - Manages user achievement unlocks and persistence
  * Handles checking conditions, unlocking, and storing achievements in localStorage
  */
-class AchievementManager {
+export class AchievementManager {
   constructor() {
     this.storageKey = window.storageKeys.ACHIEVEMENTS;
     this.unlocked = this.load();
@@ -36,7 +36,7 @@ class AchievementManager {
   check(stats) {
     const newUnlocks = [];
 
-    ACHIEVEMENTS.forEach(achievement => {
+    ACHIEVEMENTS.forEach((achievement) => {
       if (!this.unlocked[achievement.id]) {
         if (achievement.condition(stats)) {
           this.unlock(achievement.id);
@@ -51,7 +51,7 @@ class AchievementManager {
   unlock(id) {
     if (!this.unlocked[id]) {
       this.unlocked[id] = {
-        unlockedAt: new Date().toISOString()
+        unlockedAt: new Date().toISOString(),
       };
       this.save();
     }
@@ -67,13 +67,10 @@ class AchievementManager {
   }
 
   getAll() {
-    return ACHIEVEMENTS.map(ach => ({
+    return ACHIEVEMENTS.map((ach) => ({
       ...ach,
       isUnlocked: !!this.unlocked[ach.id],
-      unlockedAt: this.unlocked[ach.id] ? new Date(this.unlocked[ach.id].unlockedAt) : null
+      unlockedAt: this.unlocked[ach.id] ? new Date(this.unlocked[ach.id].unlockedAt) : null,
     }));
   }
 }
-
-// Export for use in main app
-export default AchievementManager;

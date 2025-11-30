@@ -79,7 +79,7 @@
 
   <!-- Load Core Modules -->
   <script type="module" src="scripts/core/AchievementManager.js"></script>
-  <script type="text/javascript" src="scripts/core/GeminiError.js"></script>
+  <script type="module" src="scripts/core/GeminiError.js"></script>
 
   <!-- Load Resources (Inline Icons, Themes, Animations, etc.) -->
   <script type="text/babel" src="scripts/icons.js"></script>
@@ -90,7 +90,6 @@
   <script type="module" src="scripts/levels.js"></script>
 
   <!-- Load Utils -->
-  <script type="text/javascript" src="scripts/ai.js"></script>
   <script type="text/javascript" src="scripts/animations.js"></script>
   <script type="text/javascript" src="scripts/colors.js"></script>
   <script type="module" src="scripts/wheel.js"></script>
@@ -112,7 +111,9 @@
     import { getLevelProgress, getLevelTitle } from './scripts/levels.js';
     import { drawWheel, updatePointer } from './scripts/wheel.js';
     import { AchievementFilters } from './scripts/achievements.js';
-    import AchievementManager from './scripts/core/AchievementManager.js';
+    import { AchievementManager } from './scripts/core/AchievementManager.js';
+    import { GeminiError } from './scripts/core/GeminiError.js';
+    import { generateListFromGemini, generateSpeechFromGemini } from './scripts/ai.js';
 
     const { useState, useEffect, useRef, useMemo } = React;
     const apiKey = ""; // Provided by environment
@@ -741,7 +742,7 @@
         if (!genPrompt.trim() || !geminiApiKey) return;
         setIsGenerating(true);
         try {
-          const text = await window.generateListFromGemini(geminiApiKey, genPrompt);
+          const text = await generateListFromGemini(geminiApiKey, genPrompt);
           if (text) {
             setInputText(text.trim());
             setShowGenModal(false);
@@ -761,7 +762,7 @@
 
           // Format message based on error type
           let message;
-          if (error instanceof window.GeminiError) {
+          if (error instanceof GeminiError) {
             const truncatedMessage = error.message.length > 60 ? error.message.substring(0, 60) + "..." : error.message;
             message = `${error.code} ${error.status}: ${truncatedMessage}`;
 
@@ -784,7 +785,7 @@
       const announceWinner = async (winnerText) => {
         if (!aiVoiceEnabled || !geminiApiKey) return;
         try {
-          const audioContent = await window.generateSpeechFromGemini(geminiApiKey, `The winner is... ${winnerText}!`, aiVoiceSelection);
+          const audioContent = await generateSpeechFromGemini(geminiApiKey, `The winner is... ${winnerText}!`, aiVoiceSelection);
           if (audioContent) {
             const blob = window.base64ToWavBlob(audioContent);
             const url = URL.createObjectURL(blob);
@@ -807,7 +808,7 @@
 
           // Format message based on error type
           let message;
-          if (error instanceof window.GeminiError) {
+          if (error instanceof GeminiError) {
             const truncatedMessage = error.message.length > 60 ? error.message.substring(0, 60) + "..." : error.message;
             message = `${error.code} ${error.status}: ${truncatedMessage}`;
 
@@ -2243,7 +2244,7 @@
                 />
                 <div className="flex-grow">
                   <span className="block font-medium text-gray-800 dark:text-white">Custom Hex List</span>
-                  <span className="text-xs text-gray-500 dark:text-gray-400">Enter hex codes (e.g. #F00, #00F)</span>
+                  <span className="text-xs text-gray-500 dark:text-gray-400">Enter hex codes (e.g., #F00, #00F)</span>
 
                   {tempColorType === 'custom' && (
                     <>

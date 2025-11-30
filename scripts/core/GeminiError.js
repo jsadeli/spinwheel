@@ -41,7 +41,7 @@
  * These additional fields allow callers to implement targeted error handling,
  * such as detecting invalid API keys, quota issues, or permission failures.
  */
-class GeminiError extends Error {
+export class GeminiError extends Error {
   /**
    * Creates a GeminiError instance from Gemini API error response data
    * @param {Object} data - The JSON response data from Gemini API containing error details
@@ -59,6 +59,3 @@ class GeminiError extends Error {
     }
   }
 }
-
-// Expose GeminiError globally for instanceof checks
-window.GeminiError = GeminiError;
