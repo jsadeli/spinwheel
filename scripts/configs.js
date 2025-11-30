@@ -48,6 +48,13 @@ export const themes = {
   DARK: "dark",
 };
 
+export const TickSounds = {
+  DEFAULT: "default",
+  CRISP: "crisp",
+  METALLIC: "metallic",
+  CRYSTAL: "crystal",
+};
+
 export const AIVoices = {
   AOEDE: "Aoede",
   IAPETUS: "Iapetus",
@@ -62,4 +69,4 @@ export const TabNames = {
 };
 
 export const GITHUB_LINK = "https://github.com/samuelkripto"; // universally accessible
-
+export const SPINWHEEL_REPO = "https://github.com/samuelkripto/spinwheel";

@@ -165,6 +165,7 @@
         TOAST_DURATION,
         TabNames,
         GITHUB_LINK,
+        TickSounds,
       } from "./scripts/configs.js";
 
       const { useState, useEffect, useRef, useMemo } = React;
@@ -242,7 +243,7 @@
           loadState(storageKeys.AI_VOICE_SELECTION, AIVoices.AOEDE)
         );
         const [tickSound, setTickSound] = useState(() =>
-          loadState(storageKeys.TICK_SOUND, "default")
+          loadState(storageKeys.TICK_SOUND, TickSounds.DEFAULT)
         );
 
         // Color Settings
@@ -1851,11 +1852,11 @@
                       <div className="py-1 border-b border-gray-100 dark:border-gray-700">
                         <button
                           onClick={() => {
-                            setTickSound("default");
+                            setTickSound(TickSounds.DEFAULT);
                           }}
                           disabled={!soundEnabled}
                           className={`flex items-center w-full px-4 py-2 text-sm text-left ${
-                            tickSound === "default"
+                            tickSound === TickSounds.DEFAULT
                               ? "bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300"
                               : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                           } ${!soundEnabled ? "opacity-50 cursor-not-allowed" : ""}`}
@@ -1865,7 +1866,7 @@
                             <ElectricIcon size={16} />
                           </span>
                           Default Electric
-                          {tickSound === "default" && (
+                          {tickSound === TickSounds.DEFAULT && (
                             <span className="ml-auto">
                               <CheckIcon size={16} />
                             </span>
@@ -1873,11 +1874,11 @@
                         </button>
                         <button
                           onClick={() => {
-                            setTickSound("crisp");
+                            setTickSound(TickSounds.CRISP);
                           }}
                           disabled={!soundEnabled}
                           className={`flex items-center w-full px-4 py-2 text-sm text-left ${
-                            tickSound === "crisp"
+                            tickSound === TickSounds.CRISP
                               ? "bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300"
                               : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                           } ${!soundEnabled ? "opacity-50 cursor-not-allowed" : ""}`}
@@ -1887,7 +1888,7 @@
                             <WoodIcon size={16} />
                           </span>
                           Crisp Wooden
-                          {tickSound === "crisp" && (
+                          {tickSound === TickSounds.CRISP && (
                             <span className="ml-auto">
                               <CheckIcon size={16} />
                             </span>
@@ -1895,11 +1896,11 @@
                         </button>
                         <button
                           onClick={() => {
-                            setTickSound("metallic");
+                            setTickSound(TickSounds.METALLIC);
                           }}
                           disabled={!soundEnabled}
                           className={`flex items-center w-full px-4 py-2 text-sm text-left ${
-                            tickSound === "metallic"
+                            tickSound === TickSounds.METALLIC
                               ? "bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300"
                               : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                           } ${!soundEnabled ? "opacity-50 cursor-not-allowed" : ""}`}
@@ -1909,7 +1910,7 @@
                             <MechanicalIcon size={16} />
                           </span>
                           Metallic Clank
-                          {tickSound === "metallic" && (
+                          {tickSound === TickSounds.METALLIC && (
                             <span className="ml-auto">
                               <CheckIcon size={16} />
                             </span>
@@ -1917,11 +1918,11 @@
                         </button>
                         <button
                           onClick={() => {
-                            setTickSound("crystal");
+                            setTickSound(TickSounds.CRYSTAL);
                           }}
                           disabled={!soundEnabled}
                           className={`flex items-center w-full px-4 py-2 text-sm text-left ${
-                            tickSound === "crystal"
+                            tickSound === TickSounds.CRYSTAL
                               ? "bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300"
                               : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                           } ${!soundEnabled ? "opacity-50 cursor-not-allowed" : ""}`}
@@ -1931,7 +1932,7 @@
                             <CrystalGlassIcon size={16} />
                           </span>
                           Crystal Glass
-                          {tickSound === "crystal" && (
+                          {tickSound === TickSounds.CRYSTAL && (
                             <span className="ml-auto">
                               <CheckIcon size={16} />
                             </span>

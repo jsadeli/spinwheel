@@ -1,3 +1,5 @@
+import { TickSounds } from "/scripts/configs.js";
+
 // Win Sound Logic
 export const playWinSound = (audioCtxRef, soundEnabled) => {
   if (!soundEnabled || !audioCtxRef.current) return;
@@ -32,12 +34,12 @@ export const playWinSound = (audioCtxRef, soundEnabled) => {
 };
 
 // Tick Sound Logic
-export const playTickSound = (audioCtxRef, soundEnabled, variant = "default") => {
+export const playTickSound = (audioCtxRef, soundEnabled, variant = TickSounds.DEFAULT) => {
   if (!soundEnabled || !audioCtxRef.current) return;
 
-  if (variant === "crisp") return playCrispWoodTickSound(audioCtxRef, soundEnabled);
-  if (variant === "metallic") return playMetallicClankTickSound(audioCtxRef, soundEnabled);
-  if (variant === "crystal") return playCrystalGlassTickSound(audioCtxRef, soundEnabled);
+  if (variant === TickSounds.CRISP) return playCrispWoodTickSound(audioCtxRef, soundEnabled);
+  if (variant === TickSounds.METALLIC) return playMetallicClankTickSound(audioCtxRef, soundEnabled);
+  if (variant === TickSounds.CRYSTAL) return playCrystalGlassTickSound(audioCtxRef, soundEnabled);
 
   return playDefaultTickSound(audioCtxRef, soundEnabled);
 };
