@@ -110,6 +110,7 @@
   <!-- Load App -->
   <script type="text/babel" data-type="module">
     import { getLevelProgress, getLevelTitle } from './scripts/levels.js';
+    import { drawWheel, updatePointer } from './scripts/wheel.js';
 
     const { useState, useEffect, useRef, useMemo } = React;
     const apiKey = ""; // Provided by environment
@@ -913,8 +914,8 @@
           }
 
           // --- Drawing ---
-          if (window.drawWheel) {
-            window.drawWheel(
+          if (drawWheel) {
+            drawWheel(
               ctx,
               width,
               height,
@@ -932,8 +933,8 @@
           }
 
           // --- Pointer Animation Logic ---
-          if (pointerRef.current && window.updatePointer) {
-            window.updatePointer(pointerRef.current, rotationRef.current, velocityRef.current);
+          if (pointerRef.current && updatePointer) {
+            updatePointer(pointerRef.current, rotationRef.current, velocityRef.current);
           }
 
           animationFrameId = requestAnimationFrame(render);
