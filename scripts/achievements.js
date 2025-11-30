@@ -1,4 +1,4 @@
-import { AIVoices, TickSounds } from "/scripts/configs.js";
+import { AIVoices, TickSounds } from "./configs.js";
 
 // Achievement Definitions
 /**
@@ -852,3 +852,9 @@ export const ACHIEVEMENTS = [
     condition: (stats) => stats.winnerId === "@about",
   },
 ];
+
+// Expose to window for Babel scripts
+if (typeof window !== "undefined") {
+  window.AchievementFilters = AchievementFilters;
+  window.ACHIEVEMENTS = ACHIEVEMENTS;
+}

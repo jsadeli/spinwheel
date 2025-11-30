@@ -208,3 +208,14 @@ export const parseWinnerString = (text) => {
   return [{ text: text, isEmoji: isEmoji(text) }];
 };
 
+// Expose to window for Babel scripts
+if (typeof window !== "undefined") {
+  window.loadState = loadState;
+  window.getRelativeTime = getRelativeTime;
+  window.parseItems = parseItems;
+  window.itemsToString = itemsToString;
+  window.copyToClipboard = copyToClipboard;
+  window.isEmoji = isEmoji;
+  window.parseWinnerString = parseWinnerString;
+}
+

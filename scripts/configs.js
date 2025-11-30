@@ -159,3 +159,18 @@ export const GITHUB_LINK = "https://github.com/samuelkripto";
  * @type {string}
  */
 export const SPINWHEEL_REPO = "https://github.com/samuelkripto/spinwheel";
+
+// Expose to window for Babel scripts
+if (typeof window !== "undefined") {
+  window.defaultListName = defaultListName;
+  window.defaultListItems = defaultListItems;
+  window.storageKeys = storageKeys;
+  window.themes = themes;
+  window.TickSounds = TickSounds;
+  window.ColorAssignmentMode = ColorAssignmentMode;
+  window.AIVoices = AIVoices;
+  window.TOAST_DURATION = TOAST_DURATION;
+  window.TabNames = TabNames;
+  window.GITHUB_LINK = GITHUB_LINK;
+  window.SPINWHEEL_REPO = SPINWHEEL_REPO;
+}

@@ -1,4 +1,4 @@
-import { themes } from "/scripts/configs.js";
+const { themes } = window;
 
 /**
  * Renders an icon representing the current theme (Auto, Light, or Dark).

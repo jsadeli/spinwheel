@@ -90,3 +90,12 @@ export const getLevelProgress = (currentXp) => {
     progressPercent: (currentXp / required) * 100,
   };
 };
+
+// Expose to window for Babel scripts
+if (typeof window !== "undefined") {
+  window.getLevelTitle = getLevelTitle;
+  window.XP_CONSTANTS = XP_CONSTANTS;
+  window.getRequiredXpForLevel = getRequiredXpForLevel;
+  window.calculateLevel = calculateLevel;
+  window.getLevelProgress = getLevelProgress;
+}

@@ -139,3 +139,8 @@ export const processCommandCodes = (
   return false;
 };
 
+// Expose to window
+if (typeof window !== "undefined") {
+  window.processCommandCodes = processCommandCodes;
+}
+

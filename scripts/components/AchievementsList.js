@@ -1,5 +1,4 @@
-import { AchievementFilters } from "/scripts/achievements.js";
-import { getRelativeTime } from "/scripts/utils.js";
+const { AchievementFilters, getRelativeTime } = window;
 
 /**
  * Renders a list of achievements with filtering and sorting capabilities.

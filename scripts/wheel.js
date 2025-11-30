@@ -1,7 +1,7 @@
 import { calculateLevel } from "./levels.js";
 import { drawWheelTrail } from "./animations.js";
 import { getItemColor } from "./colors.js";
-import { ColorAssignmentMode } from "/scripts/configs.js";
+import { ColorAssignmentMode } from "./configs.js";
 
 /**
  * Draws the entire spin wheel on the canvas, including segments, text, hub, border, and trail.
@@ -219,3 +219,9 @@ export const updatePointer = (pointerElement, rotation, velocity) => {
 
   pointerElement.style.transform = `rotate(${pointerAngle}deg)`;
 };
+
+// Expose to window
+if (typeof window !== "undefined") {
+  window.drawWheel = drawWheel;
+  window.updatePointer = updatePointer;
+}

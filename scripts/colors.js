@@ -56,3 +56,10 @@ export const getItemColor = (text, colors) => {
   return colors[index];
 };
 
+// Expose to window
+if (typeof window !== "undefined") {
+  window.lerpColor = lerpColor;
+  window.parseCustomColors = parseCustomColors;
+  window.getItemColor = getItemColor;
+}
+

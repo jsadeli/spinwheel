@@ -497,3 +497,10 @@ export const drawWheelTrail = (ctx, centerX, centerY, radius, rotation, velocity
   ctx.restore();
 };
 
+// Expose to window
+if (typeof window !== "undefined") {
+  window.fireConfetti = fireConfetti;
+  window.spawnSmoke = spawnSmoke;
+  window.drawWheelTrail = drawWheelTrail;
+}
+

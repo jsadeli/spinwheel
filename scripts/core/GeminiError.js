@@ -86,3 +86,8 @@ export class GeminiError extends Error {
     }
   }
 }
+
+// Expose to window
+if (typeof window !== "undefined") {
+  window.GeminiError = GeminiError;
+}

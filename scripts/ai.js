@@ -1,5 +1,5 @@
-import { GeminiError } from "/scripts/core/GeminiError.js";
-import { AIVoices } from "/scripts/configs.js";
+import { GeminiError } from "./core/GeminiError.js";
+import { AIVoices } from "./configs.js";
 
 /**
  * Generates a weighted list of items using the Gemini API based on a user prompt.
@@ -70,3 +70,9 @@ export const generateSpeechFromGemini = async (apiKey, text, voiceName = AIVoice
   }
   return data.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
 };
+
+// Expose to window
+if (typeof window !== "undefined") {
+  window.generateListFromGemini = generateListFromGemini;
+  window.generateSpeechFromGemini = generateSpeechFromGemini;
+}

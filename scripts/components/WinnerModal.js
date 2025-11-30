@@ -1,4 +1,4 @@
-import { parseWinnerString } from "/scripts/utils.js";
+const { parseWinnerString } = window;
 
 /**
  * Displays the winner announcement modal.

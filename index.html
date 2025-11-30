@@ -90,13 +90,20 @@
 
     <div id="root"></div>
 
-    <!-- Load Core Modules -->
+    <!-- Load Core Modules & Utilities (Global Scope) -->
     <script type="module" src="scripts/core/AchievementManager.js"></script>
     <script type="module" src="scripts/core/GeminiError.js"></script>
-
-    <!-- Load Data -->
     <script type="module" src="scripts/achievements.js"></script>
+    <script type="module" src="scripts/ai.js"></script>
+    <script type="module" src="scripts/animations.js"></script>
+    <script type="module" src="scripts/colors.js"></script>
+    <script type="module" src="scripts/commands.js"></script>
+    <script type="module" src="scripts/configs.js"></script>
     <script type="module" src="scripts/levels.js"></script>
+    <script type="module" src="scripts/sounds.js"></script>
+    <script type="module" src="scripts/themes.js"></script>
+    <script type="module" src="scripts/utils.js"></script>
+    <script type="module" src="scripts/wheel.js"></script>
 
     <!-- Load Resources (Inline Icons, Themes, Animations, etc.) -->
     <script type="text/babel" data-type="module" src="scripts/icons.js"></script>
@@ -106,68 +113,27 @@
     <script type="text/babel" data-type="module" src="scripts/components/Modal.js"></script>
     <script type="text/babel" data-type="module" src="scripts/components/WinnerModal.js"></script>
     <script type="text/babel" data-type="module" src="scripts/components/LevelCard.js"></script>
-    <script
-      type="text/babel"
-      data-type="module"
-      src="scripts/components/AchievementsList.js"
-    ></script>
+    <script type="text/babel" data-type="module" src="scripts/components/AchievementsList.js"></script>
     <script type="text/babel" data-type="module" src="scripts/components/Toast.js"></script>
-    <script
-      type="text/babel"
-      data-type="module"
-      src="scripts/components/OutOfOrderOverlay.js"
-    ></script>
+    <script type="text/babel" data-type="module" src="scripts/components/OutOfOrderOverlay.js"></script>
 
     <!-- Load App -->
     <script type="text/babel" data-type="module">
-      import { getLevelProgress, getLevelTitle } from "./scripts/levels.js";
-      import { drawWheel, updatePointer } from "./scripts/wheel.js";
-      import { AchievementFilters } from "./scripts/achievements.js";
-      import { AchievementManager } from "./scripts/core/AchievementManager.js";
-      import { GeminiError } from "./scripts/core/GeminiError.js";
-      import { generateListFromGemini, generateSpeechFromGemini } from "./scripts/ai.js";
-      import {
-        defaultColors,
-        beachColors,
-        getPrestigeTheme,
-        getTierColors,
-      } from "./scripts/themes.js";
-      import { lerpColor, parseCustomColors } from "./scripts/colors.js";
-      import { fireConfetti, spawnSmoke } from "./scripts/animations.js";
-      import { processCommandCodes } from "./scripts/commands.js";
-      import {
-        loadState,
-        getRelativeTime,
-        parseItems,
-        itemsToString,
-        copyToClipboard,
-        isEmoji,
-        parseWinnerString,
-      } from "./scripts/utils.js";
-      import {
-        playWinSound,
-        playTickSound,
-        playDefaultTickSound,
-        playCrispWoodTickSound,
-        playMetallicClankTickSound,
-        playCrystalGlassTickSound,
-        playFireCrackle,
-        playBreakdownSound,
-        base64ToWavBlob,
-        ChargeSound,
-      } from "./scripts/sounds.js";
-      import {
-        defaultListName,
-        defaultListItems,
-        storageKeys,
-        themes,
-        AIVoices,
-        TOAST_DURATION,
-        TabNames,
-        GITHUB_LINK,
-        TickSounds,
-        ColorAssignmentMode,
-      } from "./scripts/configs.js";
+      const {
+        getLevelProgress, getLevelTitle,
+        drawWheel, updatePointer,
+        AchievementFilters,
+        AchievementManager,
+        GeminiError,
+        generateListFromGemini, generateSpeechFromGemini,
+        defaultColors, beachColors, getPrestigeTheme, getTierColors,
+        lerpColor, parseCustomColors,
+        fireConfetti, spawnSmoke,
+        processCommandCodes,
+        loadState, getRelativeTime, parseItems, itemsToString, copyToClipboard, isEmoji, parseWinnerString,
+        playWinSound, playTickSound, playDefaultTickSound, playCrispWoodTickSound, playMetallicClankTickSound, playCrystalGlassTickSound, playFireCrackle, playBreakdownSound, base64ToWavBlob, ChargeSound,
+        defaultListName, defaultListItems, storageKeys, themes, AIVoices, TOAST_DURATION, TabNames, GITHUB_LINK, TickSounds, ColorAssignmentMode
+      } = window;
 
       const { useState, useEffect, useRef, useMemo } = React;
       const apiKey = ""; // Provided by environment

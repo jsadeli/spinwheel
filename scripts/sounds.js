@@ -1,4 +1,4 @@
-import { TickSounds } from "/scripts/configs.js";
+import { TickSounds } from "./configs.js";
 
 /**
  * Plays a celebratory fanfare sound when the wheel stops.
@@ -570,4 +570,18 @@ export const ChargeSound = class {
     }
   }
 };
+
+// Expose to window
+if (typeof window !== "undefined") {
+  window.playWinSound = playWinSound;
+  window.playTickSound = playTickSound;
+  window.playDefaultTickSound = playDefaultTickSound;
+  window.playCrispWoodTickSound = playCrispWoodTickSound;
+  window.playMetallicClankTickSound = playMetallicClankTickSound;
+  window.playCrystalGlassTickSound = playCrystalGlassTickSound;
+  window.playFireCrackle = playFireCrackle;
+  window.playBreakdownSound = playBreakdownSound;
+  window.base64ToWavBlob = base64ToWavBlob;
+  window.ChargeSound = ChargeSound;
+}
 

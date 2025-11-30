@@ -1,5 +1,5 @@
-import { ACHIEVEMENTS } from "/scripts/achievements.js";
-import { storageKeys } from "/scripts/configs.js";
+import { ACHIEVEMENTS } from "../achievements.js";
+import { storageKeys } from "../configs.js";
 
 /**
  * AchievementManager - Manages user achievement unlocks and persistence
@@ -114,4 +114,9 @@ export class AchievementManager {
       unlockedAt: this.unlocked[ach.id] ? new Date(this.unlocked[ach.id].unlockedAt) : null,
     }));
   }
+}
+
+// Expose to window
+if (typeof window !== "undefined") {
+  window.AchievementManager = AchievementManager;
 }

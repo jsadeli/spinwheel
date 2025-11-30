@@ -177,3 +177,11 @@ export const getTierColors = (level) => {
   if (level >= 3) return { start: "#fdba74", mid: "#f97316", end: "#ea580c" }; // Bronze/Orange
   return { start: "#94a3b8", mid: "#64748b", end: "#475569" }; // Default: Silver
 };
+
+// Expose to window
+if (typeof window !== "undefined") {
+  window.defaultColors = defaultColors;
+  window.beachColors = beachColors;
+  window.getPrestigeTheme = getPrestigeTheme;
+  window.getTierColors = getTierColors;
+}

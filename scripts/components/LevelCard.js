@@ -1,4 +1,4 @@
-import { getLevelTitle } from "/scripts/levels.js";
+const { getLevelTitle } = window;
 
 /**
  * Displays the user's current level, XP progress, and prestige theme effects.
