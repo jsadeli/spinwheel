@@ -1,5 +1,5 @@
 // Achievement Definitions
-window.AchievementFilters = {
+const AchievementFilters = {
   ALL: 'all',
   UNLOCKED: 'unlocked',
   LOCKED: 'locked'
@@ -802,3 +802,7 @@ const ACHIEVEMENTS = [
     condition: (stats) => stats.winnerId === "@about",
   },
 ];
+
+// Expose to window
+window.AchievementFilters = AchievementFilters;
+window.ACHIEVEMENTS = ACHIEVEMENTS;
