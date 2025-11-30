@@ -1,5 +1,5 @@
 // Win Sound Logic
-const playWinSound = (audioCtxRef, soundEnabled) => {
+export const playWinSound = (audioCtxRef, soundEnabled) => {
   if (!soundEnabled || !audioCtxRef.current) return;
   const ctx = audioCtxRef.current;
   const now = ctx.currentTime;
@@ -32,7 +32,7 @@ const playWinSound = (audioCtxRef, soundEnabled) => {
 };
 
 // Tick Sound Logic
-const playTickSound = (audioCtxRef, soundEnabled, variant = "default") => {
+export const playTickSound = (audioCtxRef, soundEnabled, variant = "default") => {
   if (!soundEnabled || !audioCtxRef.current) return;
 
   if (variant === "crisp") return playCrispWoodTickSound(audioCtxRef, soundEnabled);
@@ -43,7 +43,7 @@ const playTickSound = (audioCtxRef, soundEnabled, variant = "default") => {
 };
 
 // Tick Sound Logic - Electrical/Plastic Click Sound
-const playDefaultTickSound = (audioCtxRef, soundEnabled) => {
+export const playDefaultTickSound = (audioCtxRef, soundEnabled) => {
   if (!soundEnabled || !audioCtxRef.current) return;
   const ctx = audioCtxRef.current;
 
@@ -66,7 +66,7 @@ const playDefaultTickSound = (audioCtxRef, soundEnabled) => {
 };
 
 // Tick Sound Logic - Crisp Wood Knock Sound
-const playCrispWoodTickSound = (audioCtxRef, soundEnabled) => {
+export const playCrispWoodTickSound = (audioCtxRef, soundEnabled) => {
   if (!soundEnabled || !audioCtxRef.current) return;
   const ctx = audioCtxRef.current;
   const now = ctx.currentTime;
@@ -169,7 +169,7 @@ const playCrispWoodTickSound = (audioCtxRef, soundEnabled) => {
 };
 
 // Tick Sound Logic - Metallic Clank Sound
-const playMetallicClankTickSound = (audioCtxRef, soundEnabled) => {
+export const playMetallicClankTickSound = (audioCtxRef, soundEnabled) => {
   if (!soundEnabled || !audioCtxRef.current) return;
   const ctx = audioCtxRef.current;
   const now = ctx.currentTime;
@@ -247,7 +247,7 @@ const playMetallicClankTickSound = (audioCtxRef, soundEnabled) => {
 };
 
 // Tick Sound Logic - Crystal Glass Sound
-const playCrystalGlassTickSound = (audioCtxRef, soundEnabled) => {
+export const playCrystalGlassTickSound = (audioCtxRef, soundEnabled) => {
   if (!soundEnabled || !audioCtxRef.current) return;
   const ctx = audioCtxRef.current;
   const now = ctx.currentTime;
@@ -291,7 +291,7 @@ const playCrystalGlassTickSound = (audioCtxRef, soundEnabled) => {
 };
 
 // Fire Crackle Sound Logic
-const playFireCrackle = (audioCtxRef, soundEnabled, isOutOfOrder) => {
+export const playFireCrackle = (audioCtxRef, soundEnabled, isOutOfOrder) => {
   if (!soundEnabled || !audioCtxRef.current || isOutOfOrder) return;
   const ctx = audioCtxRef.current;
 
@@ -325,7 +325,7 @@ const playFireCrackle = (audioCtxRef, soundEnabled, isOutOfOrder) => {
 };
 
 // Breakdown Sound Logic
-const playBreakdownSound = (audioCtxRef, soundEnabled) => {
+export const playBreakdownSound = (audioCtxRef, soundEnabled) => {
   if (!soundEnabled || !audioCtxRef.current) return;
   const ctx = audioCtxRef.current;
 
@@ -348,7 +348,7 @@ const playBreakdownSound = (audioCtxRef, soundEnabled) => {
 };
 
 // Helper to convert base64 PCM data to WAV Blob
-const base64ToWavBlob = (base64Data) => {
+export const base64ToWavBlob = (base64Data) => {
   const audioBytes = Uint8Array.from(atob(base64Data), (c) => c.charCodeAt(0));
   // Basic WAV header construction for PCM data
   const wavHeader = new ArrayBuffer(44);
@@ -379,7 +379,7 @@ const base64ToWavBlob = (base64Data) => {
 };
 
 // Charge Sound Logic Class
-const ChargeSound = class {
+export const ChargeSound = class {
   constructor(audioCtx) {
     this.ctx = audioCtx;
     this.osc = null;
@@ -487,14 +487,3 @@ const ChargeSound = class {
   }
 };
 
-// Expose to window
-window.playWinSound = playWinSound;
-window.playTickSound = playTickSound;
-window.playDefaultTickSound = playDefaultTickSound;
-window.playCrispWoodTickSound = playCrispWoodTickSound;
-window.playMetallicClankTickSound = playMetallicClankTickSound;
-window.playCrystalGlassTickSound = playCrystalGlassTickSound;
-window.playFireCrackle = playFireCrackle;
-window.playBreakdownSound = playBreakdownSound;
-window.base64ToWavBlob = base64ToWavBlob;
-window.ChargeSound = ChargeSound;

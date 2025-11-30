@@ -91,7 +91,6 @@
   <!-- Load Utils -->
   <script type="text/javascript" src="scripts/colors.js"></script>
   <script type="module" src="scripts/wheel.js"></script>
-  <script type="text/javascript" src="scripts/sounds.js"></script>
 
   <!-- Load Components (Modal, Toast, etc.) -->
   <script type="text/babel" src="scripts/components/Modal.js"></script>
@@ -114,6 +113,7 @@
     import { fireConfetti, spawnSmoke } from './scripts/animations.js';
     import { processCommandCodes } from './scripts/commands.js';
     import { loadState, getRelativeTime, parseItems, itemsToString, copyToClipboard, isEmoji, parseWinnerString } from './scripts/utils.js';
+    import { playWinSound, playTickSound, playDefaultTickSound, playCrispWoodTickSound, playMetallicClankTickSound, playCrystalGlassTickSound, playFireCrackle, playBreakdownSound, base64ToWavBlob, ChargeSound } from './scripts/sounds.js';
 
     const { useState, useEffect, useRef, useMemo } = React;
     const apiKey = ""; // Provided by environment
@@ -787,7 +787,7 @@
         try {
           const audioContent = await generateSpeechFromGemini(geminiApiKey, `The winner is... ${winnerText}!`, aiVoiceSelection);
           if (audioContent) {
-            const blob = window.base64ToWavBlob(audioContent);
+            const blob = base64ToWavBlob(audioContent);
             const url = URL.createObjectURL(blob);
 
             const audio = new Audio(url);
@@ -855,7 +855,7 @@
         if (!soundEnabled || !audioCtxRef.current || isOutOfOrder) return;
 
         if (!chargeSoundRef.current) {
-          chargeSoundRef.current = new window.ChargeSound(audioCtxRef.current);
+          chargeSoundRef.current = new ChargeSound(audioCtxRef.current);
         }
         chargeSoundRef.current.start();
       };
@@ -1007,7 +1007,7 @@
             if (power >= 1) {
               overchargeRef.current += 16; // Add ~16ms per frame
               setOverchargeState(overchargeRef.current); // Trigger re-render for heat animation
-              spawnSmoke(smokeContainerRef, overchargeRef, () => window.playFireCrackle(audioCtxRef, soundEnabled, isOutOfOrder));
+              spawnSmoke(smokeContainerRef, overchargeRef, () => playFireCrackle(audioCtxRef, soundEnabled, isOutOfOrder));
 
               // Track Overheats for "This Is Fine"
               // We only want to count this ONCE per "press" when it enters the danger zone.
@@ -1039,7 +1039,7 @@
                 chargeIntervalRef.current = null;
 
                 stopChargeSound();
-                window.playBreakdownSound(audioCtxRef, soundEnabled);
+                playBreakdownSound(audioCtxRef, soundEnabled);
 
                 setIsCharging(false);
                 setChargePower(0);
@@ -1238,7 +1238,7 @@
           const lastStep = Math.floor(lastTickRef.current / pinSpacing);
 
           if (currentStep !== lastStep) {
-            window.playTickSound(audioCtxRef, soundEnabled, tickSoundRef.current);
+            playTickSound(audioCtxRef, soundEnabled, tickSoundRef.current);
           }
           lastTickRef.current = rotationRef.current;
 
@@ -1410,7 +1410,7 @@
         }
 
         if (soundEnabled) {
-          window.playWinSound(audioCtxRef, soundEnabled);
+          playWinSound(audioCtxRef, soundEnabled);
           if (aiVoiceEnabled && geminiApiKey) {
             announceWinner(winItem); // Call Gemini TTS only if enabled and key exists
           }
