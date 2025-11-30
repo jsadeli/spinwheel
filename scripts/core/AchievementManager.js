@@ -1,4 +1,5 @@
 import { ACHIEVEMENTS } from "/scripts/achievements.js";
+import { storageKeys } from "/scripts/configs.js";
 
 /**
  * AchievementManager - Manages user achievement unlocks and persistence
@@ -6,7 +7,7 @@ import { ACHIEVEMENTS } from "/scripts/achievements.js";
  */
 export class AchievementManager {
   constructor() {
-    this.storageKey = window.storageKeys.ACHIEVEMENTS;
+    this.storageKey = storageKeys.ACHIEVEMENTS;
     this.unlocked = this.load();
   }
 

@@ -74,9 +74,6 @@
 
   <div id="root"></div>
 
-  <!-- Load Configs -->
-  <script type="text/javascript" src="scripts/configs.js"></script>
-
   <!-- Load Core Modules -->
   <script type="module" src="scripts/core/AchievementManager.js"></script>
   <script type="module" src="scripts/core/GeminiError.js"></script>
@@ -91,7 +88,7 @@
   <!-- Load Components (Modal, Toast, etc.) -->
   <script type="text/babel" src="scripts/components/Modal.js"></script>
   <script type="text/babel" src="scripts/components/OutOfOrderOverlay.js"></script>
-  <script type="text/babel" src="scripts/components/ThemeIcon.js"></script>
+  <script type="text/babel" data-type="module" src="scripts/components/ThemeIcon.js"></script>
   <script type="text/babel" src="scripts/components/Toast.js"></script>
   <script type="text/babel" data-type="module" src="scripts/components/WinnerModal.js"></script>
   <script type="text/babel" data-type="module" src="scripts/components/LevelCard.js"></script>
@@ -111,10 +108,12 @@
     import { processCommandCodes } from './scripts/commands.js';
     import { loadState, getRelativeTime, parseItems, itemsToString, copyToClipboard, isEmoji, parseWinnerString } from './scripts/utils.js';
     import { playWinSound, playTickSound, playDefaultTickSound, playCrispWoodTickSound, playMetallicClankTickSound, playCrystalGlassTickSound, playFireCrackle, playBreakdownSound, base64ToWavBlob, ChargeSound } from './scripts/sounds.js';
+    import { defaultListName, defaultListItems, storageKeys, themes, AIVoices, TOAST_DURATION, TabNames, GITHUB_LINK } from './scripts/configs.js';
 
     const { useState, useEffect, useRef, useMemo } = React;
     const apiKey = ""; // Provided by environment
     const LevelCard = window.LevelCard;
+    const ThemeIcon = window.ThemeIcon;
 
     const App = () => {
       // --- STATE MANAGEMENT ---
@@ -123,21 +122,21 @@
       // We now manage a list of lists.
       // Legacy migration: if 'spinWheel_inputs' exists but 'spinWheel_savedLists' doesn't, migrate it.
       const [savedLists, setSavedLists] = useState(() => {
-        const storedLists = loadState(window.storageKeys.SAVED_LISTS, null);
+        const storedLists = loadState(storageKeys.SAVED_LISTS, null);
         if (storedLists) return storedLists;
 
         // Migration / Default
-        const legacyInput = loadState(window.storageKeys.INPUTS, null);
-        const initialContent = legacyInput !== null ? legacyInput : window.defaultListItems.join('\n');
+        const legacyInput = loadState(storageKeys.INPUTS, null);
+        const initialContent = legacyInput !== null ? legacyInput : defaultListItems.join('\n');
 
         return [{
           id: 'default',
-          name: window.defaultListName,
+          name: defaultListName,
           content: initialContent
         }];
       });
 
-      const [activeListId, setActiveListId] = useState(() => loadState(window.storageKeys.ACTIVE_LIST_ID, 'default'));
+      const [activeListId, setActiveListId] = useState(() => loadState(storageKeys.ACTIVE_LIST_ID, 'default'));
 
       // Helper to get content safely
       const getActiveListContent = (lists, id) => {
@@ -152,31 +151,31 @@
       const [items, setItems] = useState(() => parseItems(inputText));
 
       const [history, setHistory] = useState(() => {
-        const storedHistory = loadState(window.storageKeys.HISTORY, []);
+        const storedHistory = loadState(storageKeys.HISTORY, []);
         // Rehydrate timestamp strings back to Date objects
         return storedHistory.map(item => ({
           ...item,
           timestamp: new Date(item.timestamp)
         }));
       });
-      const [soundEnabled, setSoundEnabled] = useState(() => loadState(window.storageKeys.SOUND_ENABLED, true));
-      const [theme, setTheme] = useState(() => loadState(window.storageKeys.THEME, window.themes.AUTO));
-      const [spinDuration, setSpinDuration] = useState(() => loadState(window.storageKeys.SPIN_DURATION, 10000));
-      const [hideLabels, setHideLabels] = useState(() => loadState(window.storageKeys.HIDE_LABELS, false));
-      const [aiVoiceEnabled, setAiVoiceEnabled] = useState(() => loadState(window.storageKeys.AI_VOICE_ENABLED, false));
-      const [trailEnabled, setTrailEnabled] = useState(() => loadState(window.storageKeys.TRAIL_ENABLED, false));
-      const [geminiApiKey, setGeminiApiKey] = useState(() => loadState(window.storageKeys.GEMINI_API_KEY, ''));
-      const [aiVoiceSelection, setAiVoiceSelection] = useState(() => loadState(window.storageKeys.AI_VOICE_SELECTION, window.AIVoices.AOEDE));
-      const [tickSound, setTickSound] = useState(() => loadState(window.storageKeys.TICK_SOUND, 'default'));
+      const [soundEnabled, setSoundEnabled] = useState(() => loadState(storageKeys.SOUND_ENABLED, true));
+      const [theme, setTheme] = useState(() => loadState(storageKeys.THEME, themes.AUTO));
+      const [spinDuration, setSpinDuration] = useState(() => loadState(storageKeys.SPIN_DURATION, 10000));
+      const [hideLabels, setHideLabels] = useState(() => loadState(storageKeys.HIDE_LABELS, false));
+      const [aiVoiceEnabled, setAiVoiceEnabled] = useState(() => loadState(storageKeys.AI_VOICE_ENABLED, false));
+      const [trailEnabled, setTrailEnabled] = useState(() => loadState(storageKeys.TRAIL_ENABLED, false));
+      const [geminiApiKey, setGeminiApiKey] = useState(() => loadState(storageKeys.GEMINI_API_KEY, ''));
+      const [aiVoiceSelection, setAiVoiceSelection] = useState(() => loadState(storageKeys.AI_VOICE_SELECTION, AIVoices.AOEDE));
+      const [tickSound, setTickSound] = useState(() => loadState(storageKeys.TICK_SOUND, 'default'));
 
       // Color Settings
-      const [colorSettings, setColorSettings] = useState(() => loadState(window.storageKeys.COLOR_SETTINGS, {
+      const [colorSettings, setColorSettings] = useState(() => loadState(storageKeys.COLOR_SETTINGS, {
         type: 'default',
         customColors: '#FF6B6B, #4ECDC4, #45B7D1'
       }));
 
       // Color Assignment Mode (Dynamic vs Deterministic)
-      const [colorAssignment, setColorAssignment] = useState(() => loadState(window.storageKeys.COLOR_ASSIGNMENT, 'dynamic'));
+      const [colorAssignment, setColorAssignment] = useState(() => loadState(storageKeys.COLOR_ASSIGNMENT, 'dynamic'));
 
       const [activeColors, setActiveColors] = useState(defaultColors);
 
@@ -188,7 +187,7 @@
       const [showListDropdown, setShowListDropdown] = useState(false);
       const [showColorModal, setShowColorModal] = useState(false);
       const [shareUrl, setShareUrl] = useState('');
-      const [activeTab, setActiveTab] = useState(window.TabNames.INPUTS); // 'inputs', 'history', or 'progress'
+      const [activeTab, setActiveTab] = useState(TabNames.INPUTS); // 'inputs', 'history', or 'progress'
       const [isCopied, setIsCopied] = useState(false);
       const [showGenModal, setShowGenModal] = useState(false);
       const [showHelpModal, setShowHelpModal] = useState(false);
@@ -206,13 +205,13 @@
       const [chargePower, setChargePower] = useState(0);
       const [overchargeState, setOverchargeState] = useState(0); // State for overcharge animation
       const [isOutOfOrder, setIsOutOfOrder] = useState(false); // Broken state
-      const [isCorrupted, setIsCorrupted] = useState(() => loadState(window.storageKeys.IS_CORRUPTED, false)); // Corrupted state
+      const [isCorrupted, setIsCorrupted] = useState(() => loadState(storageKeys.IS_CORRUPTED, false)); // Corrupted state
       const [deferredPrompt, setDeferredPrompt] = useState(null);
 
       // Toast State (Queue System)
       const [toastQueue, setToastQueue] = useState([]);
 
-      const addToast = (message, title = "Notification", icon = null, duration = window.TOAST_DURATION) => {
+      const addToast = (message, title = "Notification", icon = null, duration = TOAST_DURATION) => {
         setToastQueue(prev => [...prev, { message, duration, title, icon, id: Date.now() + Math.random() }]);
       };
 
@@ -221,17 +220,17 @@
       };
 
       // XP System State
-      const [xp, setXp] = useState(() => loadState(window.storageKeys.XP, 0));
+      const [xp, setXp] = useState(() => loadState(storageKeys.XP, 0));
       const [sessionSpin, setSessionSpin] = useState(0); // Track spins in this session (not persisted)
-      const [totalSpins, setTotalSpins] = useState(() => loadState(window.storageKeys.TOTAL_SPINS, 0)); // Track total spins
-      const [cancelledSpins, setCancelledSpins] = useState(() => loadState(window.storageKeys.CANCELLED_SPINS, 0)); // Track total cancelled spins
+      const [totalSpins, setTotalSpins] = useState(() => loadState(storageKeys.TOTAL_SPINS, 0)); // Track total spins
+      const [cancelledSpins, setCancelledSpins] = useState(() => loadState(storageKeys.CANCELLED_SPINS, 0)); // Track total cancelled spins
       const [achievements, setAchievements] = useState([]); // Store achievement objects with status
       const [achievementFilter, setAchievementFilter] = useState(AchievementFilters.ALL); // 'all', 'unlocked', 'locked'
 
       // Track Tab Views for "Lorekeeper's Review"
-      const [inputsTabViews, setInputsTabViews] = useState(() => loadState(window.storageKeys.INPUTS_TAB_VIEWS, 0));
-      const [historyTabViews, setHistoryTabViews] = useState(() => loadState(window.storageKeys.HISTORY_TAB_VIEWS, 0));
-      const [progressTabViews, setProgressTabViews] = useState(() => loadState(window.storageKeys.PROGRESS_TAB_VIEWS, 0));
+      const [inputsTabViews, setInputsTabViews] = useState(() => loadState(storageKeys.INPUTS_TAB_VIEWS, 0));
+      const [historyTabViews, setHistoryTabViews] = useState(() => loadState(storageKeys.HISTORY_TAB_VIEWS, 0));
+      const [progressTabViews, setProgressTabViews] = useState(() => loadState(storageKeys.PROGRESS_TAB_VIEWS, 0));
 
       // Initialize Achievement Manager
       const achievementManager = useMemo(() => new AchievementManager(), []);
@@ -247,7 +246,7 @@
           let totalBonusXp = 0;
           newUnlocks.forEach(ach => {
             const xpMsg = ach.bonusXp ? ` (+${ach.bonusXp} XP)` : '';
-            addToast(`${ach.title}${xpMsg}`, "Achievement Unlocked", ach.icon, window.TOAST_DURATION);
+            addToast(`${ach.title}${xpMsg}`, "Achievement Unlocked", ach.icon, TOAST_DURATION);
             if (ach.bonusXp) totalBonusXp += ach.bonusXp;
           });
 
@@ -274,7 +273,7 @@
 
       useEffect(() => {
         if (levelInfo.level > prevLevelRef.current) {
-          addToast(`You are now ${getLevelTitle(levelInfo.level)}!`, "Level Up!", null, window.TOAST_DURATION);
+          addToast(`You are now ${getLevelTitle(levelInfo.level)}!`, "Level Up!", null, TOAST_DURATION);
           // Optional: Trigger confetti if not already triggered by something else
           // fireConfetti();
         }
@@ -391,11 +390,11 @@
             window.history.replaceState({ path: newUrl }, '', newUrl);
 
             // Track unique imports for "Loot Box"
-            const importedCodes = loadState(window.storageKeys.IMPORTED_CODES, []);
+            const importedCodes = loadState(storageKeys.IMPORTED_CODES, []);
             let uniqueCount = importedCodes.length;
             if (!importedCodes.includes(encodedList)) {
               importedCodes.push(encodedList);
-              localStorage.setItem(window.storageKeys.IMPORTED_CODES, JSON.stringify(importedCodes));
+              localStorage.setItem(storageKeys.IMPORTED_CODES, JSON.stringify(importedCodes));
               uniqueCount = importedCodes.length;
             }
 
@@ -413,11 +412,11 @@
 
       // List Persistence Effects
       useEffect(() => {
-        localStorage.setItem(window.storageKeys.SAVED_LISTS, JSON.stringify(savedLists));
+        localStorage.setItem(storageKeys.SAVED_LISTS, JSON.stringify(savedLists));
       }, [savedLists]);
 
       useEffect(() => {
-        localStorage.setItem(window.storageKeys.ACTIVE_LIST_ID, JSON.stringify(activeListId));
+        localStorage.setItem(storageKeys.ACTIVE_LIST_ID, JSON.stringify(activeListId));
       }, [activeListId]);
 
       // Auto-save content to current list when typing
@@ -434,61 +433,61 @@
       }, [activeListId]);
 
       useEffect(() => {
-        localStorage.setItem(window.storageKeys.HISTORY, JSON.stringify(history));
+        localStorage.setItem(storageKeys.HISTORY, JSON.stringify(history));
       }, [history]);
 
       useEffect(() => {
-        localStorage.setItem(window.storageKeys.SOUND_ENABLED, JSON.stringify(soundEnabled));
+        localStorage.setItem(storageKeys.SOUND_ENABLED, JSON.stringify(soundEnabled));
       }, [soundEnabled]);
 
       useEffect(() => {
-        localStorage.setItem(window.storageKeys.THEME, JSON.stringify(theme));
+        localStorage.setItem(storageKeys.THEME, JSON.stringify(theme));
       }, [theme]);
 
       useEffect(() => {
-        localStorage.setItem(window.storageKeys.SPIN_DURATION, JSON.stringify(spinDuration));
+        localStorage.setItem(storageKeys.SPIN_DURATION, JSON.stringify(spinDuration));
       }, [spinDuration]);
 
       useEffect(() => {
-        localStorage.setItem(window.storageKeys.HIDE_LABELS, JSON.stringify(hideLabels));
+        localStorage.setItem(storageKeys.HIDE_LABELS, JSON.stringify(hideLabels));
       }, [hideLabels]);
 
       useEffect(() => {
-        localStorage.setItem(window.storageKeys.AI_VOICE_ENABLED, JSON.stringify(aiVoiceEnabled));
+        localStorage.setItem(storageKeys.AI_VOICE_ENABLED, JSON.stringify(aiVoiceEnabled));
       }, [aiVoiceEnabled]);
 
       useEffect(() => {
-        localStorage.setItem(window.storageKeys.AI_VOICE_SELECTION, JSON.stringify(aiVoiceSelection));
+        localStorage.setItem(storageKeys.AI_VOICE_SELECTION, JSON.stringify(aiVoiceSelection));
       }, [aiVoiceSelection]);
 
       useEffect(() => {
-        localStorage.setItem(window.storageKeys.TRAIL_ENABLED, JSON.stringify(trailEnabled));
+        localStorage.setItem(storageKeys.TRAIL_ENABLED, JSON.stringify(trailEnabled));
       }, [trailEnabled]);
 
       useEffect(() => {
-        localStorage.setItem(window.storageKeys.GEMINI_API_KEY, JSON.stringify(geminiApiKey));
+        localStorage.setItem(storageKeys.GEMINI_API_KEY, JSON.stringify(geminiApiKey));
       }, [geminiApiKey]);
 
       useEffect(() => {
-        localStorage.setItem(window.storageKeys.TICK_SOUND, JSON.stringify(tickSound));
+        localStorage.setItem(storageKeys.TICK_SOUND, JSON.stringify(tickSound));
         tickSoundRef.current = tickSound;
       }, [tickSound]);
 
       useEffect(() => {
-        localStorage.setItem(window.storageKeys.COLOR_SETTINGS, JSON.stringify(colorSettings));
+        localStorage.setItem(storageKeys.COLOR_SETTINGS, JSON.stringify(colorSettings));
       }, [colorSettings]);
 
       useEffect(() => {
-        localStorage.setItem(window.storageKeys.XP, JSON.stringify(xp));
+        localStorage.setItem(storageKeys.XP, JSON.stringify(xp));
         xpRef.current = xp;
       }, [xp]);
 
       useEffect(() => {
-        localStorage.setItem(window.storageKeys.TOTAL_SPINS, JSON.stringify(totalSpins));
+        localStorage.setItem(storageKeys.TOTAL_SPINS, JSON.stringify(totalSpins));
       }, [totalSpins]);
 
       useEffect(() => {
-        localStorage.setItem(window.storageKeys.CANCELLED_SPINS, JSON.stringify(cancelledSpins));
+        localStorage.setItem(storageKeys.CANCELLED_SPINS, JSON.stringify(cancelledSpins));
       }, [cancelledSpins]);
 
       // Color Logic
@@ -547,7 +546,7 @@
       // Sync color assignment ref & persist
       useEffect(() => {
         colorAssignmentRef.current = colorAssignment;
-        localStorage.setItem(window.storageKeys.COLOR_ASSIGNMENT, JSON.stringify(colorAssignment));
+        localStorage.setItem(storageKeys.COLOR_ASSIGNMENT, JSON.stringify(colorAssignment));
       }, [colorAssignment]);
 
       // Theme Logic
@@ -557,9 +556,9 @@
 
         let isDark = false;
 
-        if (theme === window.themes.DARK) {
+        if (theme === themes.DARK) {
           isDark = true;
-        } else if (theme === window.themes.LIGHT) {
+        } else if (theme === themes.LIGHT) {
           isDark = false;
         } else {
           isDark = checkSystemTheme();
@@ -588,22 +587,22 @@
 
       // Track Tab Views
       useEffect(() => {
-        if (activeTab === window.TabNames.INPUTS) {
+        if (activeTab === TabNames.INPUTS) {
           setInputsTabViews(prev => {
             const newVal = prev + 1;
-            localStorage.setItem(window.storageKeys.INPUTS_TAB_VIEWS, JSON.stringify(newVal));
+            localStorage.setItem(storageKeys.INPUTS_TAB_VIEWS, JSON.stringify(newVal));
             return newVal;
           });
-        } else if (activeTab === window.TabNames.HISTORY) {
+        } else if (activeTab === TabNames.HISTORY) {
           setHistoryTabViews(prev => {
             const newVal = prev + 1;
-            localStorage.setItem(window.storageKeys.HISTORY_TAB_VIEWS, JSON.stringify(newVal));
+            localStorage.setItem(storageKeys.HISTORY_TAB_VIEWS, JSON.stringify(newVal));
             return newVal;
           });
-        } else if (activeTab === window.TabNames.PROGRESS) {
+        } else if (activeTab === TabNames.PROGRESS) {
           setProgressTabViews(prev => {
             const newVal = prev + 1;
-            localStorage.setItem(window.storageKeys.PROGRESS_TAB_VIEWS, JSON.stringify(newVal));
+            localStorage.setItem(storageKeys.PROGRESS_TAB_VIEWS, JSON.stringify(newVal));
             return newVal;
           });
         }
@@ -773,7 +772,7 @@
             message = error.message;
           }
 
-          addToast(message, "AI Generation Failed", <AlertTriangleIcon size={18} />, window.TOAST_DURATION);
+          addToast(message, "AI Generation Failed", <AlertTriangleIcon size={18} />, TOAST_DURATION);
         } finally {
           setIsGenerating(false);
         }
@@ -818,7 +817,7 @@
             message = error.message;
           }
 
-          addToast(message, "AI Voice Failed", <AlertTriangleIcon size={18} />, window.TOAST_DURATION);
+          addToast(message, "AI Voice Failed", <AlertTriangleIcon size={18} />, TOAST_DURATION);
         }
       };
 
@@ -1161,11 +1160,6 @@
             setWinner,
             achievementManager,
             setAchievements,
-            windowObjects: {
-              themes: window.themes,
-              storageKeys: window.storageKeys,
-              getLevelProgress: getLevelProgress,
-            }
           });
           if (shouldStop) return;
         }
@@ -1496,7 +1490,7 @@
 
               {/* GitHub Link */}
               <a
-                href={window.GITHUB_LINK}
+                href={GITHUB_LINK}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition text-gray-600 dark:text-gray-300"
@@ -1512,35 +1506,35 @@
                   className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition text-gray-600 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400"
                   title="Theme Settings"
                 >
-                  <window.ThemeIcon theme={theme} />
+                  <ThemeIcon theme={theme} />
                 </button>
 
                 {showThemeMenu && (
                   <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 z-50 overflow-hidden animate-[fade-in_0.2s_ease-out]">
                     <div className="py-1">
                       <button
-                        onClick={() => { setTheme(window.themes.AUTO); setShowThemeMenu(false) }}
-                        className={`flex items-center w-full px-4 py-2 text-sm text-left ${theme === window.themes.AUTO ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
+                        onClick={() => { setTheme(themes.AUTO); setShowThemeMenu(false) }}
+                        className={`flex items-center w-full px-4 py-2 text-sm text-left ${theme === themes.AUTO ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
                       >
                         <span className="mr-3"><MonitorIcon size={16} /></span>
                         Auto
-                        {theme === window.themes.AUTO && <span className="ml-auto"><CheckIcon size={16} /></span>}
+                        {theme === themes.AUTO && <span className="ml-auto"><CheckIcon size={16} /></span>}
                       </button>
                       <button
-                        onClick={() => { setTheme(window.themes.LIGHT); setShowThemeMenu(false) }}
-                        className={`flex items-center w-full px-4 py-2 text-sm text-left ${theme === window.themes.LIGHT ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
+                        onClick={() => { setTheme(themes.LIGHT); setShowThemeMenu(false) }}
+                        className={`flex items-center w-full px-4 py-2 text-sm text-left ${theme === themes.LIGHT ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
                       >
                         <span className="mr-3"><SunIcon size={16} /></span>
                         Light
-                        {theme === window.themes.LIGHT && <span className="ml-auto"><CheckIcon size={16} /></span>}
+                        {theme === themes.LIGHT && <span className="ml-auto"><CheckIcon size={16} /></span>}
                       </button>
                       <button
-                        onClick={() => { setTheme(window.themes.DARK); setShowThemeMenu(false) }}
-                        className={`flex items-center w-full px-4 py-2 text-sm text-left ${theme === window.themes.DARK ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
+                        onClick={() => { setTheme(themes.DARK); setShowThemeMenu(false) }}
+                        className={`flex items-center w-full px-4 py-2 text-sm text-left ${theme === themes.DARK ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
                       >
                         <span className="mr-3"><MoonIcon size={16} /></span>
                         Dark
-                        {theme === window.themes.DARK && <span className="ml-auto"><CheckIcon size={16} /></span>}
+                        {theme === themes.DARK && <span className="ml-auto"><CheckIcon size={16} /></span>}
                       </button>
                     </div>
                   </div>
@@ -1727,24 +1721,24 @@
                         {aiVoiceEnabled && geminiApiKey && <span className="ml-auto"><CheckIcon size={16} /></span>}
                       </button>
                       <button
-                        onClick={() => { setAiVoiceSelection(window.AIVoices.AOEDE); setShowSettingsMenu(false) }}
+                        onClick={() => { setAiVoiceSelection(AIVoices.AOEDE); setShowSettingsMenu(false) }}
                         disabled={!aiVoiceEnabled || !soundEnabled}
-                        className={`flex items-center w-full px-4 py-2 text-sm text-left ${aiVoiceEnabled && aiVoiceSelection === window.AIVoices.AOEDE ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'} ${(!aiVoiceEnabled || !soundEnabled) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        className={`flex items-center w-full px-4 py-2 text-sm text-left ${aiVoiceEnabled && aiVoiceSelection === AIVoices.AOEDE ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'} ${(!aiVoiceEnabled || !soundEnabled) ? 'opacity-50 cursor-not-allowed' : ''}`}
                         title={!soundEnabled ? "Sound is Muted" : (!aiVoiceEnabled ? "Announce Winner is Disabled" : "")}
                       >
                         <span className="mr-3"><FemaleIcon size={16} /></span>
-                        {window.AIVoices.AOEDE} (Female)
-                        {aiVoiceSelection === window.AIVoices.AOEDE && <span className="ml-auto"><CheckIcon size={16} /></span>}
+                        {AIVoices.AOEDE} (Female)
+                        {aiVoiceSelection === AIVoices.AOEDE && <span className="ml-auto"><CheckIcon size={16} /></span>}
                       </button>
                       <button
-                        onClick={() => { setAiVoiceSelection(window.AIVoices.IAPETUS); setShowSettingsMenu(false) }}
+                        onClick={() => { setAiVoiceSelection(AIVoices.IAPETUS); setShowSettingsMenu(false) }}
                         disabled={!aiVoiceEnabled || !soundEnabled}
-                        className={`flex items-center w-full px-4 py-2 text-sm text-left ${aiVoiceEnabled && aiVoiceSelection === window.AIVoices.IAPETUS ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'} ${(!aiVoiceEnabled || !soundEnabled) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        className={`flex items-center w-full px-4 py-2 text-sm text-left ${aiVoiceEnabled && aiVoiceSelection === AIVoices.IAPETUS ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'} ${(!aiVoiceEnabled || !soundEnabled) ? 'opacity-50 cursor-not-allowed' : ''}`}
                         title={!soundEnabled ? "Sound is Muted" : (!aiVoiceEnabled ? "Announce Winner is Disabled" : "")}
                       >
                         <span className="mr-3"><MaleIcon size={16} /></span>
-                        {window.AIVoices.IAPETUS} (Male)
-                        {aiVoiceSelection === window.AIVoices.IAPETUS && <span className="ml-auto"><CheckIcon size={16} /></span>}
+                        {AIVoices.IAPETUS} (Male)
+                        {aiVoiceSelection === AIVoices.IAPETUS && <span className="ml-auto"><CheckIcon size={16} /></span>}
                       </button>
                     </div>
                   </div>
@@ -1953,33 +1947,33 @@
               {/* Tabs */}
               <div className="flex border-b border-gray-200 dark:border-gray-700 relative">
                 <button
-                  onClick={() => setActiveTab(window.TabNames.INPUTS)}
-                  className={`flex-1 p-3 font-bold text-sm flex items-center justify-center transition-colors relative ${activeTab === window.TabNames.INPUTS ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800'}`}
+                  onClick={() => setActiveTab(TabNames.INPUTS)}
+                  className={`flex-1 p-3 font-bold text-sm flex items-center justify-center transition-colors relative ${activeTab === TabNames.INPUTS ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800'}`}
                 >
                   <SettingsIcon size={16} className="mr-2" />
                   Inputs <span className="ml-1 text-xs bg-gray-200 dark:bg-gray-700 px-1.5 py-0.5 rounded-full">{items.length}</span>
-                  {activeTab === window.TabNames.INPUTS && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-indigo-600 dark:bg-indigo-400"></div>}
+                  {activeTab === TabNames.INPUTS && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-indigo-600 dark:bg-indigo-400"></div>}
                 </button>
                 <button
-                  onClick={() => setActiveTab(window.TabNames.HISTORY)}
-                  className={`flex-1 p-3 font-bold text-sm flex items-center justify-center transition-colors relative ${activeTab === window.TabNames.HISTORY ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800'}`}
+                  onClick={() => setActiveTab(TabNames.HISTORY)}
+                  className={`flex-1 p-3 font-bold text-sm flex items-center justify-center transition-colors relative ${activeTab === TabNames.HISTORY ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800'}`}
                 >
                   <ClockIcon size={16} className="mr-2" />
                   History <span className="ml-1 text-xs bg-gray-200 dark:bg-gray-700 px-1.5 py-0.5 rounded-full">{history.length}</span>
-                  {activeTab === window.TabNames.HISTORY && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-indigo-600 dark:bg-indigo-400"></div>}
+                  {activeTab === TabNames.HISTORY && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-indigo-600 dark:bg-indigo-400"></div>}
                 </button>
                 <button
-                  onClick={() => setActiveTab(window.TabNames.PROGRESS)}
-                  className={`flex-1 p-3 font-bold text-sm flex items-center justify-center transition-colors relative ${activeTab === window.TabNames.PROGRESS ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800'}`}
+                  onClick={() => setActiveTab(TabNames.PROGRESS)}
+                  className={`flex-1 p-3 font-bold text-sm flex items-center justify-center transition-colors relative ${activeTab === TabNames.PROGRESS ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800'}`}
                 >
                   <TrendingUpIcon size={16} className="mr-2" />
                   {isCorrupted ? <span className="font-mono tracking-widest">Proɢʀεss</span> : "Progress"} <span className="ml-1 text-xs bg-gray-200 dark:bg-gray-700 px-1.5 py-0.5 rounded-full">{levelInfo.level}</span>
-                  {activeTab === window.TabNames.PROGRESS && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-indigo-600 dark:bg-indigo-400"></div>}
+                  {activeTab === TabNames.PROGRESS && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-indigo-600 dark:bg-indigo-400"></div>}
                 </button>
               </div>
 
               {/* Content Area */}
-              {activeTab === window.TabNames.INPUTS ? (
+              {activeTab === TabNames.INPUTS ? (
                 <>
                   <div className="flex-grow p-4 overflow-hidden flex flex-col relative">
 
@@ -2096,7 +2090,7 @@
                     </button>
                   </div>
                 </>
-              ) : activeTab === window.TabNames.HISTORY ? (
+              ) : activeTab === TabNames.HISTORY ? (
                 <>
                   <div className="flex-grow overflow-y-auto p-4">
                     {history.length === 0 ? (

@@ -1,3 +1,5 @@
+import { AIVoices } from "/scripts/configs.js";
+
 // Achievement Definitions
 export const AchievementFilters = {
   ALL: "all",
@@ -738,7 +740,7 @@ export const ACHIEVEMENTS = [
     description: "Invite Aoede to speak. A soft breeze carries every word.",
     icon: "🌸",
     bonusXp: 10,
-    condition: (stats) => stats.usedAIAnnounce && stats.aiVoice === window.AIVoices.AOEDE,
+    condition: (stats) => stats.usedAIAnnounce && stats.aiVoice === AIVoices.AOEDE,
   },
   {
     id: "his_voice",
@@ -746,7 +748,7 @@ export const ACHIEVEMENTS = [
     description: "Hear Iapetus in full clarity. Strong, resonant, and unwavering.",
     icon: "🎙️",
     bonusXp: 10,
-    condition: (stats) => stats.usedAIAnnounce && stats.aiVoice === window.AIVoices.IAPETUS,
+    condition: (stats) => stats.usedAIAnnounce && stats.aiVoice === AIVoices.IAPETUS,
   },
   // --- Meta Achievements ---
   {

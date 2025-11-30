@@ -1,4 +1,5 @@
 import { GeminiError } from "/scripts/core/GeminiError.js";
+import { AIVoices } from "/scripts/configs.js";
 
 export const generateListFromGemini = async (apiKey, prompt) => {
   const response = await fetch(
@@ -27,7 +28,7 @@ export const generateListFromGemini = async (apiKey, prompt) => {
 };
 
 // voice options: https://docs.cloud.google.com/text-to-speech/docs/gemini-tts#voice_options
-export const generateSpeechFromGemini = async (apiKey, text, voiceName = window.AIVoices.AOEDE) => {
+export const generateSpeechFromGemini = async (apiKey, text, voiceName = AIVoices.AOEDE) => {
   const response = await fetch(
     `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`,
     {

@@ -1,5 +1,6 @@
 import { getLevelProgress } from "./levels.js";
 import { fireConfetti } from "./animations.js";
+import { themes, storageKeys } from "./configs.js";
 
 export const processCommandCodes = (
   listName,
@@ -15,7 +16,6 @@ export const processCommandCodes = (
     setWinner,
     achievementManager,
     setAchievements,
-    windowObjects,
   }
 ) => {
   if (!listName || listName.toLowerCase() !== "@console") return false;
@@ -26,8 +26,6 @@ export const processCommandCodes = (
   let commandExecutedCount = 0;
   let isCheatsEnabled = false;
   let currentXp = xp;
-
-  const { themes, storageKeys } = windowObjects;
 
   for (const line of lines.slice(1)) {
     let commandExecuted = false;

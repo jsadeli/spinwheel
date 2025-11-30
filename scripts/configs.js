@@ -1,6 +1,7 @@
-const defaultListName = "Lunch Ideas";
+// Configs Module
+export const defaultListName = "Lunch Ideas";
 
-const defaultListItems = [
+export const defaultListItems = [
   "Pizza",
   "Burger",
   "Sushi",
@@ -14,7 +15,7 @@ const defaultListItems = [
   "Fried Rice",
 ];
 
-const storageKeys = {
+export const storageKeys = {
   SAVED_LISTS: "spinWheel_savedLists",
   INPUTS: "spinWheel_inputs", // Legacy
   ACTIVE_LIST_ID: "spinWheel_activeListId",
@@ -41,33 +42,24 @@ const storageKeys = {
   AI_VOICE_SELECTION: "spinWheel_aiVoiceSelection",
 };
 
-const themes = {
+export const themes = {
   AUTO: "auto",
   LIGHT: "light",
   DARK: "dark",
 };
 
-const AIVoices = {
+export const AIVoices = {
   AOEDE: "Aoede",
   IAPETUS: "Iapetus",
 };
 
-const TOAST_DURATION = 5000;
+export const TOAST_DURATION = 5000;
 
-const TabNames = {
+export const TabNames = {
   INPUTS: "inputs",
   HISTORY: "history",
   PROGRESS: "progress",
 };
 
-const GITHUB_LINK = "https://github.com/samuelkripto"; // universally accessible
+export const GITHUB_LINK = "https://github.com/samuelkripto"; // universally accessible
 
-// Expose to window
-window.defaultListName = defaultListName;
-window.defaultListItems = defaultListItems;
-window.storageKeys = storageKeys;
-window.themes = themes;
-window.AIVoices = AIVoices;
-window.TOAST_DURATION = TOAST_DURATION;
-window.TabNames = TabNames;
-window.GITHUB_LINK = GITHUB_LINK;

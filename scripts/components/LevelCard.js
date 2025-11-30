@@ -1,6 +1,6 @@
 import { getLevelTitle } from "/scripts/levels.js";
 
-window.LevelCard = ({ levelInfo, xp, isCorrupted, prestigeTheme }) => {
+const LevelCard = ({ levelInfo, xp, isCorrupted, prestigeTheme }) => {
   const isCosmic = levelInfo.level >= 11;
 
   // Corrupted State Override
@@ -139,3 +139,5 @@ window.LevelCard = ({ levelInfo, xp, isCorrupted, prestigeTheme }) => {
     </div>
   );
 };
+
+window.LevelCard = LevelCard;
