@@ -60,7 +60,7 @@ const TabNames = {
   PROGRESS: "progress",
 };
 
-const GITHUB_LINK = "https://github.com/samuelkripto/spinwheel";
+const GITHUB_LINK = "https://github.com/samuelkripto"; // universally accessible
 
 // Expose to window
 window.defaultListName = defaultListName;
