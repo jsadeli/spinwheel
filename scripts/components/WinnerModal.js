@@ -1,6 +1,6 @@
 import { parseWinnerString } from "/scripts/utils.js";
 
-window.WinnerModal = ({ winner, levelInfo, prestigeTheme, onClose, onRemoveAndSpin }) => {
+const WinnerModal = ({ winner, levelInfo, prestigeTheme, onClose, onRemoveAndSpin }) => {
   if (!winner) return null;
 
   const { useEffect } = React;
@@ -175,3 +175,6 @@ window.WinnerModal = ({ winner, levelInfo, prestigeTheme, onClose, onRemoveAndSp
     </div>
   );
 };
+
+// Expose to window (needed for Babel Standalone)
+window.WinnerModal = WinnerModal;

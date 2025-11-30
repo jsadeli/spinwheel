@@ -7,5 +7,5 @@ const ThemeIcon = ({ theme, size = 24 }) => {
   return <MoonIcon size={size} />;
 };
 
+// Expose to window (needed for Babel Standalone)
 window.ThemeIcon = ThemeIcon;
-

@@ -1,5 +1,5 @@
 // Generic Reusable Modal Component
-window.Modal = ({ isOpen, onClose, title, icon, children, footer, className = "" }) => {
+const Modal = ({ isOpen, onClose, title, icon, children, footer, className = "" }) => {
   if (!isOpen) return null;
 
   const { useEffect } = React;
@@ -49,3 +49,6 @@ window.Modal = ({ isOpen, onClose, title, icon, children, footer, className = ""
     </div>
   );
 };
+
+// Expose to window (needed for Babel Standalone)
+window.Modal = Modal;

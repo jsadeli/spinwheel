@@ -1,5 +1,5 @@
 // Out of Order Overlay Component
-window.OutOfOrderOverlay = ({ isVisible }) => {
+const OutOfOrderOverlay = ({ isVisible }) => {
   if (!isVisible) return null;
 
   const Icon = window.Icon;
@@ -58,3 +58,6 @@ window.OutOfOrderOverlay = ({ isVisible }) => {
     </div>
   );
 };
+
+// Expose to window (needed for Babel Standalone)
+window.OutOfOrderOverlay = OutOfOrderOverlay;

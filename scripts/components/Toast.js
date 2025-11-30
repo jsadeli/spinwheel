@@ -1,5 +1,5 @@
 // Toast Component
-window.Toast = ({
+const Toast = ({
   onClose,
   message,
   title = "Notification",
@@ -109,3 +109,6 @@ window.Toast = ({
     </div>
   );
 };
+
+// Expose to window (needed for Babel Standalone)
+window.Toast = Toast;

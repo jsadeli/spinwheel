@@ -1,7 +1,7 @@
 import { AchievementFilters } from "/scripts/achievements.js";
 import { getRelativeTime } from "/scripts/utils.js";
 
-window.AchievementsList = ({ achievements, achievementFilter, setAchievementFilter }) => {
+const AchievementsList = ({ achievements, achievementFilter, setAchievementFilter }) => {
   return (
     <div className="space-y-3">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 gap-2">
@@ -129,3 +129,6 @@ window.AchievementsList = ({ achievements, achievementFilter, setAchievementFilt
     </div>
   );
 };
+
+// Expose to window (needed for Babel Standalone)
+window.AchievementsList = AchievementsList;

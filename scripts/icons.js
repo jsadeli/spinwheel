@@ -383,7 +383,7 @@ const FemaleIcon = (props) => (
   </Icon>
 );
 
-// Expose to window
+// Expose to window (needed for Babel Standalone)
 window.Icon = Icon;
 window.SpinWheelLogo = SpinWheelLogo;
 window.SettingsIcon = SettingsIcon;
