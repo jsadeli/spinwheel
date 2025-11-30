@@ -5,7 +5,7 @@ const playWinSound = (audioCtxRef, soundEnabled) => {
   const now = ctx.currentTime;
 
   // Helper for playing a tone
-  const playTone = (freq, start, dur, type = 'triangle', vol = 0.1) => {
+  const playTone = (freq, start, dur, type = "triangle", vol = 0.1) => {
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
     osc.type = type;
@@ -20,26 +20,26 @@ const playWinSound = (audioCtxRef, soundEnabled) => {
   };
 
   // A major fanfare sequence (C Major)
-  playTone(523.25, now + 0.0, 0.3, 'square', 0.1); // C5
-  playTone(659.25, now + 0.1, 0.3, 'square', 0.1); // E5
-  playTone(783.99, now + 0.2, 0.3, 'square', 0.1); // G5
+  playTone(523.25, now + 0.0, 0.3, "square", 0.1); // C5
+  playTone(659.25, now + 0.1, 0.3, "square", 0.1); // E5
+  playTone(783.99, now + 0.2, 0.3, "square", 0.1); // G5
 
   // The "Ta-Da" finale (Chord)
-  playTone(523.25, now + 0.3, 1.5, 'triangle', 0.15); // C5
-  playTone(659.25, now + 0.3, 1.5, 'triangle', 0.15); // E5
-  playTone(783.99, now + 0.3, 1.5, 'triangle', 0.15); // G5
-  playTone(1046.50, now + 0.3, 2.0, 'sawtooth', 0.1); // C6 (Top Note, sharper)
+  playTone(523.25, now + 0.3, 1.5, "triangle", 0.15); // C5
+  playTone(659.25, now + 0.3, 1.5, "triangle", 0.15); // E5
+  playTone(783.99, now + 0.3, 1.5, "triangle", 0.15); // G5
+  playTone(1046.5, now + 0.3, 2.0, "sawtooth", 0.1); // C6 (Top Note, sharper)
 };
 
 // Tick Sound Logic
-const playTickSound = (audioCtxRef, soundEnabled, variant = 'default') => {
+const playTickSound = (audioCtxRef, soundEnabled, variant = "default") => {
   if (!soundEnabled || !audioCtxRef.current) return;
 
-  if (variant === 'crisp') return playCrispWoodTickSound(audioCtxRef, soundEnabled);
-  if (variant === 'metallic') return playMetallicClankTickSound(audioCtxRef, soundEnabled);
-  if (variant === 'crystal') return playCrystalGlassTickSound(audioCtxRef, soundEnabled);
+  if (variant === "crisp") return playCrispWoodTickSound(audioCtxRef, soundEnabled);
+  if (variant === "metallic") return playMetallicClankTickSound(audioCtxRef, soundEnabled);
+  if (variant === "crystal") return playCrystalGlassTickSound(audioCtxRef, soundEnabled);
 
-  return playDefaultTickSound(audioCtxRef, soundEnabled)
+  return playDefaultTickSound(audioCtxRef, soundEnabled);
 };
 
 // Tick Sound Logic - Electrical/Plastic Click Sound
@@ -51,7 +51,7 @@ const playDefaultTickSound = (audioCtxRef, soundEnabled) => {
   const osc = ctx.createOscillator();
   const gain = ctx.createGain();
 
-  osc.type = 'square';
+  osc.type = "square";
   osc.frequency.setValueAtTime(600, ctx.currentTime);
   osc.frequency.exponentialRampToValueAtTime(100, ctx.currentTime + 0.05);
 
@@ -74,7 +74,7 @@ const playCrispWoodTickSound = (audioCtxRef, soundEnabled) => {
   // Layer 1: Clean mid-range fundamental (wood body without heavy bass)
   const fundamental = ctx.createOscillator();
   const fundamentalGain = ctx.createGain();
-  fundamental.type = 'sine';
+  fundamental.type = "sine";
   fundamental.frequency.setValueAtTime(280, now); // Mid-range for clarity
   fundamental.frequency.exponentialRampToValueAtTime(220, now + 0.08);
   fundamentalGain.gain.setValueAtTime(0.25, now);
@@ -87,7 +87,7 @@ const playCrispWoodTickSound = (audioCtxRef, soundEnabled) => {
   // Layer 2: Bright harmonic (clarity and presence)
   const harmonic = ctx.createOscillator();
   const harmonicGain = ctx.createGain();
-  harmonic.type = 'triangle';
+  harmonic.type = "triangle";
   harmonic.frequency.setValueAtTime(560, now); // 2x fundamental
   harmonic.frequency.exponentialRampToValueAtTime(440, now + 0.06);
   harmonicGain.gain.setValueAtTime(0.28, now); // Strong for clarity
@@ -100,7 +100,7 @@ const playCrispWoodTickSound = (audioCtxRef, soundEnabled) => {
   // Layer 3: High-frequency definition (crisp character)
   const highTone = ctx.createOscillator();
   const highGain = ctx.createGain();
-  highTone.type = 'sine';
+  highTone.type = "sine";
   highTone.frequency.setValueAtTime(1200, now); // High and clear
   highTone.frequency.exponentialRampToValueAtTime(900, now + 0.05);
   highGain.gain.setValueAtTime(0.2, now); // Prominent for crispness
@@ -113,7 +113,7 @@ const playCrispWoodTickSound = (audioCtxRef, soundEnabled) => {
   // Layer 4: Ultra-crisp shimmer (premium sparkle)
   const shimmer = ctx.createOscillator();
   const shimmerGain = ctx.createGain();
-  shimmer.type = 'sine';
+  shimmer.type = "sine";
   shimmer.frequency.setValueAtTime(2200, now); // Very high for sparkle
   shimmer.frequency.exponentialRampToValueAtTime(1600, now + 0.04);
   shimmerGain.gain.setValueAtTime(0.12, now);
@@ -126,7 +126,7 @@ const playCrispWoodTickSound = (audioCtxRef, soundEnabled) => {
   // Layer 5: Very short percussive attack (the "knock")
   const attack = ctx.createOscillator();
   const attackGain = ctx.createGain();
-  attack.type = 'sawtooth';
+  attack.type = "sawtooth";
   attack.frequency.setValueAtTime(600, now); // Higher for crispness
   attack.frequency.exponentialRampToValueAtTime(300, now + 0.02);
   attackGain.gain.setValueAtTime(0.3, now); // Strong initial attack
@@ -148,12 +148,12 @@ const playCrispWoodTickSound = (audioCtxRef, soundEnabled) => {
 
   // High-pass and low-pass for crisp, clean texture
   const highpass = ctx.createBiquadFilter();
-  highpass.type = 'highpass';
+  highpass.type = "highpass";
   highpass.frequency.value = 300; // Remove muddy lows
   highpass.Q.value = 0.5;
 
   const lowpass = ctx.createBiquadFilter();
-  lowpass.type = 'lowpass';
+  lowpass.type = "lowpass";
   lowpass.frequency.value = 3500; // Keep bright highs
   lowpass.Q.value = 1.0; // Slight resonance for character
 
@@ -177,7 +177,7 @@ const playMetallicClankTickSound = (audioCtxRef, soundEnabled) => {
   // Layer 1: The "Clank" - Low frequency metallic impact
   const impact = ctx.createOscillator();
   const impactGain = ctx.createGain();
-  impact.type = 'square'; // Square wave for a harder, metallic edge
+  impact.type = "square"; // Square wave for a harder, metallic edge
   impact.frequency.setValueAtTime(150, now);
   impact.frequency.exponentialRampToValueAtTime(40, now + 0.1);
   impactGain.gain.setValueAtTime(0.25, now);
@@ -193,11 +193,11 @@ const playMetallicClankTickSound = (audioCtxRef, soundEnabled) => {
   const ratchetGain = ctx.createGain();
   const ratchetFilter = ctx.createBiquadFilter();
 
-  ratchet.type = 'sawtooth';
+  ratchet.type = "sawtooth";
   ratchet.frequency.setValueAtTime(800, now);
   ratchet.frequency.linearRampToValueAtTime(400, now + 0.05); // Pitch drop simulates friction
 
-  ratchetFilter.type = 'bandpass';
+  ratchetFilter.type = "bandpass";
   ratchetFilter.frequency.value = 1200;
   ratchetFilter.Q.value = 2; // Resonant peak for metallic character
 
@@ -213,7 +213,7 @@ const playMetallicClankTickSound = (audioCtxRef, soundEnabled) => {
   // Layer 3: Metallic Ring/Ping - High pitched resonance
   const ring = ctx.createOscillator();
   const ringGain = ctx.createGain();
-  ring.type = 'sine';
+  ring.type = "sine";
   ring.frequency.setValueAtTime(2400, now); // High metallic ping
   ringGain.gain.setValueAtTime(0.08, now);
   ringGain.gain.exponentialRampToValueAtTime(0.001, now + 0.15); // Longer decay for resonance
@@ -227,13 +227,13 @@ const playMetallicClankTickSound = (audioCtxRef, soundEnabled) => {
   const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
   const data = buffer.getChannelData(0);
   for (let i = 0; i < bufferSize; i++) {
-    data[i] = (Math.random() * 2 - 1);
+    data[i] = Math.random() * 2 - 1;
   }
   const noise = ctx.createBufferSource();
   noise.buffer = buffer;
 
   const noiseFilter = ctx.createBiquadFilter();
-  noiseFilter.type = 'highpass';
+  noiseFilter.type = "highpass";
   noiseFilter.frequency.value = 1000; // Remove mud
 
   const noiseGain = ctx.createGain();
@@ -255,7 +255,7 @@ const playCrystalGlassTickSound = (audioCtxRef, soundEnabled) => {
   // Layer 1: The "Ping" - Pure sine wave for the fundamental glass tone
   const fundamental = ctx.createOscillator();
   const fundamentalGain = ctx.createGain();
-  fundamental.type = 'sine';
+  fundamental.type = "sine";
   fundamental.frequency.setValueAtTime(1800, now); // High pitch for crystal
   fundamentalGain.gain.setValueAtTime(0.3, now);
   fundamentalGain.gain.exponentialRampToValueAtTime(0.001, now + 0.6); // Long, clear decay
@@ -267,7 +267,7 @@ const playCrystalGlassTickSound = (audioCtxRef, soundEnabled) => {
   // Layer 2: The "Shimmer" - High harmonic for fragility
   const harmonic = ctx.createOscillator();
   const harmonicGain = ctx.createGain();
-  harmonic.type = 'sine';
+  harmonic.type = "sine";
   harmonic.frequency.setValueAtTime(3200, now); // Very high harmonic
   harmonicGain.gain.setValueAtTime(0.1, now);
   harmonicGain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
@@ -279,7 +279,7 @@ const playCrystalGlassTickSound = (audioCtxRef, soundEnabled) => {
   // Layer 3: The "Tap" - Initial impact
   const tap = ctx.createOscillator();
   const tapGain = ctx.createGain();
-  tap.type = 'triangle';
+  tap.type = "triangle";
   tap.frequency.setValueAtTime(2000, now);
   tap.frequency.exponentialRampToValueAtTime(1000, now + 0.02);
   tapGain.gain.setValueAtTime(0.1, now);
@@ -309,7 +309,7 @@ const playFireCrackle = (audioCtxRef, soundEnabled, isOutOfOrder) => {
 
   // Filter to make it sound more like fire (low rumble + high crackle)
   const filter = ctx.createBiquadFilter();
-  filter.type = 'lowpass';
+  filter.type = "lowpass";
   filter.frequency.value = 1000; // Muffle the harsh white noise
 
   const gain = ctx.createGain();
@@ -333,7 +333,7 @@ const playBreakdownSound = (audioCtxRef, soundEnabled) => {
   const osc = ctx.createOscillator();
   const gain = ctx.createGain();
 
-  osc.type = 'sawtooth';
+  osc.type = "sawtooth";
   osc.frequency.setValueAtTime(100, ctx.currentTime);
   osc.frequency.exponentialRampToValueAtTime(10, ctx.currentTime + 1);
 
@@ -349,7 +349,7 @@ const playBreakdownSound = (audioCtxRef, soundEnabled) => {
 
 // Helper to convert base64 PCM data to WAV Blob
 const base64ToWavBlob = (base64Data) => {
-  const audioBytes = Uint8Array.from(atob(base64Data), c => c.charCodeAt(0));
+  const audioBytes = Uint8Array.from(atob(base64Data), (c) => c.charCodeAt(0));
   // Basic WAV header construction for PCM data
   const wavHeader = new ArrayBuffer(44);
   const view = new DataView(wavHeader);
@@ -361,10 +361,10 @@ const base64ToWavBlob = (base64Data) => {
     for (let i = 0; i < string.length; i++) view.setUint8(offset + i, string.charCodeAt(i));
   };
 
-  writeString(0, 'RIFF');
+  writeString(0, "RIFF");
   view.setUint32(4, 36 + audioBytes.length, true);
-  writeString(8, 'WAVE');
-  writeString(12, 'fmt ');
+  writeString(8, "WAVE");
+  writeString(12, "fmt ");
   view.setUint32(16, 16, true);
   view.setUint16(20, 1, true);
   view.setUint16(22, numChannels, true);
@@ -372,10 +372,10 @@ const base64ToWavBlob = (base64Data) => {
   view.setUint32(28, sampleRate * numChannels * 2, true);
   view.setUint16(32, numChannels * 2, true);
   view.setUint16(34, bitsPerSample, true);
-  writeString(36, 'data');
+  writeString(36, "data");
   view.setUint32(40, audioBytes.length, true);
 
-  return new Blob([wavHeader, audioBytes], { type: 'audio/wav' });
+  return new Blob([wavHeader, audioBytes], { type: "audio/wav" });
 };
 
 // Charge Sound Logic Class
@@ -397,11 +397,11 @@ const ChargeSound = class {
     this.filter = ctx.createBiquadFilter();
 
     // Sawtooth gives a buzzy, mechanical "motor" sound
-    this.osc.type = 'sawtooth';
+    this.osc.type = "sawtooth";
     this.osc.frequency.setValueAtTime(150, ctx.currentTime);
 
     // Configure Lowpass Filter to muffle the digital harshness
-    this.filter.type = 'lowpass';
+    this.filter.type = "lowpass";
     this.filter.frequency.setValueAtTime(400, ctx.currentTime); // Start quite muffled (400Hz)
 
     // Fade in to avoid clicking
@@ -420,7 +420,7 @@ const ChargeSound = class {
     const ctx = this.ctx;
 
     // Base: Ramp pitch from 150Hz to 500Hz based on power (0 to 1)
-    let targetFreq = 150 + (power * 350);
+    let targetFreq = 150 + power * 350;
 
     // Overcharge Logic: If smoke is appearing (>3000ms overcharge), ramp pitch higher
     // Breakdown happens at ~18000ms. We ramp from 3000ms to 18000ms.
@@ -429,26 +429,26 @@ const ChargeSound = class {
       const dangerProgress = Math.min((overchargeTime - 3000) / 15000, 1);
 
       // Add extra pitch (up to +800Hz) to reach ~1300Hz screaming
-      targetFreq += (dangerProgress * 800);
+      targetFreq += dangerProgress * 800;
 
       // Open the filter wide to let the harsh high frequencies through
       if (this.filter) {
-        const filterFreq = 1000 + (dangerProgress * 5000); // Open up to 6000Hz
+        const filterFreq = 1000 + dangerProgress * 5000; // Open up to 6000Hz
         this.filter.frequency.setTargetAtTime(filterFreq, ctx.currentTime, 0.1);
       }
 
       // Increase volume slightly
       if (this.gain) {
-        this.gain.gain.setTargetAtTime(0.15 + (dangerProgress * 0.1), ctx.currentTime, 0.1);
+        this.gain.gain.setTargetAtTime(0.15 + dangerProgress * 0.1, ctx.currentTime, 0.1);
       }
     } else {
       // Normal charging behavior
       if (this.filter) {
-        const filterFreq = 400 + (power * 600); // Cap at 1000Hz for heavy feel
+        const filterFreq = 400 + power * 600; // Cap at 1000Hz for heavy feel
         this.filter.frequency.setTargetAtTime(filterFreq, ctx.currentTime, 0.1);
       }
       if (this.gain) {
-        this.gain.gain.setTargetAtTime(0.1 + (power * 0.05), ctx.currentTime, 0.1);
+        this.gain.gain.setTargetAtTime(0.1 + power * 0.05, ctx.currentTime, 0.1);
       }
     }
 
@@ -478,8 +478,7 @@ const ChargeSound = class {
           if (filter) filter.disconnect();
           if (gain) gain.disconnect();
         }, 200);
-
-      } catch (e) { }
+      } catch (e) {}
 
       this.osc = null;
       this.gain = null;

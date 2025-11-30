@@ -8,19 +8,16 @@ window.Modal = ({ isOpen, onClose, title, icon, children, footer, className = ""
   // Close on Escape key
   useEffect(() => {
     const handleEsc = (e) => {
-      if (e.key === 'Escape') onClose();
+      if (e.key === "Escape") onClose();
     };
-    window.addEventListener('keydown', handleEsc);
-    return () => window.removeEventListener('keydown', handleEsc);
+    window.addEventListener("keydown", handleEsc);
+    return () => window.removeEventListener("keydown", handleEsc);
   }, [onClose]);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 backdrop-blur-sm animate-in fade-in duration-200">
       {/* Backdrop / Overlay */}
-      <div
-        className="absolute inset-0"
-        onClick={onClose}
-      />
+      <div className="absolute inset-0" onClick={onClose} />
 
       {/* Modal Content */}
       <div
@@ -30,11 +27,7 @@ window.Modal = ({ isOpen, onClose, title, icon, children, footer, className = ""
         <div className="flex items-center justify-between px-6 py-4">
           <div className="flex items-center gap-3">
             <h3 className="text-lg font-bold text-gray-800 dark:text-white flex items-center">
-              {icon && (
-                <span className="mr-2 text-indigo-500">
-                  {icon}
-                </span>
-              )}
+              {icon && <span className="mr-2 text-indigo-500">{icon}</span>}
               {title}
             </h3>
           </div>
@@ -48,16 +41,10 @@ window.Modal = ({ isOpen, onClose, title, icon, children, footer, className = ""
         </div>
 
         {/* Scrollable Body */}
-        <div className="flex-1 overflow-y-auto px-6 pb-6 custom-scrollbar">
-          {children}
-        </div>
+        <div className="flex-1 overflow-y-auto px-6 pb-6 custom-scrollbar">{children}</div>
 
         {/* Optional Footer */}
-        {footer && (
-          <div className="px-6 pb-6">
-            {footer}
-          </div>
-        )}
+        {footer && <div className="px-6 pb-6">{footer}</div>}
       </div>
     </div>
   );

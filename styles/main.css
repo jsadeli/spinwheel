@@ -50,7 +50,6 @@ textarea::-webkit-scrollbar-thumb:hover {
 
 /* Loading Screen Animations */
 @keyframes beachBounce {
-
   0%,
   100% {
     transform: translateY(0) rotate(0deg);
@@ -64,7 +63,6 @@ textarea::-webkit-scrollbar-thumb:hover {
 }
 
 @keyframes shadowScale {
-
   0%,
   100% {
     transform: scaleX(1);
@@ -79,7 +77,6 @@ textarea::-webkit-scrollbar-thumb:hover {
 
 /* Out of Order Neon Flicker */
 @keyframes neonFlicker {
-
   0%,
   19%,
   21%,

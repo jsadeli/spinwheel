@@ -1,37 +1,49 @@
-import { AchievementFilters } from '/scripts/achievements.js';
+import { AchievementFilters } from "/scripts/achievements.js";
 
 window.AchievementsList = ({ achievements, achievementFilter, setAchievementFilter }) => {
   return (
     <div className="space-y-3">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 gap-2">
         <h4 className="font-bold text-gray-700 dark:text-gray-300 text-sm uppercase tracking-wider">
-          Achievements ({achievements.filter(a => a.isUnlocked).length}/{achievements.length})
+          Achievements ({achievements.filter((a) => a.isUnlocked).length}/{achievements.length})
         </h4>
 
         {/* Filter Controls */}
         <div className="flex bg-gray-200 dark:bg-gray-700 rounded-lg p-1 self-start sm:self-auto">
           <button
             onClick={() => setAchievementFilter(AchievementFilters.ALL)}
-            className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${achievementFilter === AchievementFilters.ALL ? 'bg-white dark:bg-gray-600 text-indigo-600 dark:text-indigo-400 shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'}`}
+            className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${
+              achievementFilter === AchievementFilters.ALL
+                ? "bg-white dark:bg-gray-600 text-indigo-600 dark:text-indigo-400 shadow-sm"
+                : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+            }`}
           >
             All
           </button>
           <button
             onClick={() => setAchievementFilter(AchievementFilters.UNLOCKED)}
-            className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${achievementFilter === AchievementFilters.UNLOCKED ? 'bg-white dark:bg-gray-600 text-indigo-600 dark:text-indigo-400 shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'}`}
+            className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${
+              achievementFilter === AchievementFilters.UNLOCKED
+                ? "bg-white dark:bg-gray-600 text-indigo-600 dark:text-indigo-400 shadow-sm"
+                : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+            }`}
           >
             Earned
           </button>
           <button
             onClick={() => setAchievementFilter(AchievementFilters.LOCKED)}
-            className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${achievementFilter === AchievementFilters.LOCKED ? 'bg-white dark:bg-gray-600 text-indigo-600 dark:text-indigo-400 shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'}`}
+            className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${
+              achievementFilter === AchievementFilters.LOCKED
+                ? "bg-white dark:bg-gray-600 text-indigo-600 dark:text-indigo-400 shadow-sm"
+                : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+            }`}
           >
             To-Do
           </button>
         </div>
       </div>
       {achievements
-        .filter(ach => {
+        .filter((ach) => {
           if (achievementFilter === AchievementFilters.UNLOCKED) return ach.isUnlocked;
           if (achievementFilter === AchievementFilters.LOCKED) return !ach.isUnlocked;
           return true;
@@ -52,16 +64,20 @@ window.AchievementsList = ({ achievements, achievementFilter, setAchievementFilt
         .map((ach) => (
           <div
             key={ach.id}
-            className={`p-4 rounded-xl border flex items-start space-x-4 transition-all duration-300 ${ach.isUnlocked
-              ? 'bg-white dark:bg-gray-800 border-indigo-200 dark:border-indigo-900 shadow-sm'
-              : 'bg-gray-100 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700 opacity-75'
-              }`}
+            className={`p-4 rounded-xl border flex items-start space-x-4 transition-all duration-300 ${
+              ach.isUnlocked
+                ? "bg-white dark:bg-gray-800 border-indigo-200 dark:border-indigo-900 shadow-sm"
+                : "bg-gray-100 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700 opacity-75"
+            }`}
           >
             {/* Icon */}
-            <div className={`w-12 h-12 rounded-full flex items-center justify-center text-2xl flex-shrink-0 ${ach.isUnlocked
-              ? 'bg-indigo-100 dark:bg-indigo-900/30 shadow-inner'
-              : 'bg-gray-200 dark:bg-gray-700 grayscale'
-              }`}>
+            <div
+              className={`w-12 h-12 rounded-full flex items-center justify-center text-2xl flex-shrink-0 ${
+                ach.isUnlocked
+                  ? "bg-indigo-100 dark:bg-indigo-900/30 shadow-inner"
+                  : "bg-gray-200 dark:bg-gray-700 grayscale"
+              }`}
+            >
               {ach.icon}
             </div>
 
@@ -69,11 +85,21 @@ window.AchievementsList = ({ achievements, achievementFilter, setAchievementFilt
             <div className="flex-grow">
               <div className="flex justify-between items-start">
                 <div className="flex flex-col">
-                  <h5 className={`font-bold text-base ${ach.isUnlocked ? 'text-gray-800 dark:text-gray-100' : 'text-gray-500 dark:text-gray-400'}`}>
+                  <h5
+                    className={`font-bold text-base ${
+                      ach.isUnlocked
+                        ? "text-gray-800 dark:text-gray-100"
+                        : "text-gray-500 dark:text-gray-400"
+                    }`}
+                  >
                     {ach.title}
                   </h5>
                   {ach.bonusXp > 0 && (
-                    <span className={`text-xs font-bold mt-0.5 ${ach.isUnlocked ? 'text-yellow-600 dark:text-yellow-400' : 'text-gray-400'}`}>
+                    <span
+                      className={`text-xs font-bold mt-0.5 ${
+                        ach.isUnlocked ? "text-yellow-600 dark:text-yellow-400" : "text-gray-400"
+                      }`}
+                    >
                       +{ach.bonusXp} XP
                     </span>
                   )}
@@ -83,11 +109,17 @@ window.AchievementsList = ({ achievements, achievementFilter, setAchievementFilt
                     className="text-xs text-indigo-600 dark:text-indigo-400 font-medium bg-indigo-50 dark:bg-indigo-900/20 px-2 py-0.5 rounded-full ml-2 whitespace-nowrap"
                     title={ach.unlockedAt.toISOString()}
                   >
-                    {ach.unlockedAt ? window.getRelativeTime(ach.unlockedAt) : 'Unlocked'}
+                    {ach.unlockedAt ? window.getRelativeTime(ach.unlockedAt) : "Unlocked"}
                   </span>
                 )}
               </div>
-              <p className={`text-sm mt-1 ${ach.isUnlocked ? 'text-gray-600 dark:text-gray-300' : 'text-gray-400 dark:text-gray-500'}`}>
+              <p
+                className={`text-sm mt-1 ${
+                  ach.isUnlocked
+                    ? "text-gray-600 dark:text-gray-300"
+                    : "text-gray-400 dark:text-gray-500"
+                }`}
+              >
                 {ach.description}
               </p>
             </div>

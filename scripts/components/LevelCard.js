@@ -1,4 +1,4 @@
-import { getLevelTitle } from '/scripts/levels.js';
+import { getLevelTitle } from "/scripts/levels.js";
 
 window.LevelCard = ({ levelInfo, xp, isCorrupted, prestigeTheme }) => {
   const isCosmic = levelInfo.level >= 11;
@@ -48,7 +48,13 @@ window.LevelCard = ({ levelInfo, xp, isCorrupted, prestigeTheme }) => {
   }
 
   return (
-    <div className={`relative overflow-hidden rounded-xl mb-4 group ${isCosmic ? 'shadow-[0_0_60px_rgba(139,92,246,0.4)] dark:shadow-[0_0_60px_rgba(139,92,246,0.6)]' : prestigeTheme.shadow}`}>
+    <div
+      className={`relative overflow-hidden rounded-xl mb-4 group ${
+        isCosmic
+          ? "shadow-[0_0_60px_rgba(139,92,246,0.4)] dark:shadow-[0_0_60px_rgba(139,92,246,0.6)]"
+          : prestigeTheme.shadow
+      }`}
+    >
       {/* Dynamic Border/Background */}
       {isCosmic ? (
         <>
@@ -58,11 +64,16 @@ window.LevelCard = ({ levelInfo, xp, isCorrupted, prestigeTheme }) => {
           <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-xl opacity-40 dark:opacity-50"></div>
         </>
       ) : (
-        <div className={`absolute inset-0 ${prestigeTheme.border} opacity-100 dark:opacity-80`}></div>
+        <div
+          className={`absolute inset-0 ${prestigeTheme.border} opacity-100 dark:opacity-80`}
+        ></div>
       )}
 
-      <div className={`relative m-[2px] ${isCosmic ? 'bg-indigo-50 dark:bg-gray-900' : prestigeTheme.cardBg} rounded-[10px] p-5 text-left transition-colors duration-300 overflow-hidden`}>
-
+      <div
+        className={`relative m-[2px] ${
+          isCosmic ? "bg-indigo-50 dark:bg-gray-900" : prestigeTheme.cardBg
+        } rounded-[10px] p-5 text-left transition-colors duration-300 overflow-hidden`}
+      >
         {/* Cosmic Background Effects */}
         {isCosmic && (
           <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-[10px]">
@@ -75,15 +86,27 @@ window.LevelCard = ({ levelInfo, xp, isCorrupted, prestigeTheme }) => {
         )}
 
         <div className={`relative z-10 flex items-center justify-start mb-4 space-x-3`}>
-          <div className={`p-2 ${prestigeTheme.iconBg} rounded-full shadow-sm transition-colors duration-300`}>
-            <TrophyIcon size={24} className={`${prestigeTheme.iconColor} ${levelInfo.level >= 9 ? 'animate-bounce' : ''}`} />
+          <div
+            className={`p-2 ${prestigeTheme.iconBg} rounded-full shadow-sm transition-colors duration-300`}
+          >
+            <TrophyIcon
+              size={24}
+              className={`${prestigeTheme.iconColor} ${
+                levelInfo.level >= 9 ? "animate-bounce" : ""
+              }`}
+            />
           </div>
           <div>
-            <h3 className={`text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r ${prestigeTheme.titleGradient} leading-none`}>
+            <h3
+              className={`text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r ${prestigeTheme.titleGradient} leading-none`}
+            >
               {getLevelTitle(levelInfo.level)}
             </h3>
-            <p className={`text-sm ${prestigeTheme.textColor} font-bold mt-1 uppercase tracking-widest text-xs`}>
-              Level {levelInfo.level} <span className={`mx-2 ${prestigeTheme.accentColor}`}>•</span> {xp} XP
+            <p
+              className={`text-sm ${prestigeTheme.textColor} font-bold mt-1 uppercase tracking-widest text-xs`}
+            >
+              Level {levelInfo.level} <span className={`mx-2 ${prestigeTheme.accentColor}`}>•</span>{" "}
+              {xp} XP
             </p>
           </div>
         </div>
@@ -104,8 +127,12 @@ window.LevelCard = ({ levelInfo, xp, isCorrupted, prestigeTheme }) => {
           </div>
         </div>
 
-        <div className={`relative z-10 flex justify-between text-[10px] font-bold ${prestigeTheme.textColor} opacity-60 mt-2 px-1 uppercase tracking-wider`}>
-          <span>{Math.floor(levelInfo.currentLevelXp)} XP ({Math.round(levelInfo.progressPercent)}%)</span>
+        <div
+          className={`relative z-10 flex justify-between text-[10px] font-bold ${prestigeTheme.textColor} opacity-60 mt-2 px-1 uppercase tracking-wider`}
+        >
+          <span>
+            {Math.floor(levelInfo.currentLevelXp)} XP ({Math.round(levelInfo.progressPercent)}%)
+          </span>
           <span>{Math.floor(levelInfo.requiredLevelXp)} XP</span>
         </div>
       </div>

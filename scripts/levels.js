@@ -76,6 +76,6 @@ export const getLevelProgress = (currentXp) => {
     level,
     currentLevelXp: currentXp,
     requiredLevelXp: required,
-    progressPercent: (currentXp / required) * 100
+    progressPercent: (currentXp / required) * 100,
   };
 };

@@ -7,7 +7,6 @@ window.OutOfOrderOverlay = ({ isVisible }) => {
 
   return (
     <div className="fixed inset-0 z-[9999] bg-black/90 flex items-center justify-center overflow-hidden cursor-not-allowed backdrop-blur-sm">
-
       {/* Sparks Generator */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {Array.from({ length: 20 }).map((_, i) => (
@@ -20,8 +19,8 @@ window.OutOfOrderOverlay = ({ isVisible }) => {
               opacity: 0,
               animation: `sparkFlash ${0.2 + Math.random() * 0.5}s infinite`,
               animationDelay: `${Math.random() * 2}s`,
-              transformOrigin: 'center',
-              boxShadow: '0 0 10px #fff, 0 0 20px #fbbf24'
+              transformOrigin: "center",
+              boxShadow: "0 0 10px #fff, 0 0 20px #fbbf24",
             }}
           ></div>
         ))}
@@ -37,10 +36,10 @@ window.OutOfOrderOverlay = ({ isVisible }) => {
         <h1
           className="text-6xl md:text-7xl font-black text-transparent bg-clip-text uppercase tracking-tighter mb-4"
           style={{
-            color: 'rgba(255, 0, 0, 0.1)',
-            WebkitTextStroke: '2px #ff0000',
-            animation: 'neonFlicker 4s infinite alternate',
-            fontFamily: 'Courier New, monospace'
+            color: "rgba(255, 0, 0, 0.1)",
+            WebkitTextStroke: "2px #ff0000",
+            animation: "neonFlicker 4s infinite alternate",
+            fontFamily: "Courier New, monospace",
           }}
         >
           OUT OF ORDER
@@ -55,7 +54,6 @@ window.OutOfOrderOverlay = ({ isVisible }) => {
           CHECKSUM: JEΔFREYSA?ELi <br />
           Please refresh to reboot system.
         </div>
-
       </div>
     </div>
   );

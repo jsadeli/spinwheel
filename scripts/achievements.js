@@ -1,8 +1,8 @@
 // Achievement Definitions
 export const AchievementFilters = {
-  ALL: 'all',
-  UNLOCKED: 'unlocked',
-  LOCKED: 'locked'
+  ALL: "all",
+  UNLOCKED: "unlocked",
+  LOCKED: "locked",
 };
 
 export const ACHIEVEMENTS = [
@@ -82,7 +82,8 @@ export const ACHIEVEMENTS = [
   {
     id: "a_taste_of_fortune",
     title: "A Taste of Fortune",
-    description: "50 spins in one session. The cookie says: 'Your fate is in motion. Keep spinning.'",
+    description:
+      "50 spins in one session. The cookie says: 'Your fate is in motion. Keep spinning.'",
     icon: "🥠",
     bonusXp: 50,
     condition: (stats) => stats.sessionSpin >= 50,
@@ -127,7 +128,7 @@ export const ACHIEVEMENTS = [
     description: "Keeping it classic. Completed a spin with the default electric click.",
     icon: "🖱️",
     bonusXp: 10,
-    condition: (stats) => stats.hasSpun && !stats.soundMuted && stats.tickSound === 'default',
+    condition: (stats) => stats.hasSpun && !stats.soundMuted && stats.tickSound === "default",
   },
   {
     id: "knock_on_wood",
@@ -135,15 +136,16 @@ export const ACHIEVEMENTS = [
     description: "Superstitious? Completed a spin with the crisp wooden sound.",
     icon: "🪵",
     bonusXp: 10,
-    condition: (stats) => stats.hasSpun && !stats.soundMuted && stats.tickSound === 'crisp',
+    condition: (stats) => stats.hasSpun && !stats.soundMuted && stats.tickSound === "crisp",
   },
   {
     id: "heavy_metal",
     title: "Heavy Metal",
-    description: "Industrial grade decision making. Completed a spin with the metallic clank sound.",
+    description:
+      "Industrial grade decision making. Completed a spin with the metallic clank sound.",
     icon: "⚙️",
     bonusXp: 10,
-    condition: (stats) => stats.hasSpun && !stats.soundMuted && stats.tickSound === 'metallic',
+    condition: (stats) => stats.hasSpun && !stats.soundMuted && stats.tickSound === "metallic",
   },
   {
     id: "crystal_glass",
@@ -151,7 +153,7 @@ export const ACHIEVEMENTS = [
     description: "Luxurious decision making. Completed a spin with the crystal glass sound.",
     icon: "🍷️",
     bonusXp: 10,
-    condition: (stats) => stats.hasSpun && !stats.soundMuted && stats.tickSound === 'crystal',
+    condition: (stats) => stats.hasSpun && !stats.soundMuted && stats.tickSound === "crystal",
   },
   // --- Other Spins ---
   {
@@ -254,7 +256,8 @@ export const ACHIEVEMENTS = [
   {
     id: "one_small_step",
     title: "One Small Step",
-    description: "Lift-off achieved. Your spinning career has officially cleared the tutorial zone.",
+    description:
+      "Lift-off achieved. Your spinning career has officially cleared the tutorial zone.",
     icon: "🚀",
     bonusXp: 5,
     condition: (stats) => stats.level >= 2 && stats.hasSpun,
@@ -262,7 +265,8 @@ export const ACHIEVEMENTS = [
   {
     id: "spinner_adept",
     title: "Spinner Adept",
-    description: "Your skill in the spin arts grows with each rotation. You now live in the 3rd circle of spinner knowledge.",
+    description:
+      "Your skill in the spin arts grows with each rotation. You now live in the 3rd circle of spinner knowledge.",
     icon: "🎯",
     bonusXp: 10,
     condition: (stats) => stats.level >= 3 && stats.hasSpun,
@@ -270,7 +274,8 @@ export const ACHIEVEMENTS = [
   {
     id: "spinaholic",
     title: "Spinaholic",
-    description: "Crossed the threshold where casuals stop and enthusiasts begin. 4th gear engaged.",
+    description:
+      "Crossed the threshold where casuals stop and enthusiasts begin. 4th gear engaged.",
     icon: "🎡",
     bonusXp: 10,
     condition: (stats) => stats.level >= 4 && stats.hasSpun,
@@ -278,7 +283,8 @@ export const ACHIEVEMENTS = [
   {
     id: "phd_in_roundabout_solutions",
     title: "PhD in Roundabout Solutions",
-    description: "Risen high enough to qualify for advanced coursework. Only 5% survive this syllabus.",
+    description:
+      "Risen high enough to qualify for advanced coursework. Only 5% survive this syllabus.",
     icon: "🎓",
     bonusXp: 20,
     condition: (stats) => stats.level >= 5 && stats.hasSpun,
@@ -286,7 +292,8 @@ export const ACHIEVEMENTS = [
   {
     id: "chaos_technician",
     title: "Chaos Technician",
-    description: "Reached the domain where only 6 hands are steady enough to manage this much entropy.",
+    description:
+      "Reached the domain where only 6 hands are steady enough to manage this much entropy.",
     icon: "👷",
     bonusXp: 30,
     condition: (stats) => stats.level >= 6 && stats.hasSpun,
@@ -359,7 +366,8 @@ export const ACHIEVEMENTS = [
   {
     id: "glitch_in_the_matrix",
     title: "Glitch in the Matrix",
-    description: "Probability has been rewritten. The Architect approves your 50 identical outcomes.",
+    description:
+      "Probability has been rewritten. The Architect approves your 50 identical outcomes.",
     icon: "🐈‍⬛",
     bonusXp: 500,
     condition: (stats) => stats.consecutiveWins >= 50,
@@ -432,7 +440,8 @@ export const ACHIEVEMENTS = [
   {
     id: "illusionist",
     title: "Illusionist",
-    description: "Spin a list where every option is the same. (We admire your commitment to the illusion of choice.)",
+    description:
+      "Spin a list where every option is the same. (We admire your commitment to the illusion of choice.)",
     icon: "🪄",
     bonusXp: 20,
     condition: (stats) => stats.allIdentical && stats.itemCount >= 2,
@@ -506,7 +515,8 @@ export const ACHIEVEMENTS = [
   {
     id: "progress_enthusiast",
     title: "Progress Enthusiast",
-    description: "More than 100 visits to your records. You inspect that tab like it owes you money.",
+    description:
+      "More than 100 visits to your records. You inspect that tab like it owes you money.",
     icon: "📈",
     bonusXp: 20,
     condition: (stats) => stats.progressTabViews >= 100,
@@ -637,7 +647,8 @@ export const ACHIEVEMENTS = [
   {
     id: "silver_spark",
     title: "Silver Spark",
-    description: "Spun while radiating that early-stage metallic shimmer. Fresh, bright, and just getting started.",
+    description:
+      "Spun while radiating that early-stage metallic shimmer. Fresh, bright, and just getting started.",
     icon: "🪙",
     bonusXp: 5,
     condition: (stats) => stats.hasSpun && stats.trailEnabled && stats.level >= 1,
@@ -653,7 +664,8 @@ export const ACHIEVEMENTS = [
   {
     id: "emerald_swirl",
     title: "Emerald Swirl",
-    description: "A vivid green arc followed your spin. That vibrant hue appears only once you have ventured deep enough.",
+    description:
+      "A vivid green arc followed your spin. That vibrant hue appears only once you have ventured deep enough.",
     icon: "💚",
     bonusXp: 20,
     condition: (stats) => stats.hasSpun && stats.trailEnabled && stats.level >= 5,
@@ -661,7 +673,8 @@ export const ACHIEVEMENTS = [
   {
     id: "topaz_trace",
     title: "Topaz Trace",
-    description: "Spun with a warm, gem-bright yellow streak trailing you. Only mid-ascenders radiate this kind of polish.",
+    description:
+      "Spun with a warm, gem-bright yellow streak trailing you. Only mid-ascenders radiate this kind of polish.",
     icon: "🔷",
     bonusXp: 40,
     condition: (stats) => stats.hasSpun && stats.trailEnabled && stats.level >= 7,
@@ -669,7 +682,8 @@ export const ACHIEVEMENTS = [
   {
     id: "ruby_reverb",
     title: "Ruby Reverb",
-    description: "Your trail pulsed with a deep crimson glow. That shade appears only to those approaching the summit.",
+    description:
+      "Your trail pulsed with a deep crimson glow. That shade appears only to those approaching the summit.",
     icon: "♦️",
     bonusXp: 60,
     condition: (stats) => stats.hasSpun && stats.trailEnabled && stats.level >= 8,
@@ -677,7 +691,8 @@ export const ACHIEVEMENTS = [
   {
     id: "golden_slipstream",
     title: "Golden Slipstream",
-    description: "Radiant golden trail reserved for those standing just shy of mastery. The wheel now recognizes royalty.",
+    description:
+      "Radiant golden trail reserved for those standing just shy of mastery. The wheel now recognizes royalty.",
     icon: "💫",
     bonusXp: 100,
     condition: (stats) => stats.hasSpun && stats.trailEnabled && stats.level >= 9,
@@ -685,7 +700,8 @@ export const ACHIEVEMENTS = [
   {
     id: "quantum_wake",
     title: "Quantum Wake",
-    description: "Your spin left a quantum distortion trail behind. Probability is filing a complaint.",
+    description:
+      "Your spin left a quantum distortion trail behind. Probability is filing a complaint.",
     icon: "⚛️",
     bonusXp: 500,
     condition: (stats) => stats.hasSpun && stats.trailEnabled && stats.level >= 10,
@@ -693,7 +709,8 @@ export const ACHIEVEMENTS = [
   {
     id: "cosmic_drift",
     title: "Cosmic Drift",
-    description: "Your trail shimmered with stardust patterns not found in any earthly spectrum. Only those who spin beyond the divine ever see this glow.",
+    description:
+      "Your trail shimmered with stardust patterns not found in any earthly spectrum. Only those who spin beyond the divine ever see this glow.",
     icon: "🌌",
     bonusXp: 1000,
     condition: (stats) => stats.hasSpun && stats.trailEnabled && stats.level >= 11,
@@ -743,7 +760,8 @@ export const ACHIEVEMENTS = [
   {
     id: "halfway_hero",
     title: "Halfway Hero",
-    description: "50 percent of achievements unlocked. Statistically impressive. Emotionally questionable.",
+    description:
+      "50 percent of achievements unlocked. Statistically impressive. Emotionally questionable.",
     icon: "😤",
     bonusXp: 200,
     condition: (stats) => stats.unlockedCount >= Math.floor(ACHIEVEMENTS.length / 2),
@@ -751,7 +769,8 @@ export const ACHIEVEMENTS = [
   {
     id: "legendary_grindlord_80",
     title: "Legendary Grindlord",
-    description: "You have cleared 80 percent of all achievements. The grind is no longer a choice. It is your destiny.",
+    description:
+      "You have cleared 80 percent of all achievements. The grind is no longer a choice. It is your destiny.",
     icon: "🎖️",
     bonusXp: 300,
     condition: (stats) => stats.unlockedCount >= Math.floor(ACHIEVEMENTS.length * 0.8),
@@ -782,7 +801,7 @@ export const ACHIEVEMENTS = [
     bonusXp: 100,
     condition: (stats) => {
       const cakeEmojis = ["🍰", "🎂", "🧁", "🍥"];
-      return cakeEmojis.some(emoji => stats.winnerId && stats.winnerId.includes(emoji));
+      return cakeEmojis.some((emoji) => stats.winnerId && stats.winnerId.includes(emoji));
     },
   },
   {

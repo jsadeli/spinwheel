@@ -221,7 +221,7 @@ const spawnSmoke = (smokeContainerRef, overchargeRef, playFireCrackle) => {
   // Probability to spawn a particle this frame
   if (Math.random() > 0.1 + intensity * 0.5) return;
 
-  const el = document.createElement('div');
+  const el = document.createElement("div");
   let size = 10 + Math.random() * 20 + intensity * 30;
 
   // Phase 3: Double size for the smoke
@@ -242,10 +242,10 @@ const spawnSmoke = (smokeContainerRef, overchargeRef, playFireCrackle) => {
   el.style.width = `${size}px`;
   el.style.height = `${size}px`;
   el.style.background = color;
-  el.style.position = 'absolute';
-  el.style.borderRadius = '50%';
-  el.style.filter = 'blur(8px)';
-  el.style.pointerEvents = 'none';
+  el.style.position = "absolute";
+  el.style.borderRadius = "50%";
+  el.style.filter = "blur(8px)";
+  el.style.pointerEvents = "none";
 
   // Random position around center
   const angle = Math.random() * Math.PI * 2;
@@ -258,7 +258,7 @@ const spawnSmoke = (smokeContainerRef, overchargeRef, playFireCrackle) => {
   el.style.top = `calc(${top}% - ${size / 2}px)`;
 
   // Random rotation
-  el.style.setProperty('--rot', `${(Math.random() - 0.5) * 360}deg`);
+  el.style.setProperty("--rot", `${(Math.random() - 0.5) * 360}deg`);
 
   el.style.animation = `smokeRise ${1 + Math.random()}s forwards`;
 
@@ -271,19 +271,19 @@ const spawnSmoke = (smokeContainerRef, overchargeRef, playFireCrackle) => {
     if (Math.random() > 0.8) playFireCrackle();
 
     if (Math.random() > 0.5) {
-      const fire = document.createElement('div');
+      const fire = document.createElement("div");
       // Increased fire particle size for better visibility
       const fSize = 50 + Math.random() * 25;
-      const fColors = ['#ef4444', '#f97316', '#eab308']; // Red, Orange, Yellow
+      const fColors = ["#ef4444", "#f97316", "#eab308"]; // Red, Orange, Yellow
       const fColor = fColors[Math.floor(Math.random() * fColors.length)];
 
       fire.style.width = `${fSize}px`;
       fire.style.height = `${fSize}px`;
       fire.style.background = fColor;
-      fire.style.position = 'absolute';
-      fire.style.borderRadius = '50%';
-      fire.style.filter = 'blur(4px)';
-      fire.style.pointerEvents = 'none';
+      fire.style.position = "absolute";
+      fire.style.borderRadius = "50%";
+      fire.style.filter = "blur(4px)";
+      fire.style.pointerEvents = "none";
 
       // Fire spawns tighter to the center
       const fLeft = 50 + (Math.random() - 0.5) * 30;
@@ -327,116 +327,118 @@ const drawWheelTrail = (ctx, centerX, centerY, radius, rotation, velocity, level
   const trailRadius = radius;
   let lineWidth = 6;
   let shadowBlur = 0;
-  let shadowColor = 'transparent';
+  let shadowColor = "transparent";
   let gradientStops = [];
   let hasSparkles = false;
-  let sparkleColor = '#fff';
+  let sparkleColor = "#fff";
   let sparkleChance = 0;
 
   // Define Tier Styles
   if (level >= 11) { // Cosmic
     gradientStops = [
-      { pos: 0, color: 'rgba(236, 72, 153, 0)' },   // Pink transparent
-      { pos: 0.5, color: 'rgba(217, 70, 239, 0.6)' }, // Fuchsia
-      { pos: 1, color: 'rgba(139, 92, 246, 0.9)' }    // Violet opaque
+      { pos: 0, color: "rgba(236, 72, 153, 0)" }, // Pink transparent
+      { pos: 0.5, color: "rgba(217, 70, 239, 0.6)" }, // Fuchsia
+      { pos: 1, color: "rgba(139, 92, 246, 0.9)" }, // Violet opaque
     ];
     shadowBlur = 25;
-    shadowColor = '#8b5cf6';
+    shadowColor = "#8b5cf6";
     lineWidth = 10;
     hasSparkles = true;
-    sparkleColor = '#6366f1'; // Indigo
+    sparkleColor = "#6366f1"; // Indigo
     sparkleChance = 0.7;
   } else if (level >= 10) { // Diamond
     gradientStops = [
-      { pos: 0, color: 'rgba(34, 211, 238, 0)' },    // Cyan transparent
-      { pos: 0.5, color: 'rgba(99, 102, 241, 0.6)' }, // Indigo
-      { pos: 1, color: 'rgba(168, 85, 247, 0.9)' }    // Purple opaque
+      { pos: 0, color: "rgba(34, 211, 238, 0)" }, // Cyan transparent
+      { pos: 0.5, color: "rgba(99, 102, 241, 0.6)" }, // Indigo
+      { pos: 1, color: "rgba(168, 85, 247, 0.9)" }, // Purple opaque
     ];
     shadowBlur = 20;
-    shadowColor = '#22d3ee';
+    shadowColor = "#22d3ee";
     lineWidth = 9;
     hasSparkles = true;
-    sparkleColor = '#e0f2fe'; // Light Blue
+    sparkleColor = "#e0f2fe"; // Light Blue
     sparkleChance = 0.75;
   } else if (level >= 9) { // Gold
     gradientStops = [
-      { pos: 0, color: 'rgba(253, 224, 71, 0)' },    // Yellow transparent
-      { pos: 0.5, color: 'rgba(234, 179, 8, 0.6)' },  // Amber
-      { pos: 1, color: 'rgba(245, 158, 11, 0.9)' }    // Orange opaque
+      { pos: 0, color: "rgba(253, 224, 71, 0)" }, // Yellow transparent
+      { pos: 0.5, color: "rgba(234, 179, 8, 0.6)" }, // Amber
+      { pos: 1, color: "rgba(245, 158, 11, 0.9)" }, // Orange opaque
     ];
     shadowBlur = 20;
-    shadowColor = '#fbbf24';
+    shadowColor = "#fbbf24";
     lineWidth = 8;
     hasSparkles = true;
-    sparkleColor = '#fffbeb'; // Warm White
+    sparkleColor = "#fffbeb"; // Warm White
     sparkleChance = 0.8;
   } else if (level >= 8) { // Ruby
     gradientStops = [
-      { pos: 0, color: 'rgba(251, 113, 133, 0)' },   // Rose transparent
-      { pos: 0.6, color: 'rgba(239, 68, 68, 0.6)' },  // Red
-      { pos: 1, color: 'rgba(225, 29, 72, 0.9)' }     // Dark Red opaque
+      { pos: 0, color: "rgba(251, 113, 133, 0)" }, // Rose transparent
+      { pos: 0.6, color: "rgba(239, 68, 68, 0.6)" }, // Red
+      { pos: 1, color: "rgba(225, 29, 72, 0.9)" }, // Dark Red opaque
     ];
     shadowBlur = 20;
-    shadowColor = '#ef4444';
+    shadowColor = "#ef4444";
     lineWidth = 8;
     hasSparkles = true; // Fire sparks
-    sparkleColor = '#fbbf24'; // Amber sparks
+    sparkleColor = "#fbbf24"; // Amber sparks
     sparkleChance = 0.8;
   } else if (level >= 7) { // Topaz
     gradientStops = [
-      { pos: 0, color: 'rgba(103, 232, 249, 0)' },   // Cyan transparent
-      { pos: 0.5, color: 'rgba(6, 182, 212, 0.6)' },  // Cyan
-      { pos: 1, color: 'rgba(59, 130, 246, 0.8)' }    // Blue opaque
+      { pos: 0, color: "rgba(103, 232, 249, 0)" }, // Cyan transparent
+      { pos: 0.5, color: "rgba(6, 182, 212, 0.6)" }, // Cyan
+      { pos: 1, color: "rgba(59, 130, 246, 0.8)" }, // Blue opaque
     ];
     shadowBlur = 15;
-    shadowColor = '#06b6d4';
+    shadowColor = "#06b6d4";
     lineWidth = 7;
   } else if (level >= 5) { // Emerald
     gradientStops = [
-      { pos: 0, color: 'rgba(52, 211, 153, 0)' },    // Emerald transparent
-      { pos: 1, color: 'rgba(16, 185, 129, 0.8)' }    // Emerald opaque
+      { pos: 0, color: "rgba(52, 211, 153, 0)" }, // Emerald transparent
+      { pos: 1, color: "rgba(16, 185, 129, 0.8)" }, // Emerald opaque
     ];
     shadowBlur = 15;
-    shadowColor = '#10b981';
+    shadowColor = "#10b981";
     lineWidth = 6;
   } else if (level >= 3) { // Bronze
     gradientStops = [
-      { pos: 0, color: 'rgba(253, 186, 116, 0)' },   // Orange transparent
-      { pos: 1, color: 'rgba(234, 88, 12, 0.8)' }     // Dark Orange opaque
+      { pos: 0, color: "rgba(253, 186, 116, 0)" }, // Orange transparent
+      { pos: 1, color: "rgba(234, 88, 12, 0.8)" }, // Dark Orange opaque
     ];
     shadowBlur = 10;
-    shadowColor = '#f97316';
+    shadowColor = "#f97316";
     lineWidth = 5;
   } else if (level >= 1) { // Silver
     gradientStops = [
-      { pos: 0, color: 'rgba(148, 163, 184, 0)' },   // Slate transparent
-      { pos: 1, color: 'rgba(71, 85, 105, 0.6)' }     // Slate opaque
+      { pos: 0, color: "rgba(148, 163, 184, 0)" }, // Slate transparent
+      { pos: 1, color: "rgba(71, 85, 105, 0.6)" }, // Slate opaque
     ];
     shadowBlur = 5;
-    shadowColor = '#94a3b8';
+    shadowColor = "#94a3b8";
     lineWidth = 4;
   } else { // Basic
-    const baseColor = isDark ? '255, 255, 255' : '0, 0, 0';
+    const baseColor = isDark ? "255, 255, 255" : "0, 0, 0";
     gradientStops = [
       { pos: 0, color: `rgba(${baseColor}, 0)` },
-      { pos: 1, color: `rgba(${baseColor}, 0.3)` }
+      { pos: 1, color: `rgba(${baseColor}, 0.3)` },
     ];
     lineWidth = 4;
   }
 
   // Draw Gradient Trail
   const gradient = ctx.createLinearGradient(
-    centerX + Math.cos(startAngle) * trailRadius, centerY + Math.sin(startAngle) * trailRadius,
-    centerX + Math.cos(endAngle) * trailRadius, centerY + Math.sin(endAngle) * trailRadius
+    centerX + Math.cos(startAngle) * trailRadius,
+    centerY + Math.sin(startAngle) * trailRadius,
+    centerX + Math.cos(endAngle) * trailRadius,
+    centerY + Math.sin(endAngle) * trailRadius
   );
 
-  gradientStops.forEach(stop => gradient.addColorStop(stop.pos, stop.color));
+  gradientStops.forEach((stop) => gradient.addColorStop(stop.pos, stop.color));
 
   ctx.beginPath();
   ctx.arc(centerX, centerY, trailRadius, startAngle, endAngle);
   ctx.strokeStyle = gradient;
   ctx.lineWidth = lineWidth;
-  ctx.lineCap = 'round';
+  ctx.lineCap = "round";
   if (shadowBlur > 0) {
     ctx.shadowBlur = shadowBlur;
     ctx.shadowColor = shadowColor;
@@ -454,7 +456,7 @@ const drawWheelTrail = (ctx, centerX, centerY, radius, rotation, velocity, level
     const sx = centerX + Math.cos(sparkAngle) * sparkR;
     const sy = centerY + Math.sin(sparkAngle) * sparkR;
 
-    ctx.fillStyle = Math.random() > 0.5 ? '#fff' : sparkleColor;
+    ctx.fillStyle = Math.random() > 0.5 ? "#fff" : sparkleColor;
     ctx.globalAlpha = Math.random();
     ctx.fillRect(sx, sy, 2, 2);
     ctx.globalAlpha = 1.0;

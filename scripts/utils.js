@@ -1,6 +1,6 @@
 // Helper function to load state from localStorage
 const loadState = (key, defaultValue) => {
-  if (typeof window === 'undefined') return defaultValue;
+  if (typeof window === "undefined") return defaultValue;
   try {
     const stored = localStorage.getItem(key);
     return stored !== null ? JSON.parse(stored) : defaultValue;
@@ -12,38 +12,39 @@ const loadState = (key, defaultValue) => {
 
 // Helper for relative time
 const getRelativeTime = (date) => {
-  if (!date) return '';
+  if (!date) return "";
   const now = new Date();
   const diffInSeconds = Math.floor((now - new Date(date)) / 1000);
-  const rtf = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
+  const rtf = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
 
-  if (diffInSeconds < 60) return 'just now'; // cosmetic preference for very recent events
+  if (diffInSeconds < 60) return "just now"; // cosmetic preference for very recent events
   // OR use: return rtf.format(-diffInSeconds, 'second');
 
   const diffInMinutes = Math.floor(diffInSeconds / 60);
-  if (diffInMinutes < 60) return rtf.format(-diffInMinutes, 'minute');
+  if (diffInMinutes < 60) return rtf.format(-diffInMinutes, "minute");
 
   const diffInHours = Math.floor(diffInMinutes / 60);
-  if (diffInHours < 24) return rtf.format(-diffInHours, 'hour');
+  if (diffInHours < 24) return rtf.format(-diffInHours, "hour");
 
   const diffInDays = Math.floor(diffInHours / 24);
-  if (diffInDays < 7) return rtf.format(-diffInDays, 'day');
+  if (diffInDays < 7) return rtf.format(-diffInDays, "day");
 
   const diffInWeeks = Math.floor(diffInDays / 7);
-  if (diffInWeeks < 4) return rtf.format(-diffInWeeks, 'week');
+  if (diffInWeeks < 4) return rtf.format(-diffInWeeks, "week");
 
   const diffInMonths = Math.floor(diffInDays / 30);
-  if (diffInMonths < 12) return rtf.format(-diffInMonths, 'month');
+  if (diffInMonths < 12) return rtf.format(-diffInMonths, "month");
 
   const diffInYears = Math.floor(diffInDays / 365);
-  return rtf.format(-diffInYears, 'year');
+  return rtf.format(-diffInYears, "year");
 };
 
 // Helper to parse text into objects { text, weight }
 const parseItems = (text) => {
-  return text.split('\n')
-    .filter(line => line.trim() !== '')
-    .map(line => {
+  return text
+    .split("\n")
+    .filter((line) => line.trim() !== "")
+    .map((line) => {
       // Check for "Text:Number" pattern
       // Added \s* to allow spaces between colon and number (e.g. "Pizza: 10")
       const match = line.match(/^(.*):\s*(\d+)$/);
@@ -59,11 +60,13 @@ const parseItems = (text) => {
 
 // Helper to convert item objects back to string ("Text:Number") for text area
 const itemsToString = (itemsArray) => {
-  return itemsArray.map(i => {
-    // If the current parsed text + weight matches the original input format, preserve it
-    // Otherwise reconstruct it
-    return i.weight > 1 ? `${i.text}:${i.weight}` : i.text;
-  }).join('\n');
+  return itemsArray
+    .map((i) => {
+      // If the current parsed text + weight matches the original input format, preserve it
+      // Otherwise reconstruct it
+      return i.weight > 1 ? `${i.text}:${i.weight}` : i.text;
+    })
+    .join("\n");
 };
 
 // Helper to copy text to clipboard
@@ -93,12 +96,12 @@ const parseWinnerString = (text) => {
   if (!text) return [];
 
   // Use Intl.Segmenter if available (Modern Browsers)
-  if (typeof Intl.Segmenter !== 'undefined') {
-    const segmenter = new Intl.Segmenter([], { granularity: 'grapheme' });
+  if (typeof Intl.Segmenter !== "undefined") {
+    const segmenter = new Intl.Segmenter([], { granularity: "grapheme" });
     const segments = Array.from(segmenter.segment(text));
 
     const parts = [];
-    let currentPart = { text: '', isEmoji: null };
+    let currentPart = { text: "", isEmoji: null };
 
     for (const { segment } of segments) {
       const isEmo = isEmoji(segment);
