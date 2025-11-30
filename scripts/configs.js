@@ -55,6 +55,11 @@ export const TickSounds = {
   CRYSTAL: "crystal",
 };
 
+export const ColorAssignmentMode = {
+  DYNAMIC: "dynamic",
+  DETERMINISTIC: "deterministic",
+};
+
 export const AIVoices = {
   AOEDE: "Aoede",
   IAPETUS: "Iapetus",

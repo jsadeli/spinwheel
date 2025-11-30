@@ -166,6 +166,7 @@
         TabNames,
         GITHUB_LINK,
         TickSounds,
+        ColorAssignmentMode,
       } from "./scripts/configs.js";
 
       const { useState, useEffect, useRef, useMemo } = React;
@@ -256,7 +257,7 @@
 
         // Color Assignment Mode (Dynamic vs Deterministic)
         const [colorAssignment, setColorAssignment] = useState(() =>
-          loadState(storageKeys.COLOR_ASSIGNMENT, "dynamic")
+          loadState(storageKeys.COLOR_ASSIGNMENT, ColorAssignmentMode.DYNAMIC)
         );
 
         const [activeColors, setActiveColors] = useState(defaultColors);
@@ -1963,7 +1964,9 @@
                         <button
                           onClick={() => {
                             setColorAssignment((prev) =>
-                              prev === "dynamic" ? "deterministic" : "dynamic"
+                              prev === ColorAssignmentMode.DYNAMIC
+                                ? ColorAssignmentMode.DETERMINISTIC
+                                : ColorAssignmentMode.DYNAMIC
                             );
                           }}
                           className="flex items-center w-full px-4 py-2 text-sm text-left text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -1973,7 +1976,7 @@
                           </span>
                           Item Colors:{" "}
                           <span className="ml-1 font-semibold">
-                            {colorAssignment === "dynamic" ? "Dynamic" : "Fixed"}
+                            {colorAssignment === ColorAssignmentMode.DYNAMIC ? "Dynamic" : "Fixed"}
                           </span>
                         </button>
                         <button

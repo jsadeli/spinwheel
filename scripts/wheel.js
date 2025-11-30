@@ -1,6 +1,7 @@
 import { calculateLevel } from "./levels.js";
 import { drawWheelTrail } from "./animations.js";
 import { getItemColor } from "./colors.js";
+import { ColorAssignmentMode } from "/scripts/configs.js";
 
 export const drawWheel = (
   ctx,
@@ -85,7 +86,7 @@ export const drawWheel = (
 
       ctx.closePath();
 
-      if (colorAssignment === "deterministic") {
+      if (colorAssignment === ColorAssignmentMode.DETERMINISTIC) {
         ctx.fillStyle = getItemColor(item.text, colors); // Deterministic colors
       } else {
         ctx.fillStyle = colors[index % colors.length]; // Dynamic colors
