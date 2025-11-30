@@ -78,7 +78,7 @@
   <script type="text/javascript" src="scripts/configs.js"></script>
 
   <!-- Load Core Modules -->
-  <script type="text/javascript" src="scripts/core/AchievementManager.js"></script>
+  <script type="module" src="scripts/core/AchievementManager.js"></script>
   <script type="text/javascript" src="scripts/core/GeminiError.js"></script>
 
   <!-- Load Resources (Inline Icons, Themes, Animations, etc.) -->
@@ -86,7 +86,7 @@
   <script type="text/babel" src="scripts/themes.js"></script>
 
   <!-- Load Data -->
-  <script type="text/javascript" src="scripts/achievements.js"></script>
+  <script type="module" src="scripts/achievements.js"></script>
   <script type="module" src="scripts/levels.js"></script>
 
   <!-- Load Utils -->
@@ -105,12 +105,14 @@
   <script type="text/babel" src="scripts/components/Toast.js"></script>
   <script type="text/babel" src="scripts/components/WinnerModal.js"></script>
   <script type="text/babel" data-type="module" src="scripts/components/LevelCard.js"></script>
-  <script type="text/babel" src="scripts/components/AchievementsList.js"></script>
+  <script type="text/babel" data-type="module" src="scripts/components/AchievementsList.js"></script>
 
   <!-- Load App -->
   <script type="text/babel" data-type="module">
     import { getLevelProgress, getLevelTitle } from './scripts/levels.js';
     import { drawWheel, updatePointer } from './scripts/wheel.js';
+    import { AchievementFilters } from './scripts/achievements.js';
+    import AchievementManager from './scripts/core/AchievementManager.js';
 
     const { useState, useEffect, useRef, useMemo } = React;
     const apiKey = ""; // Provided by environment
@@ -226,7 +228,7 @@
       const [totalSpins, setTotalSpins] = useState(() => loadState(window.storageKeys.TOTAL_SPINS, 0)); // Track total spins
       const [cancelledSpins, setCancelledSpins] = useState(() => loadState(window.storageKeys.CANCELLED_SPINS, 0)); // Track total cancelled spins
       const [achievements, setAchievements] = useState([]); // Store achievement objects with status
-      const [achievementFilter, setAchievementFilter] = useState(window.AchievementFilters.ALL); // 'all', 'unlocked', 'locked'
+      const [achievementFilter, setAchievementFilter] = useState(AchievementFilters.ALL); // 'all', 'unlocked', 'locked'
 
       // Track Tab Views for "Lorekeeper's Review"
       const [inputsTabViews, setInputsTabViews] = useState(() => loadState(window.storageKeys.INPUTS_TAB_VIEWS, 0));
@@ -234,7 +236,7 @@
       const [progressTabViews, setProgressTabViews] = useState(() => loadState(window.storageKeys.PROGRESS_TAB_VIEWS, 0));
 
       // Initialize Achievement Manager
-      const achievementManager = useMemo(() => new window.AchievementManager(), []);
+      const achievementManager = useMemo(() => new AchievementManager(), []);
 
       // Load initial achievements
       useEffect(() => {

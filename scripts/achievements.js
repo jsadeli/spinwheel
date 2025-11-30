@@ -1,11 +1,11 @@
 // Achievement Definitions
-const AchievementFilters = {
+export const AchievementFilters = {
   ALL: 'all',
   UNLOCKED: 'unlocked',
   LOCKED: 'locked'
 };
 
-const ACHIEVEMENTS = [
+export const ACHIEVEMENTS = [
   // --- Spins ---
   {
     id: "hello_world",
@@ -802,7 +802,3 @@ const ACHIEVEMENTS = [
     condition: (stats) => stats.winnerId === "@about",
   },
 ];
-
-// Expose to window
-window.AchievementFilters = AchievementFilters;
-window.ACHIEVEMENTS = ACHIEVEMENTS;

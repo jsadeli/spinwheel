@@ -1,3 +1,5 @@
+import { AchievementFilters } from '/scripts/achievements.js';
+
 window.AchievementsList = ({ achievements, achievementFilter, setAchievementFilter }) => {
   return (
     <div className="space-y-3">
@@ -9,20 +11,20 @@ window.AchievementsList = ({ achievements, achievementFilter, setAchievementFilt
         {/* Filter Controls */}
         <div className="flex bg-gray-200 dark:bg-gray-700 rounded-lg p-1 self-start sm:self-auto">
           <button
-            onClick={() => setAchievementFilter(window.AchievementFilters.ALL)}
-            className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${achievementFilter === window.AchievementFilters.ALL ? 'bg-white dark:bg-gray-600 text-indigo-600 dark:text-indigo-400 shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'}`}
+            onClick={() => setAchievementFilter(AchievementFilters.ALL)}
+            className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${achievementFilter === AchievementFilters.ALL ? 'bg-white dark:bg-gray-600 text-indigo-600 dark:text-indigo-400 shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'}`}
           >
             All
           </button>
           <button
-            onClick={() => setAchievementFilter(window.AchievementFilters.UNLOCKED)}
-            className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${achievementFilter === window.AchievementFilters.UNLOCKED ? 'bg-white dark:bg-gray-600 text-indigo-600 dark:text-indigo-400 shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'}`}
+            onClick={() => setAchievementFilter(AchievementFilters.UNLOCKED)}
+            className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${achievementFilter === AchievementFilters.UNLOCKED ? 'bg-white dark:bg-gray-600 text-indigo-600 dark:text-indigo-400 shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'}`}
           >
             Earned
           </button>
           <button
-            onClick={() => setAchievementFilter(window.AchievementFilters.LOCKED)}
-            className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${achievementFilter === window.AchievementFilters.LOCKED ? 'bg-white dark:bg-gray-600 text-indigo-600 dark:text-indigo-400 shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'}`}
+            onClick={() => setAchievementFilter(AchievementFilters.LOCKED)}
+            className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${achievementFilter === AchievementFilters.LOCKED ? 'bg-white dark:bg-gray-600 text-indigo-600 dark:text-indigo-400 shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'}`}
           >
             To-Do
           </button>
@@ -30,8 +32,8 @@ window.AchievementsList = ({ achievements, achievementFilter, setAchievementFilt
       </div>
       {achievements
         .filter(ach => {
-          if (achievementFilter === window.AchievementFilters.UNLOCKED) return ach.isUnlocked;
-          if (achievementFilter === window.AchievementFilters.LOCKED) return !ach.isUnlocked;
+          if (achievementFilter === AchievementFilters.UNLOCKED) return ach.isUnlocked;
+          if (achievementFilter === AchievementFilters.LOCKED) return !ach.isUnlocked;
           return true;
         })
         .sort((a, b) => {

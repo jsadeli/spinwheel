@@ -1,3 +1,5 @@
+import { ACHIEVEMENTS } from '/scripts/achievements.js';
+
 /**
  * AchievementManager - Manages user achievement unlocks and persistence
  * Handles checking conditions, unlocking, and storing achievements in localStorage
@@ -74,4 +76,4 @@ class AchievementManager {
 }
 
 // Export for use in main app
-window.AchievementManager = AchievementManager;
+export default AchievementManager;
