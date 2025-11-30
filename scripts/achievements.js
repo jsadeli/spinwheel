@@ -633,6 +633,7 @@ const ACHIEVEMENTS = [
     bonusXp: 10,
     condition: (stats) => stats.rapidThemeToggles >= 10,
   },
+  // --- Spin Trail Effect ---
   {
     id: "silver_spark",
     title: "Silver Spark",
@@ -661,7 +662,7 @@ const ACHIEVEMENTS = [
     id: "topaz_trace",
     title: "Topaz Trace",
     description: "Spun with a warm, gem-bright yellow streak trailing you. Only mid-ascenders radiate this kind of polish.",
-    icon: "🔶",
+    icon: "🔷",
     bonusXp: 40,
     condition: (stats) => stats.hasSpun && stats.trailEnabled && stats.level >= 7,
   },
@@ -669,7 +670,7 @@ const ACHIEVEMENTS = [
     id: "ruby_reverb",
     title: "Ruby Reverb",
     description: "Your trail pulsed with a deep crimson glow. That shade appears only to those approaching the summit.",
-    icon: "❤️",
+    icon: "♦️",
     bonusXp: 60,
     condition: (stats) => stats.hasSpun && stats.trailEnabled && stats.level >= 8,
   },
