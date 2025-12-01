@@ -2729,27 +2729,41 @@
 
                     {/* View Toggle (Only if level >= 9) */}
                     {levelInfo.level >= DAILY_CHALLENGE_LEVEL && (
-                      <div className="flex justify-center mb-6">
-                        <div className="bg-gray-200 dark:bg-gray-700 p-1 rounded-lg flex space-x-1">
+                      <div className="flex justify-center mb-5">
+                        <div className="flex items-center space-x-8">
                           <button
                             onClick={() => setProgressViewMode("daily_quests")}
-                            className={`px-4 py-2 rounded-md text-sm font-bold transition-all ${
+                            className={`group relative py-2 text-sm font-bold transition-colors duration-300 ${
                               progressViewMode === "daily_quests"
-                                ? "bg-white dark:bg-gray-600 text-emerald-600 dark:text-emerald-400 shadow-sm"
-                                : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+                                ? "text-emerald-600 dark:text-emerald-400"
+                                : "text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
                             }`}
                           >
                             Daily Quests
+                            <span
+                              className={`absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 rounded-full bg-emerald-500 transition-all duration-300 ${
+                                progressViewMode === "daily_quests"
+                                  ? "opacity-100 scale-100"
+                                  : "opacity-0 scale-0"
+                              }`}
+                            ></span>
                           </button>
                           <button
                             onClick={() => setProgressViewMode("achievements")}
-                            className={`px-4 py-2 rounded-md text-sm font-bold transition-all ${
+                            className={`group relative py-2 text-sm font-bold transition-colors duration-300 ${
                               progressViewMode === "achievements"
-                                ? "bg-white dark:bg-gray-600 text-indigo-600 dark:text-indigo-400 shadow-sm"
-                                : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+                                ? "text-indigo-600 dark:text-indigo-400"
+                                : "text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
                             }`}
                           >
                             Achievements
+                            <span
+                              className={`absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 rounded-full bg-indigo-500 transition-all duration-300 ${
+                                progressViewMode === "achievements"
+                                  ? "opacity-100 scale-100"
+                                  : "opacity-0 scale-0"
+                              }`}
+                            ></span>
                           </button>
                         </div>
                       </div>
