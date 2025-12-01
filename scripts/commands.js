@@ -19,6 +19,8 @@ import { THEMES, STORAGE_KEYS } from "./configs.js";
  * @param {function} context.setWinner - State setter for the winner.
  * @param {Object} context.achievementManager - The achievement manager instance.
  * @param {function} context.setAchievements - State setter for achievements list.
+ * @param {Object} context.challengeManager - The challenge manager instance.
+ * @param {function} context.setChallenges - State setter for challenges list.
  * @returns {boolean} True if a command that stops execution (like reset) was run, false otherwise.
  * @example
  * processCommandCodes("@console", "#!sudo\n#!enable-cheats", { ...context });
@@ -28,7 +30,7 @@ const EXACT_COMMANDS = {
     state.isCheatsEnabled = true;
     return { message: "Cheat mode enabled!" };
   },
-  "levelup": (ctx, state) => {
+  levelup: (ctx, state) => {
     if (!state.isCheatsEnabled) return null;
     const info = getLevelProgress(state.currentXp);
     const needed = info.requiredLevelXp - info.currentLevelXp;
@@ -54,12 +56,12 @@ const EXACT_COMMANDS = {
     ctx.addToast("This is a sample error message.", "Error");
     return { executed: true };
   },
-  "confetti": (ctx, state) => {
+  confetti: (ctx, state) => {
     const level = getLevelProgress(state.currentXp).level;
     fireConfetti(level);
     return { executed: true };
   },
-  "break": (ctx) => {
+  break: (ctx) => {
     ctx.setIsOutOfOrder(true);
     return { executed: true };
   },
@@ -68,15 +70,20 @@ const EXACT_COMMANDS = {
     ctx.setAchievements(ctx.achievementManager.getAll());
     return { executed: true };
   },
+  "reset:quests": (ctx) => {
+    ctx.challengeManager.reset(new Date());
+    ctx.setChallenges(ctx.challengeManager.getAll());
+    return { executed: true };
+  },
   "reset:level": (ctx) => {
     ctx.setXp(() => 0);
     return { executed: true };
   },
-  "reset": () => {
+  reset: () => {
     localStorage.clear();
     window.location.reload();
     return { stop: true };
-  }
+  },
 };
 
 const PREFIX_COMMANDS = [
@@ -92,21 +99,21 @@ const PREFIX_COMMANDS = [
       ctx.setIsCorrupted(true);
       localStorage.setItem(STORAGE_KEYS.IS_CORRUPTED, "true");
       return { message: `${amount > 0 ? "+" : ""}${amount} XP` };
-    }
+    },
   },
   {
     prefix: "toast:",
     handler: (command, ctx) => {
       ctx.addToast(command.substring(6));
       return { executed: true };
-    }
+    },
   },
   {
     prefix: "winner:",
     handler: (command, ctx) => {
       ctx.setWinner(command.substring(7));
       return { executed: true };
-    }
+    },
   },
   {
     prefix: "confetti:",
@@ -117,7 +124,7 @@ const PREFIX_COMMANDS = [
         return { executed: true };
       }
       return null;
-    }
+    },
   },
   {
     prefix: "theme:",
@@ -129,8 +136,8 @@ const PREFIX_COMMANDS = [
         return { executed: true };
       }
       return null;
-    }
-  }
+    },
+  },
 ];
 
 export const processCommandCodes = (listName, inputText, context) => {
@@ -144,7 +151,7 @@ export const processCommandCodes = (listName, inputText, context) => {
   // Mutable state for the execution session
   const state = {
     isCheatsEnabled: false,
-    currentXp: context.xp
+    currentXp: context.xp,
   };
 
   for (const line of lines.slice(1)) {

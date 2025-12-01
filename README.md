@@ -108,6 +108,10 @@ Within console mode, you can issue several debugging commands/instructions:
 
 | Command              | Description                                                                                     |
 |----------------------|-------------------------------------------------------------------------------------------------|
+| `toast:achievement`  | Toast animation for achievement unlocked.                                                       |
+| `toast:quest`        | Toast animation for quest completed.                                                            |
+| `toast:levelup`      | Toast animation for leveling up.                                                                |
+| `toast:error`        | Toast animation for errors (e.g., Invalid API key).                                             |
 | `toast:message`      | `message` can be surfaced through the toast notification system by using the syntax.            |
 | `winner:name`        | `name` can be surfaced through the winner modal by using the syntax.                            |
 | `confetti`           | Triggers the confetti animation at the current user's level.                                    |
@@ -115,6 +119,7 @@ Within console mode, you can issue several debugging commands/instructions:
 | `break`              | Intentionally trigger a system failure (overheat).                                              |
 | `theme:mode`         | Adjust the global theme. The enum value for `mode` is `auto` (or `system`), `light`, or `dark`. |
 | `reset:achievements` | Reset all unlocked achievements.                                                                |
+| `reset:quests`       | Reset all completed daily quests.                                                               |
 | `reset:level`        | Reset the user level to 0.                                                                      |
 | `reset`              | Restore the application to its default (factory) settings.                                      |
 
