@@ -1,5 +1,5 @@
 import { ACHIEVEMENTS } from "../achievements.js";
-import { storageKeys } from "../configs.js";
+import { STORAGE_KEYS } from "../configs.js";
 
 /**
  * AchievementManager - Manages user achievement unlocks and persistence
@@ -11,7 +11,7 @@ export class AchievementManager {
    * Automatically loads previously unlocked achievements from localStorage.
    */
   constructor() {
-    this.storageKey = storageKeys.ACHIEVEMENTS;
+    this.storageKey = STORAGE_KEYS.ACHIEVEMENTS;
     this.unlocked = this.load();
   }
 

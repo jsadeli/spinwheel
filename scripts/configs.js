@@ -2,13 +2,13 @@
  * Default name for newly created spin lists.
  * @type {string}
  */
-export const defaultListName = "Lunch Ideas";
+export const DEFAULT_LIST_NAME = "Lunch Ideas";
 
 /**
  * Default items for new spin lists.
  * @type {string[]}
  */
-export const defaultListItems = [
+export const DEFAULT_LIST_ITEMS = [
   "Pizza",
   "Burger",
   "Sushi",
@@ -27,7 +27,7 @@ export const defaultListItems = [
  * All keys are prefixed with "spinWheel_" to avoid conflicts.
  * @type {Object<string, string>}
  */
-export const storageKeys = {
+export const STORAGE_KEYS = {
   /** Saved spin lists */
   SAVED_LISTS: "spinWheel_savedLists",
   /** Legacy input storage key */
@@ -84,7 +84,7 @@ export const storageKeys = {
  * Available theme options for the application.
  * @type {Object<string, string>}
  */
-export const themes = {
+export const THEMES = {
   /** Automatically match system theme */
   AUTO: "auto",
   /** Light theme */
@@ -97,7 +97,7 @@ export const themes = {
  * Available tick sound effects for the spin wheel.
  * @type {Object<string, string>}
  */
-export const TickSounds = {
+export const TICK_SOUNDS = {
   /** Default electric click sound */
   DEFAULT: "default",
   /** Crisp wooden knock sound */
@@ -112,7 +112,7 @@ export const TickSounds = {
  * Color assignment modes for wheel segments.
  * @type {Object<string, string>}
  */
-export const ColorAssignmentMode = {
+export const COLOR_ASSIGNMENT_MODE = {
   /** Colors change randomly on each spin */
   DYNAMIC: "dynamic",
   /** Each item always gets the same color */
@@ -124,7 +124,7 @@ export const ColorAssignmentMode = {
  * Uses Google's text-to-speech voice names.
  * @type {Object<string, string>}
  */
-export const AIVoices = {
+export const AI_VOICES = {
   /** Female voice (Aoede - Greek muse of song) */
   AOEDE: "Aoede",
   /** Male voice (Iapetus - Greek titan) */
@@ -141,7 +141,7 @@ export const TOAST_DURATION = 5000;
  * Tab identifiers for the application's main navigation.
  * @type {Object<string, string>}
  */
-export const TabNames = {
+export const TAB_NAMES = {
   /** Input/list editing tab */
   INPUTS: "inputs",
   /** Spin history tab */
@@ -176,15 +176,15 @@ export const SPINWHEEL_REPO = "https://github.com/samuelkripto/spinwheel";
 
 // Expose to window for Babel scripts
 if (typeof window !== "undefined") {
-  window.defaultListName = defaultListName;
-  window.defaultListItems = defaultListItems;
-  window.storageKeys = storageKeys;
-  window.themes = themes;
-  window.TickSounds = TickSounds;
-  window.ColorAssignmentMode = ColorAssignmentMode;
-  window.AIVoices = AIVoices;
+  window.DEFAULT_LIST_NAME = DEFAULT_LIST_NAME;
+  window.DEFAULT_LIST_ITEMS = DEFAULT_LIST_ITEMS;
+  window.STORAGE_KEYS = STORAGE_KEYS;
+  window.THEMES = THEMES;
+  window.TICK_SOUNDS = TICK_SOUNDS;
+  window.COLOR_ASSIGNMENT_MODE = COLOR_ASSIGNMENT_MODE;
+  window.AI_VOICES = AI_VOICES;
   window.TOAST_DURATION = TOAST_DURATION;
-  window.TabNames = TabNames;
+  window.TAB_NAMES = TAB_NAMES;
   window.DAILY_CHALLENGE_LEVEL = DAILY_CHALLENGE_LEVEL;
   window.DAILY_CHALLENGE_RESET_HOUR = DAILY_CHALLENGE_RESET_HOUR;
   window.GITHUB_LINK = GITHUB_LINK;

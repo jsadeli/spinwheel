@@ -1,4 +1,4 @@
-import { AIVoices, TickSounds } from "./configs.js";
+import { AI_VOICES, TICK_SOUNDS } from "./configs.js";
 
 // Achievement Definitions
 /**
@@ -147,7 +147,7 @@ export const ACHIEVEMENTS = [
     description: "Keeping it classic. Completed a spin with the default electric click.",
     icon: "🖱️",
     bonusXp: 10,
-    condition: (stats) => stats.hasSpun && !stats.soundMuted && stats.tickSound === TickSounds.DEFAULT,
+    condition: (stats) => stats.hasSpun && !stats.soundMuted && stats.tickSound === TICK_SOUNDS.DEFAULT,
   },
   {
     id: "knock_on_wood",
@@ -155,7 +155,7 @@ export const ACHIEVEMENTS = [
     description: "Superstitious? Completed a spin with the crisp wooden sound.",
     icon: "🪵",
     bonusXp: 10,
-    condition: (stats) => stats.hasSpun && !stats.soundMuted && stats.tickSound === TickSounds.CRISP,
+    condition: (stats) => stats.hasSpun && !stats.soundMuted && stats.tickSound === TICK_SOUNDS.CRISP,
   },
   {
     id: "heavy_metal",
@@ -164,7 +164,7 @@ export const ACHIEVEMENTS = [
       "Industrial grade decision making. Completed a spin with the metallic clank sound.",
     icon: "⚙️",
     bonusXp: 10,
-    condition: (stats) => stats.hasSpun && !stats.soundMuted && stats.tickSound === TickSounds.METALLIC,
+    condition: (stats) => stats.hasSpun && !stats.soundMuted && stats.tickSound === TICK_SOUNDS.METALLIC,
   },
   {
     id: "crystal_glass",
@@ -172,7 +172,7 @@ export const ACHIEVEMENTS = [
     description: "Luxurious decision making. Completed a spin with the crystal glass sound.",
     icon: "🍷️",
     bonusXp: 10,
-    condition: (stats) => stats.hasSpun && !stats.soundMuted && stats.tickSound === TickSounds.CRYSTAL,
+    condition: (stats) => stats.hasSpun && !stats.soundMuted && stats.tickSound === TICK_SOUNDS.CRYSTAL,
   },
   // --- Other Spins ---
   {
@@ -769,7 +769,7 @@ export const ACHIEVEMENTS = [
     description: "Invite Aoede to speak. A soft breeze carries every word.",
     icon: "🌸",
     bonusXp: 10,
-    condition: (stats) => stats.usedAIAnnounce && stats.aiVoice === AIVoices.AOEDE,
+    condition: (stats) => stats.usedAIAnnounce && stats.aiVoice === AI_VOICES.AOEDE,
   },
   {
     id: "his_voice",
@@ -777,7 +777,7 @@ export const ACHIEVEMENTS = [
     description: "Hear Iapetus in full clarity. Strong, resonant, and unwavering.",
     icon: "🎙️",
     bonusXp: 10,
-    condition: (stats) => stats.usedAIAnnounce && stats.aiVoice === AIVoices.IAPETUS,
+    condition: (stats) => stats.usedAIAnnounce && stats.aiVoice === AI_VOICES.IAPETUS,
   },
   // --- Meta Achievements ---
   {

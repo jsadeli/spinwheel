@@ -1,6 +1,6 @@
 import { getLevelProgress } from "./levels.js";
 import { fireConfetti } from "./animations.js";
-import { themes, storageKeys } from "./configs.js";
+import { THEMES, STORAGE_KEYS } from "./configs.js";
 
 /**
  * Processes and executes console commands from the input text.
@@ -64,7 +64,7 @@ export const processCommandCodes = (
         currentXp += amount;
         message = `${amount > 0 ? "+" : ""}${amount} XP`;
         setIsCorrupted(true);
-        localStorage.setItem(storageKeys.IS_CORRUPTED, "true");
+        localStorage.setItem(STORAGE_KEYS.IS_CORRUPTED, "true");
         commandExecuted = true;
       }
     } else if (command === "levelup" && isCheatsEnabled) {
@@ -74,7 +74,7 @@ export const processCommandCodes = (
       currentXp += needed;
       message = `Leveled Up! (+${Math.round(needed)} XP)`;
       setIsCorrupted(true);
-      localStorage.setItem(storageKeys.IS_CORRUPTED, "true");
+      localStorage.setItem(STORAGE_KEYS.IS_CORRUPTED, "true");
       commandExecuted = true;
     } else if (command.startsWith("toast:")) {
       addToast(command.substring(6));
@@ -98,9 +98,9 @@ export const processCommandCodes = (
       commandExecuted = true;
     } else if (command.startsWith("theme:")) {
       let newTheme = command.substring(6).trim();
-      if (newTheme === "system") newTheme = themes.AUTO;
+      if (newTheme === "system") newTheme = THEMES.AUTO;
 
-      if (Object.values(themes).includes(newTheme)) {
+      if (Object.values(THEMES).includes(newTheme)) {
         setTheme(newTheme);
         message = `Theme set to ${newTheme}`;
         commandExecuted = true;

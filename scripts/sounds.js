@@ -1,4 +1,4 @@
-import { TickSounds } from "./configs.js";
+import { TICK_SOUNDS } from "./configs.js";
 
 /**
  * Plays a celebratory fanfare sound when the wheel stops.
@@ -47,16 +47,16 @@ export const playWinSound = (audioCtxRef, soundEnabled) => {
  *
  * @param {Object} audioCtxRef - React ref containing the Web Audio API context.
  * @param {boolean} soundEnabled - Whether sound effects are enabled.
- * @param {string} [variant=TickSounds.DEFAULT] - The tick sound variant to play.
+ * @param {string} [variant=TICK_SOUNDS.DEFAULT] - The tick sound variant to play.
  * @example
- * playTickSound(audioCtxRef, true, TickSounds.CRISP);
+ * playTickSound(audioCtxRef, true, TICK_SOUNDS.CRISP);
  */
-export const playTickSound = (audioCtxRef, soundEnabled, variant = TickSounds.DEFAULT) => {
+export const playTickSound = (audioCtxRef, soundEnabled, variant = TICK_SOUNDS.DEFAULT) => {
   if (!soundEnabled || !audioCtxRef.current) return;
 
-  if (variant === TickSounds.CRISP) return playCrispWoodTickSound(audioCtxRef, soundEnabled);
-  if (variant === TickSounds.METALLIC) return playMetallicClankTickSound(audioCtxRef, soundEnabled);
-  if (variant === TickSounds.CRYSTAL) return playCrystalGlassTickSound(audioCtxRef, soundEnabled);
+  if (variant === TICK_SOUNDS.CRISP) return playCrispWoodTickSound(audioCtxRef, soundEnabled);
+  if (variant === TICK_SOUNDS.METALLIC) return playMetallicClankTickSound(audioCtxRef, soundEnabled);
+  if (variant === TICK_SOUNDS.CRYSTAL) return playCrystalGlassTickSound(audioCtxRef, soundEnabled);
 
   return playDefaultTickSound(audioCtxRef, soundEnabled);
 };

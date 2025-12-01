@@ -1,5 +1,5 @@
 import { DAILY_CHALLENGES } from "../challenges.js";
-import { storageKeys } from "../configs.js";
+import { STORAGE_KEYS } from "../configs.js";
 
 /**
  * ChallengeManager - Manages daily challenge state, persistence, and logic
@@ -11,7 +11,7 @@ export class ChallengeManager {
    * Automatically loads previous state from localStorage and checks for daily reset.
    */
   constructor() {
-    this.storageKey = storageKeys.DAILY_CHALLENGES;
+    this.storageKey = STORAGE_KEYS.DAILY_CHALLENGES;
     this.data = this.getDefaultData();
     this.load();
   }

@@ -1,4 +1,4 @@
-const { themes } = window;
+const { THEMES } = window;
 
 /**
  * Renders an icon representing the current theme (Auto, Light, or Dark).
@@ -9,8 +9,8 @@ const { themes } = window;
  */
 const ThemeIcon = ({ theme, size = 24 }) => {
   const { MonitorIcon, SunIcon, MoonIcon } = window;
-  if (theme === themes.AUTO) return <MonitorIcon size={size} />;
-  if (theme === themes.LIGHT) return <SunIcon size={size} />;
+  if (theme === THEMES.AUTO) return <MonitorIcon size={size} />;
+  if (theme === THEMES.LIGHT) return <SunIcon size={size} />;
   return <MoonIcon size={size} />;
 };
 

@@ -1,7 +1,7 @@
 import { calculateLevel } from "./levels.js";
 import { drawWheelTrail } from "./animations.js";
 import { getItemColor } from "./colors.js";
-import { ColorAssignmentMode } from "./configs.js";
+import { COLOR_ASSIGNMENT_MODE } from "./configs.js";
 
 /**
  * Draws the entire spin wheel on the canvas, including segments, text, hub, border, and trail.
@@ -104,7 +104,7 @@ export const drawWheel = (
 
       ctx.closePath();
 
-      if (colorAssignment === ColorAssignmentMode.DETERMINISTIC) {
+      if (colorAssignment === COLOR_ASSIGNMENT_MODE.DETERMINISTIC) {
         ctx.fillStyle = getItemColor(item.text, colors); // Deterministic colors
       } else {
         ctx.fillStyle = colors[index % colors.length]; // Dynamic colors
