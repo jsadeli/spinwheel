@@ -115,7 +115,7 @@ const AchievementsList = ({ achievements, achievementFilter, setAchievementFilte
                     {ach.bonusXp > 0 && (
                       <span
                         className={`text-xs font-bold mt-0.5 ${
-                          ach.isUnlocked ? "text-yellow-600 dark:text-yellow-400" : "text-gray-400"
+                          ach.isUnlocked ? "text-indigo-600 dark:text-indigo-400" : "text-gray-400"
                         }`}
                       >
                         +{ach.bonusXp} XP

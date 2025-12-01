@@ -979,12 +979,7 @@
               message = error.message;
             }
 
-            addToast(
-              message,
-              "AI Generation Failed",
-              <AlertTriangleIcon size={18} />,
-              TOAST_DURATION
-            );
+            addToast(message, "AI Generation Failed", null, TOAST_DURATION);
           } finally {
             setIsGenerating(false);
           }
@@ -1034,7 +1029,7 @@
               message = error.message;
             }
 
-            addToast(message, "AI Voice Failed", <AlertTriangleIcon size={18} />, TOAST_DURATION);
+            addToast(message, "AI Voice Failed", null, TOAST_DURATION);
           }
         };
 

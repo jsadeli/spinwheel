@@ -76,6 +76,18 @@ export const processCommandCodes = (
       setIsCorrupted(true);
       localStorage.setItem(STORAGE_KEYS.IS_CORRUPTED, "true");
       commandExecuted = true;
+    } else if (command === "toast:achievement") {
+      addToast("Unlocked an achievement!", "Achievement Unlocked");
+      commandExecuted = true;
+    } else if (command === "toast:quest") {
+      addToast("Completed a daily quest!", "Daily Quest Completed");
+      commandExecuted = true;
+    } else if (command === "toast:levelup") {
+      addToast("Congrats! You have leveled up!", "Level Up!");
+      commandExecuted = true;
+    } else if (command === "toast:error") {
+      addToast("This is a sample error message.", "Error");
+      commandExecuted = true;
     } else if (command.startsWith("toast:")) {
       addToast(command.substring(6));
       commandExecuted = true;
