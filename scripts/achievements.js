@@ -822,8 +822,8 @@ export const ACHIEVEMENTS = [
     icon: "💡",
     bonusXp: 10,
     condition: (stats) => stats.rapidThemeToggles >= 10,
-    progress: (stats) => stats.rapidThemeToggles || 0,
-    target: 10,
+    progress: 0,
+    target: 1,
   },
   // --- Spin Trail Effect ---
   {
