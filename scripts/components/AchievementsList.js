@@ -33,7 +33,7 @@ const AchievementsList = ({ achievements, achievementFilter, setAchievementFilte
     <div className="space-y-3">
       {/* Header & Filter Controls */}
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 gap-2">
-        <h4 className="font-bold text-gray-700 dark:text-gray-300 text-sm uppercase tracking-wider">
+        <h4 className="font-bold text-indigo-600 dark:text-indigo-400 text-sm uppercase tracking-wider">
           Achievements ({achievements.filter((a) => a.isUnlocked).length}/{achievements.length})
         </h4>
 
