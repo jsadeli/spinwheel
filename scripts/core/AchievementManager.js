@@ -107,12 +107,27 @@ export class AchievementManager {
    * const achievements = achievementManager.getAll();
    * // Returns: [{ id: 'first_spin', name: '...', isUnlocked: true, unlockedAt: Date, ... }]
    */
-  getAll() {
-    return ACHIEVEMENTS.map((ach) => ({
-      ...ach,
-      isUnlocked: !!this.unlocked[ach.id],
-      unlockedAt: this.unlocked[ach.id] ? new Date(this.unlocked[ach.id].unlockedAt) : null,
-    }));
+  getAll(stats = {}) {
+    return ACHIEVEMENTS.map((ach) => {
+      const progress = ach.progress
+        ? typeof ach.progress === "function"
+          ? ach.progress(stats)
+          : ach.progress
+        : 0;
+      const target = ach.target
+        ? typeof ach.target === "function"
+          ? ach.target(stats)
+          : ach.target
+        : 0;
+
+      return {
+        ...ach,
+        isUnlocked: !!this.unlocked[ach.id],
+        unlockedAt: this.unlocked[ach.id] ? new Date(this.unlocked[ach.id].unlockedAt) : null,
+        progress,
+        target,
+      };
+    });
   }
 }
 

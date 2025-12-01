@@ -33,6 +33,8 @@ export const ACHIEVEMENTS = [
     icon: "👋",
     bonusXp: 2,
     condition: (stats) => stats.spins >= 1,
+    progress: (stats) => stats.spins,
+    target: 1,
   },
   {
     id: "decisions_decisions",
@@ -41,6 +43,8 @@ export const ACHIEVEMENTS = [
     icon: "🤔",
     bonusXp: 10,
     condition: (stats) => stats.spins >= 10,
+    progress: (stats) => stats.spins,
+    target: 10,
   },
   {
     id: "professional_procrastinator",
@@ -49,6 +53,8 @@ export const ACHIEVEMENTS = [
     icon: "🐢️",
     bonusXp: 50,
     condition: (stats) => stats.spins >= 50,
+    progress: (stats) => stats.spins,
+    target: 50,
   },
   {
     id: "centurion_of_chaos",
@@ -57,6 +63,8 @@ export const ACHIEVEMENTS = [
     icon: "💯",
     bonusXp: 100,
     condition: (stats) => stats.spins >= 100,
+    progress: (stats) => stats.spins,
+    target: 100,
   },
   {
     id: "the_long_haul",
@@ -65,6 +73,8 @@ export const ACHIEVEMENTS = [
     icon: "🚚️",
     bonusXp: 500,
     condition: (stats) => stats.spins >= 500,
+    progress: (stats) => stats.spins,
+    target: 500,
   },
   {
     id: "millennium_of_mayhem",
@@ -73,6 +83,8 @@ export const ACHIEVEMENTS = [
     icon: "🌀",
     bonusXp: 1000,
     condition: (stats) => stats.spins >= 1000,
+    progress: (stats) => stats.spins,
+    target: 1000,
   },
   {
     id: "analysis_paralysis",
@@ -81,6 +93,8 @@ export const ACHIEVEMENTS = [
     icon: "🤯",
     bonusXp: 50,
     condition: (stats) => stats.spinsInLastMinute >= 5,
+    progress: (stats) => stats.spinsInLastMinute,
+    target: 5,
   },
   {
     id: "speedrun",
@@ -89,6 +103,8 @@ export const ACHIEVEMENTS = [
     icon: "🎮",
     bonusXp: 100,
     condition: (stats) => stats.spinsInLastMinute >= 120,
+    progress: (stats) => stats.spinsInLastMinute,
+    target: 120,
   },
   {
     id: "button_masher",
@@ -97,6 +113,8 @@ export const ACHIEVEMENTS = [
     icon: "👊",
     bonusXp: 200,
     condition: (stats) => stats.spinsInLastHour >= 200,
+    progress: (stats) => stats.spinsInLastHour,
+    target: 200,
   },
   {
     id: "a_taste_of_fortune",
@@ -106,6 +124,8 @@ export const ACHIEVEMENTS = [
     icon: "🥠",
     bonusXp: 50,
     condition: (stats) => stats.sessionSpin >= 50,
+    progress: (stats) => stats.sessionSpin,
+    target: 50,
   },
   {
     id: "champion_of_chance",
@@ -114,6 +134,8 @@ export const ACHIEVEMENTS = [
     icon: "🏹",
     bonusXp: 100,
     condition: (stats) => stats.sessionSpin >= 100,
+    progress: (stats) => stats.sessionSpin,
+    target: 100,
   },
   // --- Mystery Spin ---
   {
@@ -123,6 +145,8 @@ export const ACHIEVEMENTS = [
     icon: "🙏",
     bonusXp: 10,
     condition: (stats) => stats.mysteryMode && stats.hasSpun,
+    progress: 0,
+    target: 1,
   },
   {
     id: "devil_take_the_wheel",
@@ -131,6 +155,8 @@ export const ACHIEVEMENTS = [
     icon: "😈",
     bonusXp: 66,
     condition: (stats) => stats.mysteryModeCancelledDuringSpin,
+    progress: 0,
+    target: 1,
   },
   // --- Spin Sounds ---
   {
@@ -140,6 +166,8 @@ export const ACHIEVEMENTS = [
     icon: "🔇",
     bonusXp: 10,
     condition: (stats) => stats.hasSpun && stats.soundMuted,
+    progress: 0,
+    target: 1,
   },
   {
     id: "click_clack",
@@ -147,7 +175,10 @@ export const ACHIEVEMENTS = [
     description: "Keeping it classic. Completed a spin with the default electric click.",
     icon: "🖱️",
     bonusXp: 10,
-    condition: (stats) => stats.hasSpun && !stats.soundMuted && stats.tickSound === TICK_SOUNDS.DEFAULT,
+    condition: (stats) =>
+      stats.hasSpun && !stats.soundMuted && stats.tickSound === TICK_SOUNDS.DEFAULT,
+    progress: 0,
+    target: 1,
   },
   {
     id: "knock_on_wood",
@@ -155,7 +186,10 @@ export const ACHIEVEMENTS = [
     description: "Superstitious? Completed a spin with the crisp wooden sound.",
     icon: "🪵",
     bonusXp: 10,
-    condition: (stats) => stats.hasSpun && !stats.soundMuted && stats.tickSound === TICK_SOUNDS.CRISP,
+    condition: (stats) =>
+      stats.hasSpun && !stats.soundMuted && stats.tickSound === TICK_SOUNDS.CRISP,
+    progress: 0,
+    target: 1,
   },
   {
     id: "heavy_metal",
@@ -164,7 +198,10 @@ export const ACHIEVEMENTS = [
       "Industrial grade decision making. Completed a spin with the metallic clank sound.",
     icon: "⚙️",
     bonusXp: 10,
-    condition: (stats) => stats.hasSpun && !stats.soundMuted && stats.tickSound === TICK_SOUNDS.METALLIC,
+    condition: (stats) =>
+      stats.hasSpun && !stats.soundMuted && stats.tickSound === TICK_SOUNDS.METALLIC,
+    progress: 0,
+    target: 1,
   },
   {
     id: "crystal_glass",
@@ -172,7 +209,10 @@ export const ACHIEVEMENTS = [
     description: "Luxurious decision making. Completed a spin with the crystal glass sound.",
     icon: "🍷️",
     bonusXp: 10,
-    condition: (stats) => stats.hasSpun && !stats.soundMuted && stats.tickSound === TICK_SOUNDS.CRYSTAL,
+    condition: (stats) =>
+      stats.hasSpun && !stats.soundMuted && stats.tickSound === TICK_SOUNDS.CRYSTAL,
+    progress: 0,
+    target: 1,
   },
   // --- Other Spins ---
   {
@@ -182,6 +222,8 @@ export const ACHIEVEMENTS = [
     icon: "⚡",
     bonusXp: 10,
     condition: (stats) => stats.maxPowerCharge,
+    progress: 0,
+    target: 1,
   },
   {
     id: "speed_demon",
@@ -190,6 +232,8 @@ export const ACHIEVEMENTS = [
     icon: "💨",
     bonusXp: 5,
     condition: (stats) => stats.hasSpun && stats.spinDuration <= 5000,
+    progress: 0,
+    target: 1,
   },
   {
     id: "patience_is_a_virtue",
@@ -198,6 +242,8 @@ export const ACHIEVEMENTS = [
     icon: "🧘",
     bonusXp: 20,
     condition: (stats) => stats.hasSpun && stats.spinDuration >= 20000,
+    progress: 0,
+    target: 1,
   },
   {
     id: "afk",
@@ -206,6 +252,8 @@ export const ACHIEVEMENTS = [
     icon: "💤",
     bonusXp: 20,
     condition: (stats) => stats.timeSinceLastSpin >= 600000, // milliseconds
+    progress: 0,
+    target: 1,
   },
   {
     id: "this_is_fine",
@@ -214,6 +262,8 @@ export const ACHIEVEMENTS = [
     icon: "🔥",
     bonusXp: 50,
     condition: (stats) => stats.consecutiveOverheats >= 5,
+    progress: (stats) => stats.consecutiveOverheats,
+    target: 5,
   },
   {
     id: "into_the_void",
@@ -222,6 +272,8 @@ export const ACHIEVEMENTS = [
     icon: "👻",
     bonusXp: 10,
     condition: (stats) => stats.triedEmptySpin,
+    progress: 0,
+    target: 1,
   },
   {
     id: "one_and_done",
@@ -230,6 +282,8 @@ export const ACHIEVEMENTS = [
     icon: "🧹️",
     bonusXp: 5,
     condition: (stats) => stats.usedRemoveAndSpin,
+    progress: 0,
+    target: 1,
   },
   {
     id: "abort_mission",
@@ -238,6 +292,8 @@ export const ACHIEVEMENTS = [
     icon: "❌️",
     bonusXp: 5,
     condition: (stats) => stats.cancelledSpins >= 1,
+    progress: (stats) => stats.cancelledSpins,
+    target: 1,
   },
   {
     id: "cancel_culture",
@@ -246,6 +302,8 @@ export const ACHIEVEMENTS = [
     icon: "🛑",
     bonusXp: 500,
     condition: (stats) => stats.cancelledSpins >= 500,
+    progress: (stats) => stats.cancelledSpins,
+    target: 500,
   },
   {
     id: "premature_nope",
@@ -254,6 +312,8 @@ export const ACHIEVEMENTS = [
     icon: "🏃",
     bonusXp: 20,
     condition: (stats) => stats.isCancelledSpin && stats.spinPercentage >= 0.8,
+    progress: 0,
+    target: 1,
   },
   {
     id: "duel_mode",
@@ -262,6 +322,8 @@ export const ACHIEVEMENTS = [
     icon: "🤺",
     bonusXp: 5,
     condition: (stats) => stats.itemCount === 2 && stats.hasSpun,
+    progress: 0,
+    target: 1,
   },
   // --- Level Ups ---
   {
@@ -271,6 +333,8 @@ export const ACHIEVEMENTS = [
     icon: "🐣",
     bonusXp: 2,
     condition: (stats) => stats.level >= 1 && stats.hasSpun,
+    progress: (stats) => stats.level,
+    target: 1,
   },
   {
     id: "one_small_step",
@@ -280,6 +344,8 @@ export const ACHIEVEMENTS = [
     icon: "🚀",
     bonusXp: 5,
     condition: (stats) => stats.level >= 2 && stats.hasSpun,
+    progress: (stats) => stats.level,
+    target: 2,
   },
   {
     id: "spinner_adept",
@@ -289,6 +355,8 @@ export const ACHIEVEMENTS = [
     icon: "🎯",
     bonusXp: 10,
     condition: (stats) => stats.level >= 3 && stats.hasSpun,
+    progress: (stats) => stats.level,
+    target: 3,
   },
   {
     id: "spinaholic",
@@ -298,6 +366,8 @@ export const ACHIEVEMENTS = [
     icon: "🎡",
     bonusXp: 10,
     condition: (stats) => stats.level >= 4 && stats.hasSpun,
+    progress: (stats) => stats.level,
+    target: 4,
   },
   {
     id: "phd_in_roundabout_solutions",
@@ -307,6 +377,8 @@ export const ACHIEVEMENTS = [
     icon: "🎓",
     bonusXp: 20,
     condition: (stats) => stats.level >= 5 && stats.hasSpun,
+    progress: (stats) => stats.level,
+    target: 5,
   },
   {
     id: "chaos_technician",
@@ -316,6 +388,8 @@ export const ACHIEVEMENTS = [
     icon: "👷",
     bonusXp: 30,
     condition: (stats) => stats.level >= 6 && stats.hasSpun,
+    progress: (stats) => stats.level,
+    target: 6,
   },
   {
     id: "confetti",
@@ -324,6 +398,8 @@ export const ACHIEVEMENTS = [
     icon: "🎊",
     bonusXp: 50,
     condition: (stats) => stats.level >= 7 && stats.hasSpun,
+    progress: (stats) => stats.level,
+    target: 7,
   },
   {
     id: "mission_probability",
@@ -332,6 +408,8 @@ export const ACHIEVEMENTS = [
     icon: "🕶️",
     bonusXp: 100,
     condition: (stats) => stats.level >= 8 && stats.hasSpun,
+    progress: (stats) => stats.level,
+    target: 8,
   },
   {
     id: "wheel_whisperer",
@@ -340,6 +418,8 @@ export const ACHIEVEMENTS = [
     icon: "🛞️",
     bonusXp: 200,
     condition: (stats) => stats.level >= 9 && stats.hasSpun,
+    progress: (stats) => stats.level,
+    target: 9,
   },
   {
     id: "the_chosen_one",
@@ -348,6 +428,8 @@ export const ACHIEVEMENTS = [
     icon: "🌟",
     bonusXp: 3000,
     condition: (stats) => stats.level >= 10 && stats.hasSpun,
+    progress: (stats) => stats.level,
+    target: 10,
   },
   {
     id: "transcendence_protocol",
@@ -356,6 +438,8 @@ export const ACHIEVEMENTS = [
     icon: "♾️",
     bonusXp: 5000,
     condition: (stats) => stats.level >= 11 && stats.hasSpun,
+    progress: (stats) => stats.level,
+    target: 11,
   },
   // --- Consecutive Wins ---
   {
@@ -365,6 +449,8 @@ export const ACHIEVEMENTS = [
     icon: "👯‍♀️",
     bonusXp: 20,
     condition: (stats) => stats.consecutiveWins >= 2,
+    progress: (stats) => stats.consecutiveWins,
+    target: 2,
   },
   {
     id: "deja_vu",
@@ -373,6 +459,8 @@ export const ACHIEVEMENTS = [
     icon: "🐈",
     bonusXp: 30,
     condition: (stats) => stats.consecutiveWins >= 3,
+    progress: (stats) => stats.consecutiveWins,
+    target: 3,
   },
   {
     id: "broken_record",
@@ -381,6 +469,8 @@ export const ACHIEVEMENTS = [
     icon: "😵‍💫",
     bonusXp: 50,
     condition: (stats) => stats.consecutiveWins >= 5,
+    progress: (stats) => stats.consecutiveWins,
+    target: 5,
   },
   {
     id: "glitch_in_the_matrix",
@@ -390,6 +480,8 @@ export const ACHIEVEMENTS = [
     icon: "🐈‍⬛",
     bonusXp: 500,
     condition: (stats) => stats.consecutiveWins >= 50,
+    progress: (stats) => stats.consecutiveWins,
+    target: 50,
   },
   {
     id: "one_in_a_million",
@@ -398,6 +490,8 @@ export const ACHIEVEMENTS = [
     icon: "🦄",
     bonusXp: 1000,
     condition: (stats) => stats.consecutiveWins >= 100,
+    progress: (stats) => stats.consecutiveWins,
+    target: 100,
   },
   // --- Inputs ---
   {
@@ -407,6 +501,8 @@ export const ACHIEVEMENTS = [
     icon: "🍀",
     bonusXp: 5,
     condition: (stats) => stats.itemCount === 1 && stats.hasSpun,
+    progress: 0,
+    target: 1,
   },
   {
     id: "never_tell_me_the_odds",
@@ -415,6 +511,8 @@ export const ACHIEVEMENTS = [
     icon: "🏋️‍♂️",
     bonusXp: 10,
     condition: (stats) => stats.winnerWeight === 1 && stats.maxWeight >= 50,
+    progress: 0,
+    target: 1,
   },
   {
     id: "the_house_always_wins",
@@ -423,6 +521,8 @@ export const ACHIEVEMENTS = [
     icon: "🎲",
     bonusXp: 10,
     condition: (stats) => stats.winnerWeight >= 100,
+    progress: 0,
+    target: 1,
   },
   {
     id: "tl_dr",
@@ -431,6 +531,8 @@ export const ACHIEVEMENTS = [
     icon: "📜",
     bonusXp: 10,
     condition: (stats) => stats.maxItemLength > 50,
+    progress: 0,
+    target: 1,
   },
   {
     id: "why_are_you_like_this",
@@ -439,6 +541,8 @@ export const ACHIEVEMENTS = [
     icon: "😩",
     bonusXp: 10,
     condition: (stats) => stats.itemCount > 50,
+    progress: 0,
+    target: 1,
   },
   {
     id: "trust_issues",
@@ -447,6 +551,8 @@ export const ACHIEVEMENTS = [
     icon: "🎰",
     bonusXp: 5,
     condition: (stats) => stats.usedShuffle && stats.itemCount >= 2,
+    progress: 0,
+    target: 1,
   },
   {
     id: "certified_paranoid",
@@ -455,6 +561,8 @@ export const ACHIEVEMENTS = [
     icon: "🕵️‍♀️",
     bonusXp: 20,
     condition: (stats) => stats.consecutiveShuffles >= 100,
+    progress: (stats) => stats.consecutiveShuffles,
+    target: 100,
   },
   {
     id: "illusionist",
@@ -464,6 +572,8 @@ export const ACHIEVEMENTS = [
     icon: "🪄",
     bonusXp: 20,
     condition: (stats) => stats.allIdentical && stats.itemCount >= 2,
+    progress: 0,
+    target: 1,
   },
   {
     id: "emoji_eloquence",
@@ -472,10 +582,9 @@ export const ACHIEVEMENTS = [
     icon: "🗿",
     bonusXp: 10,
     condition: (stats) =>
-      stats.onlyEmojis &&
-      stats.itemCount >= 2 &&
-      stats.hasSpun &&
-      stats.isUniqueList,
+      stats.onlyEmojis && stats.itemCount >= 2 && stats.hasSpun && stats.isUniqueList,
+    progress: 0,
+    target: 1,
   },
   // --- Lists ---
   {
@@ -485,6 +594,8 @@ export const ACHIEVEMENTS = [
     icon: "🌱",
     bonusXp: 5,
     condition: (stats) => stats.listCount >= 2, // Assumed: Created at least one new list (default is 1)
+    progress: (stats) => stats.listCount - 1,
+    target: 1, // zero-based progress
   },
   {
     id: "the_more_the_merrier",
@@ -493,6 +604,8 @@ export const ACHIEVEMENTS = [
     icon: "🥳",
     bonusXp: 10,
     condition: (stats) => stats.listCount >= 10,
+    progress: (stats) => stats.listCount - 1,
+    target: 9, // zero-based progress
   },
   {
     id: "data_hoarder",
@@ -501,6 +614,8 @@ export const ACHIEVEMENTS = [
     icon: "💾",
     bonusXp: 10,
     condition: (stats) => stats.listCount >= 50,
+    progress: (stats) => stats.listCount - 1,
+    target: 49, // zero-based progress
   },
   {
     id: "foreign_exchange",
@@ -509,6 +624,8 @@ export const ACHIEVEMENTS = [
     icon: "🌍",
     bonusXp: 20,
     condition: (stats) => stats.importedList,
+    progress: 0,
+    target: 1,
   },
   {
     id: "loot_box",
@@ -517,6 +634,8 @@ export const ACHIEVEMENTS = [
     icon: "🎁",
     bonusXp: 50,
     condition: (stats) => stats.uniqueImportCount >= 5,
+    progress: (stats) => stats.uniqueImportCount,
+    target: 5,
   },
   {
     id: "sharing_is_caring",
@@ -525,6 +644,8 @@ export const ACHIEVEMENTS = [
     icon: "🫶",
     bonusXp: 30,
     condition: (stats) => stats.sharedList,
+    progress: 0,
+    target: 1,
   },
   // --- History ---
   {
@@ -534,6 +655,8 @@ export const ACHIEVEMENTS = [
     icon: "🙈",
     bonusXp: 10,
     condition: (stats) => stats.clearedHistory,
+    progress: 0,
+    target: 1,
   },
   {
     id: "history_hoarder",
@@ -542,6 +665,8 @@ export const ACHIEVEMENTS = [
     icon: "📚",
     bonusXp: 500,
     condition: (stats) => stats.historyLength >= 500,
+    progress: (stats) => stats.historyLength,
+    target: 500,
   },
   {
     id: "progress_enthusiast",
@@ -551,6 +676,8 @@ export const ACHIEVEMENTS = [
     icon: "📈",
     bonusXp: 20,
     condition: (stats) => stats.progressTabViews >= 100,
+    progress: (stats) => stats.progressTabViews,
+    target: 100,
   },
   // --- Time of Day ---
   {
@@ -563,6 +690,8 @@ export const ACHIEVEMENTS = [
       const h = new Date().getHours();
       return stats.hasSpun && h >= 0 && h < 3;
     },
+    progress: 0,
+    target: 1,
   },
   {
     id: "insomniac",
@@ -574,6 +703,8 @@ export const ACHIEVEMENTS = [
       const h = new Date().getHours();
       return stats.hasSpun && h >= 3 && h < 6;
     },
+    progress: 0,
+    target: 1,
   },
   {
     id: "early_bird",
@@ -585,6 +716,8 @@ export const ACHIEVEMENTS = [
       const h = new Date().getHours();
       return stats.hasSpun && h >= 6 && h < 10;
     },
+    progress: 0,
+    target: 1,
   },
   {
     id: "brunch_bunch",
@@ -596,6 +729,8 @@ export const ACHIEVEMENTS = [
       const h = new Date().getHours();
       return stats.hasSpun && h >= 10 && h < 14;
     },
+    progress: 0,
+    target: 1,
   },
   {
     id: "coffee_break",
@@ -607,6 +742,8 @@ export const ACHIEVEMENTS = [
       const h = new Date().getHours();
       return stats.hasSpun && h >= 14 && h < 18;
     },
+    progress: 0,
+    target: 1,
   },
   {
     id: "sunset_spinner",
@@ -618,6 +755,8 @@ export const ACHIEVEMENTS = [
       const h = new Date().getHours();
       return stats.hasSpun && h >= 18 && h < 22;
     },
+    progress: 0,
+    target: 1,
   },
   {
     id: "last_call",
@@ -629,6 +768,8 @@ export const ACHIEVEMENTS = [
       const h = new Date().getHours();
       return stats.hasSpun && h >= 22 && h < 0;
     },
+    progress: 0,
+    target: 1,
   },
   {
     id: "tgif",
@@ -640,6 +781,8 @@ export const ACHIEVEMENTS = [
       const d = new Date();
       return stats.hasSpun && d.getDay() === 5 && d.getHours() >= 17;
     },
+    progress: 0,
+    target: 1,
   },
   // --- Theme features ---
   {
@@ -649,6 +792,8 @@ export const ACHIEVEMENTS = [
     icon: "😎",
     bonusXp: 5,
     condition: (stats) => stats.hasSpun && !stats.isDark,
+    progress: 0,
+    target: 1,
   },
   {
     id: "hello_darkness",
@@ -657,6 +802,8 @@ export const ACHIEVEMENTS = [
     icon: "🌑",
     bonusXp: 5,
     condition: (stats) => stats.hasSpun && stats.isDark,
+    progress: 0,
+    target: 1,
   },
   {
     id: "taste_the_rainbow",
@@ -665,6 +812,8 @@ export const ACHIEVEMENTS = [
     icon: "🌈",
     bonusXp: 10,
     condition: (stats) => stats.hasSpun && stats.isCustomColors,
+    progress: 0,
+    target: 1,
   },
   {
     id: "light_switch_rave",
@@ -673,6 +822,8 @@ export const ACHIEVEMENTS = [
     icon: "💡",
     bonusXp: 10,
     condition: (stats) => stats.rapidThemeToggles >= 10,
+    progress: (stats) => stats.rapidThemeToggles || 0,
+    target: 10,
   },
   // --- Spin Trail Effect ---
   {
@@ -683,6 +834,8 @@ export const ACHIEVEMENTS = [
     icon: "🪙",
     bonusXp: 5,
     condition: (stats) => stats.hasSpun && stats.trailEnabled && stats.level >= 1,
+    progress: 0,
+    target: 1,
   },
   {
     id: "trailblazer",
@@ -691,6 +844,8 @@ export const ACHIEVEMENTS = [
     icon: "✨",
     bonusXp: 10,
     condition: (stats) => stats.hasSpun && stats.trailEnabled && stats.level >= 3,
+    progress: 0,
+    target: 1,
   },
   {
     id: "emerald_swirl",
@@ -700,6 +855,8 @@ export const ACHIEVEMENTS = [
     icon: "💚",
     bonusXp: 20,
     condition: (stats) => stats.hasSpun && stats.trailEnabled && stats.level >= 5,
+    progress: 0,
+    target: 1,
   },
   {
     id: "topaz_trace",
@@ -709,6 +866,8 @@ export const ACHIEVEMENTS = [
     icon: "🔷",
     bonusXp: 40,
     condition: (stats) => stats.hasSpun && stats.trailEnabled && stats.level >= 7,
+    progress: 0,
+    target: 1,
   },
   {
     id: "ruby_reverb",
@@ -718,6 +877,8 @@ export const ACHIEVEMENTS = [
     icon: "♦️",
     bonusXp: 60,
     condition: (stats) => stats.hasSpun && stats.trailEnabled && stats.level >= 8,
+    progress: 0,
+    target: 1,
   },
   {
     id: "golden_slipstream",
@@ -727,6 +888,8 @@ export const ACHIEVEMENTS = [
     icon: "💫",
     bonusXp: 100,
     condition: (stats) => stats.hasSpun && stats.trailEnabled && stats.level >= 9,
+    progress: 0,
+    target: 1,
   },
   {
     id: "quantum_wake",
@@ -736,6 +899,8 @@ export const ACHIEVEMENTS = [
     icon: "⚛️",
     bonusXp: 500,
     condition: (stats) => stats.hasSpun && stats.trailEnabled && stats.level >= 10,
+    progress: 0,
+    target: 1,
   },
   {
     id: "cosmic_drift",
@@ -745,6 +910,8 @@ export const ACHIEVEMENTS = [
     icon: "🌌",
     bonusXp: 1000,
     condition: (stats) => stats.hasSpun && stats.trailEnabled && stats.level >= 11,
+    progress: 0,
+    target: 1,
   },
   // --- AI features ---
   {
@@ -754,6 +921,8 @@ export const ACHIEVEMENTS = [
     icon: "🤖",
     bonusXp: 100,
     condition: (stats) => stats.usedAI,
+    progress: 0,
+    target: 1,
   },
   {
     id: "press_secretary",
@@ -762,6 +931,8 @@ export const ACHIEVEMENTS = [
     icon: "📢",
     bonusXp: 100,
     condition: (stats) => stats.usedAIAnnounce,
+    progress: 0,
+    target: 1,
   },
   {
     id: "her_voice",
@@ -770,6 +941,8 @@ export const ACHIEVEMENTS = [
     icon: "🌸",
     bonusXp: 10,
     condition: (stats) => stats.usedAIAnnounce && stats.aiVoice === AI_VOICES.AOEDE,
+    progress: 0,
+    target: 1,
   },
   {
     id: "his_voice",
@@ -778,6 +951,8 @@ export const ACHIEVEMENTS = [
     icon: "🎙️",
     bonusXp: 10,
     condition: (stats) => stats.usedAIAnnounce && stats.aiVoice === AI_VOICES.IAPETUS,
+    progress: 0,
+    target: 1,
   },
   // --- Meta Achievements ---
   {
@@ -787,6 +962,8 @@ export const ACHIEVEMENTS = [
     icon: "🏅",
     bonusXp: 100,
     condition: (stats) => stats.unlockedCount >= 20,
+    progress: (stats) => stats.unlockedCount,
+    target: 20,
   },
   {
     id: "halfway_hero",
@@ -796,6 +973,8 @@ export const ACHIEVEMENTS = [
     icon: "😤",
     bonusXp: 200,
     condition: (stats) => stats.unlockedCount >= Math.floor(ACHIEVEMENTS.length / 2),
+    progress: (stats) => stats.unlockedCount,
+    target: () => Math.floor(ACHIEVEMENTS.length / 2),
   },
   {
     id: "legendary_grindlord_80",
@@ -805,6 +984,8 @@ export const ACHIEVEMENTS = [
     icon: "🎖️",
     bonusXp: 300,
     condition: (stats) => stats.unlockedCount >= Math.floor(ACHIEVEMENTS.length * 0.8),
+    progress: (stats) => stats.unlockedCount,
+    target: () => Math.floor(ACHIEVEMENTS.length * 0.8),
   },
   {
     id: "the_completionist",
@@ -814,6 +995,8 @@ export const ACHIEVEMENTS = [
     icon: "💎",
     bonusXp: 9999,
     condition: (stats) => stats.unlockedCount >= ACHIEVEMENTS.length - 1,
+    progress: (stats) => stats.unlockedCount,
+    target: () => ACHIEVEMENTS.length - 1,
   },
   // --- Easter Eggs ---
   {
@@ -823,6 +1006,8 @@ export const ACHIEVEMENTS = [
     icon: "💀",
     bonusXp: 100,
     condition: (stats) => stats.isBroken,
+    progress: 0,
+    target: 1,
   },
   {
     id: "the_cake_is_a_lie",
@@ -834,6 +1019,8 @@ export const ACHIEVEMENTS = [
       const cakeEmojis = ["🍰", "🎂", "🧁", "🍥"];
       return cakeEmojis.some((emoji) => stats.winnerId && stats.winnerId.includes(emoji));
     },
+    progress: 0,
+    target: 1,
   },
   {
     id: "credit_where_due",
@@ -842,6 +1029,8 @@ export const ACHIEVEMENTS = [
     icon: "🥚",
     bonusXp: 200,
     condition: (stats) => stats.winnerId === "@author",
+    progress: 0,
+    target: 1,
   },
   {
     id: "lore_master",
@@ -850,6 +1039,8 @@ export const ACHIEVEMENTS = [
     icon: "📖",
     bonusXp: 300,
     condition: (stats) => stats.winnerId === "@about",
+    progress: 0,
+    target: 1,
   },
 ];
 

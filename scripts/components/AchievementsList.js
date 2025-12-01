@@ -140,6 +140,21 @@ const AchievementsList = ({ achievements, achievementFilter, setAchievementFilte
                 >
                   {ach.description}
                 </p>
+
+                {/* Progress Bar */}
+                {!ach.isUnlocked && ach.target > 0 && (
+                  <>
+                    <div className="mt-3 w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
+                      <div
+                        className="bg-indigo-500 h-full rounded-full transition-all duration-500"
+                        style={{ width: `${Math.min((ach.progress / ach.target) * 100, 100)}%` }}
+                      />
+                    </div>
+                    <div className="text-xs text-gray-400 mt-1 text-right">
+                      {ach.progress} / {ach.target}
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           ))
