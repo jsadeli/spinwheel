@@ -1958,6 +1958,9 @@
                         <button
                           onClick={() => {
                             setTickSound(TICK_SOUNDS.DEFAULT);
+                            if (tickSound === TICK_SOUNDS.DEFAULT) {
+                              setShowSettingsMenu(false);
+                            }
                           }}
                           disabled={!soundEnabled}
                           className={`flex items-center w-full px-4 py-2 text-sm text-left ${
@@ -1980,6 +1983,9 @@
                         <button
                           onClick={() => {
                             setTickSound(TICK_SOUNDS.CRISP);
+                            if (tickSound === TICK_SOUNDS.CRISP) {
+                              setShowSettingsMenu(false);
+                            }
                           }}
                           disabled={!soundEnabled}
                           className={`flex items-center w-full px-4 py-2 text-sm text-left ${
@@ -2002,6 +2008,9 @@
                         <button
                           onClick={() => {
                             setTickSound(TICK_SOUNDS.METALLIC);
+                            if (tickSound === TICK_SOUNDS.METALLIC) {
+                              setShowSettingsMenu(false);
+                            }
                           }}
                           disabled={!soundEnabled}
                           className={`flex items-center w-full px-4 py-2 text-sm text-left ${
@@ -2024,6 +2033,9 @@
                         <button
                           onClick={() => {
                             setTickSound(TICK_SOUNDS.CRYSTAL);
+                            if (tickSound === TICK_SOUNDS.CRYSTAL) {
+                              setShowSettingsMenu(false);
+                            }
                           }}
                           disabled={!soundEnabled}
                           className={`flex items-center w-full px-4 py-2 text-sm text-left ${
