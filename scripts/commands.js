@@ -23,128 +23,165 @@ import { THEMES, STORAGE_KEYS } from "./configs.js";
  * @example
  * processCommandCodes("@console", "#!sudo\n#!enable-cheats", { ...context });
  */
-export const processCommandCodes = (
-  listName,
-  inputText,
-  {
-    xp,
-    setXp,
-    setIsCorrupted,
-    setIsOutOfOrder,
-    setTheme,
-    setInputText,
-    addToast,
-    setWinner,
-    achievementManager,
-    setAchievements,
+const EXACT_COMMANDS = {
+  "#!enable-cheats": (ctx, state) => {
+    state.isCheatsEnabled = true;
+    return { message: "Cheat mode enabled!" };
+  },
+  "levelup": (ctx, state) => {
+    if (!state.isCheatsEnabled) return null;
+    const info = getLevelProgress(state.currentXp);
+    const needed = info.requiredLevelXp - info.currentLevelXp;
+    ctx.setXp((prev) => prev + needed);
+    state.currentXp += needed;
+    ctx.setIsCorrupted(true);
+    localStorage.setItem(STORAGE_KEYS.IS_CORRUPTED, "true");
+    return { message: `Leveled Up! (+${Math.round(needed)} XP)` };
+  },
+  "toast:achievement": (ctx) => {
+    ctx.addToast("Unlocked an achievement!", "Achievement Unlocked");
+    return { executed: true };
+  },
+  "toast:quest": (ctx) => {
+    ctx.addToast("Completed a daily quest!", "Daily Quest Completed");
+    return { executed: true };
+  },
+  "toast:levelup": (ctx) => {
+    ctx.addToast("Congrats! You have leveled up!", "Level Up!");
+    return { executed: true };
+  },
+  "toast:error": (ctx) => {
+    ctx.addToast("This is a sample error message.", "Error");
+    return { executed: true };
+  },
+  "confetti": (ctx, state) => {
+    const level = getLevelProgress(state.currentXp).level;
+    fireConfetti(level);
+    return { executed: true };
+  },
+  "break": (ctx) => {
+    ctx.setIsOutOfOrder(true);
+    return { executed: true };
+  },
+  "reset:achievements": (ctx) => {
+    ctx.achievementManager.reset();
+    ctx.setAchievements(ctx.achievementManager.getAll());
+    return { executed: true };
+  },
+  "reset:level": (ctx) => {
+    ctx.setXp(() => 0);
+    return { executed: true };
+  },
+  "reset": () => {
+    localStorage.clear();
+    window.location.reload();
+    return { stop: true };
   }
-) => {
+};
+
+const PREFIX_COMMANDS = [
+  {
+    prefix: "xp:",
+    handler: (command, ctx, state) => {
+      if (!state.isCheatsEnabled) return null;
+      const amount = parseInt(command.substring(3), 10);
+      if (isNaN(amount)) return null;
+
+      ctx.setXp((prev) => prev + amount);
+      state.currentXp += amount;
+      ctx.setIsCorrupted(true);
+      localStorage.setItem(STORAGE_KEYS.IS_CORRUPTED, "true");
+      return { message: `${amount > 0 ? "+" : ""}${amount} XP` };
+    }
+  },
+  {
+    prefix: "toast:",
+    handler: (command, ctx) => {
+      ctx.addToast(command.substring(6));
+      return { executed: true };
+    }
+  },
+  {
+    prefix: "winner:",
+    handler: (command, ctx) => {
+      ctx.setWinner(command.substring(7));
+      return { executed: true };
+    }
+  },
+  {
+    prefix: "confetti:",
+    handler: (command) => {
+      const level = parseInt(command.substring(9), 10);
+      if (!isNaN(level)) {
+        fireConfetti(level);
+        return { executed: true };
+      }
+      return null;
+    }
+  },
+  {
+    prefix: "theme:",
+    handler: (command, ctx) => {
+      let newTheme = command.substring(6).trim();
+      if (newTheme === "system") newTheme = THEMES.AUTO;
+      if (Object.values(THEMES).includes(newTheme)) {
+        ctx.setTheme(newTheme);
+        return { executed: true };
+      }
+      return null;
+    }
+  }
+];
+
+export const processCommandCodes = (listName, inputText, context) => {
   if (!listName || listName.toLowerCase() !== "@console") return false;
 
   const lines = inputText.split("\n");
   if (lines.length === 0 || lines[0].trim() !== "#!sudo") return false;
 
   let commandExecutedCount = 0;
-  let isCheatsEnabled = false;
-  let currentXp = xp;
+
+  // Mutable state for the execution session
+  const state = {
+    isCheatsEnabled: false,
+    currentXp: context.xp
+  };
 
   for (const line of lines.slice(1)) {
-    let commandExecuted = false;
     const command = line.trim();
-    let message = line.trim();
+    let result = null;
 
-    if (command === "#!enable-cheats") {
-      isCheatsEnabled = true;
-      message = "Cheat mode enabled!";
-      commandExecuted = true;
-    } else if (command.startsWith("xp:") && isCheatsEnabled) {
-      const amount = parseInt(command.substring(3), 10);
-      if (!isNaN(amount)) {
-        setXp((prev) => prev + amount);
-        currentXp += amount;
-        message = `${amount > 0 ? "+" : ""}${amount} XP`;
-        setIsCorrupted(true);
-        localStorage.setItem(STORAGE_KEYS.IS_CORRUPTED, "true");
-        commandExecuted = true;
-      }
-    } else if (command === "levelup" && isCheatsEnabled) {
-      const info = getLevelProgress(currentXp);
-      const needed = info.requiredLevelXp - info.currentLevelXp;
-      setXp((prev) => prev + needed);
-      currentXp += needed;
-      message = `Leveled Up! (+${Math.round(needed)} XP)`;
-      setIsCorrupted(true);
-      localStorage.setItem(STORAGE_KEYS.IS_CORRUPTED, "true");
-      commandExecuted = true;
-    } else if (command === "toast:achievement") {
-      addToast("Unlocked an achievement!", "Achievement Unlocked");
-      commandExecuted = true;
-    } else if (command === "toast:quest") {
-      addToast("Completed a daily quest!", "Daily Quest Completed");
-      commandExecuted = true;
-    } else if (command === "toast:levelup") {
-      addToast("Congrats! You have leveled up!", "Level Up!");
-      commandExecuted = true;
-    } else if (command === "toast:error") {
-      addToast("This is a sample error message.", "Error");
-      commandExecuted = true;
-    } else if (command.startsWith("toast:")) {
-      addToast(command.substring(6));
-      commandExecuted = true;
-    } else if (command.startsWith("winner:")) {
-      const name = command.substring(7);
-      setWinner(name);
-      commandExecuted = true;
-    } else if (command === "confetti") {
-      const level = getLevelProgress(currentXp).level;
-      fireConfetti(level);
-      commandExecuted = true;
-    } else if (command.startsWith("confetti:")) {
-      const level = parseInt(command.substring(9), 10);
-      if (!isNaN(level)) {
-        fireConfetti(level);
-        commandExecuted = true;
-      }
-    } else if (command === "break") {
-      setIsOutOfOrder(true);
-      commandExecuted = true;
-    } else if (command.startsWith("theme:")) {
-      let newTheme = command.substring(6).trim();
-      if (newTheme === "system") newTheme = THEMES.AUTO;
-
-      if (Object.values(THEMES).includes(newTheme)) {
-        setTheme(newTheme);
-        message = `Theme set to ${newTheme}`;
-        commandExecuted = true;
-      }
-    } else if (command === "reset:achievements") {
-      achievementManager.reset();
-      setAchievements(achievementManager.getAll());
-      message = "Achievements reset!";
-      commandExecuted = true;
-    } else if (command === "reset:level") {
-      setXp(() => 0);
-      commandExecuted = true;
-      message = "Level reset!";
-    } else if (command === "reset") {
-      localStorage.clear();
-      window.location.reload();
-      commandExecuted = true;
-      return true; // Stop everything
+    // 1. Try Exact Match
+    if (EXACT_COMMANDS[command]) {
+      result = EXACT_COMMANDS[command](context, state);
     }
 
-    if (commandExecuted) {
-      addToast(message, "COMMAND EXECUTED", "✅", 2500);
+    // 2. Try Prefix Match
+    if (!result) {
+      for (const { prefix, handler } of PREFIX_COMMANDS) {
+        if (command.startsWith(prefix)) {
+          result = handler(command, context, state);
+          if (result) break;
+        }
+      }
+    }
+
+    // 3. Process Result
+    if (result) {
+      if (result.stop) return true;
+
+      const message = result.message || command;
+      context.addToast(message, "COMMAND EXECUTED", "✅", 2500);
       commandExecutedCount++;
     }
   }
 
   if (commandExecutedCount >= 2) {
-    addToast(`${commandExecutedCount}`, "COMMANDS EXECUTED", "🖥️", 2500);
+    context.addToast(`${commandExecutedCount}`, "COMMANDS EXECUTED", "🖥️", 2500);
   }
 
   if (commandExecutedCount >= 1) {
-    setInputText("");
+    context.setInputText("");
     return true; // Stop spin
   }
 
@@ -155,4 +192,3 @@ export const processCommandCodes = (
 if (typeof window !== "undefined") {
   window.processCommandCodes = processCommandCodes;
 }
-
