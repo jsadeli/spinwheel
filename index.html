@@ -355,11 +355,58 @@
         // User Level
         const levelInfo = getLevelProgress(xp);
 
-        // Load initial data
+        // Helper to gather current stats for achievement progress
+        const getAchievementStats = () => {
+          // Calculate consecutive wins from history
+          let consecutiveWins = 0;
+          if (history.length > 0) {
+            consecutiveWins = 1;
+            const first = history[0].text;
+            for (let i = 1; i < history.length; i++) {
+              if (history[i].text === first) consecutiveWins++;
+              else break;
+            }
+          }
+
+          return {
+            spins: totalSpins,
+            level: levelInfo.level,
+            historyLength: history.length,
+            listCount: savedLists.length,
+            cancelledSpins: cancelledSpins,
+            consecutiveWins: consecutiveWins,
+            consecutiveShuffles: consecutiveShufflesRef.current,
+            inputsTabViews: inputsTabViews,
+            historyTabViews: historyTabViews,
+            progressTabViews: progressTabViews,
+            sessionSpin: sessionSpin,
+            spinsInLastMinute: spinTimestampsRef.current
+              ? spinTimestampsRef.current.filter((t) => Date.now() - t < 60000).length
+              : 0,
+            spinsInLastHour: spinTimestampsRef.current ? spinTimestampsRef.current.length : 0,
+            consecutiveOverheats: consecutiveOverheatsRef.current,
+            unlockedCount: Object.keys(achievementManager.getUnlocked()).length,
+            uniqueImportCount: loadState(STORAGE_KEYS.IMPORTED_CODES, []).length,
+          };
+        };
+
+        // Load initial data & Update on changes
         useEffect(() => {
-          setAchievements(achievementManager.getAll());
+          const stats = getAchievementStats();
+          setAchievements(achievementManager.getAll(stats));
           setChallenges(challengeManager.getAll({ xp, level: levelInfo.level }));
-        }, [xp, levelInfo.level]);
+        }, [
+          xp,
+          levelInfo.level,
+          totalSpins,
+          history,
+          savedLists,
+          cancelledSpins,
+          inputsTabViews,
+          historyTabViews,
+          progressTabViews,
+          sessionSpin,
+        ]);
 
         // Helper to handle achievement unlocks and XP gain
         const handleAchievementUnlocks = (newUnlocks) => {
@@ -371,11 +418,14 @@
               if (ach.bonusXp) totalBonusXp += ach.bonusXp;
             });
 
-            setAchievements(achievementManager.getAll());
+            setAchievements(achievementManager.getAll(getAchievementStats()));
 
             if (totalBonusXp > 0) {
               setXp((prev) => prev + totalBonusXp);
             }
+          } else {
+            // Even if no unlock, update state for progress bars
+            setAchievements(achievementManager.getAll(getAchievementStats()));
           }
         };
 
@@ -2033,7 +2083,9 @@
                           </span>
                           Item Colors:{" "}
                           <span className="ml-1 font-semibold">
-                            {colorAssignment === COLOR_ASSIGNMENT_MODE.DYNAMIC ? "Dynamic" : "Fixed"}
+                            {colorAssignment === COLOR_ASSIGNMENT_MODE.DYNAMIC
+                              ? "Dynamic"
+                              : "Fixed"}
                           </span>
                         </button>
                         <button
