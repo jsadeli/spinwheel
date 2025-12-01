@@ -142,7 +142,7 @@ const AchievementsList = ({ achievements, achievementFilter, setAchievementFilte
                 </p>
 
                 {/* Progress Bar */}
-                {!ach.isUnlocked && ach.target > 0 && (
+                {!ach.isUnlocked && ach.target >= 2 && (
                   <>
                     <div className="mt-3 w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
                       <div
