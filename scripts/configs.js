@@ -76,6 +76,8 @@ export const storageKeys = {
   ACHIEVEMENTS: "spinWheel_achievements",
   /** Selected AI voice (Aoede/Iapetus) */
   AI_VOICE_SELECTION: "spinWheel_aiVoiceSelection",
+  /** Daily Challenges data */
+  DAILY_CHALLENGES: "spinWheel_dailyChallenges",
 };
 
 /**
@@ -149,6 +151,18 @@ export const TabNames = {
 };
 
 /**
+ * Minimum level required to unlock Daily Challenges.
+ * @type {number}
+ */
+export const DAILY_CHALLENGE_LEVEL = 8;
+
+/**
+ * Hour of the day (0-23) when daily challenges reset.
+ * @type {number}
+ */
+export const DAILY_CHALLENGE_RESET_HOUR = 0;
+
+/**
  * GitHub profile link for the application author.
  * @type {string}
  */
@@ -171,6 +185,8 @@ if (typeof window !== "undefined") {
   window.AIVoices = AIVoices;
   window.TOAST_DURATION = TOAST_DURATION;
   window.TabNames = TabNames;
+  window.DAILY_CHALLENGE_LEVEL = DAILY_CHALLENGE_LEVEL;
+  window.DAILY_CHALLENGE_RESET_HOUR = DAILY_CHALLENGE_RESET_HOUR;
   window.GITHUB_LINK = GITHUB_LINK;
   window.SPINWHEEL_REPO = SPINWHEEL_REPO;
 }

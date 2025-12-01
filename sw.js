@@ -1,7 +1,8 @@
-const CACHE_NAME = "spinwheel-v36";
+const CACHE_NAME = "spinwheel-v37";
 const ASSETS = [
   "./",
   "./scripts/components/AchievementsList.js",
+  "./scripts/components/ChallengesList.js",
   "./scripts/components/LevelCard.js",
   "./scripts/components/Modal.js",
   "./scripts/components/OutOfOrderOverlay.js",
@@ -9,6 +10,7 @@ const ASSETS = [
   "./scripts/components/Toast.js",
   "./scripts/components/WinnerModal.js",
   "./scripts/core/AchievementManager.js",
+  "./scripts/core/ChallengeManager.js",
   "./scripts/core/GeminiError.js",
   "./scripts/lib/babel.min.js",
   "./scripts/lib/react-dom.production.min.js",
@@ -20,6 +22,7 @@ const ASSETS = [
   "./scripts/colors.js",
   "./scripts/commands.js",
   "./scripts/configs.js",
+  "./scripts/challenges.js",
   "./scripts/icons.js",
   "./scripts/levels.js",
   "./scripts/sounds.js",

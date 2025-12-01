@@ -93,6 +93,7 @@
 
     <!-- Load Core Modules & Utilities (Global Scope) -->
     <script type="module" src="scripts/core/AchievementManager.js"></script>
+    <script type="module" src="scripts/core/ChallengeManager.js"></script>
     <script type="module" src="scripts/core/GeminiError.js"></script>
     <script type="module" src="scripts/achievements.js"></script>
     <script type="module" src="scripts/ai.js"></script>
@@ -100,6 +101,7 @@
     <script type="module" src="scripts/colors.js"></script>
     <script type="module" src="scripts/commands.js"></script>
     <script type="module" src="scripts/configs.js"></script>
+    <script type="module" src="scripts/challenges.js"></script>
     <script type="module" src="scripts/levels.js"></script>
     <script type="module" src="scripts/sounds.js"></script>
     <script type="module" src="scripts/themes.js"></script>
@@ -115,25 +117,61 @@
     <script type="text/babel" data-type="module" src="scripts/components/WinnerModal.js"></script>
     <script type="text/babel" data-type="module" src="scripts/components/LevelCard.js"></script>
     <script type="text/babel" data-type="module" src="scripts/components/AchievementsList.js"></script>
+    <script type="text/babel" data-type="module" src="scripts/components/ChallengesList.js"></script>
     <script type="text/babel" data-type="module" src="scripts/components/Toast.js"></script>
     <script type="text/babel" data-type="module" src="scripts/components/OutOfOrderOverlay.js"></script>
 
     <!-- Load App -->
     <script type="text/babel" data-type="module">
       const {
-        getLevelProgress, getLevelTitle,
-        drawWheel, updatePointer,
+        getLevelProgress,
+        getLevelTitle,
+        drawWheel,
+        updatePointer,
         AchievementFilters,
         AchievementManager,
+        ChallengeManager,
         GeminiError,
-        generateListFromGemini, generateSpeechFromGemini,
-        defaultColors, beachColors, getPrestigeTheme, getTierColors,
-        lerpColor, parseCustomColors,
-        fireConfetti, spawnSmoke,
+        generateListFromGemini,
+        generateSpeechFromGemini,
+        defaultColors,
+        beachColors,
+        getPrestigeTheme,
+        getTierColors,
+        lerpColor,
+        parseCustomColors,
+        fireConfetti,
+        spawnSmoke,
         processCommandCodes,
-        loadState, getRelativeTime, parseItems, itemsToString, copyToClipboard, isEmoji, parseWinnerString,
-        playWinSound, playTickSound, playDefaultTickSound, playCrispWoodTickSound, playMetallicClankTickSound, playCrystalGlassTickSound, playFireCrackle, playBreakdownSound, base64ToWavBlob, ChargeSound,
-        defaultListName, defaultListItems, storageKeys, themes, AIVoices, TOAST_DURATION, TabNames, GITHUB_LINK, TickSounds, ColorAssignmentMode
+        loadState,
+        getRelativeTime,
+        parseItems,
+        itemsToString,
+        copyToClipboard,
+        isEmoji,
+        parseWinnerString,
+        playWinSound,
+        playTickSound,
+        playDefaultTickSound,
+        playCrispWoodTickSound,
+        playMetallicClankTickSound,
+        playCrystalGlassTickSound,
+        playFireCrackle,
+        playBreakdownSound,
+        base64ToWavBlob,
+        ChargeSound,
+        defaultListName,
+        defaultListItems,
+        storageKeys,
+        themes,
+        AIVoices,
+        TOAST_DURATION,
+        TabNames,
+        GITHUB_LINK,
+        TickSounds,
+        ColorAssignmentMode,
+        DAILY_CHALLENGE_LEVEL,
+        DAILY_CHALLENGE_RESET_HOUR,
       } = window;
 
       const { useState, useEffect, useRef, useMemo } = React;
@@ -288,8 +326,6 @@
         const [cancelledSpins, setCancelledSpins] = useState(() =>
           loadState(storageKeys.CANCELLED_SPINS, 0)
         ); // Track total cancelled spins
-        const [achievements, setAchievements] = useState([]); // Store achievement objects with status
-        const [achievementFilter, setAchievementFilter] = useState(AchievementFilters.ALL); // 'all', 'unlocked', 'locked'
 
         // Track Tab Views for "Lorekeeper's Review"
         const [inputsTabViews, setInputsTabViews] = useState(() =>
@@ -302,13 +338,28 @@
           loadState(storageKeys.PROGRESS_TAB_VIEWS, 0)
         );
 
-        // Initialize Achievement Manager
+        // Initialize Managers
         const achievementManager = useMemo(() => new AchievementManager(), []);
+        const challengeManager = useMemo(() => new ChallengeManager(), []);
 
-        // Load initial achievements
+        // State
+        const [progressViewMode, setProgressViewMode] = useState(() => {
+          const level = getLevelProgress(xp).level;
+          return level >= DAILY_CHALLENGE_LEVEL ? "daily_quests" : "achievements";
+        });
+        const [achievements, setAchievements] = useState([]); // Store achievement objects with status
+        const [achievementFilter, setAchievementFilter] = useState(AchievementFilters.ALL); // 'all', 'unlocked', 'locked'
+        const [challenges, setChallenges] = useState([]);
+        const [challengeFilter, setChallengeFilter] = useState(AchievementFilters.ALL);
+
+        // User Level
+        const levelInfo = getLevelProgress(xp);
+
+        // Load initial data
         useEffect(() => {
           setAchievements(achievementManager.getAll());
-        }, []);
+          setChallenges(challengeManager.getAll({ xp, level: levelInfo.level }));
+        }, [xp, levelInfo.level]);
 
         // Helper to handle achievement unlocks and XP gain
         const handleAchievementUnlocks = (newUnlocks) => {
@@ -328,6 +379,27 @@
           }
         };
 
+        // Helper to handle daily challenge unlocks
+        const handleDailyChallengeUnlocks = (newUnlocks) => {
+          if (newUnlocks.length > 0) {
+            let totalBonusXp = 0;
+            newUnlocks.forEach((ch) => {
+              const xpMsg = ch.bonusXp ? ` (+${ch.bonusXp} XP)` : "";
+              addToast(`${ch.title}${xpMsg}`, "Daily Quest Completed", ch.icon, TOAST_DURATION);
+              if (ch.bonusXp) totalBonusXp += ch.bonusXp;
+            });
+
+            setChallenges(challengeManager.getAll({ xp, level: levelInfo.level }));
+
+            if (totalBonusXp > 0) {
+              setXp((prev) => prev + totalBonusXp);
+            }
+          } else {
+            // Even if no unlock, update state for progress bars
+            setChallenges(challengeManager.getAll({ xp, level: levelInfo.level }));
+          }
+        };
+
         // Check history achievements on mount
         useEffect(() => {
           const newUnlocks = achievementManager.check({
@@ -335,8 +407,6 @@
           });
           handleAchievementUnlocks(newUnlocks);
         }, []);
-
-        const levelInfo = getLevelProgress(xp);
 
         // Level Up Toast Logic
         const prevLevelRef = useRef(levelInfo.level);
@@ -1519,7 +1589,6 @@
             tickSound: tickSoundRef.current,
             unlockedCount: Object.keys(achievementManager.getUnlocked()).length,
           });
-
           handleAchievementUnlocks(newUnlocks);
 
           if (newUnlocks.length > 0) {
@@ -1528,6 +1597,18 @@
               unlockedCount: Object.keys(achievementManager.getUnlocked()).length,
             });
             handleAchievementUnlocks(metaUnlocks);
+          }
+
+          // Check Daily Challenges
+          // Only if user is high enough level
+          if (currentLevelInfo.level >= DAILY_CHALLENGE_LEVEL) {
+            const dailyUnlocks = challengeManager.incrementSpins({
+              winner: winItem,
+              level: currentLevelInfo.level,
+              xp: xp,
+              spins: newTotalSpins,
+            });
+            handleDailyChallengeUnlocks(dailyUnlocks);
           }
 
           if (soundEnabled) {
@@ -2646,12 +2727,51 @@
                       prestigeTheme={prestigeTheme}
                     />
 
-                    {/* Bottom Section: Achievements List */}
-                    <AchievementsList
-                      achievements={achievements}
-                      achievementFilter={achievementFilter}
-                      setAchievementFilter={setAchievementFilter}
-                    />
+                    {/* View Toggle (Only if level >= 9) */}
+                    {levelInfo.level >= DAILY_CHALLENGE_LEVEL && (
+                      <div className="flex justify-center mb-6">
+                        <div className="bg-gray-200 dark:bg-gray-700 p-1 rounded-lg flex space-x-1">
+                          <button
+                            onClick={() => setProgressViewMode("daily_quests")}
+                            className={`px-4 py-2 rounded-md text-sm font-bold transition-all ${
+                              progressViewMode === "daily_quests"
+                                ? "bg-white dark:bg-gray-600 text-emerald-600 dark:text-emerald-400 shadow-sm"
+                                : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+                            }`}
+                          >
+                            Daily Quests
+                          </button>
+                          <button
+                            onClick={() => setProgressViewMode("achievements")}
+                            className={`px-4 py-2 rounded-md text-sm font-bold transition-all ${
+                              progressViewMode === "achievements"
+                                ? "bg-white dark:bg-gray-600 text-indigo-600 dark:text-indigo-400 shadow-sm"
+                                : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+                            }`}
+                          >
+                            Achievements
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Bottom Section: Lists */}
+                    {progressViewMode === "achievements" ||
+                    levelInfo.level < DAILY_CHALLENGE_LEVEL ? (
+                      <AchievementsList
+                        achievements={achievements}
+                        achievementFilter={achievementFilter}
+                        setAchievementFilter={setAchievementFilter}
+                      />
+                    ) : (
+                      progressViewMode === "daily_quests" && (
+                        <ChallengesList
+                          challenges={challenges}
+                          filter={challengeFilter}
+                          setFilter={setChallengeFilter}
+                        />
+                      )
+                    )}
                   </div>
                 )}
               </div>

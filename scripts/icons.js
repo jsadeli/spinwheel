@@ -398,6 +398,24 @@ const FemaleIcon = (props) => (
   </Icon>
 );
 
+const SwordsIcon = (props) => (
+  <Icon {...props}>
+    {/* First sword - bottom-left to top-right */}
+    <path d="M20 4l-2 2" />
+    <path d="M18 6l-8 8" />
+    <path d="M10 14l-2 2" />
+    <path d="M7 17l-3 3" />
+    <path d="M6 16h2v2" />
+
+    {/* Second sword - top-left to bottom-right */}
+    <path d="M4 4l2 2" />
+    <path d="M6 6l8 8" />
+    <path d="M14 14l2 2" />
+    <path d="M17 17l3 3" />
+    <path d="M16 18v-2h2" />
+  </Icon>
+);
+
 // Expose to window (needed for Babel Standalone)
 window.Icon = Icon;
 window.SpinWheelLogo = SpinWheelLogo;
@@ -443,3 +461,4 @@ window.AlertTriangleIcon = AlertTriangleIcon;
 window.SkullIcon = SkullIcon;
 window.MaleIcon = MaleIcon;
 window.FemaleIcon = FemaleIcon;
+window.SwordsIcon = SwordsIcon;

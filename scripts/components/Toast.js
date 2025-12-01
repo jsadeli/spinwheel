@@ -17,6 +17,8 @@ const Toast = ({
   duration = window.TOAST_DURATION,
 }) => {
   const { useEffect } = React;
+  const { TrophyIcon, TrendingUpIcon, CloseIcon, SwordsIcon } = window;
+
   useEffect(() => {
     const timer = setTimeout(() => {
       onClose();
@@ -25,9 +27,10 @@ const Toast = ({
   }, [duration, onClose]);
 
   const isAchievement = title === "Achievement Unlocked";
+  const isDailyChallenge = title === "Daily Quest Completed";
   const isLevelUp = title === "Level Up!";
   const isError = title === "AI Voice Failed" || title === "AI Generation Failed";
-  const isSpecial = isAchievement || isLevelUp || isError;
+  const isSpecial = isAchievement || isDailyChallenge || isLevelUp || isError;
 
   return (
     <div className="fixed bottom-12 left-1/2 transform -translate-x-1/2 z-[10000]">
@@ -52,6 +55,10 @@ const Toast = ({
           <div className="absolute top-[-50%] left-[-50%] w-[200%] h-[200%] bg-[conic-gradient(from_0deg,#FCD34D,#F59E0B,#B45309,#F59E0B,#FCD34D)] animate-[spin_3s_linear_infinite] z-0"></div>
         )}
 
+        {isDailyChallenge && (
+          <div className="absolute top-[-50%] left-[-50%] w-[200%] h-[200%] bg-[conic-gradient(from_0deg,#6EE7B7,#10B981,#047857,#10B981,#6EE7B7)] animate-[spin_3s_linear_infinite] z-0"></div>
+        )}
+
         {isError && (
           <div className="absolute top-[-50%] left-[-50%] w-[200%] h-[200%] bg-[conic-gradient(from_0deg,#EF4444,#B91C1C,#7F1D1D,#B91C1C,#EF4444)] animate-[spin_3s_linear_infinite] z-0"></div>
         )}
@@ -66,6 +73,8 @@ const Toast = ({
             className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center ${
               isAchievement
                 ? "bg-yellow-100 dark:bg-yellow-900/30"
+                : isDailyChallenge
+                ? "bg-emerald-100 dark:bg-emerald-900/30"
                 : isError
                 ? "bg-red-100 dark:bg-red-900/30"
                 : "bg-indigo-50 dark:bg-indigo-900/30"
@@ -79,6 +88,11 @@ const Toast = ({
               <TrendingUpIcon
                 size={24}
                 className="text-indigo-600 dark:text-indigo-400 animate-bounce"
+              />
+            ) : isDailyChallenge ? (
+              <SwordsIcon
+                size={24}
+                className="text-emerald-600 dark:text-emerald-400 animate-pulse"
               />
             ) : (
               <TrophyIcon
@@ -94,6 +108,8 @@ const Toast = ({
               className={`text-xs font-bold tracking-wide uppercase ${
                 isAchievement
                   ? "text-yellow-600 dark:text-yellow-400"
+                  : isDailyChallenge
+                  ? "text-emerald-600 dark:text-emerald-400"
                   : isError
                   ? "text-red-600 dark:text-red-400"
                   : "text-indigo-500 dark:text-indigo-400"
