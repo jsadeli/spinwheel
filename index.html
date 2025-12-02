@@ -345,7 +345,7 @@
         // SpinCoin State
         const [coins, setCoins] = useState(() => {
           const coins = loadState(STORAGE_KEYS.COINS, null);
-          if (coins) return coins;
+          if (coins != null) return coins;
 
           // if previous coin balance is not present, initialize based on total spins
           return loadState(STORAGE_KEYS.TOTAL_SPINS, 0);
