@@ -4,6 +4,7 @@ const CoinChip = ({ balance, animate, onAnimationComplete }) => {
   const [prevBalance, setPrevBalance] = useState(balance);
   const [isRolling, setIsRolling] = useState(false);
   const [delta, setDelta] = useState(0);
+  const isIncreasing = balance >= prevBalance;
 
   useEffect(() => {
     if (balance !== prevBalance) {
@@ -66,22 +67,31 @@ const CoinChip = ({ balance, animate, onAnimationComplete }) => {
 
         {/* Balance */}
         <div className="font-bold text-indigo-900 dark:text-indigo-100 font-mono relative h-6 overflow-hidden">
-          <div className="opacity-0 h-6 flex items-center">
-            {balance.toLocaleString()}
-          </div>
+          <div className="opacity-0 h-6 flex items-center">{balance.toLocaleString()}</div>
           <div
             className={`absolute top-0 left-0 w-full flex flex-col ${
-              isRolling
-                ? "transition-transform duration-300 -translate-y-1/2"
-                : ""
+              isRolling ? "transition-transform duration-300" : ""
+            } ${
+              isIncreasing
+                ? isRolling
+                  ? "-translate-y-1/2"
+                  : "translate-y-0"
+                : isRolling
+                ? "translate-y-0"
+                : "-translate-y-1/2"
             }`}
           >
-            <div className="h-6 flex items-center">
-              {prevBalance.toLocaleString()}
-            </div>
-            <div className="h-6 flex items-center">
-              {balance.toLocaleString()}
-            </div>
+            {isIncreasing ? (
+              <>
+                <div className="h-6 flex items-center">{prevBalance.toLocaleString()}</div>
+                <div className="h-6 flex items-center">{balance.toLocaleString()}</div>
+              </>
+            ) : (
+              <>
+                <div className="h-6 flex items-center">{balance.toLocaleString()}</div>
+                <div className="h-6 flex items-center">{prevBalance.toLocaleString()}</div>
+              </>
+            )}
           </div>
         </div>
 
