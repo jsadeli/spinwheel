@@ -32,6 +32,8 @@ Screenshot:
     (e.g., "Lunch Options", "Daily Standup", "Movie Night").
   - **Progress**: Track your XP progress, levels, and achievements. Earn XP points and unlock various
     achievements on every spin!
+  - **SpinCoin**: Earn coins by spinning the wheel! Use them to buy items from the shop or unlock
+    new customizations (eventually... shop features are not yet implemented).
 - 🎨 Visuals & UI
   - **3D Confetti**: Physics-based confetti engine with wind resistance, tumbling, and
     semi-transparent paper effects.
@@ -127,10 +129,11 @@ Cheats (intended solely for testing, _obviously_) can be enabled by executing `#
 command to elevate permissions, before inputting any of the cheat commands. Once activated, the
 following commands allow you to manipulate progression state:
 
-| Command     | Description                                                               |
-|-------------|---------------------------------------------------------------------------|
-| `xp:amount` | Modify experience points. The `amount` value may be positive or negative. |
-| `levelup`   | Jump directly to the next level threshold.                                |
+| Command        | Description                                                                    |
+|----------------|--------------------------------------------------------------------------------|
+| `coins:amount` | Modify the 'SpinCoin' balance. The `amount` value may be positive or negative. |
+| `xp:amount`    | Modify experience points. The `amount` value may be positive or negative.      |
+| `levelup`      | Jump directly to the next level threshold.                                     |
 
 ### Special Keywords
 
