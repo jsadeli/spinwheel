@@ -121,6 +121,7 @@
     <script type="text/babel" data-type="module" src="scripts/components/ChallengesList.js"></script>
     <script type="text/babel" data-type="module" src="scripts/components/Toast.js"></script>
     <script type="text/babel" data-type="module" src="scripts/components/OutOfOrderOverlay.js"></script>
+    <script type="text/babel" data-type="module" src="scripts/components/CoinChip.js"></script>
 
     <!-- Load App -->
     <script type="text/babel" data-type="module">
@@ -174,6 +175,7 @@
         COLOR_ASSIGNMENT_MODE,
         DAILY_CHALLENGE_LEVEL,
         DAILY_CHALLENGE_RESET_HOUR,
+        CoinChip,
       } = window;
 
       const { useState, useEffect, useRef, useMemo } = React;
@@ -339,6 +341,16 @@
         const [progressTabViews, setProgressTabViews] = useState(() =>
           loadState(STORAGE_KEYS.PROGRESS_TAB_VIEWS, 0)
         );
+
+        // SpinCoin State
+        const [coins, setCoins] = useState(() => {
+          const coins = loadState(STORAGE_KEYS.COINS, null);
+          if (coins) return coins;
+
+          // if previous coin balance is not present, initialize based on total spins
+          return loadState(STORAGE_KEYS.TOTAL_SPINS, 0);
+        });
+        const [triggerCoinAnim, setTriggerCoinAnim] = useState(false);
 
         // Initialize Managers
         const achievementManager = useMemo(() => new AchievementManager(), []);
@@ -677,6 +689,10 @@
         useEffect(() => {
           localStorage.setItem(STORAGE_KEYS.CANCELLED_SPINS, JSON.stringify(cancelledSpins));
         }, [cancelledSpins]);
+
+        useEffect(() => {
+          localStorage.setItem(STORAGE_KEYS.COINS, JSON.stringify(coins));
+        }, [coins]);
 
         // Color Logic
         useEffect(() => {
@@ -1552,6 +1568,7 @@
           setXp((prev) => prev + 1);
           setSessionSpin((prev) => prev + 1); // Track session spins
           setTotalSpins((prev) => prev + 1);
+          setCoins((prev) => prev + 1); // Earn coins
 
           // Check Achievements
           // We need the NEW total spins and level.
@@ -1700,6 +1717,11 @@
             1
           );
         }
+
+        const handleCloseWinnerModal = () => {
+          setWinner(null);
+          setTriggerCoinAnim(true);
+        };
 
         const handleRemoveAndSpin = () => {
           // Remove winner logic with animation
@@ -2297,6 +2319,15 @@
                   </div>
                 )}
 
+                {/* CoinChip HUD - Top Right */}
+                <div className="absolute top-3 left-3 z-30">
+                  <CoinChip
+                    balance={coins}
+                    animate={triggerCoinAnim}
+                    onAnimationComplete={() => setTriggerCoinAnim(false)}
+                  />
+                </div>
+
                 {/* Pointer Triangle */}
                 <div className="absolute z-20 right-0 md:right-auto top-1/2 -translate-y-1/2 translate-x-1/2 md:translate-x-[210px] lg:translate-x-[260px] filter drop-shadow-lg pointer-events-none">
                   <div
@@ -2848,7 +2879,7 @@
               winner={winner}
               levelInfo={levelInfo}
               prestigeTheme={prestigeTheme}
-              onClose={() => setWinner(null)}
+              onClose={handleCloseWinnerModal}
               onRemoveAndSpin={handleRemoveAndSpin}
             />
 

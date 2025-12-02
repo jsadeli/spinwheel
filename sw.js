@@ -3,6 +3,7 @@ const ASSETS = [
   "./",
   "./scripts/components/AchievementsList.js",
   "./scripts/components/ChallengesList.js",
+  "./scripts/components/CoinChip.js",
   "./scripts/components/LevelCard.js",
   "./scripts/components/Modal.js",
   "./scripts/components/OutOfOrderOverlay.js",

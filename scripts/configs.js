@@ -78,6 +78,8 @@ export const STORAGE_KEYS = {
   AI_VOICE_SELECTION: "spinWheel_aiVoiceSelection",
   /** Daily Challenges data */
   DAILY_CHALLENGES: "spinWheel_dailyChallenges",
+  /** Coin balance */
+  COINS: "spinWheel_coins",
 };
 
 /**
