@@ -1568,7 +1568,6 @@
           setXp((prev) => prev + 1);
           setSessionSpin((prev) => prev + 1); // Track session spins
           setTotalSpins((prev) => prev + 1);
-          setCoins((prev) => prev + 1); // Earn coins
 
           // Check Achievements
           // We need the NEW total spins and level.
@@ -1719,7 +1718,11 @@
         }
 
         const handleCloseWinnerModal = () => {
+          if (!winnerRef.current) return; // Prevent multiple triggers using ref for immediate check
+          winnerRef.current = null; // Immediately block subsequent calls
+
           setWinner(null);
+          setCoins((prev) => prev + 1); // Earn coins
           setTriggerCoinAnim(true);
         };
 
