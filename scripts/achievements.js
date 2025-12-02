@@ -669,6 +669,17 @@ export const ACHIEVEMENTS = [
     target: 500,
   },
   {
+    id: "spin_historian",
+    title: "Historian",
+    description:
+      "Your spin log is 1000 entries long, long enough to fill a small library. The archives speak your name.",
+    icon: "👴",
+    bonusXp: 1000,
+    condition: (stats) => stats.historyLength >= 1000,
+    progress: (stats) => stats.historyLength,
+    target: 1000,
+  },
+  {
     id: "progress_enthusiast",
     title: "Progress Enthusiast",
     description:
