@@ -1,4 +1,4 @@
-const CACHE_NAME = "spinwheel-v37";
+const CACHE_NAME = "spinwheel-v38";
 const ASSETS = [
   "./",
   "./scripts/components/AchievementsList.js",
@@ -12,6 +12,7 @@ const ASSETS = [
   "./scripts/core/AchievementManager.js",
   "./scripts/core/ChallengeManager.js",
   "./scripts/core/GeminiError.js",
+  "./scripts/core/Stats.js",
   "./scripts/lib/babel.min.js",
   "./scripts/lib/react-dom.production.min.js",
   "./scripts/lib/react.production.min.js",

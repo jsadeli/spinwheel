@@ -105,6 +105,7 @@
     <script type="module" src="scripts/levels.js"></script>
     <script type="module" src="scripts/sounds.js"></script>
     <script type="module" src="scripts/themes.js"></script>
+    <script type="module" src="scripts/core/Stats.js"></script>
     <script type="module" src="scripts/utils.js"></script>
     <script type="module" src="scripts/wheel.js"></script>
 
@@ -130,6 +131,7 @@
         updatePointer,
         AchievementFilters,
         AchievementManager,
+        Stats,
         ChallengeManager,
         GeminiError,
         generateListFromGemini,
@@ -357,24 +359,13 @@
 
         // Helper to gather current stats for achievement progress
         const getAchievementStats = () => {
-          // Calculate consecutive wins from history
-          let consecutiveWins = 0;
-          if (history.length > 0) {
-            consecutiveWins = 1;
-            const first = history[0].text;
-            for (let i = 1; i < history.length; i++) {
-              if (history[i].text === first) consecutiveWins++;
-              else break;
-            }
-          }
-
           return {
             spins: totalSpins,
             level: levelInfo.level,
             historyLength: history.length,
             listCount: savedLists.length,
             cancelledSpins: cancelledSpins,
-            consecutiveWins: consecutiveWins,
+            consecutiveWins: Stats.calculateConsecutiveWins(history),
             consecutiveShuffles: consecutiveShufflesRef.current,
             inputsTabViews: inputsTabViews,
             historyTabViews: historyTabViews,
