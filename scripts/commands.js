@@ -102,6 +102,20 @@ const PREFIX_COMMANDS = [
     },
   },
   {
+    prefix: "coins:",
+    handler: (command, ctx, state) => {
+      if (!state.isCheatsEnabled) return null;
+      const amount = parseInt(command.substring(6), 10);
+      if (isNaN(amount)) return null;
+
+      ctx.setCoins((prev) => prev + amount);
+      state.currentCoins += amount;
+      ctx.setIsCorrupted(true);
+      localStorage.setItem(STORAGE_KEYS.IS_CORRUPTED, "true");
+      return { message: `${amount > 0 ? "+" : ""}${amount} coins` };
+    },
+  },
+  {
     prefix: "toast:",
     handler: (command, ctx) => {
       ctx.addToast(command.substring(6));

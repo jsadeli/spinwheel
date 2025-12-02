@@ -1,4 +1,8 @@
-const CoinChip = ({ balance, animate, onAnimationComplete }) => {
+const CoinChip = ({
+  balance,
+  rollingDuration = 500,
+  animationDuration = 2000,
+}) => {
   const { useState, useEffect } = React;
   const [isAnimating, setIsAnimating] = useState(false);
   const [prevBalance, setPrevBalance] = useState(balance);
@@ -9,25 +13,25 @@ const CoinChip = ({ balance, animate, onAnimationComplete }) => {
   useEffect(() => {
     if (balance !== prevBalance) {
       setDelta(balance - prevBalance);
+
       setIsRolling(true);
-      const timer = setTimeout(() => {
+      setIsAnimating(true);
+
+      const rollTimer = setTimeout(() => {
         setIsRolling(false);
         setPrevBalance(balance);
-      }, 500);
-      return () => clearTimeout(timer);
-    }
-  }, [balance, prevBalance]);
+      }, rollingDuration);
 
-  useEffect(() => {
-    if (animate) {
-      setIsAnimating(true);
-      const timer = setTimeout(() => {
+      const animTimer = setTimeout(() => {
         setIsAnimating(false);
-        if (onAnimationComplete) onAnimationComplete();
-      }, 1000);
-      return () => clearTimeout(timer);
+      }, animationDuration);
+
+      return () => {
+        clearTimeout(rollTimer);
+        clearTimeout(animTimer);
+      };
     }
-  }, [animate]);
+  }, [balance, rollingDuration, animationDuration]);
 
   return (
     <div className="pointer-events-none">
@@ -69,17 +73,20 @@ const CoinChip = ({ balance, animate, onAnimationComplete }) => {
         <div className="font-bold text-indigo-900 dark:text-indigo-100 font-mono relative h-6 overflow-hidden">
           <div className="opacity-0 h-6 flex items-center">{balance.toLocaleString()}</div>
           <div
-            className={`absolute top-0 left-0 w-full flex flex-col ${
-              isRolling ? "transition-transform duration-300" : ""
-            } ${
-              isIncreasing
+            key={prevBalance}
+            className={`absolute top-0 left-0 w-full flex flex-col`}
+            style={{
+              transition: isRolling
+                ? `transform ${rollingDuration}ms ease-in-out`
+                : "none",
+              transform: isIncreasing
                 ? isRolling
-                  ? "-translate-y-1/2"
-                  : "translate-y-0"
+                  ? "translateY(-50%)"
+                  : "translateY(0%)"
                 : isRolling
-                ? "translate-y-0"
-                : "-translate-y-1/2"
-            }`}
+                ? "translateY(0%)"
+                : "translateY(-50%)",
+            }}
           >
             {isIncreasing ? (
               <>

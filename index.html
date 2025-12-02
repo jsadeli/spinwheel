@@ -350,7 +350,6 @@
           // if previous coin balance is not present, initialize based on total spins
           return loadState(STORAGE_KEYS.TOTAL_SPINS, 0);
         });
-        const [triggerCoinAnim, setTriggerCoinAnim] = useState(false);
 
         // Initialize Managers
         const achievementManager = useMemo(() => new AchievementManager(), []);
@@ -1383,6 +1382,7 @@
             const shouldStop = processCommandCodes(currentList.name, inputText, {
               xp,
               setXp,
+              setCoins,
               setIsCorrupted,
               setIsOutOfOrder,
               setTheme,
@@ -1723,7 +1723,6 @@
 
           setWinner(null);
           setCoins((prev) => prev + 1); // Earn coins
-          setTriggerCoinAnim(true);
         };
 
         const handleRemoveAndSpin = () => {
@@ -2324,11 +2323,7 @@
 
                 {/* CoinChip HUD - Top Right */}
                 <div className="absolute top-3 left-3 z-30">
-                  <CoinChip
-                    balance={coins}
-                    animate={triggerCoinAnim}
-                    onAnimationComplete={() => setTriggerCoinAnim(false)}
-                  />
+                  <CoinChip balance={coins} />
                 </div>
 
                 {/* Pointer Triangle */}
