@@ -3,9 +3,11 @@ const CoinChip = ({ balance, animate, onAnimationComplete }) => {
   const [isAnimating, setIsAnimating] = useState(false);
   const [prevBalance, setPrevBalance] = useState(balance);
   const [isRolling, setIsRolling] = useState(false);
+  const [delta, setDelta] = useState(0);
 
   useEffect(() => {
     if (balance !== prevBalance) {
+      setDelta(balance - prevBalance);
       setIsRolling(true);
       const timer = setTimeout(() => {
         setIsRolling(false);
@@ -83,10 +85,15 @@ const CoinChip = ({ balance, animate, onAnimationComplete }) => {
           </div>
         </div>
 
-        {/* +1 */}
-        {isAnimating && (
-          <div className="absolute -top-1 -right-1 text-green-500 font-bold animate-bounce text-sm">
-            +1
+        {/* Delta */}
+        {isAnimating && delta !== 0 && (
+          <div
+            className={`absolute -top-1 -right-1 font-bold animate-bounce text-sm ${
+              delta > 0 ? "text-green-500" : "text-red-500"
+            }`}
+          >
+            {delta > 0 ? "+" : ""}
+            {delta.toLocaleString()}
           </div>
         )}
       </div>
