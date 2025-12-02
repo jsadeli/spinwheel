@@ -1,6 +1,19 @@
 const CoinChip = ({ balance, animate, onAnimationComplete }) => {
   const { useState, useEffect } = React;
   const [isAnimating, setIsAnimating] = useState(false);
+  const [prevBalance, setPrevBalance] = useState(balance);
+  const [isRolling, setIsRolling] = useState(false);
+
+  useEffect(() => {
+    if (balance !== prevBalance) {
+      setIsRolling(true);
+      const timer = setTimeout(() => {
+        setIsRolling(false);
+        setPrevBalance(balance);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [balance, prevBalance]);
 
   useEffect(() => {
     if (animate) {
@@ -50,8 +63,24 @@ const CoinChip = ({ balance, animate, onAnimationComplete }) => {
         </div>
 
         {/* Balance */}
-        <div className="font-bold text-indigo-900 dark:text-indigo-100 font-mono">
-          {balance.toLocaleString()}
+        <div className="font-bold text-indigo-900 dark:text-indigo-100 font-mono relative h-6 overflow-hidden">
+          <div className="opacity-0 h-6 flex items-center">
+            {balance.toLocaleString()}
+          </div>
+          <div
+            className={`absolute top-0 left-0 w-full flex flex-col ${
+              isRolling
+                ? "transition-transform duration-300 -translate-y-1/2"
+                : ""
+            }`}
+          >
+            <div className="h-6 flex items-center">
+              {prevBalance.toLocaleString()}
+            </div>
+            <div className="h-6 flex items-center">
+              {balance.toLocaleString()}
+            </div>
+          </div>
         </div>
 
         {/* +1 */}
