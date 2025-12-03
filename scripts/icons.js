@@ -51,6 +51,37 @@ const SpinWheelLogo = (props) => (
   </svg>
 );
 
+const SpinCoinLogo = (props) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 16 16"
+    aria-labelledby="scFlex"
+    width={props.size || 24}
+    height={props.size || 24}
+    className={props.className}
+    preserveAspectRatio="xMidYMid meet"
+    {...props}
+  >
+    <title id="scFlex">SpinCoin - Responsive</title>
+
+    <circle cx="8" cy="8" r="7" fill="#FFB84D" stroke="#D1892C" strokeWidth="1" />
+    <circle cx="8" cy="8" r="4" fill="none" stroke="#FFDFA6" strokeWidth="1" />
+
+    <text
+      x="8"
+      y="10"
+      fontFamily="Inter, Arial, sans-serif"
+      fontSize="7"
+      fontWeight="700"
+      textAnchor="middle"
+      fill="#B35E00"
+      style={{ fill: "#B35E00" }} /* Forces color to persist against CSS overrides */
+    >
+      S
+    </text>
+  </svg>
+);
+
 const SettingsIcon = (props) => (
   <Icon {...props}>
     <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.47a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
@@ -416,9 +447,24 @@ const SwordsIcon = (props) => (
   </Icon>
 );
 
+const ShoppingBagIcon = (props) => (
+  <Icon {...props}>
+    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+    <line x1="3" y1="6" x2="21" y2="6" />
+    <path d="M16 10a4 4 0 0 1-8 0" />
+  </Icon>
+);
+
+const StarIcon = (props) => (
+  <Icon {...props}>
+    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+  </Icon>
+);
+
 // Expose to window (needed for Babel Standalone)
 window.Icon = Icon;
 window.SpinWheelLogo = SpinWheelLogo;
+window.SpinCoinLogo = SpinCoinLogo;
 window.SettingsIcon = SettingsIcon;
 window.SlidersIcon = SlidersIcon;
 window.Volume2Icon = Volume2Icon;
@@ -462,3 +508,5 @@ window.SkullIcon = SkullIcon;
 window.MaleIcon = MaleIcon;
 window.FemaleIcon = FemaleIcon;
 window.SwordsIcon = SwordsIcon;
+window.ShoppingBagIcon = ShoppingBagIcon;
+window.StarIcon = StarIcon;
