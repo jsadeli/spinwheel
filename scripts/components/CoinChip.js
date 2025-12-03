@@ -71,7 +71,7 @@ const CoinChip = ({
 
         {/* Balance */}
         <div className="font-bold text-indigo-900 dark:text-indigo-100 font-mono relative h-6 overflow-hidden">
-          <div className="opacity-0 h-6 flex items-center">{balance.toLocaleString()}</div>
+          <div className="opacity-0 h-6 flex items-center">{balance}</div>
           <div
             key={prevBalance}
             className={`absolute top-0 left-0 w-full flex flex-col`}
@@ -90,13 +90,13 @@ const CoinChip = ({
           >
             {isIncreasing ? (
               <>
-                <div className="h-6 flex items-center">{prevBalance.toLocaleString()}</div>
-                <div className="h-6 flex items-center">{balance.toLocaleString()}</div>
+                <div className="h-6 flex items-center">{prevBalance}</div>
+                <div className="h-6 flex items-center">{balance}</div>
               </>
             ) : (
               <>
-                <div className="h-6 flex items-center">{balance.toLocaleString()}</div>
-                <div className="h-6 flex items-center">{prevBalance.toLocaleString()}</div>
+                <div className="h-6 flex items-center">{balance}</div>
+                <div className="h-6 flex items-center">{prevBalance}</div>
               </>
             )}
           </div>
@@ -110,7 +110,7 @@ const CoinChip = ({
             }`}
           >
             {delta > 0 ? "+" : ""}
-            {delta.toLocaleString()}
+            {delta}
           </div>
         )}
       </div>
