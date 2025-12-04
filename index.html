@@ -122,6 +122,7 @@
     <script type="text/babel" data-type="module" src="scripts/components/Toast.js"></script>
     <script type="text/babel" data-type="module" src="scripts/components/OutOfOrderOverlay.js"></script>
     <script type="text/babel" data-type="module" src="scripts/components/CoinChip.js"></script>
+    <script type="text/babel" data-type="module" src="scripts/components/CoinStoreModal.js"></script>
 
     <!-- Load App -->
     <script type="text/babel" data-type="module">
@@ -176,6 +177,7 @@
         DAILY_CHALLENGE_LEVEL,
         DAILY_CHALLENGE_RESET_HOUR,
         CoinChip,
+        CoinStoreModal,
       } = window;
 
       const { useState, useEffect, useRef, useMemo } = React;
@@ -278,6 +280,7 @@
         const [showSettingsMenu, setShowSettingsMenu] = useState(false);
         const [showListDropdown, setShowListDropdown] = useState(false);
         const [showColorModal, setShowColorModal] = useState(false);
+        const [showCoinStoreModal, setShowCoinStoreModal] = useState(false);
         const [shareUrl, setShareUrl] = useState("");
         const [activeTab, setActiveTab] = useState(TAB_NAMES.INPUTS); // 'inputs', 'history', or 'progress'
         const [isCopied, setIsCopied] = useState(false);
@@ -729,6 +732,33 @@
             customColors: tempCustomColors,
           });
           setShowColorModal(false);
+        };
+
+        // Coin Swap Logic
+        const handleCoinSwap = (option) => {
+          if (coins >= option.coins) {
+            // Deduct coins
+            setCoins((prev) => prev - option.coins);
+
+            // Add XP
+            setXp((prev) => prev + option.xp);
+
+            // Play sound
+            playWinSound(); // Or a specific coin sound if available
+
+            // Show toast
+            addToast(
+              `Exchanged ${option.coins} SpinCoin for ${option.xp} XP!`,
+              "Transaction Successful",
+              "🪙",
+              TOAST_DURATION
+            );
+
+            // Trigger confetti for big swaps
+            if (option.bonus >= 50) {
+              fireConfetti();
+            }
+          }
         };
 
         // Sync items ref for the animation loop & Update Items State
@@ -2337,7 +2367,7 @@
 
                 {/* CoinChip HUD - Top Right */}
                 <div className="absolute top-3 left-3 z-30">
-                  <CoinChip balance={coins} />
+                  <CoinChip balance={coins} onClick={() => setShowCoinStoreModal(true)} />
                 </div>
 
                 {/* Pointer Triangle */}
@@ -3206,6 +3236,15 @@
                 </p>
               </div>
             </Modal>
+
+            {/* Coin Store Modal */}
+            <CoinStoreModal
+              isOpen={showCoinStoreModal}
+              onClose={() => setShowCoinStoreModal(false)}
+              coins={coins}
+              xp={xp}
+              onTransact={handleCoinSwap}
+            />
 
             {/* OUT OF ORDER OVERLAY */}
             <OutOfOrderOverlay isVisible={isOutOfOrder} />

@@ -1,8 +1,4 @@
-const CoinChip = ({
-  balance,
-  rollingDuration = 500,
-  animationDuration = 2000,
-}) => {
+const CoinChip = ({ balance, rollingDuration = 500, animationDuration = 2000, onClick }) => {
   const { useState, useEffect } = React;
   const [isAnimating, setIsAnimating] = useState(false);
   const [prevBalance, setPrevBalance] = useState(balance);
@@ -34,40 +30,21 @@ const CoinChip = ({
   }, [balance, rollingDuration, animationDuration]);
 
   return (
-    <div className="pointer-events-none">
+    <div
+      className={`${onClick ? "cursor-pointer pointer-events-auto" : "pointer-events-none"}`}
+      onClick={onClick}
+    >
       <div
         className={`flex items-center gap-2 px-4 py-2 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm rounded-full border border-indigo-100 dark:border-indigo-900 transition-all duration-300 ${
           isAnimating ? "scale-110 ring-4 ring-yellow-400/30" : "scale-100"
+        } ${
+          onClick
+            ? "hover:bg-indigo-50 dark:hover:bg-slate-700 hover:scale-105 active:scale-95"
+            : ""
         }`}
       >
         {/* SpinCoin */}
-        <div className="text-xl w-6 h-6">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 16 16"
-            aria-labelledby="scFlex"
-            width="100%"
-            height="100%"
-            preserveAspectRatio="xMidYMid meet"
-          >
-            <title id="scFlex">SpinCoin - Responsive</title>
-
-            <circle cx="8" cy="8" r="7" fill="#FFB84D" stroke="#D1892C" stroke-width="1" />
-            <circle cx="8" cy="8" r="4" fill="none" stroke="#FFDFA6" stroke-width="1" />
-
-            <text
-              x="8"
-              y="10"
-              font-family="Inter, Arial, sans-serif"
-              font-size="7"
-              font-weight="700"
-              text-anchor="middle"
-              fill="#B35E00"
-            >
-              S
-            </text>
-          </svg>
-        </div>
+        <SpinCoinLogo size={24} />
 
         {/* Balance */}
         <div className="font-bold text-indigo-900 dark:text-indigo-100 font-mono relative h-6 overflow-hidden">
