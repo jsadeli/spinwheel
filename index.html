@@ -909,10 +909,24 @@
             return;
           }
 
-          if (confirm("Are you sure you want to delete this list?")) {
+          const isEmptyList = !inputText || inputText.trim() === "";
+          const currentListIndex = savedLists.findIndex((l) => l.id === activeListId);
+          const currentListName = savedLists[currentListIndex].name;
+
+          if (
+            isEmptyList ||
+            confirm(`The list '${currentListName}' is not empty. Are you sure you want to delete it?`)
+          ) {
+            // Delete the list
             const newLists = savedLists.filter((l) => l.id !== activeListId);
             setSavedLists(newLists);
-            setActiveListId(newLists[0].id);
+
+            // Select the previous list (if possible)
+            if (currentListIndex > 0) {
+              setActiveListId(savedLists[currentListIndex - 1].id);
+            } else {
+              setActiveListId(newLists[0].id);
+            }
           }
         };
 
