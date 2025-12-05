@@ -171,7 +171,7 @@ const CoinStoreModal = ({ isOpen, onClose, coins, xp, onTransact }) => {
               }`}
             >
               {isBestValue && canAfford && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md flex items-center gap-1">
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-[10px] font-bold px-3 py-0.5 rounded-b-lg shadow-md flex items-center gap-1">
                   <ZapIcon className="w-3 h-3" /> BEST VALUE
                 </div>
               )}
