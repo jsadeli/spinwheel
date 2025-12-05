@@ -173,8 +173,8 @@ const CoinStoreModal = ({ isOpen, onClose, coins, xp, onTransact }) => {
                 </div>
               )}
               {!canAfford && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md flex items-center gap-1">
-                  ⚠️ INSUFFICIENT
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 bg-red-500 text-white text-[10px] font-bold px-3 py-0.5 rounded-b-lg shadow-sm flex items-center gap-1 z-20">
+                  INSUFFICIENT
                 </div>
               )}
 
