@@ -746,14 +746,6 @@
             // Play sound
             playWinSound(); // Or a specific coin sound if available
 
-            // Show toast
-            addToast(
-              `Exchanged ${option.coins} SpinCoin for ${option.xp} XP!`,
-              "Transaction Successful",
-              "🪙",
-              TOAST_DURATION
-            );
-
             // Trigger confetti for big swaps
             if (option.bonus >= 50) {
               fireConfetti();

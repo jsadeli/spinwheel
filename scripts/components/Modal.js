@@ -6,13 +6,14 @@
  * @param {Object} props - Component props.
  * @param {boolean} props.isOpen - Whether the modal is currently visible.
  * @param {function} props.onClose - Callback function to close the modal.
- * @param {string} [props.title] - The title text displayed in the header.
+ * @param {React.ReactNode} [props.title] - The title content to display in the header.
  * @param {React.ReactNode} [props.icon] - Optional icon to display next to the title.
+ * @param {React.ReactNode} [props.header] - Optional sticky header content below the title bar.
  * @param {React.ReactNode} props.children - The content to display inside the modal body.
  * @param {React.ReactNode} [props.footer] - Optional content to display in the footer.
  * @param {string} [props.className=""] - Additional CSS classes for the modal container.
  */
-const Modal = ({ isOpen, onClose, title, icon, children, footer, className = "" }) => {
+const Modal = ({ isOpen, onClose, title, icon, header, children, footer, className = "" }) => {
   if (!isOpen) return null;
 
   const { useEffect } = React;
@@ -52,6 +53,9 @@ const Modal = ({ isOpen, onClose, title, icon, children, footer, className = "" 
             <CloseIcon size={20} />
           </button>
         </div>
+
+        {/* Optional Custom Header Content (Sticky) */}
+        {header && <div className="px-6 pb-4">{header}</div>}
 
         {/* Scrollable Body */}
         <div className="flex-1 overflow-y-auto px-6 pb-6 custom-scrollbar">{children}</div>
