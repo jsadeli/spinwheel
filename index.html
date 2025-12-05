@@ -162,6 +162,8 @@
         playCrystalGlassTickSound,
         playFireCrackle,
         playBreakdownSound,
+        playPurchaseSound,
+        playBigPurchaseSound,
         base64ToWavBlob,
         ChargeSound,
         DEFAULT_LIST_NAME,
@@ -743,12 +745,12 @@
             // Add XP
             setXp((prev) => prev + option.xp);
 
-            // Play sound
-            playWinSound(); // Or a specific coin sound if available
-
-            // Trigger confetti for big swaps
-            if (option.bonus >= 50) {
+            // Play sound based on purchase size
+            if (option.coins >= 500) {
+              playBigPurchaseSound(audioCtxRef, soundEnabled); // "Rich" sound for big buys
               fireConfetti();
+            } else {
+              playPurchaseSound(audioCtxRef, soundEnabled); // Standard cash register sound
             }
           }
         };

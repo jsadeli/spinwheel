@@ -403,6 +403,132 @@ export const playBreakdownSound = (audioCtxRef, soundEnabled) => {
 };
 
 /**
+ * Plays a cash register "Cha-Ching!" sound effect.
+ * Used when a purchase is successfully completed.
+ *
+ * @param {Object} audioCtxRef - React ref containing the Web Audio API context.
+ * @param {boolean} soundEnabled - Whether sound effects are enabled.
+ */
+export const playPurchaseSound = (audioCtxRef, soundEnabled) => {
+  if (!soundEnabled || !audioCtxRef.current) return;
+  const ctx = audioCtxRef.current;
+  const now = ctx.currentTime;
+
+  // "Cha" - Mechanical/Sliding sound (short burst of filtered noise/sawtooth)
+  const chaOsc = ctx.createOscillator();
+  const chaGain = ctx.createGain();
+  const chaFilter = ctx.createBiquadFilter();
+
+  chaOsc.type = "sawtooth";
+  chaOsc.frequency.setValueAtTime(800, now);
+  chaOsc.frequency.exponentialRampToValueAtTime(1200, now + 0.1); // Slide up slightly
+
+  chaFilter.type = "highpass";
+  chaFilter.frequency.setValueAtTime(2000, now);
+
+  chaGain.gain.setValueAtTime(0.2, now);
+  chaGain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+
+  chaOsc.connect(chaFilter);
+  chaFilter.connect(chaGain);
+  chaGain.connect(ctx.destination);
+  chaOsc.start(now);
+  chaOsc.stop(now + 0.1);
+
+  // "Ching!" - High pitched ringing coin sound (Two distinct bells)
+  const bell1 = ctx.createOscillator();
+  const bell1Gain = ctx.createGain();
+  bell1.type = "sine";
+  bell1.frequency.setValueAtTime(1600, now + 0.08); // B6 approx
+  bell1Gain.gain.setValueAtTime(0, now + 0.08);
+  bell1Gain.gain.linearRampToValueAtTime(0.3, now + 0.09); // Fast attack
+  bell1Gain.gain.exponentialRampToValueAtTime(0.001, now + 0.8); // Long decay
+
+  bell1.connect(bell1Gain);
+  bell1Gain.connect(ctx.destination);
+  bell1.start(now + 0.08);
+  bell1.stop(now + 0.8);
+
+  const bell2 = ctx.createOscillator();
+  const bell2Gain = ctx.createGain();
+  bell2.type = "sine";
+  bell2.frequency.setValueAtTime(2400, now + 0.12); // High harmonic
+  bell2Gain.gain.setValueAtTime(0, now + 0.12);
+  bell2Gain.gain.linearRampToValueAtTime(0.2, now + 0.13);
+  bell2Gain.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
+
+  bell2.connect(bell2Gain);
+  bell2Gain.connect(ctx.destination);
+  bell2.start(now + 0.12);
+  bell2.stop(now + 0.6);
+};
+
+/**
+ * Plays a "Big Purchase" sound effect for expensive items.
+ * A rich, multi-layered chime/chord with a magical sparkle.
+ *
+ * @param {Object} audioCtxRef - React ref containing the Web Audio API context.
+ * @param {boolean} soundEnabled - Whether sound effects are enabled.
+ */
+export const playBigPurchaseSound = (audioCtxRef, soundEnabled) => {
+  if (!soundEnabled || !audioCtxRef.current) return;
+  const ctx = audioCtxRef.current;
+  const now = ctx.currentTime;
+
+  // 1. Rich Chord (Major 7th: C4, E4, G4, B4)
+  const frequencies = [261.63, 329.63, 392.0, 493.88]; // C4, E4, G4, B4
+  frequencies.forEach((freq, i) => {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.type = i % 2 === 0 ? "sine" : "triangle"; // Mix sine and triangle for richness
+    osc.frequency.setValueAtTime(freq, now);
+
+    gain.gain.setValueAtTime(0, now);
+    gain.gain.linearRampToValueAtTime(0.15, now + 0.05); // Attack
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 2.0); // Long Sustain
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now + 2.0);
+  });
+
+  // 2. High Sparkle Arpeggio (Rapid high notes)
+  const sparkleFreqs = [1046.5, 1318.51, 1567.98, 2093.0]; // C6 scale
+  sparkleFreqs.forEach((freq, i) => {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(freq, now + 0.1 + i * 0.08); // Staggered start
+
+    gain.gain.setValueAtTime(0, now + 0.1 + i * 0.08);
+    gain.gain.linearRampToValueAtTime(0.1, now + 0.1 + i * 0.08 + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 1.0);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(now + 0.1 + i * 0.08);
+    osc.stop(now + 1.0);
+  });
+
+  // 3. Deep Bass Pulse (for weight/importance)
+  const bassOsc = ctx.createOscillator();
+  const bassGain = ctx.createGain();
+  bassOsc.type = "sine";
+  bassOsc.frequency.setValueAtTime(65.41, now); // C2
+  bassGain.gain.setValueAtTime(0, now);
+  bassGain.gain.linearRampToValueAtTime(0.2, now + 0.1);
+  bassGain.gain.exponentialRampToValueAtTime(0.001, now + 1.5);
+
+  bassOsc.connect(bassGain);
+  bassGain.connect(ctx.destination);
+  bassOsc.start(now);
+  bassOsc.stop(now + 1.5);
+};
+
+/**
  * Converts base64-encoded PCM audio data to a WAV Blob.
  * Used for playing AI-generated voice announcements.
  *
@@ -581,6 +707,8 @@ if (typeof window !== "undefined") {
   window.playCrystalGlassTickSound = playCrystalGlassTickSound;
   window.playFireCrackle = playFireCrackle;
   window.playBreakdownSound = playBreakdownSound;
+  window.playPurchaseSound = playPurchaseSound;
+  window.playBigPurchaseSound = playBigPurchaseSound;
   window.base64ToWavBlob = base64ToWavBlob;
   window.ChargeSound = ChargeSound;
 }
