@@ -113,7 +113,7 @@ const CoinStoreModal = ({ isOpen, onClose, coins, xp, onTransact }) => {
             {selectedOption ? (
               <span>
                 <span className="font-bold text-gray-900 dark:text-white">
-                  {selectedOption.coins} Coins
+                  {selectedOption.coins} SpinCoin
                 </span>{" "}
                 ⇄{" "}
                 <span className="font-bold text-indigo-600 dark:text-indigo-400">
@@ -246,7 +246,7 @@ const CoinStoreModal = ({ isOpen, onClose, coins, xp, onTransact }) => {
                         {option.coins}
                       </span>
                       <span className="text-xs font-medium text-gray-500 dark:text-gray-400 truncate">
-                        coins
+                        SpinCoin
                       </span>
                     </div>
                     <div className="flex items-baseline gap-1.5 flex-shrink-0">
