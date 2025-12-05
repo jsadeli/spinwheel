@@ -178,7 +178,7 @@ const CoinStoreModal = ({ isOpen, onClose, coins, xp, onTransact }) => {
                 </div>
               )}
 
-              <div className="flex items-start gap-4">
+              <div className="flex items-start gap-3">
                 {/* Icon */}
                 <div
                   className={`w-14 h-14 rounded-xl flex items-center justify-center text-2xl shadow-sm flex-shrink-0 ${
@@ -200,44 +200,47 @@ const CoinStoreModal = ({ isOpen, onClose, coins, xp, onTransact }) => {
                   )}
                 </div>
 
-                {/* Info Section - Coin Price */}
-                <div className="flex-1 h-14 flex flex-col justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                      {option.label}
+                {/* Content Container (Merged Info & Reward) */}
+                <div className="flex-1 h-14 flex flex-col justify-between min-w-0">
+                  {/* Top Row: Label + Bonus --- Reward Label */}
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider truncate">
+                        {option.label}
+                      </div>
+                      {option.bonus > 0 && (
+                        <span
+                          className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md flex-shrink-0 ${
+                            isSelected
+                              ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                              : "bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300"
+                          }`}
+                        >
+                          +{option.bonus}%
+                        </span>
+                      )}
                     </div>
-                    {option.bonus > 0 && (
-                      <span
-                        className={`text-xs font-bold px-2 py-0.5 rounded-lg ${
-                          isSelected
-                            ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
-                            : "bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300"
-                        }`}
-                      >
-                        +{option.bonus}%
-                      </span>
-                    )}
+                    <div className="text-xs text-gray-400 uppercase tracking-wider flex-shrink-0">
+                      Reward
+                    </div>
                   </div>
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-2xl font-bold text-gray-900 dark:text-white">
-                      {option.coins}
-                    </span>
-                    <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                      coins
-                    </span>
-                  </div>
-                </div>
 
-                {/* XP Reward */}
-                <div className="h-14 flex flex-col justify-between flex-shrink-0">
-                  <div className="text-right text-xs text-gray-400 uppercase tracking-wider">
-                    Reward
-                  </div>
-                  <div className="flex items-baseline gap-2 justify-end">
-                    <span className="text-2xl font-bold text-gray-900 dark:text-white">
-                      {option.xp}
-                    </span>
-                    <span className="text-purple-500 font-medium">XP</span>
+                  {/* Bottom Row: Cost --- XP Value */}
+                  <div className="flex items-baseline justify-between gap-2">
+                    <div className="flex items-baseline gap-1.5 min-w-0">
+                      <span className="text-xl font-bold text-gray-900 dark:text-white truncate">
+                        {option.coins}
+                      </span>
+                      <span className="text-xs font-medium text-gray-500 dark:text-gray-400 truncate">
+                        coins
+                      </span>
+                    </div>
+                    <div className="flex items-baseline gap-1.5 flex-shrink-0">
+                      <span className="text-xl font-bold text-gray-900 dark:text-white">
+                        {option.xp}
+                      </span>
+                      <span className="text-sm text-purple-500 font-medium">XP</span>
+                    </div>
                   </div>
                 </div>
               </div>
