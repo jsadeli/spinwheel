@@ -1,4 +1,4 @@
-const CACHE_NAME = "spinwheel-v41";
+const CACHE_NAME = "spinwheel-v42";
 const ASSETS = [
   "./",
   "./scripts/components/AchievementsList.js",
