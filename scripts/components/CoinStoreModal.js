@@ -1,7 +1,7 @@
 const CoinStoreModal = ({ isOpen, onClose, coins, xp, onTransact }) => {
   if (!isOpen) return null;
 
-  const { Modal, SpinCoinLogo, ZapIcon, TrendingUpIcon, ShoppingBagIcon, StarIcon } = window;
+  const { Modal, SpinCoinLogo, ZapIcon, ShoppingBagIcon, StarIcon } = window;
   const { useState, useEffect } = React;
 
   const [selectedOption, setSelectedOption] = useState(null);
@@ -107,6 +107,50 @@ const CoinStoreModal = ({ isOpen, onClose, coins, xp, onTransact }) => {
             <div className="text-3xl font-bold text-gray-900 dark:text-white tracking-tight text-right">
               {xp}
             </div>
+          </div>
+        </div>
+
+        {/* XP Progress Bar */}
+        <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-100 dark:border-gray-700 shadow-sm">
+          <div className="flex justify-between items-end mb-2">
+            <div className="text-lg font-bold text-gray-900 dark:text-white">
+              Level {window.getLevelProgress(xp).level}
+            </div>
+            {selectedOption && (
+              <div className="text-sm font-bold text-indigo-500 animate-pulse">
+                +{selectedOption.xp} XP
+              </div>
+            )}
+          </div>
+
+          <div className="relative w-full h-4 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+            {/* Layer 1: Current XP (Deep Purple) */}
+            <div
+              className="absolute top-0 left-0 h-full bg-indigo-600 transition-all duration-500 ease-out z-10"
+              style={{ width: `${window.getLevelProgress(xp).progressPercent}%` }}
+            />
+
+            {/* Layer 2: Potential XP (Light Purple) */}
+            {selectedOption && (
+              <div
+                className="absolute top-0 h-full bg-indigo-300 dark:bg-indigo-400 transition-all duration-500 ease-out z-0"
+                style={{
+                  left: `${window.getLevelProgress(xp).progressPercent}%`,
+                  width: `${Math.min(
+                    100 - window.getLevelProgress(xp).progressPercent,
+                    (selectedOption.xp / window.getLevelProgress(xp).requiredLevelXp) * 100
+                  )}%`,
+                }}
+              />
+            )}
+          </div>
+
+          <div className="mt-2 text-xs font-medium text-gray-500 dark:text-gray-400">
+            {Math.max(
+              0,
+              window.getLevelProgress(xp).requiredLevelXp - window.getLevelProgress(xp).currentLevelXp
+            )}{" "}
+            XP to the next level
           </div>
         </div>
 
