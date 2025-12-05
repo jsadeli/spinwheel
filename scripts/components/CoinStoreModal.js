@@ -253,7 +253,7 @@ const CoinStoreModal = ({ isOpen, onClose, coins, xp, onTransact }) => {
                       <span className="text-xl font-bold text-gray-900 dark:text-white">
                         {option.xp}
                       </span>
-                      <span className="text-sm text-purple-500 font-medium">XP</span>
+                      <span className="text-sm text-indigo-500 font-medium">XP</span>
                     </div>
                   </div>
                 </div>
