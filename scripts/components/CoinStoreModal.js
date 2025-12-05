@@ -134,13 +134,24 @@ const CoinStoreModal = ({ isOpen, onClose, coins, xp, onTransact }) => {
             <button
               onClick={handleConfirmTransact}
               disabled={!canAffordSelected}
-              className={`px-8 py-2.5 rounded-xl font-bold text-white shadow-lg transition-all transform active:scale-95 flex items-center gap-2 ${
+              className={`relative rounded-xl font-bold text-white shadow-lg transition-all transform active:scale-95 overflow-hidden ${
                 canAffordSelected
-                  ? "bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 shadow-indigo-500/30"
-                  : "bg-gray-300 dark:bg-gray-700 cursor-not-allowed opacity-50"
+                  ? "group p-[1px]"
+                  : "px-8 py-2.5 bg-gray-300 dark:bg-gray-700 cursor-not-allowed opacity-50"
               }`}
             >
-              <span>Buy</span>
+              {canAffordSelected && (
+                <div className="absolute inset-[-1000%] bg-[conic-gradient(from_90deg_at_50%_50%,#0000_0%,#0000_50%,#6366f1_100%)] dark:bg-[conic-gradient(from_90deg_at_50%_50%,#0000_0%,#0000_50%,#ffffff_100%)] animate-[spin_2s_linear_infinite] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              )}
+              <div
+                className={`flex items-center justify-center gap-2 h-full w-full rounded-xl relative z-10 ${
+                  canAffordSelected
+                    ? "bg-gradient-to-r from-indigo-600 to-purple-600 group-hover:from-indigo-500 group-hover:to-purple-500 px-8 py-2.5"
+                    : ""
+                }`}
+              >
+                <span>Buy</span>
+              </div>
             </button>
           </div>
         </div>
