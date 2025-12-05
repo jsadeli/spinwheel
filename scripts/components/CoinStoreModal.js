@@ -51,7 +51,10 @@ const CoinStoreModal = ({ isOpen, onClose, coins, xp, onTransact }) => {
           <span className="font-bold">Store</span>
           <span className="text-gray-400 dark:text-gray-500">|</span>
           <span className="text-gray-600 dark:text-gray-400 font-normal">
-            Your SpinCoin balance:
+            {/* Larger screens uses the full-length text */}
+            <span className="hidden sm:inline">Your SpinCoin balance:</span>
+            {/* Smaller screens uses the truncated text */}
+            <span className="sm:hidden">SpinCoin:</span>
           </span>
           <CoinChip balance={coins} size={28} />
         </div>
@@ -113,7 +116,7 @@ const CoinStoreModal = ({ isOpen, onClose, coins, xp, onTransact }) => {
                   {selectedOption.coins} Coins
                 </span>{" "}
                 ⇄{" "}
-                <span className="font-bold text-purple-600 dark:text-purple-400">
+                <span className="font-bold text-indigo-600 dark:text-indigo-400">
                   {selectedOption.xp} XP
                 </span>
               </span>
