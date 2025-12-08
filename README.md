@@ -1,4 +1,4 @@
-# Spin Wheel
+# SpinWheel
 
 An interactive spin wheel progressive web application with a user progression system. Perfect for
 making random selections, choosing winners, or making decisions in a fun and interactive way.
@@ -179,6 +179,15 @@ Serve locally using python3:
 ```bash
 python3 -m http.server
 ```
+
+> [!NOTE]
+> This app's original intention is to be a simple project that requires no build/compilation stage
+> and ease of deployment. Generally not a recommended approach for larger apps/projects, because
+> this has known limitations such as:
+>
+> - using in-browser Babel compilation for JSX (less performant)
+> - no TypeScript support
+> - no minification process for final delivery
 
 ## License
 
