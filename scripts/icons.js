@@ -497,6 +497,37 @@ const CrownIcon = (props) => (
   </Icon>
 );
 
+// Main Action Icons
+const PlayIcon = ({ gradientStops, ...props }) => {
+  const gradId = "play-icon-heat-gradient";
+  const hasGradient = gradientStops && gradientStops.length > 0;
+
+  return (
+    <Icon {...props}>
+      {hasGradient && (
+        <defs>
+          <linearGradient id={gradId} x1="0%" y1="0%" x2="100%" y2="0%">
+            {gradientStops.map((stop, i) => (
+              <stop key={i} offset={stop.offset} stopColor={stop.color} />
+            ))}
+          </linearGradient>
+        </defs>
+      )}
+      <polygon
+        points="5 3 19 12 5 21 5 3"
+        stroke={hasGradient ? `url(#${gradId})` : "currentColor"}
+        fill={hasGradient ? `url(#${gradId})` : "none"}
+      />
+    </Icon>
+  );
+};
+
+const StopIcon = (props) => (
+  <Icon {...props}>
+    <rect x="6" y="6" width="12" height="12" />
+  </Icon>
+);
+
 // Expose to window (needed for Babel Standalone)
 window.Icon = Icon;
 window.SpinWheelLogo = SpinWheelLogo;
@@ -551,3 +582,5 @@ window.BoltIcon = BoltIcon;
 window.FlameIcon = FlameIcon;
 window.GemIcon = GemIcon;
 window.CrownIcon = CrownIcon;
+window.PlayIcon = PlayIcon;
+window.StopIcon = StopIcon;

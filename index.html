@@ -2576,11 +2576,28 @@
                             ${
                               isSpinning
                                 ? "text-red-600 dark:text-red-400"
-                                : `bg-clip-text text-transparent bg-gradient-to-r ${prestigeTheme.titleGradient}`
+                                : prestigeTheme.iconColor
                             }
                          `}
                         >
-                          {isSpinning ? "STOP" : "SPIN"}
+                          {isSpinning ? (
+                            <StopIcon size={32} />
+                          ) : (
+                            <PlayIcon
+                              size={32}
+                              className="ml-1"
+                              gradientStops={[
+                                {
+                                  offset: "0%",
+                                  color: lerpColor(tierColors.mid, "#ef4444", heatProgress),
+                                },
+                                {
+                                  offset: "100%",
+                                  color: lerpColor(tierColors.end, "#ff0000", heatProgress),
+                                },
+                              ]}
+                            />
+                          )}
                         </span>
                       </button>
                     </div>
