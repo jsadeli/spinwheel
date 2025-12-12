@@ -1705,20 +1705,31 @@
             handleDailyChallengeUnlocks(dailyUnlocks);
           }
 
+          // Christmas Season Logic: Dec 12 – Jan 6
+          const now = new Date();
+          const month = now.getMonth(); // 0-indexed (Jan=0, Dec=11)
+          const day = now.getDate();
+          const isChristmasSeason = (month === 11 && day >= 12) || (month === 0 && day <= 6);
+
           if (soundEnabled) {
-            // playWinSound(audioCtxRef, soundEnabled);
-            playJingleBells(audioCtxRef, soundEnabled);
+            if (isChristmasSeason) {
+              playJingleBells(audioCtxRef, soundEnabled);
+            } else {
+              playWinSound(audioCtxRef, soundEnabled);
+            }
             if (aiVoiceEnabled && geminiApiKey) {
               announceWinner(winItem); // Call Gemini TTS only if enabled and key exists
             }
           }
 
-          // Christmas Theme: Snowfall (Replaces Confetti logic)
-          // Original Condition: Only trigger confetti if level is at least 7
-          // if (newLevelInfo.level >= 7) {
-          //   fireConfetti(newLevelInfo.level);
-          // }
-          fireSnowfall();
+          // Trigger animation if Level >= 7 ("Lord of the Spins")
+          if (newLevelInfo.level >= 7) {
+            if (isChristmasSeason) {
+              fireSnowfall(); // Christmas Theme
+            } else {
+              fireConfetti(newLevelInfo.level); // Default Theme
+            }
+          }
         };
 
         const handleShuffle = () => {
