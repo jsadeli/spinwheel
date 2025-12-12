@@ -205,6 +205,110 @@ export const fireConfetti = (level = 0) => {
 };
 
 /**
+ * Fires a christmas-themed snowfall animation.
+ * Replaces the confetti animation with falling snow from the top of the screen.
+ *
+ * @param {number} [duration=5000] - How long the snowfall lasts in ms (default 5s).
+ */
+export const fireSnowfall = (duration = 5000) => {
+  const container = document.createElement("div");
+  container.style.position = "fixed";
+  container.style.top = "0";
+  container.style.left = "0";
+  container.style.width = "100%";
+  container.style.height = "100%";
+  container.style.pointerEvents = "none";
+  container.style.zIndex = "9999";
+  document.body.appendChild(container);
+
+  const particles = [];
+  const count = 150;
+
+  for (let i = 0; i < count; i++) {
+    const el = document.createElement("div");
+    el.innerHTML = "❄";
+    el.style.position = "absolute";
+    el.style.color = "white";
+    el.style.fontSize = Math.random() * 15 + 10 + "px";
+    el.style.textShadow = "0 0 5px rgba(255, 255, 255, 0.8)";
+    el.style.userSelect = "none";
+
+    // Random start position (mostly above screen)
+    const startX = Math.random() * window.innerWidth;
+    const startY = -Math.random() * window.innerHeight; // Start above viewport
+
+    // Initial opacity
+    el.style.opacity = Math.random() * 0.5 + 0.5;
+    el.style.willChange = "transform, opacity";
+
+    container.appendChild(el);
+
+    particles.push({
+      el,
+      x: startX,
+      y: startY,
+      speedY: Math.random() * 2 + 1, // Fall speed
+      speedX: (Math.random() - 0.5) * 1, // Drift speed
+      swaySpeed: Math.random() * 0.05 + 0.01,
+      swayOffset: Math.random() * Math.PI * 2,
+      swayAmplitude: Math.random() * 2,
+      opacity: parseFloat(el.style.opacity),
+      rotation: Math.random() * 360,
+      rotationSpeed: (Math.random() - 0.5) * 2,
+    });
+  }
+
+  let animationFrameId;
+  const startTime = Date.now();
+  let fadingOut = false;
+
+  const animate = () => {
+    const now = Date.now();
+    const elapsed = now - startTime;
+
+    // Start fading out near the end
+    if (elapsed > duration - 1000) {
+      fadingOut = true;
+    }
+
+    if (elapsed > duration) {
+      if (document.body.contains(container)) {
+        document.body.removeChild(container);
+      }
+      return;
+    }
+
+    particles.forEach((p) => {
+      p.y += p.speedY;
+
+      // Swaying motion
+      p.x += Math.sin(now * 0.001 * p.swaySpeed + p.swayOffset) * 0.5 + p.speedX;
+
+      // Rotation
+      p.rotation += p.rotationSpeed;
+
+      // Wrap around if it goes off bottom (optional, but for a short effect, maybe just let them fall)
+      // Since it's a "win" animation, continuous falling for duration is nice.
+      if (p.y > window.innerHeight) {
+        p.y = -50;
+        p.x = Math.random() * window.innerWidth;
+      }
+
+      p.el.style.transform = `translate3d(${p.x}px, ${p.y}px, 0) rotate(${p.rotation}deg)`;
+
+      if (fadingOut) {
+        p.opacity -= 0.02;
+        p.el.style.opacity = Math.max(0, p.opacity);
+      }
+    });
+
+    animationFrameId = requestAnimationFrame(animate);
+  };
+
+  animate();
+};
+
+/**
  * Spawns smoke particles around the spin button during overcharge.
  * Progressively darkens and intensifies, eventually adding fire particles.
  * Phases: White → Grey → Dark Grey → Black + Fire (inferno)
@@ -500,6 +604,7 @@ export const drawWheelTrail = (ctx, centerX, centerY, radius, rotation, velocity
 // Expose to window
 if (typeof window !== "undefined") {
   window.fireConfetti = fireConfetti;
+  window.fireSnowfall = fireSnowfall;
   window.spawnSmoke = spawnSmoke;
   window.drawWheelTrail = drawWheelTrail;
 }

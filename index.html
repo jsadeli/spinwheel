@@ -145,6 +145,7 @@
         lerpColor,
         parseCustomColors,
         fireConfetti,
+        fireSnowfall,
         spawnSmoke,
         processCommandCodes,
         loadState,
@@ -155,6 +156,7 @@
         isEmoji,
         parseWinnerString,
         playWinSound,
+        playJingleBells,
         playTickSound,
         playDefaultTickSound,
         playCrispWoodTickSound,
@@ -1704,16 +1706,19 @@
           }
 
           if (soundEnabled) {
-            playWinSound(audioCtxRef, soundEnabled);
+            // playWinSound(audioCtxRef, soundEnabled);
+            playJingleBells(audioCtxRef, soundEnabled);
             if (aiVoiceEnabled && geminiApiKey) {
               announceWinner(winItem); // Call Gemini TTS only if enabled and key exists
             }
           }
 
-          // Only trigger confetti if level is at least 7 ("Lord of the Spins")
-          if (newLevelInfo.level >= 7) {
-            fireConfetti(newLevelInfo.level);
-          }
+          // Christmas Theme: Snowfall (Replaces Confetti logic)
+          // Original Condition: Only trigger confetti if level is at least 7
+          // if (newLevelInfo.level >= 7) {
+          //   fireConfetti(newLevelInfo.level);
+          // }
+          fireSnowfall();
         };
 
         const handleShuffle = () => {

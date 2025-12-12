@@ -42,6 +42,74 @@ export const playWinSound = (audioCtxRef, soundEnabled) => {
 };
 
 /**
+ * Plays a Christmas-themed Jingle Bells melody.
+ * Replaces the win sound for the holiday season.
+ *
+ * @param {Object} audioCtxRef - React ref containing the Web Audio API context.
+ * @param {boolean} soundEnabled - Whether sound effects are enabled.
+ */
+export const playJingleBells = (audioCtxRef, soundEnabled) => {
+  if (!soundEnabled || !audioCtxRef.current) return;
+  const ctx = audioCtxRef.current;
+  const now = ctx.currentTime;
+
+  // Helper for playing a tone with bell-like envelope
+  // Increased default volume to 0.4 to match the loudness of playWinSound (which uses louder Square/Sawtooth waves)
+  const playNote = (freq, start, dur, vol = 0.4) => {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    // Mix sine and triangle for a bell/chime character
+    osc.type = "sine";
+    // Add a subtle second oscillator for richness could be nice, but keeping it simple for now
+
+    osc.frequency.value = freq;
+
+    gain.gain.setValueAtTime(0, start);
+    gain.gain.linearRampToValueAtTime(vol, start + 0.05); // Quick attack
+    gain.gain.exponentialRampToValueAtTime(0.001, start + dur); // Bell-like decay
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(start);
+    osc.stop(start + dur);
+  };
+
+  const E5 = 659.25;
+  const G5 = 783.99;
+  const C5 = 523.25;
+  const D5 = 587.33;
+
+  // Timing (Seconds)
+  let t = now;
+  const beat = 0.2;
+
+  // First measure: E E E
+  playNote(E5, t, 0.3); t += beat;
+  playNote(E5, t, 0.3); t += beat;
+  playNote(E5, t, 0.6); t += beat * 2;
+
+  // Second measure: E E E
+  playNote(E5, t, 0.3); t += beat;
+  playNote(E5, t, 0.3); t += beat;
+  playNote(E5, t, 0.6); t += beat * 2;
+
+  // Third measure: E G C D E (long)
+  playNote(E5, t, 0.3); t += beat;
+  playNote(G5, t, 0.3); t += beat;
+  playNote(C5, t, 0.3); t += beat;
+  playNote(D5, t, 0.3); t += beat;
+  playNote(E5, t, 1.2); t += beat * 4;
+
+  // Final chord for "Win" feeling (C Major)
+  // Reduced individual volume for the chord to avoid clipping while maintaining fullness
+  const chordStart = t - beat * 2; // Overlap slightly with the last note
+  playNote(C5, chordStart, 2.0, 0.3);
+  playNote(E5, chordStart, 2.0, 0.3);
+  playNote(G5, chordStart, 2.0, 0.3);
+};
+
+/**
  * Plays a tick sound as the wheel rotates.
  * Supports multiple sound variants (default, crisp, metallic, crystal).
  *
@@ -700,6 +768,7 @@ export const ChargeSound = class {
 // Expose to window
 if (typeof window !== "undefined") {
   window.playWinSound = playWinSound;
+  window.playJingleBells = playJingleBells;
   window.playTickSound = playTickSound;
   window.playDefaultTickSound = playDefaultTickSound;
   window.playCrispWoodTickSound = playCrispWoodTickSound;
