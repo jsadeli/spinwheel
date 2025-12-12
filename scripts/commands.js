@@ -1,5 +1,5 @@
 import { getLevelProgress } from "./levels.js";
-import { fireConfetti } from "./animations.js";
+import { fireConfetti, fireSnowfall } from "./animations.js";
 import { THEMES, STORAGE_KEYS } from "./configs.js";
 
 /**
@@ -59,6 +59,10 @@ const EXACT_COMMANDS = {
   confetti: (ctx, state) => {
     const level = getLevelProgress(state.currentXp).level;
     fireConfetti(level);
+    return { executed: true };
+  },
+  snowfall: (ctx, state) => {
+    fireSnowfall();
     return { executed: true };
   },
   break: (ctx) => {

@@ -118,6 +118,7 @@ Within console mode, you can issue several debugging commands/instructions:
 | `winner:name`        | `name` can be surfaced through the winner modal by using the syntax.                            |
 | `confetti`           | Triggers the confetti animation at the current user's level.                                    |
 | `confetti:level`     | Triggers the confetti animation at the specified `level`.                                       |
+| `snowfall`           | Triggers the snowfall animation (for Christmas season).                                         |
 | `break`              | Intentionally trigger a system failure (overheat).                                              |
 | `theme:mode`         | Adjust the global theme. The enum value for `mode` is `auto` (or `system`), `light`, or `dark`. |
 | `reset:achievements` | Reset all unlocked achievements.                                                                |
