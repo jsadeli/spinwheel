@@ -1,4 +1,6 @@
 import React from "react";
+import { AchievementsList } from "../scripts/components/AchievementsList.js";
+import { ChallengesList } from "../scripts/components/ChallengesList.js";
 import { Modal } from "../scripts/components/Modal.js";
 import { ThemeIcon } from "../scripts/components/ThemeIcon.js";
 import { AchievementFilters, ACHIEVEMENTS } from "../scripts/achievements.js";
@@ -30,6 +32,10 @@ import {
 
 declare global {
   interface Window {
+    // AchievementsList (AchievementsList.js)
+    AchievementsList: typeof AchievementsList;
+    // ChallengesList (ChallengesList.js)
+    ChallengesList: typeof ChallengesList;
     // Modal (Modal.js)
     Modal: typeof Modal;
     // ThemeIcon (ThemeIcon.js)

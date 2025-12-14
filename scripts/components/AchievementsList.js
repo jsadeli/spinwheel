@@ -11,7 +11,7 @@ const { AchievementFilters, getRelativeTime } = window;
  * @param {string} props.achievementFilter - Current filter state (all, unlocked, locked).
  * @param {function} props.setAchievementFilter - State setter for the filter.
  */
-const AchievementsList = ({ achievements, achievementFilter, setAchievementFilter }) => {
+export const AchievementsList = ({ achievements, achievementFilter, setAchievementFilter }) => {
   const filteredAchievements = achievements.filter((ach) => {
     if (achievementFilter === AchievementFilters.UNLOCKED) return ach.isUnlocked;
     if (achievementFilter === AchievementFilters.LOCKED) return !ach.isUnlocked;
@@ -168,5 +168,4 @@ const AchievementsList = ({ achievements, achievementFilter, setAchievementFilte
 };
 
 // Expose to window (needed for Babel Standalone)
-// @ts-ignore
 window.AchievementsList = AchievementsList;

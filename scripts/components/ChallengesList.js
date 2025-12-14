@@ -11,7 +11,7 @@ const { AchievementFilters, SwordsIcon, getRelativeTime } = window;
  * @param {string} props.filter - Current filter state (all, completed, incomplete).
  * @param {function} props.setFilter - State setter for the filter.
  */
-const ChallengesList = ({ challenges, filter, setFilter }) => {
+export const ChallengesList = ({ challenges, filter, setFilter }) => {
   // Filter challenges first
   const filteredChallenges = challenges.filter((ch) => {
     if (filter === AchievementFilters.UNLOCKED) return ch.isCompleted;
@@ -176,5 +176,4 @@ const ChallengesList = ({ challenges, filter, setFilter }) => {
 };
 
 // Expose to window (needed for Babel Standalone)
-// @ts-ignore
 window.ChallengesList = ChallengesList;
