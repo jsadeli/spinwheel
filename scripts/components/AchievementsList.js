@@ -25,7 +25,7 @@ const AchievementsList = ({ achievements, achievementFilter, setAchievementFilte
 
     // 2. If both unlocked, sort by date (newest first)
     if (a.isUnlocked && b.isUnlocked) {
-      return new Date(b.unlockedAt) - new Date(a.unlockedAt);
+      return new Date(b.unlockedAt).getTime() - new Date(a.unlockedAt).getTime();
     }
 
     // 3. If both locked, sort by bonusXp (smallest first)
