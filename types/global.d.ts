@@ -1,4 +1,5 @@
 import React from "react";
+import { Modal } from "../scripts/components/Modal.js";
 import { ThemeIcon } from "../scripts/components/ThemeIcon.js";
 import { AchievementFilters, ACHIEVEMENTS } from "../scripts/achievements.js";
 import { generateListFromGemini, generateSpeechFromGemini } from "../scripts/ai.js";
@@ -29,10 +30,10 @@ import {
 
 declare global {
   interface Window {
+    // Modal (Modal.js)
+    Modal: typeof Modal;
     // ThemeIcon (ThemeIcon.js)
     ThemeIcon: typeof ThemeIcon;
-    // Modal (Modal.js)
-    Modal: React.FC<any>;
     // Achievements (achievements.js)
     AchievementFilters: typeof AchievementFilters;
     ACHIEVEMENTS: typeof ACHIEVEMENTS;

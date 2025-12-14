@@ -16,7 +16,16 @@ import React from "react";
  * @param {React.ReactNode} [props.footer] - Optional content to display in the footer.
  * @param {string} [props.className=""] - Additional CSS classes for the modal container.
  */
-const Modal = ({ isOpen, onClose, title, icon, header, children, footer, className = "" }) => {
+export const Modal = ({
+  isOpen,
+  onClose,
+  title,
+  icon,
+  header,
+  children,
+  footer,
+  className = "",
+}) => {
   if (!isOpen) return null;
 
   const { useEffect } = React;
@@ -71,5 +80,4 @@ const Modal = ({ isOpen, onClose, title, icon, header, children, footer, classNa
 };
 
 // Expose to window (needed for Babel Standalone)
-// @ts-ignore
 window.Modal = Modal;
