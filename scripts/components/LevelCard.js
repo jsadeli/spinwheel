@@ -14,6 +14,7 @@ const { getLevelTitle } = window;
  * @param {Object} props.prestigeTheme - Theme configuration object for the current level.
  */
 export const LevelCard = ({ levelInfo, xp, isCorrupted, prestigeTheme }) => {
+  const { AlertTriangleIcon, TrophyIcon } = window;
   const isCosmic = levelInfo.level >= 11;
 
   // Corrupted State Override
