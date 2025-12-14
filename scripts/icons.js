@@ -1,3 +1,5 @@
+import React from "react";
+
 /**
  * Generic Icon component wrapper for SVG icons.
  *

@@ -1,3 +1,5 @@
+import React from "react";
+
 // Out of Order Overlay Component
 /**
  * Displays a full-screen "Out of Order" overlay with glitch effects.

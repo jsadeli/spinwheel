@@ -1,3 +1,5 @@
+import React from "react";
+
 // Generic Reusable Modal Component
 /**
  * A generic, reusable modal component with backdrop, animation, and close handlers.

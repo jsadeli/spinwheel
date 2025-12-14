@@ -1,3 +1,5 @@
+import React from "react";
+
 const CoinStoreModal = ({ isOpen, onClose, coins, xp, onTransact }) => {
   if (!isOpen) return null;
 

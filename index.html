@@ -26,9 +26,15 @@
       };
     </script>
 
-    <!-- React & ReactDOM (v18.3.1) -->
-    <script crossorigin src="scripts/lib/react.production.min.js"></script>
-    <script crossorigin src="scripts/lib/react-dom.production.min.js"></script>
+    <!-- React & ReactDOM (v19) via Import Map (Cached ESM) -->
+    <script type="importmap">
+      {
+        "imports": {
+          "react": "./scripts/lib/react.esm.js",
+          "react-dom/client": "./scripts/lib/react-dom-client.esm.js"
+        }
+      }
+    </script>
 
     <!-- Babel for JSX (v7.28.5) -->
     <script src="scripts/lib/babel.min.js"></script>
@@ -184,7 +190,9 @@
         CoinStoreModal,
       } = window;
 
-      const { useState, useEffect, useRef, useMemo } = React;
+      import React, { useState, useEffect, useRef, useMemo } from "react";
+      import { createRoot } from "react-dom/client";
+
       const apiKey = ""; // Provided by environment
 
       const App = () => {
@@ -3291,7 +3299,7 @@
         );
       };
 
-      const root = ReactDOM.createRoot(document.getElementById("root"));
+      const root = createRoot(document.getElementById("root"));
       root.render(<App />);
 
       // Service Worker Registration

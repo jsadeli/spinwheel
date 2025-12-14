@@ -1,3 +1,5 @@
+import React from "react";
+
 // Toast Component
 /**
  * Displays a temporary notification toast with different styles for achievements, errors, and general messages.

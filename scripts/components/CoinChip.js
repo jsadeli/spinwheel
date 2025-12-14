@@ -1,3 +1,5 @@
+import React from "react";
+
 const CoinChip = ({ balance, rollingDuration = 500, animationDuration = 2000, onClick }) => {
   const { useState, useEffect } = React;
   const [isAnimating, setIsAnimating] = useState(false);
