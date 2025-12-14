@@ -1,0 +1,26 @@
+{
+  "name": "spinwheel",
+  "version": "1.0.0",
+  "description": "An interactive spin wheel progressive web application with a user progression system. Perfect for making random selections, choosing winners, or making decisions in a fun and interactive way.",
+  "main": "sw.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/samuelkripto/spinwheel.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/samuelkripto/spinwheel/issues"
+  },
+  "homepage": "https://github.com/samuelkripto/spinwheel#readme",
+  "devDependencies": {
+    "@types/react": "^19.2.3",
+    "@types/react-dom": "^19.2.3",
+    "typescript": "^5.9.3"
+  }
+}
