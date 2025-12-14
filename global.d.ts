@@ -1,4 +1,13 @@
 import React from "react";
+import {
+  loadState,
+  getRelativeTime,
+  parseItems,
+  itemsToString,
+  copyToClipboard,
+  isEmoji,
+  parseWinnerString,
+} from "./scripts/utils.js";
 
 declare global {
   interface Window {
@@ -73,12 +82,12 @@ declare global {
       LOCKED: string;
     };
     // utils.js
-    loadState: <T>(key: string, defaultValue: T) => T;
-    getRelativeTime: (date: Date | string | number) => string;
-    parseItems: (text: string) => Array<{ text: string; weight: number; original: string }>;
-    itemsToString: (itemsArray: Array<{ text: string; weight: number }>) => string;
-    copyToClipboard: (text: string, setIsCopied: (copied: boolean) => void) => void;
-    isEmoji: (str: string) => boolean;
-    parseWinnerString: (text: string) => Array<{ text: string; isEmoji: boolean | null }>;
+    loadState: typeof loadState;
+    getRelativeTime: typeof getRelativeTime;
+    parseItems: typeof parseItems;
+    itemsToString: typeof itemsToString;
+    copyToClipboard: typeof copyToClipboard;
+    isEmoji: typeof isEmoji;
+    parseWinnerString: typeof parseWinnerString;
   }
 }
