@@ -18,4 +18,5 @@ const ThemeIcon = ({ theme, size = 24 }) => {
 };
 
 // Expose to window (needed for Babel Standalone)
+// @ts-ignore
 window.ThemeIcon = ThemeIcon;

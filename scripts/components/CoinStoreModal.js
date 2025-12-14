@@ -1,3 +1,4 @@
+// @ts-ignore
 import React from "react";
 
 const CoinStoreModal = ({ isOpen, onClose, coins, xp, onTransact }) => {
@@ -268,4 +269,6 @@ const CoinStoreModal = ({ isOpen, onClose, coins, xp, onTransact }) => {
   );
 };
 
+// Expose to window (needed for Babel Standalone)
+// @ts-ignore
 window.CoinStoreModal = CoinStoreModal;

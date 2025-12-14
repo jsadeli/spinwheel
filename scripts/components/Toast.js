@@ -1,3 +1,4 @@
+// @ts-ignore
 import React from "react";
 
 // Toast Component
@@ -149,4 +150,5 @@ const Toast = ({
 };
 
 // Expose to window (needed for Babel Standalone)
+// @ts-ignore
 window.Toast = Toast;

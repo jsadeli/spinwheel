@@ -1,3 +1,4 @@
+// @ts-ignore
 import React from "react";
 
 /**
@@ -531,58 +532,61 @@ const StopIcon = (props) => (
 );
 
 // Expose to window (needed for Babel Standalone)
-window.Icon = Icon;
-window.SpinWheelLogo = SpinWheelLogo;
-window.SpinCoinLogo = SpinCoinLogo;
-window.SettingsIcon = SettingsIcon;
-window.SlidersIcon = SlidersIcon;
-window.Volume2Icon = Volume2Icon;
-window.VolumeXIcon = VolumeXIcon;
-window.ShuffleIcon = ShuffleIcon;
-window.Trash2Icon = Trash2Icon;
-window.TrophyIcon = TrophyIcon;
-window.SunIcon = SunIcon;
-window.MoonIcon = MoonIcon;
-window.MonitorIcon = MonitorIcon;
-window.CheckIcon = CheckIcon;
-window.ChevronDownIcon = ChevronDownIcon;
-window.GithubIcon = GithubIcon;
-window.ShareIcon = ShareIcon;
-window.CopyIcon = CopyIcon;
-window.ClockIcon = ClockIcon;
-window.EyeIcon = EyeIcon;
-window.EyeOffIcon = EyeOffIcon;
-window.ZapIcon = ZapIcon;
-window.HourglassIcon = HourglassIcon;
-window.CodeIcon = CodeIcon;
-window.ScrollIcon = ScrollIcon;
-window.HelpCircleIcon = HelpCircleIcon;
-window.SparklesIcon = SparklesIcon;
-window.BotIcon = BotIcon;
-window.KeyIcon = KeyIcon;
-window.PaletteIcon = PaletteIcon;
-window.PlusIcon = PlusIcon;
-window.DownloadIcon = DownloadIcon;
-window.TrendingUpIcon = TrendingUpIcon;
-window.CloseIcon = CloseIcon;
-window.CirclePlusIcon = CirclePlusIcon;
-window.TrailIcon = TrailIcon;
-window.MusicIcon = MusicIcon;
-window.ElectricIcon = ElectricIcon;
-window.WoodIcon = WoodIcon;
-window.MechanicalIcon = MechanicalIcon;
-window.CrystalGlassIcon = CrystalGlassIcon;
-window.AlertTriangleIcon = AlertTriangleIcon;
-window.SkullIcon = SkullIcon;
-window.MaleIcon = MaleIcon;
-window.FemaleIcon = FemaleIcon;
-window.SwordsIcon = SwordsIcon;
-window.ShoppingBagIcon = ShoppingBagIcon;
-window.StarIcon = StarIcon;
-window.SeedlingIcon = SeedlingIcon;
-window.BoltIcon = BoltIcon;
-window.FlameIcon = FlameIcon;
-window.GemIcon = GemIcon;
-window.CrownIcon = CrownIcon;
-window.PlayIcon = PlayIcon;
-window.StopIcon = StopIcon;
+// @ts-ignore
+Object.assign(window, {
+  Icon,
+  SpinWheelLogo,
+  SpinCoinLogo,
+  SettingsIcon,
+  SlidersIcon,
+  Volume2Icon,
+  VolumeXIcon,
+  ShuffleIcon,
+  Trash2Icon,
+  TrophyIcon,
+  SunIcon,
+  MoonIcon,
+  MonitorIcon,
+  CheckIcon,
+  ChevronDownIcon,
+  GithubIcon,
+  ShareIcon,
+  CopyIcon,
+  ClockIcon,
+  EyeIcon,
+  EyeOffIcon,
+  ZapIcon,
+  HourglassIcon,
+  CodeIcon,
+  ScrollIcon,
+  HelpCircleIcon,
+  SparklesIcon,
+  BotIcon,
+  KeyIcon,
+  PaletteIcon,
+  PlusIcon,
+  DownloadIcon,
+  TrendingUpIcon,
+  CloseIcon,
+  CirclePlusIcon,
+  TrailIcon,
+  MusicIcon,
+  ElectricIcon,
+  WoodIcon,
+  MechanicalIcon,
+  CrystalGlassIcon,
+  AlertTriangleIcon,
+  SkullIcon,
+  MaleIcon,
+  FemaleIcon,
+  SwordsIcon,
+  ShoppingBagIcon,
+  StarIcon,
+  SeedlingIcon,
+  BoltIcon,
+  FlameIcon,
+  GemIcon,
+  CrownIcon,
+  PlayIcon,
+  StopIcon,
+});

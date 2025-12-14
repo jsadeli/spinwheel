@@ -1,3 +1,4 @@
+// @ts-ignore
 import React from "react";
 
 const { parseWinnerString } = window;
@@ -190,4 +191,5 @@ const WinnerModal = ({ winner, levelInfo, prestigeTheme, onClose, onRemoveAndSpi
 };
 
 // Expose to window (needed for Babel Standalone)
+// @ts-ignore
 window.WinnerModal = WinnerModal;

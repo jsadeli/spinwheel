@@ -1,3 +1,4 @@
+// @ts-ignore
 import React from "react";
 
 // Generic Reusable Modal Component
@@ -70,4 +71,5 @@ const Modal = ({ isOpen, onClose, title, icon, header, children, footer, classNa
 };
 
 // Expose to window (needed for Babel Standalone)
+// @ts-ignore
 window.Modal = Modal;

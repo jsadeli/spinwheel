@@ -70,4 +70,5 @@ const OutOfOrderOverlay = ({ isVisible }) => {
 };
 
 // Expose to window (needed for Babel Standalone)
+// @ts-ignore
 window.OutOfOrderOverlay = OutOfOrderOverlay;

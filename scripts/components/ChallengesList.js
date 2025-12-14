@@ -31,7 +31,7 @@ const ChallengesList = ({ challenges, filter, setFilter }) => {
     }
 
     // 3. If both completed, sort by date (newest first)
-    return new Date(b.completedAt || 0) - new Date(a.completedAt || 0);
+    return new Date(b.completedAt || 0).getTime() - new Date(a.completedAt || 0).getTime();
   });
 
   return (
@@ -175,6 +175,6 @@ const ChallengesList = ({ challenges, filter, setFilter }) => {
   );
 };
 
-// Expose to window
+// Expose to window (needed for Babel Standalone)
 // @ts-ignore
 window.ChallengesList = ChallengesList;
