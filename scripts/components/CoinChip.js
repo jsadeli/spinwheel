@@ -1,6 +1,6 @@
 // @ts-ignore
 import React from "react";
-import { SpinCoinLogo } from "../icons.js";
+const { SpinCoinLogo } = window;
 
 export const CoinChip = ({
   balance,
