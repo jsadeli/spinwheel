@@ -4,6 +4,7 @@
   "description": "An interactive spin wheel progressive web application with a user progression system. Perfect for making random selections, choosing winners, or making decisions in a fun and interactive way.",
   "main": "sw.js",
   "scripts": {
+    "tsc": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
