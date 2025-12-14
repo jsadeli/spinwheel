@@ -238,7 +238,7 @@ export const fireSnowfall = (duration = 5000) => {
     const startY = -Math.random() * window.innerHeight; // Start above viewport
 
     // Initial opacity
-    el.style.opacity = Math.random() * 0.5 + 0.5;
+    el.style.opacity = (Math.random() * 0.5 + 0.5).toString();
     el.style.willChange = "transform, opacity";
 
     container.appendChild(el);
