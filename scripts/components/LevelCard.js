@@ -154,4 +154,6 @@ export const LevelCard = ({ levelInfo, xp, isCorrupted, prestigeTheme }) => {
 };
 
 // Expose to window (needed for Babel Standalone)
-window.LevelCard = LevelCard;
+if (typeof window !== "undefined") {
+  window.LevelCard = LevelCard;
+}

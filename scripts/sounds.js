@@ -765,7 +765,7 @@ export const ChargeSound = class {
   }
 };
 
-// Expose to window
+// Expose to window (needed for Babel Standalone)
 if (typeof window !== "undefined") {
   window.playWinSound = playWinSound;
   window.playJingleBells = playJingleBells;

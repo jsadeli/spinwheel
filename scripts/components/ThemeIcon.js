@@ -18,4 +18,6 @@ export const ThemeIcon = ({ theme, size = 24 }) => {
 };
 
 // Expose to window (needed for Babel Standalone)
-window.ThemeIcon = ThemeIcon;
+if (typeof window !== "undefined") {
+  window.ThemeIcon = ThemeIcon;
+}

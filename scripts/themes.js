@@ -178,7 +178,7 @@ export const getTierColors = (level) => {
   return { start: "#94a3b8", mid: "#64748b", end: "#475569" }; // Default: Silver
 };
 
-// Expose to window
+// Expose to window (needed for Babel Standalone)
 if (typeof window !== "undefined") {
   window.defaultColors = defaultColors;
   window.beachColors = beachColors;

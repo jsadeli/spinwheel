@@ -60,7 +60,7 @@ export const DAILY_CHALLENGES = [
   },
 ];
 
-// Expose to window for Babel scripts
+// Expose to window (needed for Babel Standalone)
 if (typeof window !== "undefined") {
   window.DAILY_CHALLENGES = DAILY_CHALLENGES;
 }

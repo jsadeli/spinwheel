@@ -176,4 +176,6 @@ export const ChallengesList = ({ challenges, filter, setFilter }) => {
 };
 
 // Expose to window (needed for Babel Standalone)
-window.ChallengesList = ChallengesList;
+if (typeof window !== "undefined") {
+  window.ChallengesList = ChallengesList;
+}

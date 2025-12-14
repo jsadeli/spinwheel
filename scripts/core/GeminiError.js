@@ -87,7 +87,7 @@ export class GeminiError extends Error {
   }
 }
 
-// Expose to window
+// Expose to window (needed for Babel Standalone)
 if (typeof window !== "undefined") {
   window.GeminiError = GeminiError;
 }

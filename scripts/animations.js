@@ -601,7 +601,7 @@ export const drawWheelTrail = (ctx, centerX, centerY, radius, rotation, velocity
   ctx.restore();
 };
 
-// Expose to window
+// Expose to window (needed for Babel Standalone)
 if (typeof window !== "undefined") {
   window.fireConfetti = fireConfetti;
   window.fireSnowfall = fireSnowfall;

@@ -99,4 +99,6 @@ export const CoinChip = ({ balance, rollingDuration = 500, animationDuration = 2
 };
 
 // Expose to window (needed for Babel Standalone)
-window.CoinChip = CoinChip;
+if (typeof window !== "undefined") {
+  window.CoinChip = CoinChip;
+}

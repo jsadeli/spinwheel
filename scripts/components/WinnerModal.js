@@ -191,4 +191,6 @@ export const WinnerModal = ({ winner, levelInfo, prestigeTheme, onClose, onRemov
 };
 
 // Expose to window (needed for Babel Standalone)
-window.WinnerModal = WinnerModal;
+if (typeof window !== "undefined") {
+  window.WinnerModal = WinnerModal;
+}

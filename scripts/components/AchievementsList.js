@@ -168,4 +168,6 @@ export const AchievementsList = ({ achievements, achievementFilter, setAchieveme
 };
 
 // Expose to window (needed for Babel Standalone)
-window.AchievementsList = AchievementsList;
+if (typeof window !== "undefined") {
+  window.AchievementsList = AchievementsList;
+}

@@ -270,4 +270,6 @@ export const CoinStoreModal = ({ isOpen, onClose, coins, xp, onTransact }) => {
 };
 
 // Expose to window (needed for Babel Standalone)
-window.CoinStoreModal = CoinStoreModal;
+if (typeof window !== "undefined") {
+  window.CoinStoreModal = CoinStoreModal;
+}

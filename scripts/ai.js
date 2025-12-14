@@ -71,7 +71,7 @@ export const generateSpeechFromGemini = async (apiKey, text, voiceName = AI_VOIC
   return data.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
 };
 
-// Expose to window
+// Expose to window (needed for Babel Standalone)
 if (typeof window !== "undefined") {
   window.generateListFromGemini = generateListFromGemini;
   window.generateSpeechFromGemini = generateSpeechFromGemini;

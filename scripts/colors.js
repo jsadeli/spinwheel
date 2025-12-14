@@ -56,7 +56,7 @@ export const getItemColor = (text, colors) => {
   return colors[index];
 };
 
-// Expose to window
+// Expose to window (needed for Babel Standalone)
 if (typeof window !== "undefined") {
   window.lerpColor = lerpColor;
   window.parseCustomColors = parseCustomColors;

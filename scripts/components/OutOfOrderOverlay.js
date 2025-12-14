@@ -70,4 +70,6 @@ export const OutOfOrderOverlay = ({ isVisible }) => {
 };
 
 // Expose to window (needed for Babel Standalone)
-window.OutOfOrderOverlay = OutOfOrderOverlay;
+if (typeof window !== "undefined") {
+  window.OutOfOrderOverlay = OutOfOrderOverlay;
+}

@@ -208,7 +208,7 @@ export const parseWinnerString = (text) => {
   return [{ text: text, isEmoji: isEmoji(text) }];
 };
 
-// Expose to window for Babel scripts
+// Expose to window (needed for Babel Standalone)
 if (typeof window !== "undefined") {
   window.loadState = loadState;
   window.getRelativeTime = getRelativeTime;

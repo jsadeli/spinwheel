@@ -91,7 +91,7 @@ export const getLevelProgress = (currentXp) => {
   };
 };
 
-// Expose to window for Babel scripts
+// Expose to window (needed for Babel Standalone)
 if (typeof window !== "undefined") {
   window.getLevelTitle = getLevelTitle;
   window.XP_CONSTANTS = XP_CONSTANTS;

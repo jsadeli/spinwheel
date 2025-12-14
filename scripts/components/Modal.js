@@ -80,4 +80,6 @@ export const Modal = ({
 };
 
 // Expose to window (needed for Babel Standalone)
-window.Modal = Modal;
+if (typeof window !== "undefined") {
+  window.Modal = Modal;
+}

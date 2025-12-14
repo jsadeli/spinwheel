@@ -1057,7 +1057,7 @@ export const ACHIEVEMENTS = [
   },
 ];
 
-// Expose to window for Babel scripts
+// Expose to window (needed for Babel Standalone)
 if (typeof window !== "undefined") {
   window.AchievementFilters = AchievementFilters;
   window.ACHIEVEMENTS = ACHIEVEMENTS;

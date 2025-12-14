@@ -220,7 +220,7 @@ export const updatePointer = (pointerElement, rotation, velocity) => {
   pointerElement.style.transform = `rotate(${pointerAngle}deg)`;
 };
 
-// Expose to window
+// Expose to window (needed for Babel Standalone)
 if (typeof window !== "undefined") {
   window.drawWheel = drawWheel;
   window.updatePointer = updatePointer;

@@ -213,7 +213,7 @@ export const processCommandCodes = (listName, inputText, context) => {
   return false;
 };
 
-// Expose to window
+// Expose to window (needed for Babel Standalone)
 if (typeof window !== "undefined") {
   window.processCommandCodes = processCommandCodes;
 }

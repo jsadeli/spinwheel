@@ -176,7 +176,7 @@ export const GITHUB_LINK = "https://github.com/samuelkripto";
  */
 export const SPINWHEEL_REPO = "https://github.com/samuelkripto/spinwheel";
 
-// Expose to window for Babel scripts
+// Expose to window (needed for Babel Standalone)
 if (typeof window !== "undefined") {
   window.DEFAULT_LIST_NAME = DEFAULT_LIST_NAME;
   window.DEFAULT_LIST_ITEMS = DEFAULT_LIST_ITEMS;

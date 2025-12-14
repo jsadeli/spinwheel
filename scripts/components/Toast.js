@@ -150,4 +150,6 @@ export const Toast = ({
 };
 
 // Expose to window (needed for Babel Standalone)
-window.Toast = Toast;
+if (typeof window !== "undefined") {
+  window.Toast = Toast;
+}
