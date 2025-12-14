@@ -1,6 +1,17 @@
 // @ts-ignore
 import React from "react";
 
+/**
+ * Modal component for the in-game coin store.
+ * Allows users to exchange SpinCoins for XP using various packages.
+ *
+ * @param {Object} props - Component props.
+ * @param {boolean} props.isOpen - Whether the modal is currently visible.
+ * @param {() => void} props.onClose - Callback to close the modal.
+ * @param {number} props.coins - Current coin balance.
+ * @param {number} props.xp - Current XP amount.
+ * @param {(option: Object) => void} props.onTransact - Callback when a purchase is confirmed.
+ */
 export const CoinStoreModal = ({ isOpen, onClose, coins, xp, onTransact }) => {
   if (!isOpen) {
     return null;

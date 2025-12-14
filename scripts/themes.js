@@ -1,4 +1,8 @@
-// Default Themes
+/**
+ * Default color palette for wheel segments.
+ * A vibrant, balanced palette with warm and cool tones.
+ * @type {string[]}
+ */
 export const defaultColors = [
   "#F25F5C",
   "#FF9F1C",
@@ -14,6 +18,11 @@ export const defaultColors = [
   "#F8B195",
 ];
 
+/**
+ * Beach/pastel color palette for wheel segments.
+ * A softer, muted palette with earthy tones.
+ * @type {string[]}
+ */
 export const beachColors = [
   "#D98C8C",
   "#D9A679",

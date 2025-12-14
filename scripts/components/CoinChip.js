@@ -1,6 +1,17 @@
 // @ts-ignore
 import React from "react";
 
+/**
+ * A coin balance display chip with animated rolling numbers.
+ * Features pulse animation on value change and optional click handler.
+ *
+ * @param {Object} props - Component props.
+ * @param {number} props.balance - The current coin balance to display.
+ * @param {number} [props.rollingDuration=500] - Duration in ms for the rolling number animation.
+ * @param {number} [props.animationDuration=2000] - Duration in ms for the entire animation cycle.
+ * @param {React.MouseEventHandler<HTMLDivElement>} [props.onClick] - Optional click handler (if provided, chip becomes clickable).
+ * @param {number} [props.size=24] - The size of the SpinCoin logo.
+ */
 export const CoinChip = ({
   balance,
   rollingDuration = 500,
