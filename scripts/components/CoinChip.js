@@ -2,7 +2,13 @@
 import React from "react";
 import { SpinCoinLogo } from "../icons.js";
 
-export const CoinChip = ({ balance, rollingDuration = 500, animationDuration = 2000, onClick }) => {
+export const CoinChip = ({
+  balance,
+  rollingDuration = 500,
+  animationDuration = 2000,
+  onClick = undefined,
+  size = 24,
+}) => {
   const { useState, useEffect } = React;
   const [isAnimating, setIsAnimating] = useState(false);
   const [prevBalance, setPrevBalance] = useState(balance);
@@ -48,7 +54,7 @@ export const CoinChip = ({ balance, rollingDuration = 500, animationDuration = 2
         }`}
       >
         {/* SpinCoin */}
-        <SpinCoinLogo size={24} />
+        <SpinCoinLogo size={size} />
 
         {/* Balance */}
         <div className="font-bold text-indigo-900 dark:text-indigo-100 font-mono relative h-6 overflow-hidden">
