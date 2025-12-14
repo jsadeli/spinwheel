@@ -34,7 +34,7 @@ export const loadState = (key, defaultValue) => {
 export const getRelativeTime = (date) => {
   if (!date) return "";
   const now = new Date();
-  const diffInSeconds = Math.floor((now - new Date(date)) / 1000);
+  const diffInSeconds = Math.floor((now.getTime() - new Date(date).getTime()) / 1000);
   const rtf = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
 
   if (diffInSeconds < 60) return "just now"; // cosmetic preference for very recent events
