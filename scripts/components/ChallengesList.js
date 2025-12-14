@@ -158,11 +158,11 @@ export const ChallengesList = ({ challenges, filter, setFilter }) => {
                     <div className="mt-3 w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
                       <div
                         className="bg-emerald-500 h-full rounded-full transition-all duration-500"
-                        style={{ width: `${(ch.progress / ch.target) * 100}%` }}
+                        style={{ width: `${(Number(ch.progress) / ch.target) * 100}%` }}
                       />
                     </div>
                     <div className="text-xs text-gray-400 mt-1 text-right">
-                      {ch.progress} / {ch.target}
+                      {Number(ch.progress)} / {ch.target}
                     </div>
                   </>
                 )}
