@@ -31,6 +31,29 @@ import {
   SPINWHEEL_REPO,
 } from "../scripts/configs.js";
 import {
+  getLevelTitle,
+  XP_CONSTANTS,
+  getRequiredXpForLevel,
+  calculateLevel,
+  getLevelProgress,
+} from "../scripts/levels.js";
+import {
+  playWinSound,
+  playJingleBells,
+  playTickSound,
+  playDefaultTickSound,
+  playCrispWoodTickSound,
+  playMetallicClankTickSound,
+  playCrystalGlassTickSound,
+  playFireCrackle,
+  playBreakdownSound,
+  playPurchaseSound,
+  playBigPurchaseSound,
+  base64ToWavBlob,
+  ChargeSound
+} from "../scripts/sounds.js";
+import { defaultColors, beachColors, getPrestigeTheme, getTierColors } from "../scripts/themes.js";
+import {
   loadState,
   getRelativeTime,
   parseItems,
@@ -39,6 +62,7 @@ import {
   isEmoji,
   parseWinnerString,
 } from "../scripts/utils.js";
+import { drawWheel, updatePointer } from "../scripts/wheel.js";
 
 declare global {
   interface Window {
@@ -81,6 +105,20 @@ declare global {
     getItemColor: typeof getItemColor;
     // Commands (commands.js)
     processCommandCodes: typeof processCommandCodes;
+    // Configurations (configs.js)
+    THEMES: typeof THEMES;
+    DEFAULT_LIST_NAME: typeof DEFAULT_LIST_NAME;
+    DEFAULT_LIST_ITEMS: typeof DEFAULT_LIST_ITEMS;
+    STORAGE_KEYS: typeof STORAGE_KEYS;
+    TICK_SOUNDS: typeof TICK_SOUNDS;
+    COLOR_ASSIGNMENT_MODE: typeof COLOR_ASSIGNMENT_MODE;
+    AI_VOICES: typeof AI_VOICES;
+    TOAST_DURATION: typeof TOAST_DURATION;
+    TAB_NAMES: typeof TAB_NAMES;
+    DAILY_CHALLENGE_LEVEL: typeof DAILY_CHALLENGE_LEVEL;
+    DAILY_CHALLENGE_RESET_HOUR: typeof DAILY_CHALLENGE_RESET_HOUR;
+    GITHUB_LINK: typeof GITHUB_LINK;
+    SPINWHEEL_REPO: typeof SPINWHEEL_REPO;
     // Icons (icons.js)
     Icon: React.FC<any>;
     SpinWheelLogo: React.FC<any>;
@@ -137,20 +175,31 @@ declare global {
     CrownIcon: React.FC<any>;
     PlayIcon: React.FC<any>;
     StopIcon: React.FC<any>;
-    // Configurations (configs.js)
-    THEMES: typeof THEMES;
-    DEFAULT_LIST_NAME: typeof DEFAULT_LIST_NAME;
-    DEFAULT_LIST_ITEMS: typeof DEFAULT_LIST_ITEMS;
-    STORAGE_KEYS: typeof STORAGE_KEYS;
-    TICK_SOUNDS: typeof TICK_SOUNDS;
-    COLOR_ASSIGNMENT_MODE: typeof COLOR_ASSIGNMENT_MODE;
-    AI_VOICES: typeof AI_VOICES;
-    TOAST_DURATION: typeof TOAST_DURATION;
-    TAB_NAMES: typeof TAB_NAMES;
-    DAILY_CHALLENGE_LEVEL: typeof DAILY_CHALLENGE_LEVEL;
-    DAILY_CHALLENGE_RESET_HOUR: typeof DAILY_CHALLENGE_RESET_HOUR;
-    GITHUB_LINK: typeof GITHUB_LINK;
-    SPINWHEEL_REPO: typeof SPINWHEEL_REPO;
+    // Levels (levels.js)
+    getLevelTitle: typeof getLevelTitle;
+    XP_CONSTANTS: typeof XP_CONSTANTS;
+    getRequiredXpForLevel: typeof getRequiredXpForLevel;
+    calculateLevel: typeof calculateLevel;
+    getLevelProgress: typeof getLevelProgress;
+    // Sounds (sounds.js)
+    playWinSound: typeof playWinSound;
+    playJingleBells: typeof playJingleBells;
+    playTickSound: typeof playTickSound;
+    playDefaultTickSound: typeof playDefaultTickSound;
+    playCrispWoodTickSound: typeof playCrispWoodTickSound;
+    playMetallicClankTickSound: typeof playMetallicClankTickSound;
+    playCrystalGlassTickSound: typeof playCrystalGlassTickSound;
+    playFireCrackle: typeof playFireCrackle;
+    playBreakdownSound: typeof playBreakdownSound;
+    playPurchaseSound: typeof playPurchaseSound;
+    playBigPurchaseSound: typeof playBigPurchaseSound;
+    base64ToWavBlob: typeof base64ToWavBlob;
+    ChargeSound: typeof ChargeSound;
+    // Themes (themes.js)
+    defaultColors: typeof defaultColors;
+    beachColors: typeof beachColors;
+    getPrestigeTheme: typeof getPrestigeTheme;
+    getTierColors: typeof getTierColors;
     // Utilities (utils.js)
     loadState: typeof loadState;
     getRelativeTime: typeof getRelativeTime;
@@ -159,5 +208,8 @@ declare global {
     copyToClipboard: typeof copyToClipboard;
     isEmoji: typeof isEmoji;
     parseWinnerString: typeof parseWinnerString;
+    // Wheel (wheel.js)
+    drawWheel: typeof drawWheel;
+    updatePointer: typeof updatePointer;
   }
 }

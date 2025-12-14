@@ -532,7 +532,6 @@ const StopIcon = (props) => (
 );
 
 // Expose to window (needed for Babel Standalone)
-// @ts-ignore
 Object.assign(window, {
   Icon,
   SpinWheelLogo,
