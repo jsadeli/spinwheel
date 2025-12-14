@@ -9,7 +9,7 @@ import React from "react";
  * @param {number} [props.size=24] - The width and height of the icon.
  * @param {string} [props.className=""] - Additional CSS classes.
  */
-const Icon = ({ children, size = 24, className = "" }) => (
+export const Icon = ({ children, size = 24, className = "" }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width={size}
@@ -33,7 +33,7 @@ const Icon = ({ children, size = 24, className = "" }) => (
  * @param {number} [props.size=24] - The size of the logo.
  * @param {string} [props.className] - Additional CSS classes.
  */
-const SpinWheelLogo = (props) => (
+export const SpinWheelLogo = (props) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 512 512"
@@ -54,7 +54,7 @@ const SpinWheelLogo = (props) => (
   </svg>
 );
 
-const SpinCoinLogo = (props) => (
+export const SpinCoinLogo = (props) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 16 16"
@@ -85,14 +85,14 @@ const SpinCoinLogo = (props) => (
   </svg>
 );
 
-const SettingsIcon = (props) => (
+export const SettingsIcon = (props) => (
   <Icon {...props}>
     <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.47a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
     <circle cx="12" cy="12" r="3" />
   </Icon>
 );
 
-const SlidersIcon = (props) => (
+export const SlidersIcon = (props) => (
   <Icon {...props}>
     <line x1="4" y1="21" x2="4" y2="14" />
     <line x1="4" y1="10" x2="4" y2="3" />
@@ -106,14 +106,14 @@ const SlidersIcon = (props) => (
   </Icon>
 );
 
-const Volume2Icon = (props) => (
+export const Volume2Icon = (props) => (
   <Icon {...props}>
     <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
     <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" />
   </Icon>
 );
 
-const VolumeXIcon = (props) => (
+export const VolumeXIcon = (props) => (
   <Icon {...props}>
     <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
     <line x1="23" y1="9" x2="17" y2="15" />
@@ -121,7 +121,7 @@ const VolumeXIcon = (props) => (
   </Icon>
 );
 
-const ShuffleIcon = (props) => (
+export const ShuffleIcon = (props) => (
   <Icon {...props}>
     <polyline points="16 3 21 3 21 8" />
     <line x1="4" y1="20" x2="21" y2="3" />
@@ -131,7 +131,7 @@ const ShuffleIcon = (props) => (
   </Icon>
 );
 
-const Trash2Icon = (props) => (
+export const Trash2Icon = (props) => (
   <Icon {...props}>
     <polyline points="3 6 5 6 21 6" />
     <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
@@ -140,7 +140,7 @@ const Trash2Icon = (props) => (
   </Icon>
 );
 
-const TrophyIcon = (props) => (
+export const TrophyIcon = (props) => (
   <Icon {...props}>
     <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
     <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
@@ -151,7 +151,7 @@ const TrophyIcon = (props) => (
   </Icon>
 );
 
-const SunIcon = (props) => (
+export const SunIcon = (props) => (
   <Icon {...props}>
     <circle cx="12" cy="12" r="5" />
     <line x1="12" y1="1" x2="12" y2="3" />
@@ -165,13 +165,13 @@ const SunIcon = (props) => (
   </Icon>
 );
 
-const MoonIcon = (props) => (
+export const MoonIcon = (props) => (
   <Icon {...props}>
     <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
   </Icon>
 );
 
-const MonitorIcon = (props) => (
+export const MonitorIcon = (props) => (
   <Icon {...props}>
     <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
     <line x1="8" y1="21" x2="16" y2="21" />
@@ -179,25 +179,25 @@ const MonitorIcon = (props) => (
   </Icon>
 );
 
-const CheckIcon = (props) => (
+export const CheckIcon = (props) => (
   <Icon {...props}>
     <polyline points="20 6 9 17 4 12" />
   </Icon>
 );
 
-const ChevronDownIcon = (props) => (
+export const ChevronDownIcon = (props) => (
   <Icon {...props}>
     <polyline points="6 9 12 15 18 9" />
   </Icon>
 );
 
-const GithubIcon = (props) => (
+export const GithubIcon = (props) => (
   <Icon {...props}>
     <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" />
   </Icon>
 );
 
-const ShareIcon = (props) => (
+export const ShareIcon = (props) => (
   <Icon {...props}>
     <circle cx="18" cy="5" r="3" />
     <circle cx="6" cy="12" r="3" />
@@ -207,28 +207,28 @@ const ShareIcon = (props) => (
   </Icon>
 );
 
-const CopyIcon = (props) => (
+export const CopyIcon = (props) => (
   <Icon {...props}>
     <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
     <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
   </Icon>
 );
 
-const ClockIcon = (props) => (
+export const ClockIcon = (props) => (
   <Icon {...props}>
     <circle cx="12" cy="12" r="10" />
     <polyline points="12 6 12 12 16 14" />
   </Icon>
 );
 
-const EyeIcon = (props) => (
+export const EyeIcon = (props) => (
   <Icon {...props}>
     <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
     <circle cx="12" cy="12" r="3" />
   </Icon>
 );
 
-const EyeOffIcon = (props) => (
+export const EyeOffIcon = (props) => (
   <Icon {...props}>
     <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24" />
     <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68" />
@@ -237,13 +237,13 @@ const EyeOffIcon = (props) => (
   </Icon>
 );
 
-const ZapIcon = (props) => (
+export const ZapIcon = (props) => (
   <Icon {...props}>
     <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
   </Icon>
 );
 
-const HourglassIcon = (props) => (
+export const HourglassIcon = (props) => (
   <Icon {...props}>
     <path d="M5 22h14" />
     <path d="M5 2h14" />
@@ -252,14 +252,14 @@ const HourglassIcon = (props) => (
   </Icon>
 );
 
-const CodeIcon = (props) => (
+export const CodeIcon = (props) => (
   <Icon {...props}>
     <polyline points="16 18 22 12 16 6" />
     <polyline points="8 6 2 12 8 18" />
   </Icon>
 );
 
-const ScrollIcon = (props) => (
+export const ScrollIcon = (props) => (
   <Icon {...props}>
     <path d="M19 20H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
     <polyline points="17 21 17 13 15 11" />
@@ -268,7 +268,7 @@ const ScrollIcon = (props) => (
   </Icon>
 );
 
-const HelpCircleIcon = (props) => (
+export const HelpCircleIcon = (props) => (
   <Icon {...props}>
     <circle cx="12" cy="12" r="10" />
     <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
@@ -276,13 +276,13 @@ const HelpCircleIcon = (props) => (
   </Icon>
 );
 
-const SparklesIcon = (props) => (
+export const SparklesIcon = (props) => (
   <Icon {...props}>
     <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />
   </Icon>
 );
 
-const BotIcon = (props) => (
+export const BotIcon = (props) => (
   <Icon {...props}>
     <path d="M12 8V4H8" />
     <rect width="16" height="12" x="4" y="8" rx="2" />
@@ -293,14 +293,14 @@ const BotIcon = (props) => (
   </Icon>
 );
 
-const KeyIcon = (props) => (
+export const KeyIcon = (props) => (
   <Icon {...props}>
     <path d="m21 2-2 2m-7.6 7.6a6.5 6.5 0 1 1-2.8-2.8c.7.7 1.2 1.2 1.8 1.8 1.2 1.2 2.2 2.2 2.9 2.9.7.7 1.3 1.3 2 2l2.4-2.4c-.7-.7-1.3-1.3-2-2l-2.4 2.4-2-2" />
     <circle cx="7.5" cy="7.5" r="2.5" />
   </Icon>
 );
 
-const PaletteIcon = (props) => (
+export const PaletteIcon = (props) => (
   <Icon {...props}>
     <circle cx="13.5" cy="6.5" r=".5" fill="currentColor" />
     <circle cx="17.5" cy="10.5" r=".5" fill="currentColor" />
@@ -310,14 +310,14 @@ const PaletteIcon = (props) => (
   </Icon>
 );
 
-const PlusIcon = (props) => (
+export const PlusIcon = (props) => (
   <Icon {...props}>
     <path d="M5 12h14" />
     <path d="M12 5v14" />
   </Icon>
 );
 
-const DownloadIcon = (props) => (
+export const DownloadIcon = (props) => (
   <Icon {...props}>
     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
     <polyline points="7 10 12 15 17 10" />
@@ -325,21 +325,21 @@ const DownloadIcon = (props) => (
   </Icon>
 );
 
-const TrendingUpIcon = (props) => (
+export const TrendingUpIcon = (props) => (
   <Icon {...props}>
     <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
     <polyline points="17 6 23 6 23 12" />
   </Icon>
 );
 
-const CloseIcon = (props) => (
+export const CloseIcon = (props) => (
   <Icon {...props}>
     <line x1="18" y1="6" x2="6" y2="18" />
     <line x1="6" y1="6" x2="18" y2="18" />
   </Icon>
 );
 
-const CirclePlusIcon = (props) => (
+export const CirclePlusIcon = (props) => (
   <Icon {...props}>
     <circle cx="12" cy="12" r="10" />
     <path d="M12 8v8" />
@@ -347,13 +347,13 @@ const CirclePlusIcon = (props) => (
   </Icon>
 );
 
-const TrailIcon = (props) => (
+export const TrailIcon = (props) => (
   <Icon {...props}>
     <path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2" />
   </Icon>
 );
 
-const MusicIcon = (props) => (
+export const MusicIcon = (props) => (
   <Icon {...props}>
     <path d="M9 18V5l12-2v13" />
     <circle cx="6" cy="18" r="3" />
@@ -361,13 +361,13 @@ const MusicIcon = (props) => (
   </Icon>
 );
 
-const ElectricIcon = (props) => (
+export const ElectricIcon = (props) => (
   <Icon {...props}>
     <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
   </Icon>
 );
 
-const WoodIcon = (props) => (
+export const WoodIcon = (props) => (
   <Icon {...props}>
     <path d="M12 2l6 7H6z" />
     <path d="M12 7l7 8H5z" />
@@ -376,7 +376,7 @@ const WoodIcon = (props) => (
   </Icon>
 );
 
-const MechanicalIcon = (props) => (
+export const MechanicalIcon = (props) => (
   <Icon {...props}>
     <path d="M5 4h14v3H5z" />
     <path d="M12 7v10" />
@@ -388,7 +388,7 @@ const MechanicalIcon = (props) => (
   </Icon>
 );
 
-const CrystalGlassIcon = (props) => (
+export const CrystalGlassIcon = (props) => (
   <Icon {...props}>
     <path d="M7 3h10" />
     <path d="M8 3c0 4.5 2 9 4 9s4-4.5 4-9" />
@@ -398,7 +398,7 @@ const CrystalGlassIcon = (props) => (
   </Icon>
 );
 
-const AlertTriangleIcon = (props) => (
+export const AlertTriangleIcon = (props) => (
   <Icon {...props}>
     <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
     <line x1="12" y1="9" x2="12" y2="13" />
@@ -406,7 +406,7 @@ const AlertTriangleIcon = (props) => (
   </Icon>
 );
 
-const SkullIcon = (props) => (
+export const SkullIcon = (props) => (
   <Icon {...props}>
     <path d="M12 2c-4.4 0-8 3.6-8 8 0 2.8 1.5 5.3 3.8 6.7.3.2.5.5.5.9v1.9c0 .8.7 1.5 1.5 1.5h4.4c.8 0 1.5-.7 1.5-1.5v-1.9c0-.4.2-.7.5-.9 2.3-1.4 3.8-3.9 3.8-6.7 0-4.4-3.6-8-8-8z" />
     <path d="M9 12h.01" />
@@ -416,7 +416,7 @@ const SkullIcon = (props) => (
   </Icon>
 );
 
-const MaleIcon = (props) => (
+export const MaleIcon = (props) => (
   <Icon {...props}>
     <circle cx="10" cy="10" r="7" />
     <line x1="21" y1="3" x2="15" y2="9" />
@@ -424,7 +424,7 @@ const MaleIcon = (props) => (
   </Icon>
 );
 
-const FemaleIcon = (props) => (
+export const FemaleIcon = (props) => (
   <Icon {...props}>
     <circle cx="12" cy="10" r="7" />
     <line x1="12" y1="17" x2="12" y2="23" />
@@ -432,7 +432,7 @@ const FemaleIcon = (props) => (
   </Icon>
 );
 
-const SwordsIcon = (props) => (
+export const SwordsIcon = (props) => (
   <Icon {...props}>
     {/* First sword - bottom-left to top-right */}
     <path d="M20 4l-2 2" />
@@ -450,7 +450,7 @@ const SwordsIcon = (props) => (
   </Icon>
 );
 
-const ShoppingBagIcon = (props) => (
+export const ShoppingBagIcon = (props) => (
   <Icon {...props}>
     <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
     <line x1="3" y1="6" x2="21" y2="6" />
@@ -458,14 +458,14 @@ const ShoppingBagIcon = (props) => (
   </Icon>
 );
 
-const StarIcon = (props) => (
+export const StarIcon = (props) => (
   <Icon {...props}>
     <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
   </Icon>
 );
 
 // Store Package Icons
-const SeedlingIcon = (props) => (
+export const SeedlingIcon = (props) => (
   <Icon {...props}>
     <path d="M12 22v-8" />
     <path d="M12 14C9.2 14 7 11.8 7 9s2.2-5 5-5c1.7 0 3.2.9 4.1 2.3" />
@@ -473,19 +473,19 @@ const SeedlingIcon = (props) => (
   </Icon>
 );
 
-const BoltIcon = (props) => (
+export const BoltIcon = (props) => (
   <Icon {...props}>
     <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
   </Icon>
 );
 
-const FlameIcon = (props) => (
+export const FlameIcon = (props) => (
   <Icon {...props}>
     <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z" />
   </Icon>
 );
 
-const GemIcon = (props) => (
+export const GemIcon = (props) => (
   <Icon {...props}>
     <polygon points="6 3 18 3 22 9 12 22 2 9 6 3" />
     <path d="M11 3 9 9 12 22 15 9 13 3" />
@@ -493,7 +493,7 @@ const GemIcon = (props) => (
   </Icon>
 );
 
-const CrownIcon = (props) => (
+export const CrownIcon = (props) => (
   <Icon {...props}>
     <path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7z" />
     <path d="M2 16h20" />
@@ -501,7 +501,7 @@ const CrownIcon = (props) => (
 );
 
 // Main Action Icons
-const PlayIcon = ({ gradientStops, ...props }) => {
+export const PlayIcon = ({ gradientStops, ...props }) => {
   const gradId = "play-icon-heat-gradient";
   const hasGradient = gradientStops && gradientStops.length > 0;
 
@@ -525,7 +525,7 @@ const PlayIcon = ({ gradientStops, ...props }) => {
   );
 };
 
-const StopIcon = (props) => (
+export const StopIcon = (props) => (
   <Icon {...props}>
     <rect x="6" y="6" width="12" height="12" />
   </Icon>

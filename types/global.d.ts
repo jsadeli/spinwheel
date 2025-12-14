@@ -35,6 +35,63 @@ import {
   SPINWHEEL_REPO,
 } from "../scripts/configs.js";
 import {
+  Icon,
+  SpinWheelLogo,
+  SpinCoinLogo,
+  SettingsIcon,
+  SlidersIcon,
+  Volume2Icon,
+  VolumeXIcon,
+  ShuffleIcon,
+  Trash2Icon,
+  TrophyIcon,
+  SunIcon,
+  MoonIcon,
+  MonitorIcon,
+  CheckIcon,
+  ChevronDownIcon,
+  GithubIcon,
+  ShareIcon,
+  CopyIcon,
+  ClockIcon,
+  EyeIcon,
+  EyeOffIcon,
+  ZapIcon,
+  HourglassIcon,
+  CodeIcon,
+  ScrollIcon,
+  HelpCircleIcon,
+  SparklesIcon,
+  BotIcon,
+  KeyIcon,
+  PaletteIcon,
+  PlusIcon,
+  DownloadIcon,
+  TrendingUpIcon,
+  CloseIcon,
+  CirclePlusIcon,
+  TrailIcon,
+  MusicIcon,
+  ElectricIcon,
+  WoodIcon,
+  MechanicalIcon,
+  CrystalGlassIcon,
+  AlertTriangleIcon,
+  SkullIcon,
+  MaleIcon,
+  FemaleIcon,
+  SwordsIcon,
+  ShoppingBagIcon,
+  StarIcon,
+  SeedlingIcon,
+  BoltIcon,
+  FlameIcon,
+  GemIcon,
+  CrownIcon,
+  PlayIcon,
+  StopIcon,
+} from "../scripts/icons.js";
+import {
   getLevelTitle,
   XP_CONSTANTS,
   getRequiredXpForLevel,
@@ -54,7 +111,7 @@ import {
   playPurchaseSound,
   playBigPurchaseSound,
   base64ToWavBlob,
-  ChargeSound
+  ChargeSound,
 } from "../scripts/sounds.js";
 import { defaultColors, beachColors, getPrestigeTheme, getTierColors } from "../scripts/themes.js";
 import {
@@ -132,61 +189,61 @@ declare global {
     GITHUB_LINK: typeof GITHUB_LINK;
     SPINWHEEL_REPO: typeof SPINWHEEL_REPO;
     // Icons (icons.js)
-    Icon: React.FC<any>;
-    SpinWheelLogo: React.FC<any>;
-    SpinCoinLogo: React.FC<any>;
-    SettingsIcon: React.FC<any>;
-    SlidersIcon: React.FC<any>;
-    Volume2Icon: React.FC<any>;
-    VolumeXIcon: React.FC<any>;
-    ShuffleIcon: React.FC<any>;
-    Trash2Icon: React.FC<any>;
-    TrophyIcon: React.FC<any>;
-    SunIcon: React.FC<any>;
-    MoonIcon: React.FC<any>;
-    MonitorIcon: React.FC<any>;
-    CheckIcon: React.FC<any>;
-    ChevronDownIcon: React.FC<any>;
-    GithubIcon: React.FC<any>;
-    ShareIcon: React.FC<any>;
-    CopyIcon: React.FC<any>;
-    ClockIcon: React.FC<any>;
-    EyeIcon: React.FC<any>;
-    EyeOffIcon: React.FC<any>;
-    ZapIcon: React.FC<any>;
-    HourglassIcon: React.FC<any>;
-    CodeIcon: React.FC<any>;
-    ScrollIcon: React.FC<any>;
-    HelpCircleIcon: React.FC<any>;
-    SparklesIcon: React.FC<any>;
-    BotIcon: React.FC<any>;
-    KeyIcon: React.FC<any>;
-    PaletteIcon: React.FC<any>;
-    PlusIcon: React.FC<any>;
-    DownloadIcon: React.FC<any>;
-    TrendingUpIcon: React.FC<any>;
-    CloseIcon: React.FC<any>;
-    CirclePlusIcon: React.FC<any>;
-    TrailIcon: React.FC<any>;
-    MusicIcon: React.FC<any>;
-    ElectricIcon: React.FC<any>;
-    WoodIcon: React.FC<any>;
-    MechanicalIcon: React.FC<any>;
-    CrystalGlassIcon: React.FC<any>;
-    AlertTriangleIcon: React.FC<any>;
-    SkullIcon: React.FC<any>;
-    MaleIcon: React.FC<any>;
-    FemaleIcon: React.FC<any>;
-    SwordsIcon: React.FC<any>;
-    ShoppingBagIcon: React.FC<any>;
-    StarIcon: React.FC<any>;
-    SeedlingIcon: React.FC<any>;
-    BoltIcon: React.FC<any>;
-    FlameIcon: React.FC<any>;
-    GemIcon: React.FC<any>;
-    CrownIcon: React.FC<any>;
-    PlayIcon: React.FC<any>;
-    StopIcon: React.FC<any>;
+    Icon: typeof Icon;
+    SpinWheelLogo: typeof SpinWheelLogo;
+    SpinCoinLogo: typeof SpinCoinLogo;
+    SettingsIcon: typeof SettingsIcon;
+    SlidersIcon: typeof SlidersIcon;
+    Volume2Icon: typeof Volume2Icon;
+    VolumeXIcon: typeof VolumeXIcon;
+    ShuffleIcon: typeof ShuffleIcon;
+    Trash2Icon: typeof Trash2Icon;
+    TrophyIcon: typeof TrophyIcon;
+    SunIcon: typeof SunIcon;
+    MoonIcon: typeof MoonIcon;
+    MonitorIcon: typeof MonitorIcon;
+    CheckIcon: typeof CheckIcon;
+    ChevronDownIcon: typeof ChevronDownIcon;
+    GithubIcon: typeof GithubIcon;
+    ShareIcon: typeof ShareIcon;
+    CopyIcon: typeof CopyIcon;
+    ClockIcon: typeof ClockIcon;
+    EyeIcon: typeof EyeIcon;
+    EyeOffIcon: typeof EyeOffIcon;
+    ZapIcon: typeof ZapIcon;
+    HourglassIcon: typeof HourglassIcon;
+    CodeIcon: typeof CodeIcon;
+    ScrollIcon: typeof ScrollIcon;
+    HelpCircleIcon: typeof HelpCircleIcon;
+    SparklesIcon: typeof SparklesIcon;
+    BotIcon: typeof BotIcon;
+    KeyIcon: typeof KeyIcon;
+    PaletteIcon: typeof PaletteIcon;
+    PlusIcon: typeof PlusIcon;
+    DownloadIcon: typeof DownloadIcon;
+    TrendingUpIcon: typeof TrendingUpIcon;
+    CloseIcon: typeof CloseIcon;
+    CirclePlusIcon: typeof CirclePlusIcon;
+    TrailIcon: typeof TrailIcon;
+    MusicIcon: typeof MusicIcon;
+    ElectricIcon: typeof ElectricIcon;
+    WoodIcon: typeof WoodIcon;
+    MechanicalIcon: typeof MechanicalIcon;
+    CrystalGlassIcon: typeof CrystalGlassIcon;
+    AlertTriangleIcon: typeof AlertTriangleIcon;
+    SkullIcon: typeof SkullIcon;
+    MaleIcon: typeof MaleIcon;
+    FemaleIcon: typeof FemaleIcon;
+    SwordsIcon: typeof SwordsIcon;
+    ShoppingBagIcon: typeof ShoppingBagIcon;
+    StarIcon: typeof StarIcon;
+    SeedlingIcon: typeof SeedlingIcon;
+    BoltIcon: typeof BoltIcon;
+    FlameIcon: typeof FlameIcon;
+    GemIcon: typeof GemIcon;
+    CrownIcon: typeof CrownIcon;
+    PlayIcon: typeof PlayIcon;
+    StopIcon: typeof StopIcon;
     // Levels (levels.js)
     getLevelTitle: typeof getLevelTitle;
     XP_CONSTANTS: typeof XP_CONSTANTS;
