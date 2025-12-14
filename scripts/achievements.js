@@ -23,7 +23,7 @@ export const AchievementFilters = {
  *   bonusXp: number,
  *   condition: (stats: Object) => boolean,
  *   progress: number | ((stats: Object) => number),
- *   target: number | (() => number),
+ *   target: number | ((stats: Object) => number),
  * }>}
  */
 export const ACHIEVEMENTS = [
