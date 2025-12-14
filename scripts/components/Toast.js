@@ -20,7 +20,7 @@ export const Toast = ({
   duration = window.TOAST_DURATION,
 }) => {
   const { useEffect } = React;
-  const { TrophyIcon, TrendingUpIcon, CloseIcon, SwordsIcon } = window;
+  const { TrophyIcon, TrendingUpIcon, CloseIcon, SwordsIcon, AlertTriangleIcon } = window;
 
   useEffect(() => {
     const timer = setTimeout(() => {
