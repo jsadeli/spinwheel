@@ -116,13 +116,11 @@ export class ChallengeManager {
     // Merge internal state with external stats
     const stats = {
       spinsToday: this.data.spinsToday,
-      ...externalStats
+      ...externalStats,
     };
 
     DAILY_CHALLENGES.forEach((challenge) => {
-      const isCompleted = this.data.completed.some(
-        (c) => c.challengeId === challenge.id
-      );
+      const isCompleted = this.data.completed.some((c) => c.challengeId === challenge.id);
       if (isCompleted) return;
 
       // Use the condition function
@@ -154,20 +152,21 @@ export class ChallengeManager {
 
     const stats = {
       spinsToday: this.data.spinsToday,
-      ...externalStats
+      ...externalStats,
     };
 
     return DAILY_CHALLENGES.map((challenge) => {
       // Calculate progress using the function
-      const currentProgress = challenge.progress ? challenge.progress(stats) : 0;
+      const currentProgress =
+        typeof challenge.progress === "function"
+          ? challenge.progress(stats)
+          : challenge.progress || 0;
 
       // Clamp progress to target for display purposes if needed
       const displayProgress = Math.min(currentProgress, challenge.target);
 
       // Find completion record
-      const completionRecord = this.data.completed.find(
-        (c) => c.challengeId === challenge.id
-      );
+      const completionRecord = this.data.completed.find((c) => c.challengeId === challenge.id);
 
       return {
         ...challenge,
