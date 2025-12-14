@@ -1,6 +1,21 @@
 /**
+ * @typedef {Object} Challenge
+ * @property {string} id - Unique identifier for the challenge
+ * @property {string} title - Display title
+ * @property {string} description - Description of the challenge
+ * @property {string} icon - Emoji icon
+ * @property {number} bonusXp - XP awarded upon completion
+ * @property {function(Object): boolean} condition - Function to check if challenge is completed based on stats
+ * @property {number|function(Object): number} progress - Current progress value (runtime) or calculation function (static)
+ * @property {number} target - Target value to reach
+ * @property {boolean} [isCompleted] - (Runtime) Whether the challenge is completed
+ * @property {string} [completedAt] - (Runtime) Timestamp of completion
+ */
+
+/**
  * Definition of Daily Challenges.
  * Now supports flexible conditions and progress calculation.
+ * @type {Challenge[]}
  */
 export const DAILY_CHALLENGES = [
   {
@@ -47,5 +62,6 @@ export const DAILY_CHALLENGES = [
 
 // Expose to window for Babel scripts
 if (typeof window !== "undefined") {
+  // @ts-ignore
   window.DAILY_CHALLENGES = DAILY_CHALLENGES;
 }

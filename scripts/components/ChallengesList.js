@@ -7,7 +7,7 @@ const { AchievementFilters, SwordsIcon, getRelativeTime } = window;
  * Renders a list of daily challenges with filtering.
  *
  * @param {Object} props - Component props.
- * @param {Array<Object>} props.challenges - List of challenge objects.
+ * @param {Array<import("../challenges.js").Challenge>} props.challenges - List of challenge objects.
  * @param {string} props.filter - Current filter state (all, completed, incomplete).
  * @param {function} props.setFilter - State setter for the filter.
  */
@@ -176,4 +176,5 @@ const ChallengesList = ({ challenges, filter, setFilter }) => {
 };
 
 // Expose to window
+// @ts-ignore
 window.ChallengesList = ChallengesList;
