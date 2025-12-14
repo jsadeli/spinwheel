@@ -1,5 +1,6 @@
 // @ts-ignore
 import React from "react";
+import { SpinCoinLogo } from "../icons.js";
 
 export const CoinChip = ({ balance, rollingDuration = 500, animationDuration = 2000, onClick }) => {
   const { useState, useEffect } = React;
