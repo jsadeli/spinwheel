@@ -9,7 +9,7 @@ import React from "react";
  * @param {Object} props - Component props.
  * @param {boolean} props.isVisible - Whether the overlay should be visible.
  */
-const OutOfOrderOverlay = ({ isVisible }) => {
+export const OutOfOrderOverlay = ({ isVisible }) => {
   if (!isVisible) return null;
 
   const Icon = window.Icon;
@@ -70,5 +70,4 @@ const OutOfOrderOverlay = ({ isVisible }) => {
 };
 
 // Expose to window (needed for Babel Standalone)
-// @ts-ignore
 window.OutOfOrderOverlay = OutOfOrderOverlay;

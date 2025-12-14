@@ -1,7 +1,7 @@
 // @ts-ignore
 import React from "react";
 
-const CoinChip = ({ balance, rollingDuration = 500, animationDuration = 2000, onClick }) => {
+export const CoinChip = ({ balance, rollingDuration = 500, animationDuration = 2000, onClick }) => {
   const { useState, useEffect } = React;
   const [isAnimating, setIsAnimating] = useState(false);
   const [prevBalance, setPrevBalance] = useState(balance);
@@ -99,5 +99,4 @@ const CoinChip = ({ balance, rollingDuration = 500, animationDuration = 2000, on
 };
 
 // Expose to window (needed for Babel Standalone)
-// @ts-ignore
 window.CoinChip = CoinChip;

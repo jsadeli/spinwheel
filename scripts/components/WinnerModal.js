@@ -14,7 +14,7 @@ const { parseWinnerString } = window;
  * @param {function} props.onClose - Callback to close the modal.
  * @param {function} props.onRemoveAndSpin - Callback to remove the winner and spin again.
  */
-const WinnerModal = ({ winner, levelInfo, prestigeTheme, onClose, onRemoveAndSpin }) => {
+export const WinnerModal = ({ winner, levelInfo, prestigeTheme, onClose, onRemoveAndSpin }) => {
   if (!winner) return null;
 
   const { useEffect } = React;
@@ -191,5 +191,4 @@ const WinnerModal = ({ winner, levelInfo, prestigeTheme, onClose, onRemoveAndSpi
 };
 
 // Expose to window (needed for Babel Standalone)
-// @ts-ignore
 window.WinnerModal = WinnerModal;

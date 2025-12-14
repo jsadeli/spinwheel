@@ -1,8 +1,14 @@
 import React from "react";
 import { AchievementsList } from "../scripts/components/AchievementsList.js";
 import { ChallengesList } from "../scripts/components/ChallengesList.js";
+import { CoinChip } from "../scripts/components/CoinChip.js";
+import { CoinStoreModal } from "../scripts/components/CoinStoreModal.js";
+import { LevelCard } from "../scripts/components/LevelCard.js";
 import { Modal } from "../scripts/components/Modal.js";
+import { OutOfOrderOverlay } from "../scripts/components/OutOfOrderOverlay.js";
 import { ThemeIcon } from "../scripts/components/ThemeIcon.js";
+import { Toast } from "../scripts/components/Toast.js";
+import { WinnerModal } from "../scripts/components/WinnerModal.js";
 import { AchievementFilters, ACHIEVEMENTS } from "../scripts/achievements.js";
 import { generateListFromGemini, generateSpeechFromGemini } from "../scripts/ai.js";
 import {
@@ -36,10 +42,22 @@ declare global {
     AchievementsList: typeof AchievementsList;
     // ChallengesList (ChallengesList.js)
     ChallengesList: typeof ChallengesList;
+    // CoinChip (CoinChip.js)
+    CoinChip: typeof CoinChip;
+    // CoinStoreModal (CoinStoreModal.js)
+    CoinStoreModal: typeof CoinStoreModal;
+    // LevelCard (LevelCard.js)
+    LevelCard: typeof LevelCard;
     // Modal (Modal.js)
     Modal: typeof Modal;
+    // OutOfOrderOverlay (OutOfOrderOverlay.js)
+    OutOfOrderOverlay: typeof OutOfOrderOverlay;
     // ThemeIcon (ThemeIcon.js)
     ThemeIcon: typeof ThemeIcon;
+    // Toast (Toast.js)
+    Toast: typeof Toast;
+    // WinnerModal (WinnerModal.js)
+    WinnerModal: typeof WinnerModal;
     // Achievements (achievements.js)
     AchievementFilters: typeof AchievementFilters;
     ACHIEVEMENTS: typeof ACHIEVEMENTS;

@@ -12,7 +12,7 @@ import React from "react";
  * @param {React.ReactNode} [props.icon=null] - Optional icon to display.
  * @param {number} [props.duration=TOAST_DURATION] - Duration in ms before auto-closing.
  */
-const Toast = ({
+export const Toast = ({
   onClose,
   message,
   title = "Notification",
@@ -150,5 +150,4 @@ const Toast = ({
 };
 
 // Expose to window (needed for Babel Standalone)
-// @ts-ignore
 window.Toast = Toast;

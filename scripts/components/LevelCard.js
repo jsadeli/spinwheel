@@ -13,7 +13,7 @@ const { getLevelTitle } = window;
  * @param {boolean} props.isCorrupted - Whether the user has enabled cheats/corruption.
  * @param {Object} props.prestigeTheme - Theme configuration object for the current level.
  */
-const LevelCard = ({ levelInfo, xp, isCorrupted, prestigeTheme }) => {
+export const LevelCard = ({ levelInfo, xp, isCorrupted, prestigeTheme }) => {
   const isCosmic = levelInfo.level >= 11;
 
   // Corrupted State Override
@@ -154,5 +154,4 @@ const LevelCard = ({ levelInfo, xp, isCorrupted, prestigeTheme }) => {
 };
 
 // Expose to window (needed for Babel Standalone)
-// @ts-ignore
 window.LevelCard = LevelCard;
