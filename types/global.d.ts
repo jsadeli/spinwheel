@@ -1,4 +1,5 @@
 import React from "react";
+import { ThemeIcon } from "../scripts/components/ThemeIcon.js";
 import { AchievementFilters, ACHIEVEMENTS } from "../scripts/achievements.js";
 import { generateListFromGemini, generateSpeechFromGemini } from "../scripts/ai.js";
 import {
@@ -28,7 +29,9 @@ import {
 
 declare global {
   interface Window {
-    ThemeIcon: React.FC<any>;
+    // ThemeIcon (ThemeIcon.js)
+    ThemeIcon: typeof ThemeIcon;
+    // Modal (Modal.js)
     Modal: React.FC<any>;
     // Achievements (achievements.js)
     AchievementFilters: typeof AchievementFilters;

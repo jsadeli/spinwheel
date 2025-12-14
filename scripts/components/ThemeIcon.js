@@ -10,7 +10,7 @@ const { THEMES } = window;
  * @param {string} props.theme - The current theme value (auto, light, dark).
  * @param {number} [props.size=24] - The size of the icon.
  */
-const ThemeIcon = ({ theme, size = 24 }) => {
+export const ThemeIcon = ({ theme, size = 24 }) => {
   const { MonitorIcon, SunIcon, MoonIcon } = window;
   if (theme === THEMES.AUTO) return <MonitorIcon size={size} />;
   if (theme === THEMES.LIGHT) return <SunIcon size={size} />;
@@ -18,5 +18,4 @@ const ThemeIcon = ({ theme, size = 24 }) => {
 };
 
 // Expose to window (needed for Babel Standalone)
-// @ts-ignore
 window.ThemeIcon = ThemeIcon;
