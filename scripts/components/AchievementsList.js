@@ -168,4 +168,5 @@ const AchievementsList = ({ achievements, achievementFilter, setAchievementFilte
 };
 
 // Expose to window (needed for Babel Standalone)
+// @ts-ignore
 window.AchievementsList = AchievementsList;
