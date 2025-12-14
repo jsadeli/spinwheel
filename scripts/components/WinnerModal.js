@@ -1,8 +1,6 @@
 // @ts-ignore
 import React from "react";
 
-const { parseWinnerString } = window;
-
 /**
  * Displays the winner announcement modal.
  * Features special themes for high levels (Cosmic) and Easter eggs for specific winner names.
@@ -18,7 +16,13 @@ export const WinnerModal = ({ winner, levelInfo, prestigeTheme, onClose, onRemov
   if (!winner) return null;
 
   const { useEffect } = React;
-  const { CodeIcon, ScrollIcon, TrophyIcon, CloseIcon } = window;
+  const { CodeIcon, ScrollIcon, TrophyIcon, CloseIcon, parseWinnerString } = window;
+
+  // Safety check: Don't render if icons/globals aren't loaded yet
+  if (!CodeIcon || !ScrollIcon || !TrophyIcon || !CloseIcon || !parseWinnerString) {
+    return null;
+  }
+
   const isCosmic = levelInfo.level >= 11;
 
   // Close on Escape key

@@ -1,8 +1,6 @@
 // @ts-ignore
 import React from "react";
 
-const { AchievementFilters, getRelativeTime } = window;
-
 /**
  * Renders a list of achievements with filtering and sorting capabilities.
  *
@@ -12,6 +10,13 @@ const { AchievementFilters, getRelativeTime } = window;
  * @param {function} props.setAchievementFilter - State setter for the filter.
  */
 export const AchievementsList = ({ achievements, achievementFilter, setAchievementFilter }) => {
+  const { AchievementFilters, getRelativeTime } = window;
+
+  // Safety check: Don't render if globals aren't loaded yet
+  if (!AchievementFilters || !getRelativeTime) {
+    return null;
+  }
+
   const filteredAchievements = achievements.filter((ach) => {
     if (achievementFilter === AchievementFilters.UNLOCKED) return ach.isUnlocked;
     if (achievementFilter === AchievementFilters.LOCKED) return !ach.isUnlocked;

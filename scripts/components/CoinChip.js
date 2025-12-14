@@ -1,6 +1,5 @@
 // @ts-ignore
 import React from "react";
-const { SpinCoinLogo } = window;
 
 export const CoinChip = ({
   balance,
@@ -9,7 +8,14 @@ export const CoinChip = ({
   onClick = undefined,
   size = 24,
 }) => {
-  const { useState, useEffect } = React;
+  const { useEffect, useState } = React;
+  const { SpinCoinLogo } = window;
+
+  // Safety check: Don't render if SpinCoinLogo isn't loaded yet
+  if (!SpinCoinLogo) {
+    return null;
+  }
+
   const [isAnimating, setIsAnimating] = useState(false);
   const [prevBalance, setPrevBalance] = useState(balance);
   const [isRolling, setIsRolling] = useState(false);

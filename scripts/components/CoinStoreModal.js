@@ -2,7 +2,9 @@
 import React from "react";
 
 export const CoinStoreModal = ({ isOpen, onClose, coins, xp, onTransact }) => {
-  if (!isOpen) return null;
+  if (!isOpen) {
+    return null;
+  }
 
   const {
     Modal,
@@ -15,6 +17,22 @@ export const CoinStoreModal = ({ isOpen, onClose, coins, xp, onTransact }) => {
     GemIcon,
     CrownIcon,
   } = window;
+
+  // Safety check: Don't render if globals aren't loaded yet
+  if (
+    !Modal ||
+    !CoinChip ||
+    !ZapIcon ||
+    !ShoppingBagIcon ||
+    !SeedlingIcon ||
+    !BoltIcon ||
+    !FlameIcon ||
+    !GemIcon ||
+    !CrownIcon
+  ) {
+    return null;
+  }
+
   const { useState, useEffect } = React;
 
   const [selectedOption, setSelectedOption] = useState(null);

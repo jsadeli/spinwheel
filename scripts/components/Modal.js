@@ -26,10 +26,17 @@ export const Modal = ({
   footer,
   className = "",
 }) => {
-  if (!isOpen) return null;
+  if (!isOpen) {
+    return null;
+  }
 
   const { useEffect } = React;
   const { CloseIcon } = window; // Access global Icon component
+
+  // Safety check: Don't render if CloseIcon isn't loaded yet
+  if (!CloseIcon) {
+    return null;
+  }
 
   // Close on Escape key
   useEffect(() => {

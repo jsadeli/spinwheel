@@ -22,6 +22,11 @@ export const Toast = ({
   const { useEffect } = React;
   const { TrophyIcon, TrendingUpIcon, CloseIcon, SwordsIcon, AlertTriangleIcon } = window;
 
+  // Safety check: Don't render if icons aren't loaded yet
+  if (!TrophyIcon || !TrendingUpIcon || !CloseIcon || !SwordsIcon || !AlertTriangleIcon) {
+    return null;
+  }
+
   useEffect(() => {
     const timer = setTimeout(() => {
       onClose();

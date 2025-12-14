@@ -1,8 +1,6 @@
 // @ts-ignore
 import React from "react";
 
-const { getLevelTitle } = window;
-
 /**
  * Displays the user's current level, XP progress, and prestige theme effects.
  * Handles special visual states for "Cosmic" levels (11+) and "Corrupted" (cheat) modes.
@@ -14,7 +12,13 @@ const { getLevelTitle } = window;
  * @param {Object} props.prestigeTheme - Theme configuration object for the current level.
  */
 export const LevelCard = ({ levelInfo, xp, isCorrupted, prestigeTheme }) => {
-  const { AlertTriangleIcon, TrophyIcon } = window;
+  const { AlertTriangleIcon, TrophyIcon, getLevelTitle } = window;
+
+  // Safety check: Don't render if icons aren't loaded yet
+  if (!AlertTriangleIcon || !TrophyIcon || !getLevelTitle) {
+    return null;
+  }
+
   const isCosmic = levelInfo.level >= 11;
 
   // Corrupted State Override

@@ -1,8 +1,6 @@
 // @ts-ignore
 import React from "react";
 
-const { AchievementFilters, SwordsIcon, getRelativeTime } = window;
-
 /**
  * Renders a list of daily challenges with filtering.
  *
@@ -12,6 +10,13 @@ const { AchievementFilters, SwordsIcon, getRelativeTime } = window;
  * @param {function} props.setFilter - State setter for the filter.
  */
 export const ChallengesList = ({ challenges, filter, setFilter }) => {
+  const { AchievementFilters, SwordsIcon, getRelativeTime } = window;
+
+  // Safety check: Don't render if globals aren't loaded yet
+  if (!AchievementFilters || !SwordsIcon || !getRelativeTime) {
+    return null;
+  }
+
   // Filter challenges first
   const filteredChallenges = challenges.filter((ch) => {
     if (filter === AchievementFilters.UNLOCKED) return ch.isCompleted;
