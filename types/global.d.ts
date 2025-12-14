@@ -1,5 +1,6 @@
 import React from "react";
 import { AchievementFilters, ACHIEVEMENTS } from "../scripts/achievements.js";
+import { generateListFromGemini, generateSpeechFromGemini } from "../scripts/ai.js";
 import {
   DEFAULT_LIST_NAME,
   DEFAULT_LIST_ITEMS,
@@ -32,6 +33,9 @@ declare global {
     // Achievements (achievements.js)
     AchievementFilters: typeof AchievementFilters;
     ACHIEVEMENTS: typeof ACHIEVEMENTS;
+    // AI (ai.js)
+    generateListFromGemini: typeof generateListFromGemini;
+    generateSpeechFromGemini: typeof generateSpeechFromGemini;
     // Icons (icons.js)
     Icon: React.FC<any>;
     SpinWheelLogo: React.FC<any>;
