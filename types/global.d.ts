@@ -7,7 +7,7 @@ import {
   copyToClipboard,
   isEmoji,
   parseWinnerString,
-} from "./scripts/utils.js";
+} from "../scripts/utils.js";
 
 declare global {
   interface Window {
