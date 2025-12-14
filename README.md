@@ -187,7 +187,8 @@ python3 -m http.server
 > this has known limitations such as:
 >
 > - using in-browser Babel compilation for JSX (less performant)
-> - no TypeScript support
+> - no performance optimizations (e.g., React 19's memoization)
+> - partial TypeScript support
 > - no minification process for final delivery
 
 ## License
