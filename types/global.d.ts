@@ -1,4 +1,5 @@
 import React from "react";
+import { AchievementFilters, ACHIEVEMENTS } from "../scripts/achievements.js";
 import {
   DEFAULT_LIST_NAME,
   DEFAULT_LIST_ITEMS,
@@ -28,7 +29,10 @@ declare global {
   interface Window {
     ThemeIcon: React.FC<any>;
     Modal: React.FC<any>;
-    // Icons
+    // Achievements (achievements.js)
+    AchievementFilters: typeof AchievementFilters;
+    ACHIEVEMENTS: typeof ACHIEVEMENTS;
+    // Icons (icons.js)
     Icon: React.FC<any>;
     SpinWheelLogo: React.FC<any>;
     SpinCoinLogo: React.FC<any>;
@@ -98,12 +102,6 @@ declare global {
     DAILY_CHALLENGE_RESET_HOUR: typeof DAILY_CHALLENGE_RESET_HOUR;
     GITHUB_LINK: typeof GITHUB_LINK;
     SPINWHEEL_REPO: typeof SPINWHEEL_REPO;
-    // Achievements (achievements.js)
-    AchievementFilters: {
-      ALL: string;
-      UNLOCKED: string;
-      LOCKED: string;
-    };
     // Utilities (utils.js)
     loadState: typeof loadState;
     getRelativeTime: typeof getRelativeTime;

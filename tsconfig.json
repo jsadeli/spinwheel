@@ -7,7 +7,8 @@
     "module": "ESNext",
     "moduleResolution": "node",
     "jsx": "react",
-    "lib": ["DOM", "DOM.Iterable", "ESNext"]
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "esModuleInterop": true
   },
   "exclude": ["node_modules", "scripts/lib/**/*"],
   "include": ["scripts/**/*", "types/**/*"]
