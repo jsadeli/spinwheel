@@ -1,5 +1,20 @@
 import React from "react";
 import {
+  DEFAULT_LIST_NAME,
+  DEFAULT_LIST_ITEMS,
+  STORAGE_KEYS,
+  THEMES,
+  TICK_SOUNDS,
+  COLOR_ASSIGNMENT_MODE,
+  AI_VOICES,
+  TOAST_DURATION,
+  TAB_NAMES,
+  DAILY_CHALLENGE_LEVEL,
+  DAILY_CHALLENGE_RESET_HOUR,
+  GITHUB_LINK,
+  SPINWHEEL_REPO,
+} from "../scripts/configs.js";
+import {
   loadState,
   getRelativeTime,
   parseItems,
@@ -69,19 +84,27 @@ declare global {
     CrownIcon: React.FC<any>;
     PlayIcon: React.FC<any>;
     StopIcon: React.FC<any>;
-    // Themes
-    THEMES: {
-      AUTO: string;
-      LIGHT: string;
-      DARK: string;
-    };
-    // Achievements
+    // Configurations (configs.js)
+    THEMES: typeof THEMES;
+    DEFAULT_LIST_NAME: typeof DEFAULT_LIST_NAME;
+    DEFAULT_LIST_ITEMS: typeof DEFAULT_LIST_ITEMS;
+    STORAGE_KEYS: typeof STORAGE_KEYS;
+    TICK_SOUNDS: typeof TICK_SOUNDS;
+    COLOR_ASSIGNMENT_MODE: typeof COLOR_ASSIGNMENT_MODE;
+    AI_VOICES: typeof AI_VOICES;
+    TOAST_DURATION: typeof TOAST_DURATION;
+    TAB_NAMES: typeof TAB_NAMES;
+    DAILY_CHALLENGE_LEVEL: typeof DAILY_CHALLENGE_LEVEL;
+    DAILY_CHALLENGE_RESET_HOUR: typeof DAILY_CHALLENGE_RESET_HOUR;
+    GITHUB_LINK: typeof GITHUB_LINK;
+    SPINWHEEL_REPO: typeof SPINWHEEL_REPO;
+    // Achievements (achievements.js)
     AchievementFilters: {
       ALL: string;
       UNLOCKED: string;
       LOCKED: string;
     };
-    // utils.js
+    // Utilities (utils.js)
     loadState: typeof loadState;
     getRelativeTime: typeof getRelativeTime;
     parseItems: typeof parseItems;
