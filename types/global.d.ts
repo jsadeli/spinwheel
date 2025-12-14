@@ -9,6 +9,10 @@ import { OutOfOrderOverlay } from "../scripts/components/OutOfOrderOverlay.js";
 import { ThemeIcon } from "../scripts/components/ThemeIcon.js";
 import { Toast } from "../scripts/components/Toast.js";
 import { WinnerModal } from "../scripts/components/WinnerModal.js";
+import { AchievementManager } from "../scripts/core/AchievementManager.js";
+import { ChallengeManager } from "../scripts/core/ChallengeManager.js";
+import { GeminiError } from "../scripts/core/GeminiError.js";
+import { Stats } from "../scripts/core/Stats.js";
 import { AchievementFilters, ACHIEVEMENTS } from "../scripts/achievements.js";
 import { generateListFromGemini, generateSpeechFromGemini } from "../scripts/ai.js";
 import { fireConfetti, fireSnowfall, spawnSmoke, drawWheelTrail } from "../scripts/animations.js";
@@ -86,6 +90,14 @@ declare global {
     Toast: typeof Toast;
     // WinnerModal (WinnerModal.js)
     WinnerModal: typeof WinnerModal;
+    // AchievementManager (AchievementManager.js)
+    AchievementManager: typeof AchievementManager;
+    // ChallengeManager (ChallengeManager.js)
+    ChallengeManager: typeof ChallengeManager;
+    // GeminiError (GeminiError.js)
+    GeminiError: typeof GeminiError;
+    // Stats (Stats.js)
+    Stats: typeof Stats;
     // Achievements (achievements.js)
     AchievementFilters: typeof AchievementFilters;
     ACHIEVEMENTS: typeof ACHIEVEMENTS;
