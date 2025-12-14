@@ -97,6 +97,139 @@
 
     <div id="root"></div>
 
+    <!-- Error Handling for Loading Screen -->
+    <script>
+      (function () {
+        const loader = document.getElementById("app-loader");
+        const heading = loader?.querySelector("h2");
+        if (!loader || !heading) return;
+
+        const updateLoadingText = (msg) => {
+          // If the loader is already hidden or removed, don't do anything
+          if (loader.style.display === "none" || !document.body.contains(loader)) return;
+
+          heading.textContent = msg;
+          heading.classList.remove(
+            "animate-pulse",
+            "text-blue-900",
+            "tracking-[0.3em]",
+            "uppercase"
+          );
+          heading.classList.add("text-red-600", "font-mono", "text-sm", "px-4", "normal-case");
+
+          // Deflate the ball
+          const ball = loader.querySelector("div[style*='beachBounce']");
+          const shadow = loader.querySelector("div[style*='shadowScale']");
+
+          if (ball) {
+            ball.style.animation = "none";
+            ball.style.transition = "transform 0.5s ease-out, filter 0.5s";
+            // Squish it down to sit on the ground
+            ball.style.transform = "translateY(40px) scale(1.1, 0.8) rotate(-10deg)";
+
+            const svg = ball.querySelector("svg");
+            // Only apply the crumple effect once
+            if (svg && !svg.querySelector("#crumple-clip")) {
+              // 1. Define the Crumple Shape via ClipPath
+              // This shape mimics a ball with the top-right caved in
+              const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+              const clipPath = document.createElementNS("http://www.w3.org/2000/svg", "clipPath");
+              clipPath.setAttribute("id", "crumple-clip");
+
+              const clipShape = document.createElementNS("http://www.w3.org/2000/svg", "path");
+              // Start top-left (ish), Big arc around bottom, curve into center for dent
+              clipShape.setAttribute(
+                "d",
+                "M 60 140 A 240 240 0 1 0 450 140 C 350 260, 160 260, 60 140 Z"
+              );
+              clipPath.appendChild(clipShape);
+              defs.appendChild(clipPath);
+              svg.insertBefore(defs, svg.firstChild);
+
+              // 2. Wrap existing content in a group with the clip-path
+              const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
+              group.setAttribute("clip-path", "url(#crumple-clip)");
+
+              // Move all children (circles, paths) into the group
+              // Iterate backwards to safely move nodes
+              for (let i = svg.childNodes.length - 1; i >= 0; i--) {
+                const node = svg.childNodes[i];
+                if (node !== defs) {
+                  // Don't move the defs we just added
+                  group.insertBefore(node, group.firstChild);
+                }
+              }
+              svg.appendChild(group);
+
+              // 3. Add Shadow/Crease Overlay for the Dent
+              // This draws over the "missing" part to show the folded material
+              const crease = document.createElementNS("http://www.w3.org/2000/svg", "path");
+              // Curve matching the dent in the clip path, plus some inner fold details
+              crease.setAttribute(
+                "d",
+                "M 60 140 C 160 260, 350 260, 450 140 C 380 200, 150 200, 60 140 Z"
+              );
+              crease.setAttribute("fill", "#000"); // Shadow color
+              crease.setAttribute("opacity", "0.3");
+              crease.setAttribute("class", "crumple-shadow");
+              svg.appendChild(crease);
+
+              // 4. Add "cracks" or stress lines near the dent
+              const stress = document.createElementNS("http://www.w3.org/2000/svg", "path");
+              stress.setAttribute("d", "M 150 220 L 180 250 M 360 220 L 330 250");
+              stress.setAttribute("stroke", "#000");
+              stress.setAttribute("stroke-width", "4");
+              stress.setAttribute("opacity", "0.2");
+              stress.setAttribute("fill", "none");
+              svg.appendChild(stress);
+            }
+          }
+
+          if (shadow) {
+            shadow.style.animation = "none";
+            shadow.style.transform = "scale(1.2, 1)";
+            shadow.style.opacity = "0.8";
+          }
+        };
+
+        window.addEventListener(
+          "error",
+          (event) => {
+            let msg = event.message;
+            // Handle resource loading errors (which don't have a message property)
+            if (
+              !msg &&
+              event.target &&
+              (event.target.tagName === "SCRIPT" || event.target.tagName === "LINK")
+            ) {
+              msg = `Failed to load resource: ${event.target.src || event.target.href}`;
+            }
+            updateLoadingText(msg || "Unknown Error; check Console");
+          },
+          true
+        );
+
+        window.addEventListener("unhandledrejection", (event) => {
+          updateLoadingText(event.reason?.message || event.reason || "Unhandled Promise Rejection");
+        });
+
+        const originalConsoleError = console.error;
+        console.error = (...args) => {
+          originalConsoleError.apply(console, args);
+          const msg = args
+            .map((arg) =>
+              arg instanceof Error
+                ? arg.message
+                : typeof arg === "object"
+                ? JSON.stringify(arg)
+                : String(arg)
+            )
+            .join(" ");
+          updateLoadingText(msg);
+        };
+      })();
+    </script>
+
     <!-- Load Core Modules & Utilities (Global Scope) -->
     <script type="module" src="scripts/core/AchievementManager.js"></script>
     <script type="module" src="scripts/core/ChallengeManager.js"></script>
