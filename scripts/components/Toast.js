@@ -6,7 +6,7 @@ import React from "react";
  * Displays a temporary notification toast with different styles for achievements, errors, and general messages.
  *
  * @param {Object} props - Component props.
- * @param {function} props.onClose - Callback to close the toast.
+ * @param {() => void} props.onClose - Callback to close the toast.
  * @param {string} props.message - The main message text to display.
  * @param {string} [props.title="Notification"] - The title text (determines style for "Achievement Unlocked" etc).
  * @param {React.ReactNode} [props.icon=null] - Optional icon to display.

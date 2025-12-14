@@ -11,8 +11,8 @@ const { parseWinnerString } = window;
  * @param {string} props.winner - The text of the winning item.
  * @param {Object} props.levelInfo - User's level information (affects theme).
  * @param {Object} props.prestigeTheme - Theme configuration for the current level.
- * @param {function} props.onClose - Callback to close the modal.
- * @param {function} props.onRemoveAndSpin - Callback to remove the winner and spin again.
+ * @param {() => void} props.onClose - Callback to close the modal.
+ * @param {() => void} props.onRemoveAndSpin - Callback to remove the winner and spin again.
  */
 export const WinnerModal = ({ winner, levelInfo, prestigeTheme, onClose, onRemoveAndSpin }) => {
   if (!winner) return null;

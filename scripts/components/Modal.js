@@ -8,7 +8,7 @@ import React from "react";
  *
  * @param {Object} props - Component props.
  * @param {boolean} props.isOpen - Whether the modal is currently visible.
- * @param {function} props.onClose - Callback function to close the modal.
+ * @param {() => void} props.onClose - Callback function to close the modal.
  * @param {React.ReactNode} [props.title] - The title content to display in the header.
  * @param {React.ReactNode} [props.icon] - Optional icon to display next to the title.
  * @param {React.ReactNode} [props.header] - Optional sticky header content below the title bar.
