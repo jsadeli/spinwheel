@@ -51,6 +51,7 @@ export class GeminiError extends Error {
    * @param {number} data.error.code - The HTTP error code (e.g., 400, 403, 429).
    * @param {string} data.error.status - The error status string (e.g., "INVALID_ARGUMENT").
    * @param {Array<Object>} [data.error.details] - Optional array of error detail objects.
+   * @param {Object} data.error.details - The details object containing error reasons.
    * @param {string} [data.error.details[].reason] - The specific error reason (e.g., "API_KEY_INVALID").
    *
    * @property {string} name - Always "GeminiError".
