@@ -11,6 +11,10 @@ import { Toast } from "../scripts/components/Toast.js";
 import { WinnerModal } from "../scripts/components/WinnerModal.js";
 import { AchievementFilters, ACHIEVEMENTS } from "../scripts/achievements.js";
 import { generateListFromGemini, generateSpeechFromGemini } from "../scripts/ai.js";
+import { fireConfetti, fireSnowfall, spawnSmoke, drawWheelTrail } from "../scripts/animations.js";
+import { DAILY_CHALLENGES } from "../scripts/challenges.js";
+import { lerpColor, parseCustomColors, getItemColor } from "../scripts/colors.js";
+import { processCommandCodes } from "../scripts/commands.js";
 import {
   DEFAULT_LIST_NAME,
   DEFAULT_LIST_ITEMS,
@@ -64,6 +68,19 @@ declare global {
     // AI (ai.js)
     generateListFromGemini: typeof generateListFromGemini;
     generateSpeechFromGemini: typeof generateSpeechFromGemini;
+    // Animations (animations.js)
+    fireConfetti: typeof fireConfetti;
+    fireSnowfall: typeof fireSnowfall;
+    spawnSmoke: typeof spawnSmoke;
+    drawWheelTrail: typeof drawWheelTrail;
+    // Challenges (challenges.js)
+    DAILY_CHALLENGES: typeof DAILY_CHALLENGES;
+    // Colors (colors.js)
+    lerpColor: typeof lerpColor;
+    parseCustomColors: typeof parseCustomColors;
+    getItemColor: typeof getItemColor;
+    // Commands (commands.js)
+    processCommandCodes: typeof processCommandCodes;
     // Icons (icons.js)
     Icon: React.FC<any>;
     SpinWheelLogo: React.FC<any>;

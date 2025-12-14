@@ -62,6 +62,5 @@ export const DAILY_CHALLENGES = [
 
 // Expose to window for Babel scripts
 if (typeof window !== "undefined") {
-  // @ts-ignore
   window.DAILY_CHALLENGES = DAILY_CHALLENGES;
 }
