@@ -4,6 +4,8 @@ import { AI_VOICES } from "./configs.js";
 /**
  * Generates a weighted list of items using the Gemini API based on a user prompt.
  *
+ * See https://ai.google.dev/gemini-api/docs/text-generation#rest for API details.
+ *
  * @param {string} apiKey - The Gemini API key.
  * @param {string} prompt - The user's prompt describing the desired list.
  * @returns {Promise<string>} A promise that resolves to the generated text content.
@@ -13,7 +15,7 @@ import { AI_VOICES } from "./configs.js";
  */
 export const generateListFromGemini = async (apiKey, prompt) => {
   const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`,
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -28,7 +30,7 @@ export const generateListFromGemini = async (apiKey, prompt) => {
           },
         ],
       }),
-    }
+    },
   );
   const data = await response.json();
   if (data.error) {
@@ -40,6 +42,8 @@ export const generateListFromGemini = async (apiKey, prompt) => {
 // voice options: https://docs.cloud.google.com/text-to-speech/docs/gemini-tts#voice_options
 /**
  * Generates speech audio from text using the Gemini API.
+ *
+ * See https://ai.google.dev/gemini-api/docs/speech-generation#rest for API details.
  *
  * @param {string} apiKey - The Gemini API key.
  * @param {string} text - The text to convert to speech.
