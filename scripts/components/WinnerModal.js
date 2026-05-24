@@ -10,9 +10,9 @@ import React from "react";
  * @param {Object} props.levelInfo - User's level information (affects theme).
  * @param {Object} props.prestigeTheme - Theme configuration for the current level.
  * @param {() => void} props.onClose - Callback to close the modal.
- * @param {() => void} props.onRemoveAndSpin - Callback to remove the winner and spin again.
+ * @param {() => void} props.onRemove - Callback to remove the winner and spin again.
  */
-export const WinnerModal = ({ winner, levelInfo, prestigeTheme, onClose, onRemoveAndSpin }) => {
+export const WinnerModal = ({ winner, levelInfo, prestigeTheme, onClose, onRemove }) => {
   if (!winner) return null;
 
   const { useEffect } = React;
@@ -180,10 +180,10 @@ export const WinnerModal = ({ winner, levelInfo, prestigeTheme, onClose, onRemov
                   Close
                 </button>
                 <button
-                  onClick={onRemoveAndSpin}
+                  onClick={onRemove}
                   className="w-full py-3 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 rounded-xl font-bold hover:border-red-200 dark:hover:border-red-800 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition"
                 >
-                  Remove & Spin Again
+                  Remove
                 </button>
               </div>
             </div>

@@ -1920,7 +1920,7 @@
           setCoins((prev) => prev + 1); // Earn coins
         };
 
-        const handleRemoveAndSpin = () => {
+        const handleRemove = () => {
           // Remove winner logic with animation
           const winnerIndex = items.findIndex((i) => i.text === winner);
           if (winnerIndex !== -1) {
@@ -3090,7 +3090,7 @@
               levelInfo={levelInfo}
               prestigeTheme={prestigeTheme}
               onClose={handleCloseWinnerModal}
-              onRemoveAndSpin={handleRemoveAndSpin}
+              onRemove={handleRemove}
             />
 
             {/* Color Settings Modal */}
