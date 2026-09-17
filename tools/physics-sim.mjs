@@ -88,6 +88,7 @@ const run = (cfg, spins) => {
   const seats = [];
   let restOnPin = 0;
   let restOnBoundaryPin = 0;
+  let restTouching = 0;
   let lateCrests = 0;
   let reversedSpins = 0;
   let noSettle = 0;
@@ -148,8 +149,8 @@ const run = (cfg, spins) => {
     if (sawReverse) reversedSpins++;
     if (phys.lastCrestWasBoundary) boundaryFinal++;
 
-    // How the wheel came to rest, and how busy its last three seconds were. Both are feel
-    // properties rather than correctness ones, but a regression in either turns the wheel
+    // How the wheel came to rest, and how busy its last three seconds were. All feel
+    // properties rather than correctness ones, but a regression in any of them turns the wheel
     // back into something that snaps to dead centre with a foregone ending.
     const seat = phys.seatOffset();
     seats.push(seat);
@@ -157,6 +158,10 @@ const run = (cfg, spins) => {
       restOnPin++;
       if (phys.restingOnBoundary()) restOnBoundaryPin++;
     }
+    // `onPin` is a position in the valley, not a contact: the flapper only reaches a pin over
+    // the arc that pin is drawn across, so most spins now end with the nose hanging free. This
+    // is the one that says whether the escapement was still holding the wheel when it stopped.
+    if (phys.touchingPin()) restTouching++;
     lateCrests += crestTimes.filter((x) => x > t - 3).length;
 
     counts[winnerOf(phys.theta, weights)]++;
@@ -201,6 +206,7 @@ const run = (cfg, spins) => {
     boundaryPct: ((boundaryFinal / spins) * 100).toFixed(1),
     onPin: ((restOnPin / spins) * 100).toFixed(0),
     onBnd: ((restOnBoundaryPin / spins) * 100).toFixed(1),
+    touching: ((restTouching / spins) * 100).toFixed(0),
     crests3s: (lateCrests / spins).toFixed(0),
     reversePct: ((reversedSpins / spins) * 100).toFixed(1),
     chi2: chi2.toFixed(1),
@@ -254,6 +260,7 @@ for (const cfg of CONFIGS) {
       "  dur " + r.dur.padStart(5) + "s (" + r.durRange + ")" +
       "  revs " + r.revs.padStart(5) +
       "  onPin " + r.onPin.padStart(3) + "%" +
+      "  touch " + r.touching.padStart(3) + "%" +
       "  onBnd " + r.onBnd.padStart(4) + "%" +
       "  crests3s " + r.crests3s.padStart(3) +
       "  rev " + r.reversePct.padStart(5) + "%" +
