@@ -36,6 +36,12 @@ export const PHYSICS = {
   GAP_EXPONENT: 1.75,
   /** Smallest amplitude scale a degenerate (very narrow) gap may collapse to. */
   GAP_SCALE_FLOOR: 0.05,
+  /**
+   * How the whole ring's cam amplitude scales with pin density. At 0.5 the energy a wheel
+   * sheds per revolution is independent of how many pins it has, so a densely pinned list
+   * spins for about as long as a sparse one instead of stopping dead or coasting forever.
+   */
+  DENSITY_EXPONENT: 1.25,
   /** Flapper torsion spring constant at nominal tension. */
   SPRING_K: 22,
   /** Flapper moment of inertia. */
@@ -112,6 +118,7 @@ export const TENSION_MULTIPLIERS = {
  * @property {Float64Array} gapAfter Angular gap from each pin to the next.
  * @property {Float64Array} amp Cam amplitude for the bump centered on each pin.
  * @property {number} count
+ * @property {number} pitchRatio Widest valley divided by narrowest; 1 means perfectly even.
  */
 
 /** @param {number} a @returns {number} `a` wrapped into [0, 2PI). */
@@ -124,58 +131,119 @@ const wrapTau = (a) => {
 const clamp = (v, lo, hi) => (v < lo ? lo : v > hi ? hi : v);
 
 /**
+ * Chooses how many valleys each segment gets.
+ *
+ * A segment only ever gets a whole number of valleys, so its pitch is a rounding of the
+ * ideal. A *sustained* pitch mismatch between regions of the rim phase-locks the terminal
+ * staircase and rigs the odds outright: on [4,3,2,1,1] a 20% mismatch pulled one item 32%
+ * off its weight. The pin budget is therefore searched for the layout whose widest and
+ * narrowest valleys are closest to equal, breaking ties toward the nominal pin count.
+ *
+ * @param {number[]} fractions Normalized weights of the segments that get pins.
+ * @param {number} basePins Nominal pin count at the target pitch.
+ * @param {number} lo Lowest budget to consider.
+ * @param {number} hi Highest budget to consider.
+ * @returns {{counts: number[], ratio: number}}
+ */
+const chooseCounts = (fractions, basePins, lo, hi) => {
+  let best = null;
+
+  for (let budget = lo; budget <= hi; budget++) {
+    const counts = fractions.map((f) => Math.max(1, Math.round(f * budget)));
+
+    let total = 0;
+    let minPitch = Infinity;
+    let maxPitch = 0;
+    for (let i = 0; i < counts.length; i++) {
+      total += counts[i];
+      const pitch = (fractions[i] * TAU) / counts[i];
+      if (pitch < minPitch) minPitch = pitch;
+      if (pitch > maxPitch) maxPitch = pitch;
+    }
+    if (total > PHYSICS.MAX_TOTAL_PINS) continue;
+
+    const ratio = maxPitch / minPitch;
+    const score = ratio + 0.002 * Math.abs(total - basePins);
+    if (!best || score < best.score) best = { counts, ratio, score };
+  }
+
+  return best || { counts: fractions.map(() => 1), ratio: 1 };
+};
+
+/** @param {number[]} values @returns {number} */
+const median = (values) => {
+  const sorted = [...values].sort((a, b) => a - b);
+  const mid = sorted.length >> 1;
+  return sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+};
+
+/** @returns {PinArray} A single-pin ring, used for empty or degenerate item lists. */
+const singlePin = () => ({
+  angles: new Float64Array([0]),
+  boundary: new Uint8Array([1]),
+  gapAfter: new Float64Array([TAU]),
+  amp: new Float64Array([PHYSICS.CAM_AMPLITUDE]),
+  count: 1,
+  pitchRatio: 1,
+});
+
+/**
  * Builds the pin ring for a set of weighted items.
  *
- * One pin lands exactly on every segment boundary, which is what keeps the landing
- * probability proportional to weight; the remaining pins subdivide each segment so the
- * tick pitch stays near {@link PHYSICS}.TARGET_PITCH. Every segment gets at least one
- * valley, so no item can ever become unreachable.
+ * One pin lands exactly on every segment boundary, so the flapper always seats strictly
+ * inside a segment and the winner is never ambiguous. The remaining pins subdivide each
+ * segment; how many is decided by {@link chooseCounts}, because equal valley widths are
+ * what keep the landing distribution proportional to weight.
  *
  * @param {WheelItem[]} items
  * @returns {PinArray}
  */
 export const buildPins = (items) => {
   const list = Array.isArray(items) ? items : [];
-  if (list.length === 0) {
-    return {
-      angles: new Float64Array([0]),
-      boundary: new Uint8Array([1]),
-      gapAfter: new Float64Array([TAU]),
-      amp: new Float64Array([PHYSICS.CAM_AMPLITUDE]),
-      count: 1,
-    };
-  }
+  if (list.length === 0) return singlePin();
 
-  const WEIGHT_FLOOR = 1e-6;
-  const weights = list.map((it) => Math.max(WEIGHT_FLOOR, Number(it && it.weight) || 0));
+  const weights = list.map((it) => Math.max(0, Number(it && it.weight) || 0));
   const total = weights.reduce((s, w) => s + w, 0);
+  if (total <= 0) return singlePin();
 
-  // A segment always gets a whole number of valleys, so a segment narrower than one
-  // pitch is rounded up to one and lands far more often than its weight deserves. The
-  // pin budget is therefore raised until even the thinnest segment is resolved, capped
-  // so an extreme list cannot turn the rim into a solid ring.
-  const minFraction = Math.min(...weights) / total;
   const basePins = Math.round(TAU / PHYSICS.TARGET_PITCH);
-  const budget = clamp(Math.ceil(1.2 / minFraction), basePins, PHYSICS.MAX_TOTAL_PINS);
+
+  // A segment too thin to hold even half a valley cannot be selected by the winner lookup
+  // either, so it is left out of the ring rather than rounded up to a full valley it has
+  // not earned. Without this a single zero-weight item drags the budget to its ceiling and
+  // crushes the cam amplitude across the whole wheel.
+  const minKeep = 0.5 / PHYSICS.MAX_TOTAL_PINS;
+
+  /** @type {{start: number, frac: number}[]} */
+  const kept = [];
+  let acc = 0;
+  for (let i = 0; i < weights.length; i++) {
+    const frac = weights[i] / total;
+    const start = (acc / total) * TAU;
+    acc += weights[i];
+    if (frac >= minKeep) kept.push({ start, frac });
+  }
+  if (kept.length === 0) return singlePin();
+
+  // The whole budget range is searched rather than starting from a heuristic floor: on a
+  // list like [100, 1, 1] the only layout with even valleys is 102 pins, which any floor
+  // derived from the thinnest segment would have skipped straight past.
+  const fractions = kept.map((k) => k.frac);
+  const lo = clamp(Math.max(basePins, kept.length), 1, PHYSICS.MAX_TOTAL_PINS);
+  const { counts, ratio } = chooseCounts(fractions, basePins, lo, PHYSICS.MAX_TOTAL_PINS);
 
   /** @type {number[]} */
   const angles = [];
   /** @type {number[]} */
   const boundary = [];
 
-  let acc = 0;
-  for (let i = 0; i < weights.length; i++) {
-    const start = (acc / total) * TAU;
-    acc += weights[i];
-    const end = (acc / total) * TAU;
-    const arc = end - start;
-
-    const n = Math.max(1, Math.round((weights[i] / total) * budget));
-
-    angles.push(start);
+  for (let i = 0; i < kept.length; i++) {
+    const arc = kept[i].frac * TAU;
+    const n = counts[i];
+    angles.push(kept[i].start);
     boundary.push(1);
     for (let j = 1; j < n; j++) {
-      angles.push(start + (arc * j) / n);
+      angles.push(kept[i].start + (arc * j) / n);
       boundary.push(0);
     }
   }
@@ -187,6 +255,7 @@ export const buildPins = (items) => {
     gapAfter: new Float64Array(count),
     amp: new Float64Array(count),
     count,
+    pitchRatio: ratio,
   };
 
   for (let i = 0; i < count; i++) {
@@ -194,14 +263,22 @@ export const buildPins = (items) => {
       i < count - 1 ? out.angles[i + 1] - out.angles[i] : out.angles[0] + TAU - out.angles[count - 1];
   }
 
-  // Cam amplitude tracks the local gap so narrow valleys stay numerically tame and so
-  // the barrier a spin has to clear scales with the arc it is being trapped in.
+  // Cam amplitude has two independent jobs, so it gets two exponents.
+  //
+  // Within a wheel, a crest's barrier has to grow with the gap it guards, otherwise the
+  // wheel stops uniformly per valley instead of per unit of arc and the odds stop tracking
+  // the weights. That is GAP_EXPONENT, applied relative to this wheel's median gap.
+  //
+  // Across wheels, the ring's overall amplitude has to fall as pins get denser, or a
+  // 120-pin list sheds 120 barriers per revolution and stops in under a turn. DENSITY_EXPONENT
+  // holds the energy lost per revolution roughly constant instead.
+  const mid = Math.max(median([...out.gapAfter]), 1e-9);
+  const density = Math.pow(mid / PHYSICS.TARGET_PITCH, PHYSICS.DENSITY_EXPONENT);
+
   for (let i = 0; i < count; i++) {
-    const hwL = out.gapAfter[i] / 2;
-    const hwR = out.gapAfter[(i - 1 + count) % count] / 2;
-    const meanGap = hwL + hwR;
-    const scale = clamp(meanGap / PHYSICS.TARGET_PITCH, PHYSICS.GAP_SCALE_FLOOR, 1);
-    out.amp[i] = PHYSICS.CAM_AMPLITUDE * Math.pow(scale, PHYSICS.GAP_EXPONENT);
+    const meanGap = (out.gapAfter[i] + out.gapAfter[(i - 1 + count) % count]) / 2;
+    const scale = clamp(meanGap / mid, PHYSICS.GAP_SCALE_FLOOR, 1 / PHYSICS.GAP_SCALE_FLOOR);
+    out.amp[i] = PHYSICS.CAM_AMPLITUDE * density * Math.pow(scale, PHYSICS.GAP_EXPONENT);
   }
 
   return out;

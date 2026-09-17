@@ -90,10 +90,14 @@ const run = (cfg, spins) => {
   let maxSubsteps = 0;
 
   const rng = mulberry32(0xc0ffee);
+  const skin = cfg.skin || {};
   const phys = new WheelPhysics({
     items,
     preset: cfg.preset || 10000,
     tension: cfg.tension || "normal",
+    skinTensionMul: skin.tensionMul,
+    skinMassMul: skin.massMul,
+    skinDampingMul: skin.dampingMul,
     rng,
   });
 
@@ -165,6 +169,7 @@ const run = (cfg, spins) => {
   return {
     name: cfg.name,
     pins: pins.count,
+    ratio: pins.pitchRatio,
     perSeg: (pins.count / weights.length).toFixed(1),
     dur: (durSum / spins).toFixed(2),
     durRange: durMin.toFixed(1) + "-" + durMax.toFixed(1),
@@ -189,11 +194,22 @@ const CONFIGS = [
   { name: "uniform-30", weights: Array(30).fill(1) },
   { name: "uniform-50", weights: Array(50).fill(1) },
   { name: "weighted-3-2-1", weights: [3, 2, 1] },
+  { name: "incommensurate-a", weights: [4, 3, 2, 1, 1] },
+  { name: "incommensurate-b", weights: [7, 5, 3, 2] },
+  { name: "zero-weight", weights: [1, 1, 0] },
   { name: "skew-100-1-1", weights: [100, 1, 1] },
   { name: "skew-50-50-1", weights: [50, 50, 1] },
   { name: "heavy-preset-6", weights: Array(6).fill(1), preset: 20000 },
   { name: "light-preset-6", weights: Array(6).fill(1), preset: 5000 },
-  { name: "brutal-tension-6", weights: Array(6).fill(1), tension: "brutal" },
+  { name: "tension-light-6", weights: Array(6).fill(1), tension: "light" },
+  { name: "tension-strong-6", weights: Array(6).fill(1), tension: "strong" },
+  { name: "tension-brutal-6", weights: Array(6).fill(1), tension: "brutal" },
+  // A cosmetic the player picks must not move their odds, so every skin is gated here
+  // rather than asserted in a docstring.
+  { name: "skin-sword-7", weights: Array(7).fill(1), skin: { tensionMul: 1.45, massMul: 2.2, dampingMul: 0.8 } },
+  { name: "skin-feather-7", weights: Array(7).fill(1), skin: { tensionMul: 0.6, massMul: 0.4, dampingMul: 1.3 } },
+  { name: "skin-laser-7", weights: Array(7).fill(1), skin: { tensionMul: 0.35, massMul: 0.15, dampingMul: 2.2 } },
+  { name: "skin-sword-brutal-7", weights: Array(7).fill(1), tension: "brutal", skin: { tensionMul: 1.45, massMul: 2.2, dampingMul: 0.8 } },
 ];
 
 const rows = [];
@@ -206,7 +222,7 @@ for (const cfg of CONFIGS) {
   console.log(
     r.name.padEnd(18) +
       "pins " + String(r.pins).padStart(3) +
-      "  /seg " + r.perSeg.padStart(4) +
+      "  ratio " + r.ratio.toFixed(3) +
       "  dur " + r.dur.padStart(5) + "s (" + r.durRange + ")" +
       "  revs " + r.revs.padStart(5) +
       "  bnd " + r.boundaryPct.padStart(5) + "%" +
@@ -248,7 +264,10 @@ const deterministic = onlyName ? true : determinism();
 // zero-bucket and the chi-square checks are only meaningful once every bucket is expected
 // to be hit at least ~5 times.
 const fails = rows.filter(
-  (r) => r.noSettle > 0 || (!r.undersampled && (r.zeroBuckets > 0 || Number(r.p) < 0.01))
+  (r) =>
+    r.noSettle > 0 ||
+    r.ratio > 1.02 ||
+    (!r.undersampled && (r.zeroBuckets > 0 || Number(r.p) < 0.01))
 );
 if (!deterministic) console.log("FAIL: frame pacing changed the outcome");
 console.log("\n" + (fails.length === 0 && deterministic ? "PASS" : "FAIL: " + fails.map((f) => f.name).join(", ")));
