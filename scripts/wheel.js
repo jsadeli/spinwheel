@@ -7,7 +7,7 @@ import { COLOR_ASSIGNMENT_MODE } from "./configs.js";
  * How far, in canvas pixels, a pin shoves the flapper outward at full lift. Matches the
  * drawn pin: the tip rests just inside the pin circle and rides over the top of one.
  */
-const PIN_LIFT_PX = 10;
+const PIN_LIFT_PX = 14;
 
 /**
  * Applies the removal animation to a item list, easing the outgoing item's weight to zero.

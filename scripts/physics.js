@@ -126,8 +126,17 @@ export const PHYSICS = {
    * could have pushed it to, which reads as the pointer flailing loose.
    */
   LIFT_LIMIT: 1.3,
-  /** Multiplier from physical flapper deflection to rendered deflection. */
-  DISPLAY_GAIN: 2.4,
+  /**
+   * Multiplier from physical flapper deflection to rendered rotation. Cosmetic only; it
+   * never feeds back into the solver.
+   *
+   * Kept small on purpose. The pointer pivots about its own tip so that the tip stays on the
+   * line the winner is read from, which means the arm is what swings -- and an arm swung far
+   * enough reads as an arrow tilted at nothing rather than a flapper riding a pin. Most of
+   * the visible reaction is the radial shove instead (PIN_LIFT_PX in wheel.js), which is
+   * what a cam follower actually does.
+   */
+  DISPLAY_GAIN: 0.74,
   /**
    * Event gating. A settling wheel rocks across a valley floor and the flapper re-seats
    * many times on the same pin, which is physically real but produces hundreds of
