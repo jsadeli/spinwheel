@@ -100,8 +100,13 @@ export const PHYSICS = {
    * It is stiff in absolute terms only because CAM_AMPLITUDE is pinned to the drawn pin size.
    * Capture speed is `amp * sqrt(k / I)`, so shrinking the amplitude by 2.5x and raising k by
    * 6.25x leaves the speed at which the escapement catches the wheel exactly where it was.
+   *
+   * No wheel runs at this value: it is what a tension setting multiplies. It is 3.125 over the
+   * default setting's 0.8 precisely so that the default still lands on 3.125 and keeps the
+   * capture speed above, leaving {@link TENSION_MULTIPLIERS} free to spread its ladder without
+   * dragging the wheel everyone gets along with it.
    */
-  SPRING_K: 3.125,
+  SPRING_K: 3.90625,
   /**
    * Flapper moment of inertia.
    *
@@ -253,11 +258,21 @@ export const WHEEL_PRESETS = {
 
 /**
  * Spring tension multipliers applied on top of {@link PHYSICS}.SPRING_K.
+ *
+ * What the setting actually controls is how often a spin ends by stalling part-way up a pin and
+ * being pushed back down, rather than coasting over it. Duration barely moves across the whole
+ * range -- under 2% -- and the number of pins struck does not move at all, so a spread that
+ * cannot be seen in the rollback rate cannot be seen anywhere.
+ *
+ * The bottom of the ladder used to sit at 0.7 and 1, which put light and normal at 30% and 50%
+ * rollback -- close enough together that the two settings were hard to tell apart. SPRING_K is
+ * scaled to this table rather than the other way round, so `normal` still resolves to the same
+ * spring the wheel was tuned around and only the spread moved.
  * @type {Object<string, number>}
  */
 export const TENSION_MULTIPLIERS = {
-  light: 0.7,
-  normal: 1,
+  light: 0.4,
+  normal: 0.8,
   strong: 1.5,
   brutal: 2.2,
 };
