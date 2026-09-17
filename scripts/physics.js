@@ -48,6 +48,9 @@ export const GEOMETRY = {
   POINTER_ARM: 50,
 };
 
+/** Integration step for the rendered arm's flex mode, seconds. */
+const FLEX_STEP = 0.002;
+
 /**
  * Global physics tuning. Units are radians and seconds throughout; inertia and torque
  * are in arbitrary but self-consistent "game" units -- only their ratios matter.
@@ -99,7 +102,19 @@ export const PHYSICS = {
    * 6.25x leaves the speed at which the escapement catches the wheel exactly where it was.
    */
   SPRING_K: 3.125,
-  /** Flapper moment of inertia. */
+  /**
+   * Flapper moment of inertia.
+   *
+   * Deliberately tiny, and it has to stay that way. It sets how much of the wheel's energy each
+   * landing takes, as `J * Ld^2 / (I + J * Ld^2)`: at this value a pin costs the wheel 0.3%, and
+   * raising it far enough for the arm's own ringing to be visible (41x, for 8 Hz) takes that to
+   * 10%. Pin losses then swamp bearing drag, and since the wheel presets differ *by* their drag,
+   * the whole light/normal/heavy setting collapses -- measured, the long preset fell from 17.7s
+   * to 7.3s and no drag value brought it back.
+   *
+   * The arm consequently rings at 51 Hz, well under a frame, so what the pointer is seen doing
+   * on the way back to rest is modelled where it belongs: {@link PHYSICS}.FLEX_FREQ.
+   */
   FLAPPER_J: 0.00003,
   /**
    * Flapper viscous damping. Scaled to the spring: too much of it relative to k and the
@@ -177,12 +192,33 @@ export const PHYSICS = {
   /**
    * Multiplier from physical flapper deflection to rendered rotation.
    *
-   * Kept at 1, which is the only value that is not a lie: the nose is drawn travelling exactly
-   * as far as the pin under it pushed it. It was 2.4, which swung the nose 28 px off a pin
-   * drawn 5 px across -- a pointer that visibly over-reacted to what hit it. Cosmetic either
+   * At 1 the nose travels exactly as far as the pin under it pushed it, which is 5 px and about
+   * 5.7 degrees -- honest, and far too small to read as a wheel knocking a pointer about. This
+   * sits halfway between that and the 34 degrees it swung before the contact geometry was
+   * corrected. The exaggeration is in the swing's depth only: *when* the pointer starts moving
+   * is now exactly when a pin covers it, which is the part that looked wrong. Cosmetic either
    * way; it never feeds back into the solver.
    */
-  DISPLAY_GAIN: 1,
+  DISPLAY_GAIN: 3.5,
+  /**
+   * The drawn pointer's own bending mode, in hertz.
+   *
+   * {@link WheelPhysics}#phi is where the cam puts the *contact point* -- it is a kinematic
+   * constraint, so it steps and snaps. A real pointer is an arm on a mount, not a rigid line
+   * from the nose to the pivot: it whips past where the cam released it and rings back through
+   * rest before settling. That ringing is what this is.
+   *
+   * It cannot come from the solver's own flapper spring, which sits at 51 Hz -- under one frame,
+   * so it renders as nothing at all -- and cannot be slowed without wrecking the escapement (see
+   * FLAPPER_J). Output only: the solver never reads it back, so it cannot move a winner.
+   */
+  FLEX_FREQ: 12,
+  /**
+   * Damping ratio of that bending mode. At 0.32 the arm overshoots its return to rest by about
+   * 30% and is done ringing inside 0.17 s -- one clear swing back rather than a wobble that is
+   * still going when the next pin arrives.
+   */
+  FLEX_DAMPING: 0.32,
   /**
    * Event gating. A settling wheel rocks across a valley floor and the flapper re-seats
    * many times on the same pin, which is physically real but produces hundreds of
@@ -504,6 +540,11 @@ export class WheelPhysics {
     /** False while the flapper is airborne between pins. */
     this.contact = true;
 
+    /** Rendered arm angle, radians: `phi` seen through the arm's own flex. Output only. */
+    this._flexPhi = 0;
+    /** Rate of change of the rendered arm angle, rad/s. */
+    this._flexVel = 0;
+
     this.spinning = false;
     this.settled = true;
     this.tSim = 0;
@@ -709,9 +750,35 @@ export class WheelPhysics {
     this._events.length = 0;
   }
 
+  /**
+   * Advances the drawn arm toward the deflection the solver computed.
+   *
+   * A damped second-order follower, so the arm lags the cam by a frame or two, overshoots when
+   * a pin lets go and rings back through rest. Sub-stepped because a frame at 30 Hz is too
+   * coarse a step for a 12 Hz mode to stay stable at.
+   *
+   * Runs whether or not the wheel is turning: the ringing outlasts the spin that caused it.
+   *
+   * @param {number} dt Seconds since the previous frame.
+   * @returns {void}
+   */
+  _advanceFlex(dt) {
+    const w = TAU * PHYSICS.FLEX_FREQ;
+    const zeta = PHYSICS.FLEX_DAMPING;
+    let left = clamp(dt, 0, PHYSICS.MAX_DT);
+
+    while (left > 0) {
+      const h = left > FLEX_STEP ? FLEX_STEP : left;
+      const acc = w * w * (this.phi - this._flexPhi) - 2 * zeta * w * this._flexVel;
+      this._flexVel += acc * h;
+      this._flexPhi += this._flexVel * h;
+      left -= h;
+    }
+  }
+
   /** @returns {number} Rendered flapper deflection, radians. */
   flapperAngle() {
-    return this.phi * PHYSICS.DISPLAY_GAIN;
+    return this._flexPhi * PHYSICS.DISPLAY_GAIN;
   }
 
   /**
@@ -823,6 +890,7 @@ export class WheelPhysics {
    */
   step(dt) {
     this._events.length = 0;
+    this._advanceFlex(dt);
     if (!this.spinning) return { impacts: this._events, settled: this.settled };
 
     this._acc += clamp(dt, 0, PHYSICS.MAX_DT);

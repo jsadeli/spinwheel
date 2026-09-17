@@ -41,7 +41,9 @@ Screenshot:
     creeps through its last second, turning about two thirds of a degree before it settles.
   - **Anchored Pointer**: The pointer hangs from a fixed mount and each pin arriving under it
     swings its nose down, riding back up as the pin passes -- driven by the wheel actually
-    pushing on it rather than by a position-keyed animation.
+    pushing on it rather than by a position-keyed animation. The arm is not a rigid line from
+    nose to pivot either: it whips past where the pin let go of it and rings back through its
+    resting position before settling, the way a real one on a spring would.
   - **Never Dead Centre**: Between pins the pointer is touching nothing, so there is no spring
     pulling the wheel anywhere once it stops -- it comes to rest where it ran out of energy,
     which is anywhere across a valley rather than centred in one. When it does stop against a

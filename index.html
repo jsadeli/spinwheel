@@ -1431,9 +1431,15 @@
             const dt = lastFrameRef.current ? (now - lastFrameRef.current) / 1000 : 1 / 60;
             lastFrameRef.current = now;
 
-            if (physics && physics.spinning) {
+            // Stepped every frame, not only while the wheel is turning: the pointer's arm goes
+            // on ringing after the spin that flicked it has ended, and the step is a no-op for
+            // the wheel itself once it has settled. `spinning` is read first because the step
+            // is what clears it on the frame the wheel comes to rest.
+            const wasSpinning = physics != null && physics.spinning;
+            const result = physics ? physics.step(dt) : null;
+
+            if (wasSpinning) {
               // --- Physics ---
-              const result = physics.step(dt);
               rotationRef.current = physics.theta;
               velocityRef.current = physics.omega;
 
