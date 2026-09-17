@@ -167,7 +167,8 @@ const chooseCounts = (fractions, basePins, lo, hi) => {
     if (!best || score < best.score) best = { counts, ratio, score };
   }
 
-  return best || { counts: fractions.map(() => 1), ratio: 1 };
+  if (!best) return { counts: fractions.map(() => 1), ratio: 1 };
+  return { counts: best.counts, ratio: best.ratio };
 };
 
 /** @param {number[]} values @returns {number} */

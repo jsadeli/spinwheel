@@ -80,6 +80,10 @@ export const STORAGE_KEYS = {
   DAILY_CHALLENGES: "spinWheel_dailyChallenges",
   /** Coin balance */
   COINS: "spinWheel_coins",
+  /** Flapper spring tension preset */
+  FLAPPER_TENSION: "spinWheel_flapperTension",
+  /** Selected pointer skin */
+  POINTER_SKIN: "spinWheel_pointerSkin",
 };
 
 /**
@@ -108,6 +112,69 @@ export const TICK_SOUNDS = {
   METALLIC: "metallic",
   /** Luxurious crystal glass sound */
   CRYSTAL: "crystal",
+};
+
+/**
+ * Flapper spring tension presets.
+ *
+ * Tension is how hard the pointer fights the wheel: a stiff spring brakes harder on every
+ * pin, holds the wheel longer at the last crest, and rolls it further back when it fails
+ * to climb. It does move which pin the wheel stalls on, so every setting is gated through
+ * tools/physics-sim.mjs to confirm it does not bias the odds.
+ * @type {Object<string, string>}
+ */
+export const FLAPPER_TENSIONS = {
+  /** Barely notices the pins; the wheel glides. */
+  LIGHT: "light",
+  /** Balanced default. */
+  NORMAL: "normal",
+  /** Audible chatter and a long hold at the final crest. */
+  STRONG: "strong",
+  /** Slams the wheel around; frequent stalls and rollbacks. */
+  BRUTAL: "brutal",
+};
+
+/**
+ * Pointer skins. Each skin is a physical object, not just a picture: its multipliers feed
+ * straight into the flapper solver, so a heavy sword really does brake harder than a laser.
+ * A cosmetic must never move a player's odds, so each skin is gated through
+ * tools/physics-sim.mjs alongside the tension presets.
+ * `color` is the CSS border color used for the pointer triangle.
+ * @type {Object<string, {id: string, label: string, color: string, tensionMul: number, massMul: number, dampingMul: number}>}
+ */
+export const POINTER_SKINS = {
+  CLASSIC: {
+    id: "classic",
+    label: "Classic",
+    color: "#dc2626",
+    tensionMul: 1,
+    massMul: 1,
+    dampingMul: 1,
+  },
+  SWORD: {
+    id: "sword",
+    label: "Sword",
+    color: "#94a3b8",
+    tensionMul: 1.45,
+    massMul: 2.2,
+    dampingMul: 0.8,
+  },
+  FEATHER: {
+    id: "feather",
+    label: "Feather",
+    color: "#38bdf8",
+    tensionMul: 0.6,
+    massMul: 0.4,
+    dampingMul: 1.3,
+  },
+  LASER: {
+    id: "laser",
+    label: "Laser",
+    color: "#a855f7",
+    tensionMul: 0.35,
+    massMul: 0.15,
+    dampingMul: 2.2,
+  },
 };
 
 /**
@@ -183,6 +250,8 @@ if (typeof window !== "undefined") {
   window.STORAGE_KEYS = STORAGE_KEYS;
   window.THEMES = THEMES;
   window.TICK_SOUNDS = TICK_SOUNDS;
+  window.FLAPPER_TENSIONS = FLAPPER_TENSIONS;
+  window.POINTER_SKINS = POINTER_SKINS;
   window.COLOR_ASSIGNMENT_MODE = COLOR_ASSIGNMENT_MODE;
   window.AI_VOICES = AI_VOICES;
   window.TOAST_DURATION = TOAST_DURATION;

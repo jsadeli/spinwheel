@@ -448,14 +448,17 @@ export const spawnSmoke = (smokeContainerRef, overchargeRef, playFireCrackle) =>
  * drawWheelTrail(ctx, 200, 200, 150, Math.PI, 0.5, 10, true);
  */
 export const drawWheelTrail = (ctx, centerX, centerY, radius, rotation, velocity, level, isDark) => {
-  // Only draw when spinning fast enough
-  if (velocity < 0.005) return;
+  // Only draw when spinning fast enough. Velocity is rad/second and is signed, since
+  // the flapper can drive the wheel backwards at the end of a spin.
+  const speed = Math.abs(velocity);
+  if (speed < 0.3) return;
 
   // Trail length depends on speed, capped at half circle
-  const trailLength = Math.min(velocity * 30, Math.PI);
+  const trailLength = Math.min(speed * 0.5, Math.PI);
 
-  // Trail is behind the rotation direction (assuming clockwise spin)
-  const startAngle = rotation - trailLength;
+  // Trail streams behind the direction of travel, whichever way that currently is.
+  const dir = velocity < 0 ? -1 : 1;
+  const startAngle = rotation - trailLength * dir;
   const endAngle = rotation;
 
   ctx.save();

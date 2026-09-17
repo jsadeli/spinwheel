@@ -5,7 +5,7 @@
   "main": "sw.js",
   "scripts": {
     "tsc": "tsc",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node tools/physics-sim.mjs --spins 6000"
   },
   "repository": {
     "type": "git",

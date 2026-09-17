@@ -25,6 +25,8 @@ import {
   STORAGE_KEYS,
   THEMES,
   TICK_SOUNDS,
+  FLAPPER_TENSIONS,
+  POINTER_SKINS,
   COLOR_ASSIGNMENT_MODE,
   AI_VOICES,
   TOAST_DURATION,
@@ -123,7 +125,7 @@ import {
   isEmoji,
   parseWinnerString,
 } from "../scripts/utils.js";
-import { drawWheel, updatePointer } from "../scripts/wheel.js";
+import { drawWheel, updatePointer, effectiveItems } from "../scripts/wheel.js";
 import {
   WheelPhysics,
   buildPins,
@@ -187,6 +189,8 @@ declare global {
     DEFAULT_LIST_ITEMS: typeof DEFAULT_LIST_ITEMS;
     STORAGE_KEYS: typeof STORAGE_KEYS;
     TICK_SOUNDS: typeof TICK_SOUNDS;
+    FLAPPER_TENSIONS: typeof FLAPPER_TENSIONS;
+    POINTER_SKINS: typeof POINTER_SKINS;
     COLOR_ASSIGNMENT_MODE: typeof COLOR_ASSIGNMENT_MODE;
     AI_VOICES: typeof AI_VOICES;
     TOAST_DURATION: typeof TOAST_DURATION;
@@ -287,6 +291,7 @@ declare global {
     // Wheel (wheel.js)
     drawWheel: typeof drawWheel;
     updatePointer: typeof updatePointer;
+    effectiveItems: typeof effectiveItems;
     // Physics (physics.js)
     WheelPhysics: typeof WheelPhysics;
     buildPins: typeof buildPins;

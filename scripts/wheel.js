@@ -4,6 +4,29 @@ import { getItemColor } from "./colors.js";
 import { COLOR_ASSIGNMENT_MODE } from "./configs.js";
 
 /**
+ * Applies the removal animation to a item list, easing the outgoing item's weight to zero.
+ * Shared with the physics layer so the pin ring follows the same geometry that is drawn.
+ *
+ * @param {Array<{text: string, weight: number}>} items
+ * @param {{index: number, startTime: number, duration: number}|null} removingItem
+ * @returns {Array<{text: string, weight: number}>}
+ */
+export const effectiveItems = (items, removingItem) => {
+  if (!removingItem) return items;
+
+  const { index, startTime, duration } = removingItem;
+  const progress = Math.min((Date.now() - startTime) / duration, 1);
+  const ease =
+    progress < 0.5 ? 4 * progress * progress * progress : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+
+  const next = [...items];
+  if (next[index]) {
+    next[index] = { ...next[index], weight: next[index].weight * (1 - ease) };
+  }
+  return next;
+};
+
+/**
  * Draws the entire spin wheel on the canvas, including segments, text, hub, border, and trail.
  * Handles empty state, item removal animation, and dynamic/deterministic coloring.
  *
@@ -20,6 +43,8 @@ import { COLOR_ASSIGNMENT_MODE } from "./configs.js";
  * @param {Object|null} removingItem - State object for an item being removed (animation), or null.
  * @param {string} colorAssignment - The color assignment mode (dynamic or deterministic).
  * @param {number} xp - The current XP (used for trail effects).
+ * @param {{angles: Float64Array, boundary: Uint8Array, count: number}|null} [pins] - Pin ring from
+ *   buildPins(); boundary pins sit on segment edges. Falls back to a uniform ring when absent.
  */
 export const drawWheel = (
   ctx,
@@ -34,12 +59,12 @@ export const drawWheel = (
   velocity,
   removingItem,
   colorAssignment,
-  xp
+  xp,
+  pins
 ) => {
   const centerX = width / 2;
   const centerY = height / 2;
   const radius = Math.min(width, height) / 2 - 20; // Leave room for pins
-  const NUM_PINS = 30;
 
   // --- Drawing ---
   ctx.clearRect(0, 0, width, height);
@@ -62,35 +87,14 @@ export const drawWheel = (
   } else {
     // Calculate Total Weight
     // Modified for animation: if removing, reduce weight of that item
-    let effectiveItems = [...items];
-    if (removingItem) {
-      const { index, startTime, duration } = removingItem;
-      const now = Date.now();
-      const progress = Math.min((now - startTime) / duration, 1);
-      // Ease in out
-      const ease =
-        progress < 0.5
-          ? 4 * progress * progress * progress
-          : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+    const drawItems = effectiveItems(items, removingItem);
 
-      // We need to identify the item by index or text. Index is safer if text is not unique?
-      // But items list might have changed? No, we blocked interaction.
-      // Let's use the index stored in ref.
-      if (effectiveItems[index]) {
-        // Clone the item to not mutate ref
-        effectiveItems[index] = {
-          ...effectiveItems[index],
-          weight: effectiveItems[index].weight * (1 - ease),
-        };
-      }
-    }
-
-    const totalWeight = effectiveItems.reduce((sum, item) => sum + item.weight, 0);
+    const totalWeight = drawItems.reduce((sum, item) => sum + item.weight, 0);
 
     // Draw Wheel Slices
     let currentAngle = rotation;
 
-    effectiveItems.forEach((item, index) => {
+    drawItems.forEach((item, index) => {
       // Calculate slice size based on weight
       const sliceAngle = (item.weight / totalWeight) * (2 * Math.PI);
 
@@ -150,78 +154,60 @@ export const drawWheel = (
     ctx.stroke();
 
     // Draw Trail Effect
-    if (trailEnabled && velocity > 0.005) {
+    if (trailEnabled && Math.abs(velocity) > 0.3) {
       const currentLevel = calculateLevel(xp);
       drawWheelTrail(ctx, centerX, centerY, radius, rotation, velocity, currentLevel, isDark);
     }
 
     // Draw Pins
+    // Pin positions come from the physics ring so what the flapper collides with is
+    // exactly what is drawn. Boundary pins are the ones that can flip the outcome, so
+    // they are drawn heavier than the fillers between them.
     const pinRadius = radius + 10; // Pins sit outside the main wheel
-    for (let i = 0; i < NUM_PINS; i++) {
-      const angle = (i * 2 * Math.PI) / NUM_PINS + rotation;
+    const count = pins && pins.count ? pins.count : 30;
+    const dense = count > 48;
+
+    for (let i = 0; i < count; i++) {
+      const local = pins && pins.angles ? pins.angles[i] : (i * 2 * Math.PI) / count;
+      const isBoundary = pins && pins.boundary ? pins.boundary[i] === 1 : true;
+      if (dense && !isBoundary && i % 2 === 1) continue; // thin the fillers when crowded
+
+      const angle = local + rotation;
       const px = centerX + Math.cos(angle) * pinRadius;
       const py = centerY + Math.sin(angle) * pinRadius;
 
       ctx.beginPath();
-      ctx.arc(px, py, 4, 0, 2 * Math.PI);
-      ctx.fillStyle = "#C0C0C0"; // Silver pins
+      ctx.arc(px, py, isBoundary ? 5 : 3.5, 0, 2 * Math.PI);
+      ctx.fillStyle = isBoundary ? "#E2E8F0" : "#C0C0C0";
       ctx.fill();
-      ctx.strokeStyle = "#666";
-      ctx.lineWidth = 1;
+      ctx.strokeStyle = isBoundary ? "#1f2937" : "#666";
+      ctx.lineWidth = isBoundary ? 1.5 : 1;
       ctx.stroke();
     }
   }
 };
 
 /**
- * Updates the rotation of the pointer element based on wheel rotation and velocity.
- * Simulates physics interactions between the pins and the pointer (push and snap).
+ * Renders the flapper at the deflection the physics solver actually computed.
  *
- * @param {HTMLElement} pointerElement - The DOM element for the pointer.
- * @param {number} rotation - The current wheel rotation in radians.
- * @param {number} velocity - The current wheel velocity.
+ * The previous implementation derived the angle from `rotation % pinSpacing` and a
+ * damped cosine parameterized on position rather than time, so it deflected the wrong
+ * way on the push phase and froze mid-wiggle at rest. The angle is now simply read off
+ * the simulation, which is also what makes the flapper's fight with the wheel visible.
+ *
+ * @param {HTMLElement|null} pointerElement - The DOM element for the pointer.
+ * @param {number} flapperAngle - Deflection in radians, from WheelPhysics#flapperAngle().
+ * @returns {void}
  */
-export const updatePointer = (pointerElement, rotation, velocity) => {
+export const updatePointer = (pointerElement, flapperAngle) => {
   if (!pointerElement) return;
-
-  const NUM_PINS = 30;
-  const pinSpacing = (2 * Math.PI) / NUM_PINS;
-  const pinPhase = (rotation % pinSpacing) / pinSpacing;
-
-  let pointerAngle = 0;
-
-  // Physics Parameters
-  // Dynamic max angle based on velocity
-  // Cap velocity influence to avoid 360 spins
-  const velocityFactor = Math.min(velocity * 800, 40);
-  const maxAngle = 30 + velocityFactor;
-
-  const pushThreshold = 0.65; // Earlier contact for smoother push
-
-  if (pinPhase > pushThreshold) {
-    // PUSH PHASE: Pin contacts pointer and pushes it down (Clockwise)
-    // Map range [0.85, 1.0] to [0, maxAngle]
-    const t = (pinPhase - pushThreshold) / (pushThreshold - 1);
-    // Use a slight curve for weight
-    pointerAngle = t * maxAngle;
-  } else {
-    // SPRING/SNAP PHASE: Pin releases, pointer snaps back
-    // Damped harmonic oscillator: A * e^(-ct) * cos(wt)
-    const t = pinPhase;
-
-    // Tune these for "snapiness"
-    const decay = 10; // How fast energy is lost
-    const freq = 120; // Wiggle speed
-
-    // Start at maxAngle (t=0), decay to 0
-    pointerAngle = maxAngle * Math.exp(-decay * t) * Math.cos(freq * t);
-  }
-
-  pointerElement.style.transform = `rotate(${pointerAngle}deg)`;
+  const deg = (flapperAngle * 180) / Math.PI;
+  pointerElement.style.transform = `rotate(${deg.toFixed(2)}deg)`;
 };
 
 // Expose to window (needed for Babel Standalone)
 if (typeof window !== "undefined") {
   window.drawWheel = drawWheel;
+  window.effectiveItems = effectiveItems;
   window.updatePointer = updatePointer;
 }

@@ -247,6 +247,7 @@
     <script type="module" src="scripts/themes.js"></script>
     <script type="module" src="scripts/utils.js"></script>
     <script type="module" src="scripts/wheel.js"></script>
+    <script type="module" src="scripts/physics.js"></script>
 
     <!-- Load Resources (Inline Icons, Themes, Animations, etc.) -->
     <script type="text/babel" data-type="module" src="scripts/icons.js"></script>
@@ -321,6 +322,11 @@
         DAILY_CHALLENGE_RESET_HOUR,
         CoinChip,
         CoinStoreModal,
+        effectiveItems,
+        WheelPhysics,
+        WHEEL_PRESETS,
+        FLAPPER_TENSIONS,
+        POINTER_SKINS,
       } = window;
 
       import React, { useState, useEffect, useRef, useMemo } from "react";
@@ -401,6 +407,12 @@
         );
         const [tickSound, setTickSound] = useState(() =>
           loadState(STORAGE_KEYS.TICK_SOUND, TICK_SOUNDS.DEFAULT)
+        );
+        const [flapperTension, setFlapperTension] = useState(() =>
+          loadState(STORAGE_KEYS.FLAPPER_TENSION, FLAPPER_TENSIONS.NORMAL)
+        );
+        const [pointerSkin, setPointerSkin] = useState(() =>
+          loadState(STORAGE_KEYS.POINTER_SKIN, POINTER_SKINS.CLASSIC.id)
         );
 
         // Color Settings
@@ -644,17 +656,18 @@
         const themeMenuRef = useRef(null);
         const shareMenuRef = useRef(null);
         const settingsMenuRef = useRef(null);
-        const spinFrameRef = useRef(null); // Capture requestAnimationFrame ID
         const hideLabelsRef = useRef(hideLabels);
         const pointerRef = useRef(null); // Ref for the arrow pointer
         const listDropdownRef = useRef(null); // Ref for list dropdown
         const isOutOfOrderRef = useRef(isOutOfOrder); // Ref for out of order state
         const colorAssignmentRef = useRef(colorAssignment); // Ref for color assignment mode
         const idleVelocityRef = useRef(0); // Tracks current idle rotation speed for gradual acceleration
+        const physicsRef = useRef(null); // WheelPhysics instance; owns rotation while spinning
+        const settleTimerRef = useRef(null); // Pending winner-modal delay after the wheel stops
+        const lastFrameRef = useRef(0); // Previous rAF timestamp, for the fixed-step accumulator
 
         // Audio Refs
         const audioCtxRef = useRef(null);
-        const lastTickRef = useRef(0);
         const chargeSoundRef = useRef(null); // Ref for the charging sound controller
 
         // Achievement Tracking Refs
@@ -671,6 +684,9 @@
         const xpRef = useRef(xp); // Ref for XP to be used in animation loop
         const trailEnabledRef = useRef(trailEnabled); // Ref for trail setting
         const tickSoundRef = useRef(tickSound); // Ref for tick sound preference
+        const spinDurationRef = useRef(spinDuration); // Ref for the wheel-weight preset
+        const flapperTensionRef = useRef(flapperTension); // Ref for flapper spring tension
+        const pointerSkinRef = useRef(pointerSkin); // Ref for selected pointer skin
 
         // State to force re-render for relative time updates
         const [, setTick] = useState(0);
@@ -819,6 +835,18 @@
           localStorage.setItem(STORAGE_KEYS.TICK_SOUND, JSON.stringify(tickSound));
           tickSoundRef.current = tickSound;
         }, [tickSound]);
+
+        useEffect(() => {
+          localStorage.setItem(STORAGE_KEYS.FLAPPER_TENSION, JSON.stringify(flapperTension));
+          flapperTensionRef.current = flapperTension;
+          if (physicsRef.current) physicsRef.current.setTension(flapperTension);
+        }, [flapperTension]);
+
+        useEffect(() => {
+          localStorage.setItem(STORAGE_KEYS.POINTER_SKIN, JSON.stringify(pointerSkin));
+          pointerSkinRef.current = pointerSkin;
+          if (physicsRef.current) physicsRef.current.setSkin(resolveSkin(pointerSkin));
+        }, [pointerSkin]);
 
         useEffect(() => {
           localStorage.setItem(STORAGE_KEYS.COLOR_SETTINGS, JSON.stringify(colorSettings));
@@ -1267,6 +1295,77 @@
           }
         };
 
+        /**
+         * Resolves a stored pointer-skin id to its physical parameters.
+         * @param {string} id
+         * @returns {{id: string, label: string, color: string, tensionMul: number, massMul: number, dampingMul: number}}
+         */
+        const resolveSkin = (id) =>
+          Object.values(POINTER_SKINS).find((s) => s.id === id) || POINTER_SKINS.CLASSIC;
+
+        /**
+         * Lazily creates the physics instance. The wheel owns its own rotation from here on,
+         * so this must exist before the render loop touches rotationRef.
+         * @returns {WheelPhysics|null}
+         */
+        const ensurePhysics = () => {
+          if (!physicsRef.current && typeof WheelPhysics === "function") {
+            physicsRef.current = new WheelPhysics({
+              items: itemsRef.current,
+              preset: spinDurationRef.current,
+              tension: flapperTensionRef.current,
+              skinTensionMul: resolveSkin(pointerSkinRef.current).tensionMul,
+              skinMassMul: resolveSkin(pointerSkinRef.current).massMul,
+              skinDampingMul: resolveSkin(pointerSkinRef.current).dampingMul,
+            });
+            physicsRef.current.theta = rotationRef.current;
+          }
+          return physicsRef.current;
+        };
+
+        /**
+         * Runs once the wheel has physically stopped. The winner modal is held back briefly
+         * so the flapper's final stall and rollback are actually visible instead of being
+         * covered the instant they happen; a boundary near-miss gets the longer beat because
+         * that is the moment that decided the result.
+         * @returns {void}
+         */
+        const handleSettled = () => {
+          const physics = physicsRef.current;
+          velocityRef.current = 0;
+          isSpinningRef.current = false;
+          setIsSpinning(false);
+
+          const beat = physics && physics.lastCrestWasBoundary ? 850 : 600;
+          if (settleTimerRef.current) clearTimeout(settleTimerRef.current);
+          settleTimerRef.current = setTimeout(() => {
+            settleTimerRef.current = null;
+            calculateWinner(rotationRef.current);
+          }, beat);
+        };
+
+        // The render loop is mounted once, so it reads the settle handler through a ref to
+        // avoid calling a version of it that closed over stale state.
+        const onSettleRef = useRef(handleSettled);
+        useEffect(() => {
+          onSettleRef.current = handleSettled;
+        });
+
+        // Keep the pin ring in step with the item list. Rotation is preserved, so the wheel
+        // re-seats into whichever valley now contains it rather than snapping.
+        useEffect(() => {
+          if (physicsRef.current) physicsRef.current.setItems(items);
+        }, [items]);
+
+        useEffect(() => {
+          spinDurationRef.current = spinDuration;
+          if (physicsRef.current) physicsRef.current.setPreset(spinDuration);
+        }, [spinDuration]);
+
+        useEffect(() => () => {
+          if (settleTimerRef.current) clearTimeout(settleTimerRef.current);
+        }, []);
+
         // MAIN RENDER LOOP
         useEffect(() => {
           const canvas = canvasRef.current;
@@ -1274,36 +1373,50 @@
           const ctx = canvas.getContext("2d");
           let animationFrameId;
 
-          const render = () => {
+          const render = (now) => {
             const width = canvas.width;
             const height = canvas.height;
             const currentItems = itemsRef.current;
             const currentColors = colorsRef.current;
             const isDark = isDarkModeRef.current;
             const shouldHide = hideLabelsRef.current;
+            const physics = ensurePhysics();
 
-            // --- Idle Spin Logic ---
-            if (
+            const dt = lastFrameRef.current ? (now - lastFrameRef.current) / 1000 : 1 / 60;
+            lastFrameRef.current = now;
+
+            if (physics && physics.spinning) {
+              // --- Physics ---
+              const result = physics.step(dt);
+              rotationRef.current = physics.theta;
+              velocityRef.current = physics.omega;
+              if (result.settled && onSettleRef.current) onSettleRef.current();
+            } else if (
               !isSpinningRef.current &&
               !isChargingRef.current &&
               !isOutOfOrderRef.current &&
               !removingItemRef.current &&
               currentItems.length > 0 &&
-              velocityRef.current === 0 &&
               !winnerRef.current
             ) {
-              const targetIdleSpeed = 0.002;
-              const acceleration = 0.00001;
+              // --- Idle Spin Logic ---
+              // Pin coupling stays off here on purpose: a real flapper would simply block a
+              // drift this slow, and the drift is attract-mode decoration rather than a spin.
+              const targetIdleSpeed = 0.12; // rad/s
+              const acceleration = 0.036; // rad/s^2
+              idleVelocityRef.current = Math.min(
+                idleVelocityRef.current + acceleration * dt,
+                targetIdleSpeed
+              );
 
-              if (idleVelocityRef.current < targetIdleSpeed) {
-                idleVelocityRef.current = Math.min(
-                  idleVelocityRef.current + acceleration,
-                  targetIdleSpeed
-                );
+              if (physics) {
+                physics.drift(idleVelocityRef.current * dt);
+                rotationRef.current = physics.theta;
+              } else {
+                rotationRef.current =
+                  (rotationRef.current + idleVelocityRef.current * dt) % (2 * Math.PI);
               }
-
-              rotationRef.current = (rotationRef.current + idleVelocityRef.current) % (2 * Math.PI);
-              lastTickRef.current = rotationRef.current;
+              velocityRef.current = 0;
             }
 
             // --- Removing Item Animation Logic ---
@@ -1311,6 +1424,11 @@
               const { startTime, duration } = removingItemRef.current;
               const now = Date.now();
               const progress = Math.min((now - startTime) / duration, 1);
+
+              // Shrink the pin ring alongside the slice so pins never float over a gap.
+              if (physics && effectiveItems) {
+                physics.setItems(effectiveItems(currentItems, removingItemRef.current));
+              }
 
               if (progress >= 1) {
                 const itemToRemove = removingItemRef.current.text;
@@ -1337,19 +1455,20 @@
                 velocityRef.current,
                 removingItemRef.current,
                 colorAssignmentRef.current,
-                xpRef.current
+                xpRef.current,
+                physics ? physics.pins : null
               );
             }
 
             // --- Pointer Animation Logic ---
             if (pointerRef.current && updatePointer) {
-              updatePointer(pointerRef.current, rotationRef.current, velocityRef.current);
+              updatePointer(pointerRef.current, physics ? physics.flapperAngle() : 0);
             }
 
             animationFrameId = requestAnimationFrame(render);
           };
 
-          render();
+          animationFrameId = requestAnimationFrame(render);
           return () => cancelAnimationFrame(animationFrameId);
         }, []);
 
@@ -1589,12 +1708,18 @@
 
           initAudio();
 
+          // A settle beat from the previous spin may still be pending; drop it so the old
+          // winner cannot pop up over the new spin.
+          if (settleTimerRef.current) {
+            clearTimeout(settleTimerRef.current);
+            settleTimerRef.current = null;
+          }
+
           // CHANGED: Update Ref synchronously BEFORE state
           isSpinningRef.current = true;
           setIsSpinning(true);
 
           setWinner(null);
-          lastTickRef.current = rotationRef.current;
           idleVelocityRef.current = 0; // Reset idle velocity for gradual startup after spin
 
           // Reset consecutive shuffles on spin
@@ -1609,65 +1734,30 @@
             (t) => now - t < 3600000
           ); // Keep last hour
 
-          const baseSpeed = Math.random() * 0.2 + 0.5;
-          velocityRef.current = baseSpeed * (0.05 + 0.95 * powerFactor);
+          // Hand the spin to the solver. Duration is no longer imposed: it falls out of the
+          // launch impulse, the wheel's inertia and everything the flapper takes back on the
+          // way down, so powerFactor now buys rotations rather than seconds.
+          const physics = ensurePhysics();
+          if (!physics) {
+            isSpinningRef.current = false;
+            setIsSpinning(false);
+            return;
+          }
 
-          const maxDuration = spinDuration;
-          // Reduced minimum duration from 2000ms to 500ms for quick nudges
-          const targetDuration = Math.max(500, maxDuration * powerFactor);
+          physics.setPreset(spinDuration);
+          physics.setTension(flapperTensionRef.current);
+          physics.setSkin(resolveSkin(pointerSkinRef.current));
+          physics.setItems(itemsRef.current);
 
           spinStartTimeRef.current = performance.now();
-          spinTargetDurationRef.current = targetDuration;
-          const stopThreshold = 0.0001;
-          const totalFrames = targetDuration / 16.667;
-          const baseFriction = Math.pow(stopThreshold / velocityRef.current, 1 / totalFrames);
-
-          let lastTime = performance.now();
-
-          const animateSpin = (currentTime) => {
-            const dt = currentTime - lastTime;
-            lastTime = currentTime;
-            const frameRatio = dt / 16.67;
-            velocityRef.current *= Math.pow(baseFriction, frameRatio);
-
-            if (velocityRef.current < 0.05 && velocityRef.current > 0.001) {
-              const wobble = Math.sin(currentTime / 50) * (velocityRef.current * 0.15);
-              rotationRef.current += wobble;
-            }
-
-            rotationRef.current += velocityRef.current * frameRatio;
-
-            // --- TICK SOUND LOGIC ---
-            const NUM_PINS = 30;
-            const pinSpacing = (2 * Math.PI) / NUM_PINS;
-
-            const currentStep = Math.floor(rotationRef.current / pinSpacing);
-            const lastStep = Math.floor(lastTickRef.current / pinSpacing);
-
-            if (currentStep !== lastStep) {
-              playTickSound(audioCtxRef, soundEnabled, tickSoundRef.current);
-            }
-            lastTickRef.current = rotationRef.current;
-
-            if (velocityRef.current > stopThreshold) {
-              spinFrameRef.current = requestAnimationFrame(animateSpin);
-            } else {
-              velocityRef.current = 0;
-
-              // Update Ref synchronously
-              isSpinningRef.current = false;
-              setIsSpinning(false);
-
-              calculateWinner(rotationRef.current);
-            }
-          };
-          spinFrameRef.current = requestAnimationFrame(animateSpin);
+          spinTargetDurationRef.current = physics.launch(powerFactor);
         };
 
         const handleStopSpin = () => {
-          if (spinFrameRef.current) {
-            cancelAnimationFrame(spinFrameRef.current);
-            spinFrameRef.current = null;
+          if (physicsRef.current) physicsRef.current.cancel();
+          if (settleTimerRef.current) {
+            clearTimeout(settleTimerRef.current);
+            settleTimerRef.current = null;
           }
           // Update Ref synchronously
           isSpinningRef.current = false;
@@ -2525,7 +2615,8 @@
                 <div className="absolute z-20 right-0 md:right-auto top-1/2 -translate-y-1/2 translate-x-1/2 md:translate-x-[210px] lg:translate-x-[260px] filter drop-shadow-lg pointer-events-none">
                   <div
                     ref={pointerRef}
-                    className="w-0 h-0 border-t-[20px] border-t-transparent border-r-[50px] border-r-red-600 border-b-[20px] border-b-transparent transform origin-right transition-transform duration-75"
+                    style={{ borderRightColor: resolveSkin(pointerSkin).color }}
+                    className="w-0 h-0 border-t-[20px] border-t-transparent border-r-[50px] border-b-[20px] border-b-transparent transform origin-right"
                   ></div>
                 </div>
 
