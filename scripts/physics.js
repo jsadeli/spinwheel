@@ -70,6 +70,15 @@ export const PHYSICS = {
   MAX_SPIN_TIME: 90,
   /** Multiplier from physical flapper deflection to rendered deflection. */
   DISPLAY_GAIN: 2.4,
+  /**
+   * Event gating. A settling wheel rocks across a valley floor and the flapper re-seats
+   * many times on the same pin, which is physically real but produces hundreds of
+   * inaudible events per second. These bound what reaches the audio layer.
+   */
+  MIN_EVENT_FORCE: 0.35,
+  MIN_EVENT_SPEED: 6,
+  EVENT_DEBOUNCE: 0.04,
+  MAX_EVENTS_PER_STEP: 8,
 };
 
 /**
@@ -362,6 +371,8 @@ export class WheelPhysics {
     this._prevD = 0;
     this._prevPin = -1;
     this._seatEmitted = false;
+    /** @type {Map<number, number>} Last emission time per pin, for chatter debouncing. */
+    this._lastEmit = new Map();
     /** @type {ImpactEvent[]} */
     this._events = [];
 
@@ -463,6 +474,7 @@ export class WheelPhysics {
     this._settleTimer = 0;
     this._seatEmitted = false;
     this._prevPin = -1;
+    this._lastEmit.clear();
     this.lastCrestWasBoundary = false;
 
     this.estimatedDuration = this._estimate(targetOmega);
@@ -733,10 +745,26 @@ export class WheelPhysics {
    * @returns {void}
    */
   _emit(kind, force, vImpact, pinIndex, isBoundary, tOffset) {
+    const magnitude = Math.abs(force);
+
+    if (kind !== "seat") {
+      // An engage happens at the valley floor where the contact force is near zero, so it
+      // is judged on how fast the flapper is travelling; a release happens at the crest,
+      // where force is the meaningful quantity.
+      const audible =
+        kind === "engage" ? vImpact >= PHYSICS.MIN_EVENT_SPEED : magnitude >= PHYSICS.MIN_EVENT_FORCE;
+      if (!audible) return;
+
+      const last = this._lastEmit.get(pinIndex);
+      if (last != null && this.tSim - last < PHYSICS.EVENT_DEBOUNCE) return;
+      if (this._events.length >= PHYSICS.MAX_EVENTS_PER_STEP) return;
+      this._lastEmit.set(pinIndex, this.tSim);
+    }
+
     this._events.push({
       tSim: this.tSim + tOffset,
       kind,
-      force: Math.abs(force),
+      force: magnitude,
       vImpact,
       omega: this.omega,
       isBoundary,

@@ -114,6 +114,13 @@ import {
   playBigPurchaseSound,
   base64ToWavBlob,
   ChargeSound,
+  getBuses,
+  getWheelBus,
+  getSfxBus,
+  playSeatThunk,
+  WheelRumble,
+  ImpactScheduler,
+  IMPACT_TUNING,
 } from "../scripts/sounds.js";
 import { defaultColors, beachColors, getPrestigeTheme, getTierColors } from "../scripts/themes.js";
 import {
@@ -275,6 +282,13 @@ declare global {
     playBigPurchaseSound: typeof playBigPurchaseSound;
     base64ToWavBlob: typeof base64ToWavBlob;
     ChargeSound: typeof ChargeSound;
+    getBuses: typeof getBuses;
+    getWheelBus: typeof getWheelBus;
+    getSfxBus: typeof getSfxBus;
+    playSeatThunk: typeof playSeatThunk;
+    WheelRumble: typeof WheelRumble;
+    ImpactScheduler: typeof ImpactScheduler;
+    IMPACT_TUNING: typeof IMPACT_TUNING;
     // Themes (themes.js)
     defaultColors: typeof defaultColors;
     beachColors: typeof beachColors;

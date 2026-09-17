@@ -323,6 +323,10 @@
         CoinChip,
         CoinStoreModal,
         effectiveItems,
+        getBuses,
+        getWheelBus,
+        WheelRumble,
+        ImpactScheduler,
         WheelPhysics,
         WHEEL_PRESETS,
         FLAPPER_TENSIONS,
@@ -669,6 +673,9 @@
         // Audio Refs
         const audioCtxRef = useRef(null);
         const chargeSoundRef = useRef(null); // Ref for the charging sound controller
+        const schedulerRef = useRef(null); // Places pin impacts on the audio clock
+        const rumbleRef = useRef(null); // Continuous bearing/air bed under a spin
+        const soundEnabledRef = useRef(soundEnabled); // Read live so muting mid-spin works
 
         // Achievement Tracking Refs
         const spinTimestampsRef = useRef([]); // Track spins for "Analysis Paralysis"
@@ -830,6 +837,14 @@
         useEffect(() => {
           localStorage.setItem(STORAGE_KEYS.GEMINI_API_KEY, JSON.stringify(geminiApiKey));
         }, [geminiApiKey]);
+
+        useEffect(() => {
+          soundEnabledRef.current = soundEnabled;
+          const ctx = audioCtxRef.current;
+          if (ctx && getBuses) {
+            getBuses(ctx).master.gain.setTargetAtTime(soundEnabled ? 1 : 0, ctx.currentTime, 0.02);
+          }
+        }, [soundEnabled]);
 
         useEffect(() => {
           localStorage.setItem(STORAGE_KEYS.TICK_SOUND, JSON.stringify(tickSound));
@@ -1333,6 +1348,8 @@
         const handleSettled = () => {
           const physics = physicsRef.current;
           velocityRef.current = 0;
+          if (rumbleRef.current) rumbleRef.current.stop(0.18);
+          if (schedulerRef.current) schedulerRef.current.endSpin();
           isSpinningRef.current = false;
           setIsSpinning(false);
 
@@ -1362,8 +1379,26 @@
           if (physicsRef.current) physicsRef.current.setPreset(spinDuration);
         }, [spinDuration]);
 
+        useEffect(() => {
+          const onVisibility = () => {
+            if (document.hidden) {
+              if (rumbleRef.current) rumbleRef.current.stop(0.05);
+            } else if (physicsRef.current && physicsRef.current.spinning) {
+              // ctx.currentTime stops advancing while the context is suspended but the
+              // solver's clock does not, so without re-anchoring every queued impact
+              // would fire at once on resume.
+              if (schedulerRef.current) schedulerRef.current.reanchor(physicsRef.current.tSim);
+              if (rumbleRef.current) rumbleRef.current.start();
+            }
+            lastFrameRef.current = 0;
+          };
+          document.addEventListener("visibilitychange", onVisibility);
+          return () => document.removeEventListener("visibilitychange", onVisibility);
+        }, []);
+
         useEffect(() => () => {
           if (settleTimerRef.current) clearTimeout(settleTimerRef.current);
+          if (rumbleRef.current) rumbleRef.current.dispose();
         }, []);
 
         // MAIN RENDER LOOP
@@ -1390,6 +1425,15 @@
               const result = physics.step(dt);
               rotationRef.current = physics.theta;
               velocityRef.current = physics.omega;
+
+              // --- Audio ---
+              // Impacts carry their own sub-frame timing, so they are handed to the
+              // scheduler rather than played here; firing them per frame is what made the
+              // old wheel sound sparse at speed.
+              const rateHz = (Math.abs(physics.omega) * physics.pins.count) / (2 * Math.PI);
+              if (schedulerRef.current) schedulerRef.current.schedule(result.impacts, rateHz);
+              if (rumbleRef.current) rumbleRef.current.update(physics.omega, rateHz);
+
               if (result.settled && onSettleRef.current) onSettleRef.current();
             } else if (
               !isSpinningRef.current &&
@@ -1751,10 +1795,29 @@
 
           spinStartTimeRef.current = performance.now();
           spinTargetDurationRef.current = physics.launch(powerFactor);
+
+          const ctx = audioCtxRef.current;
+          if (ctx && ImpactScheduler && WheelRumble) {
+            if (!schedulerRef.current) {
+              schedulerRef.current = new ImpactScheduler(
+                ctx,
+                getWheelBus(ctx),
+                () => soundEnabledRef.current && !isOutOfOrderRef.current,
+                () => tickSoundRef.current
+              );
+            }
+            schedulerRef.current.beginSpin();
+
+            if (rumbleRef.current) rumbleRef.current.dispose();
+            rumbleRef.current = new WheelRumble(ctx, getWheelBus(ctx));
+            if (soundEnabledRef.current && !isOutOfOrderRef.current) rumbleRef.current.start();
+          }
         };
 
         const handleStopSpin = () => {
           if (physicsRef.current) physicsRef.current.cancel();
+          if (rumbleRef.current) rumbleRef.current.stop(0.08);
+          if (schedulerRef.current) schedulerRef.current.endSpin();
           if (settleTimerRef.current) {
             clearTimeout(settleTimerRef.current);
             settleTimerRef.current = null;

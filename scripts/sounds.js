@@ -24,7 +24,7 @@ export const playWinSound = (audioCtxRef, soundEnabled) => {
     gain.gain.linearRampToValueAtTime(vol, start + 0.05);
     gain.gain.exponentialRampToValueAtTime(0.001, start + dur);
     osc.connect(gain);
-    gain.connect(ctx.destination);
+    gain.connect(getSfxBus(ctx));
     osc.start(start);
     osc.stop(start + dur);
   };
@@ -70,7 +70,7 @@ export const playJingleBells = (audioCtxRef, soundEnabled) => {
     gain.gain.exponentialRampToValueAtTime(0.001, start + dur); // Bell-like decay
 
     osc.connect(gain);
-    gain.connect(ctx.destination);
+    gain.connect(getSfxBus(ctx));
     osc.start(start);
     osc.stop(start + dur);
   };
@@ -110,295 +110,63 @@ export const playJingleBells = (audioCtxRef, soundEnabled) => {
 };
 
 /**
- * Plays a tick sound as the wheel rotates.
- * Supports multiple sound variants (default, crisp, metallic, crystal).
+ * Plays one pin strike.
+ *
+ * With an `impact` from the physics solver the voice is synthesized from that strike's
+ * own force and speed. Without one it falls back to a representative mid-force release,
+ * which is what a settings preview wants.
  *
  * @param {Object} audioCtxRef - React ref containing the Web Audio API context.
  * @param {boolean} soundEnabled - Whether sound effects are enabled.
  * @param {string} [variant=TICK_SOUNDS.DEFAULT] - The tick sound variant to play.
+ * @param {Object} [impact] - Impact event from WheelPhysics#step().
+ * @returns {void}
  * @example
  * playTickSound(audioCtxRef, true, TICK_SOUNDS.CRISP);
  */
-export const playTickSound = (audioCtxRef, soundEnabled, variant = TICK_SOUNDS.DEFAULT) => {
+export const playTickSound = (audioCtxRef, soundEnabled, variant = TICK_SOUNDS.DEFAULT, impact) => {
   if (!soundEnabled || !audioCtxRef.current) return;
+  const ctx = audioCtxRef.current;
 
-  if (variant === TICK_SOUNDS.CRISP) return playCrispWoodTickSound(audioCtxRef, soundEnabled);
-  if (variant === TICK_SOUNDS.METALLIC) return playMetallicClankTickSound(audioCtxRef, soundEnabled);
-  if (variant === TICK_SOUNDS.CRYSTAL) return playCrystalGlassTickSound(audioCtxRef, soundEnabled);
+  const spec = TICK_VARIANT_SPECS[variant] || TICK_VARIANT_SPECS[TICK_SOUNDS.DEFAULT];
+  const ev = impact || {
+    kind: "release",
+    force: IMPACT_TUNING.FORCE_REF,
+    vImpact: IMPACT_TUNING.V_REF,
+    omega: IMPACT_TUNING.OMEGA_REF * 0.5,
+    isBoundary: false,
+  };
 
-  return playDefaultTickSound(audioCtxRef, soundEnabled);
+  buildImpactVoice(ctx, getWheelBus(ctx), spec, mapImpact(ev, spec, 1, 1), ctx.currentTime + 0.002);
 };
 
 /**
  * Plays the default electrical/plastic click tick sound.
- *
- * @param {Object} audioCtxRef - React ref containing the Web Audio API context.
- * @param {boolean} soundEnabled - Whether sound effects are enabled.
+ * @param {Object} audioCtxRef @param {boolean} soundEnabled @returns {void}
  */
-export const playDefaultTickSound = (audioCtxRef, soundEnabled) => {
-  if (!soundEnabled || !audioCtxRef.current) return;
-  const ctx = audioCtxRef.current;
-
-  // Short, "plastic click" sound
-  const osc = ctx.createOscillator();
-  const gain = ctx.createGain();
-
-  osc.type = "square";
-  osc.frequency.setValueAtTime(600, ctx.currentTime);
-  osc.frequency.exponentialRampToValueAtTime(100, ctx.currentTime + 0.05);
-
-  gain.gain.setValueAtTime(0.2, ctx.currentTime);
-  gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.05);
-
-  osc.connect(gain);
-  gain.connect(ctx.destination);
-
-  osc.start();
-  osc.stop(ctx.currentTime + 0.05);
-};
+export const playDefaultTickSound = (audioCtxRef, soundEnabled) =>
+  playTickSound(audioCtxRef, soundEnabled, TICK_SOUNDS.DEFAULT);
 
 /**
  * Plays a crisp wooden knock tick sound.
- * Synthesizes a multi-layered wood percussion sound with clarity and presence.
- *
- * @param {Object} audioCtxRef - React ref containing the Web Audio API context.
- * @param {boolean} soundEnabled - Whether sound effects are enabled.
+ * @param {Object} audioCtxRef @param {boolean} soundEnabled @returns {void}
  */
-export const playCrispWoodTickSound = (audioCtxRef, soundEnabled) => {
-  if (!soundEnabled || !audioCtxRef.current) return;
-  const ctx = audioCtxRef.current;
-  const now = ctx.currentTime;
-
-  // Layer 1: Clean mid-range fundamental (wood body without heavy bass)
-  const fundamental = ctx.createOscillator();
-  const fundamentalGain = ctx.createGain();
-  fundamental.type = "sine";
-  fundamental.frequency.setValueAtTime(280, now); // Mid-range for clarity
-  fundamental.frequency.exponentialRampToValueAtTime(220, now + 0.08);
-  fundamentalGain.gain.setValueAtTime(0.25, now);
-  fundamentalGain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
-  fundamental.connect(fundamentalGain);
-  fundamentalGain.connect(ctx.destination);
-  fundamental.start(now);
-  fundamental.stop(now + 0.08);
-
-  // Layer 2: Bright harmonic (clarity and presence)
-  const harmonic = ctx.createOscillator();
-  const harmonicGain = ctx.createGain();
-  harmonic.type = "triangle";
-  harmonic.frequency.setValueAtTime(560, now); // 2x fundamental
-  harmonic.frequency.exponentialRampToValueAtTime(440, now + 0.06);
-  harmonicGain.gain.setValueAtTime(0.28, now); // Strong for clarity
-  harmonicGain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
-  harmonic.connect(harmonicGain);
-  harmonicGain.connect(ctx.destination);
-  harmonic.start(now);
-  harmonic.stop(now + 0.06);
-
-  // Layer 3: High-frequency definition (crisp character)
-  const highTone = ctx.createOscillator();
-  const highGain = ctx.createGain();
-  highTone.type = "sine";
-  highTone.frequency.setValueAtTime(1200, now); // High and clear
-  highTone.frequency.exponentialRampToValueAtTime(900, now + 0.05);
-  highGain.gain.setValueAtTime(0.2, now); // Prominent for crispness
-  highGain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
-  highTone.connect(highGain);
-  highGain.connect(ctx.destination);
-  highTone.start(now);
-  highTone.stop(now + 0.05);
-
-  // Layer 4: Ultra-crisp shimmer (premium sparkle)
-  const shimmer = ctx.createOscillator();
-  const shimmerGain = ctx.createGain();
-  shimmer.type = "sine";
-  shimmer.frequency.setValueAtTime(2200, now); // Very high for sparkle
-  shimmer.frequency.exponentialRampToValueAtTime(1600, now + 0.04);
-  shimmerGain.gain.setValueAtTime(0.12, now);
-  shimmerGain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
-  shimmer.connect(shimmerGain);
-  shimmerGain.connect(ctx.destination);
-  shimmer.start(now);
-  shimmer.stop(now + 0.04);
-
-  // Layer 5: Very short percussive attack (the "knock")
-  const attack = ctx.createOscillator();
-  const attackGain = ctx.createGain();
-  attack.type = "sawtooth";
-  attack.frequency.setValueAtTime(600, now); // Higher for crispness
-  attack.frequency.exponentialRampToValueAtTime(300, now + 0.02);
-  attackGain.gain.setValueAtTime(0.3, now); // Strong initial attack
-  attackGain.gain.exponentialRampToValueAtTime(0.001, now + 0.02);
-  attack.connect(attackGain);
-  attackGain.connect(ctx.destination);
-  attack.start(now);
-  attack.stop(now + 0.02);
-
-  // Layer 6: Bright wood texture (minimal filtering for maximum clarity)
-  const bufferSize = ctx.sampleRate * 0.015;
-  const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-  const data = buffer.getChannelData(0);
-  for (let i = 0; i < bufferSize; i++) {
-    data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.15));
-  }
-  const noise = ctx.createBufferSource();
-  noise.buffer = buffer;
-
-  // High-pass and low-pass for crisp, clean texture
-  const highpass = ctx.createBiquadFilter();
-  highpass.type = "highpass";
-  highpass.frequency.value = 300; // Remove muddy lows
-  highpass.Q.value = 0.5;
-
-  const lowpass = ctx.createBiquadFilter();
-  lowpass.type = "lowpass";
-  lowpass.frequency.value = 3500; // Keep bright highs
-  lowpass.Q.value = 1.0; // Slight resonance for character
-
-  const noiseGain = ctx.createGain();
-  noiseGain.gain.setValueAtTime(0.28, now);
-  noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.015);
-
-  noise.connect(highpass);
-  highpass.connect(lowpass);
-  lowpass.connect(noiseGain);
-  noiseGain.connect(ctx.destination);
-  noise.start(now);
-};
+export const playCrispWoodTickSound = (audioCtxRef, soundEnabled) =>
+  playTickSound(audioCtxRef, soundEnabled, TICK_SOUNDS.CRISP);
 
 /**
  * Plays a heavy metallic clank tick sound.
- * Simulates the sound of metal gears or mechanical parts engaging.
- *
- * @param {Object} audioCtxRef - React ref containing the Web Audio API context.
- * @param {boolean} soundEnabled - Whether sound effects are enabled.
+ * @param {Object} audioCtxRef @param {boolean} soundEnabled @returns {void}
  */
-export const playMetallicClankTickSound = (audioCtxRef, soundEnabled) => {
-  if (!soundEnabled || !audioCtxRef.current) return;
-  const ctx = audioCtxRef.current;
-  const now = ctx.currentTime;
-
-  // Layer 1: The "Clank" - Low frequency metallic impact
-  const impact = ctx.createOscillator();
-  const impactGain = ctx.createGain();
-  impact.type = "square"; // Square wave for a harder, metallic edge
-  impact.frequency.setValueAtTime(150, now);
-  impact.frequency.exponentialRampToValueAtTime(40, now + 0.1);
-  impactGain.gain.setValueAtTime(0.25, now);
-  impactGain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
-  impact.connect(impactGain);
-  impactGain.connect(ctx.destination);
-  impact.start(now);
-  impact.stop(now + 0.1);
-
-  // Layer 2: The "Ratchet" - High frequency gear scrape
-  // Using a bandpass filtered sawtooth for that "zipper" or "ratchet" quality
-  const ratchet = ctx.createOscillator();
-  const ratchetGain = ctx.createGain();
-  const ratchetFilter = ctx.createBiquadFilter();
-
-  ratchet.type = "sawtooth";
-  ratchet.frequency.setValueAtTime(800, now);
-  ratchet.frequency.linearRampToValueAtTime(400, now + 0.05); // Pitch drop simulates friction
-
-  ratchetFilter.type = "bandpass";
-  ratchetFilter.frequency.value = 1200;
-  ratchetFilter.Q.value = 2; // Resonant peak for metallic character
-
-  ratchetGain.gain.setValueAtTime(0.12, now);
-  ratchetGain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
-
-  ratchet.connect(ratchetFilter);
-  ratchetFilter.connect(ratchetGain);
-  ratchetGain.connect(ctx.destination);
-  ratchet.start(now);
-  ratchet.stop(now + 0.06);
-
-  // Layer 3: Metallic Ring/Ping - High pitched resonance
-  const ring = ctx.createOscillator();
-  const ringGain = ctx.createGain();
-  ring.type = "sine";
-  ring.frequency.setValueAtTime(2400, now); // High metallic ping
-  ringGain.gain.setValueAtTime(0.08, now);
-  ringGain.gain.exponentialRampToValueAtTime(0.001, now + 0.15); // Longer decay for resonance
-  ring.connect(ringGain);
-  ringGain.connect(ctx.destination);
-  ring.start(now);
-  ring.stop(now + 0.15);
-
-  // Layer 4: Grinding Noise - Mechanical friction
-  const bufferSize = ctx.sampleRate * 0.04;
-  const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-  const data = buffer.getChannelData(0);
-  for (let i = 0; i < bufferSize; i++) {
-    data[i] = Math.random() * 2 - 1;
-  }
-  const noise = ctx.createBufferSource();
-  noise.buffer = buffer;
-
-  const noiseFilter = ctx.createBiquadFilter();
-  noiseFilter.type = "highpass";
-  noiseFilter.frequency.value = 1000; // Remove mud
-
-  const noiseGain = ctx.createGain();
-  noiseGain.gain.setValueAtTime(0.08, now);
-  noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
-
-  noise.connect(noiseFilter);
-  noiseFilter.connect(noiseGain);
-  noiseGain.connect(ctx.destination);
-  noise.start(now);
-};
+export const playMetallicClankTickSound = (audioCtxRef, soundEnabled) =>
+  playTickSound(audioCtxRef, soundEnabled, TICK_SOUNDS.METALLIC);
 
 /**
  * Plays a luxurious crystal glass tick sound.
- * Creates a high-pitched, resonant tone reminiscent of fine crystal.
- *
- * @param {Object} audioCtxRef - React ref containing the Web Audio API context.
- * @param {boolean} soundEnabled - Whether sound effects are enabled.
+ * @param {Object} audioCtxRef @param {boolean} soundEnabled @returns {void}
  */
-export const playCrystalGlassTickSound = (audioCtxRef, soundEnabled) => {
-  if (!soundEnabled || !audioCtxRef.current) return;
-  const ctx = audioCtxRef.current;
-  const now = ctx.currentTime;
-
-  // Layer 1: The "Ping" - Pure sine wave for the fundamental glass tone
-  const fundamental = ctx.createOscillator();
-  const fundamentalGain = ctx.createGain();
-  fundamental.type = "sine";
-  fundamental.frequency.setValueAtTime(1800, now); // High pitch for crystal
-  fundamentalGain.gain.setValueAtTime(0.3, now);
-  fundamentalGain.gain.exponentialRampToValueAtTime(0.001, now + 0.6); // Long, clear decay
-  fundamental.connect(fundamentalGain);
-  fundamentalGain.connect(ctx.destination);
-  fundamental.start(now);
-  fundamental.stop(now + 0.6);
-
-  // Layer 2: The "Shimmer" - High harmonic for fragility
-  const harmonic = ctx.createOscillator();
-  const harmonicGain = ctx.createGain();
-  harmonic.type = "sine";
-  harmonic.frequency.setValueAtTime(3200, now); // Very high harmonic
-  harmonicGain.gain.setValueAtTime(0.1, now);
-  harmonicGain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
-  harmonic.connect(harmonicGain);
-  harmonicGain.connect(ctx.destination);
-  harmonic.start(now);
-  harmonic.stop(now + 0.4);
-
-  // Layer 3: The "Tap" - Initial impact
-  const tap = ctx.createOscillator();
-  const tapGain = ctx.createGain();
-  tap.type = "triangle";
-  tap.frequency.setValueAtTime(2000, now);
-  tap.frequency.exponentialRampToValueAtTime(1000, now + 0.02);
-  tapGain.gain.setValueAtTime(0.1, now);
-  tapGain.gain.exponentialRampToValueAtTime(0.001, now + 0.02);
-  tap.connect(tapGain);
-  tapGain.connect(ctx.destination);
-  tap.start(now);
-  tap.stop(now + 0.02);
-};
+export const playCrystalGlassTickSound = (audioCtxRef, soundEnabled) =>
+  playTickSound(audioCtxRef, soundEnabled, TICK_SOUNDS.CRYSTAL);
 
 /**
  * Plays a fire crackle sound effect during overcharge.
@@ -436,7 +204,7 @@ export const playFireCrackle = (audioCtxRef, soundEnabled, isOutOfOrder) => {
 
   noise.connect(filter);
   filter.connect(gain);
-  gain.connect(ctx.destination);
+  gain.connect(getSfxBus(ctx));
 
   noise.start();
 };
@@ -464,7 +232,7 @@ export const playBreakdownSound = (audioCtxRef, soundEnabled) => {
   gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1);
 
   osc.connect(gain);
-  gain.connect(ctx.destination);
+  gain.connect(getSfxBus(ctx));
 
   osc.start();
   osc.stop(ctx.currentTime + 1);
@@ -499,7 +267,7 @@ export const playPurchaseSound = (audioCtxRef, soundEnabled) => {
 
   chaOsc.connect(chaFilter);
   chaFilter.connect(chaGain);
-  chaGain.connect(ctx.destination);
+  chaGain.connect(getSfxBus(ctx));
   chaOsc.start(now);
   chaOsc.stop(now + 0.1);
 
@@ -513,7 +281,7 @@ export const playPurchaseSound = (audioCtxRef, soundEnabled) => {
   bell1Gain.gain.exponentialRampToValueAtTime(0.001, now + 0.8); // Long decay
 
   bell1.connect(bell1Gain);
-  bell1Gain.connect(ctx.destination);
+  bell1Gain.connect(getSfxBus(ctx));
   bell1.start(now + 0.08);
   bell1.stop(now + 0.8);
 
@@ -526,7 +294,7 @@ export const playPurchaseSound = (audioCtxRef, soundEnabled) => {
   bell2Gain.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
 
   bell2.connect(bell2Gain);
-  bell2Gain.connect(ctx.destination);
+  bell2Gain.connect(getSfxBus(ctx));
   bell2.start(now + 0.12);
   bell2.stop(now + 0.6);
 };
@@ -557,7 +325,7 @@ export const playBigPurchaseSound = (audioCtxRef, soundEnabled) => {
     gain.gain.exponentialRampToValueAtTime(0.001, now + 2.0); // Long Sustain
 
     osc.connect(gain);
-    gain.connect(ctx.destination);
+    gain.connect(getSfxBus(ctx));
     osc.start(now);
     osc.stop(now + 2.0);
   });
@@ -576,7 +344,7 @@ export const playBigPurchaseSound = (audioCtxRef, soundEnabled) => {
     gain.gain.exponentialRampToValueAtTime(0.001, now + 1.0);
 
     osc.connect(gain);
-    gain.connect(ctx.destination);
+    gain.connect(getSfxBus(ctx));
     osc.start(now + 0.1 + i * 0.08);
     osc.stop(now + 1.0);
   });
@@ -591,7 +359,7 @@ export const playBigPurchaseSound = (audioCtxRef, soundEnabled) => {
   bassGain.gain.exponentialRampToValueAtTime(0.001, now + 1.5);
 
   bassOsc.connect(bassGain);
-  bassGain.connect(ctx.destination);
+  bassGain.connect(getSfxBus(ctx));
   bassOsc.start(now);
   bassOsc.stop(now + 1.5);
 };
@@ -678,7 +446,7 @@ export const ChargeSound = class {
     // Connect: Oscillator -> Filter -> Gain -> Output
     this.osc.connect(this.filter);
     this.filter.connect(this.gain);
-    this.gain.connect(ctx.destination);
+    this.gain.connect(getSfxBus(ctx));
     this.osc.start();
   }
 
@@ -765,7 +533,839 @@ export const ChargeSound = class {
   }
 };
 
-// Expose to window (needed for Babel Standalone)
+
+
+/* ==========================================================================
+ * Impact-driven wheel audio
+ *
+ * The wheel used to fire one fixed tick per animation frame, so a fast spin
+ * crossing five pins in 16ms played a single click and sounded sparse and
+ * digital. The physics solver now reports every contact it computes, with a
+ * sub-frame timestamp and the force behind it, and this layer turns that
+ * stream into sound: each strike is synthesized from its own impact, and the
+ * whole thing is scheduled on the audio clock rather than the frame clock.
+ * ========================================================================== */
+
+/**
+ * Normalization for the physics-side quantities. These are measured, not guessed:
+ * they are the medians of the release-force and impact-speed distributions over a
+ * few hundred simulated spins. Re-measure with tools/physics-sim.mjs if the solver
+ * is retuned.
+ * @type {Object<string, number>}
+ */
+export const IMPACT_TUNING = {
+  /** Median contact force of a mid-spin crest release. */
+  FORCE_REF: 9,
+  /** Median flapper approach speed, rad/s. */
+  V_REF: 90,
+  /** Wheel speed treated as "fast", rad/s. */
+  OMEGA_REF: 10,
+  /** Impact rate at which density ducking starts, per second. */
+  RATE_REF: 12,
+  /** Peak linear gain of one nominal release voice. */
+  AMP_BASE: 0.22,
+};
+
+/** @param {number} v @param {number} lo @param {number} hi @returns {number} */
+const clampAudio = (v, lo, hi) => (v < lo ? lo : v > hi ? hi : v);
+
+/** @param {number} a @param {number} b @param {number} x @returns {number} */
+const smoothstep = (a, b, x) => {
+  const t = clampAudio((x - a) / (b - a), 0, 1);
+  return t * t * (3 - 2 * t);
+};
+
+/**
+ * @typedef {Object} AudioBuses
+ * @property {GainNode} master Global mute/level handle.
+ * @property {GainNode} sfx Unity-gain path for the pre-existing sounds.
+ * @property {GainNode} wheel Compressed and soft-clipped path for wheel impacts.
+ */
+
+/** @type {WeakMap<BaseAudioContext, AudioBuses>} */
+const busCache = new WeakMap();
+
+/**
+ * Returns this context's shared buses, creating them on first use.
+ *
+ * Everything previously connected straight to `ctx.destination`, so overlapping
+ * transients clipped: the wooden tick alone schedules six layers whose peaks sum
+ * past 1.0. The wheel path now goes through a compressor and a soft clipper; the
+ * sfx path stays at unity gain so the existing sounds come out unchanged.
+ *
+ * @param {AudioContext} ctx
+ * @returns {AudioBuses}
+ */
+export const getBuses = (ctx) => {
+  const cached = busCache.get(ctx);
+  if (cached) return cached;
+
+  const master = ctx.createGain();
+  master.gain.value = 1;
+  master.connect(ctx.destination);
+
+  const sfx = ctx.createGain();
+  sfx.gain.value = 1;
+  sfx.connect(master);
+
+  const comp = ctx.createDynamicsCompressor();
+  comp.threshold.value = -16;
+  comp.knee.value = 10;
+  comp.ratio.value = 6;
+  comp.attack.value = 0.003;
+  comp.release.value = 0.2;
+
+  // The compressor's 3ms attack lets the very front of each transient through
+  // untouched, which is exactly the part that clips, so a soft clipper catches it.
+  // WaveShaper hard-clips anything outside [-1, 1] before consulting the curve, so
+  // the pad keeps the input inside that window.
+  const pad = ctx.createGain();
+  pad.gain.value = 0.7;
+
+  const shaper = ctx.createWaveShaper();
+  const curve = new Float32Array(4096);
+  for (let i = 0; i < curve.length; i++) {
+    const x = (i / (curve.length - 1)) * 2 - 1;
+    const a = Math.abs(x);
+    curve[i] = a <= 0.6 ? x : Math.sign(x) * (0.6 + 0.38 * Math.tanh((a - 0.6) / 0.38));
+  }
+  shaper.curve = curve;
+  shaper.oversample = "2x";
+
+  const wheel = ctx.createGain();
+  wheel.gain.value = 1;
+  wheel.connect(comp);
+  comp.connect(pad);
+  pad.connect(shaper);
+  shaper.connect(master);
+
+  const buses = { master, sfx, wheel };
+  busCache.set(ctx, buses);
+  return buses;
+};
+
+/** @param {AudioContext} ctx @returns {GainNode} */
+export const getWheelBus = (ctx) => getBuses(ctx).wheel;
+
+/** @param {AudioContext} ctx @returns {GainNode} */
+export const getSfxBus = (ctx) => getBuses(ctx).sfx;
+
+/**
+ * @typedef {Object} NoiseBuffers
+ * @property {AudioBuffer} low
+ * @property {AudioBuffer} mid
+ * @property {AudioBuffer} bright
+ * @property {AudioBuffer} brown
+ */
+
+/** @type {WeakMap<BaseAudioContext, NoiseBuffers>} */
+const noiseCache = new WeakMap();
+
+/**
+ * Pre-bakes the noise beds once per context.
+ *
+ * Building noise per tick meant four nodes per strike; at well over a hundred
+ * strikes a second that allocation pressure alone drops frames. Reusing a buffer
+ * cuts the noise path to a source and a gain.
+ *
+ * @param {AudioContext} ctx
+ * @returns {NoiseBuffers}
+ */
+export const getNoiseBuffers = (ctx) => {
+  const cached = noiseCache.get(ctx);
+  if (cached) return cached;
+
+  const sr = ctx.sampleRate;
+  /** @param {number} fc @returns {number} */
+  const poleFor = (fc) => 1 - Math.exp((-2 * Math.PI * fc) / sr);
+
+  /**
+   * @param {number} seconds
+   * @param {(x: number, i: number) => number} shape
+   * @returns {AudioBuffer}
+   */
+  const make = (seconds, shape) => {
+    const buf = ctx.createBuffer(1, Math.floor(sr * seconds), sr);
+    const data = buf.getChannelData(0);
+    let peak = 1e-9;
+    for (let i = 0; i < data.length; i++) {
+      const v = shape(Math.random() * 2 - 1, i);
+      data[i] = v;
+      if (Math.abs(v) > peak) peak = Math.abs(v);
+    }
+    for (let i = 0; i < data.length; i++) data[i] /= peak;
+    return buf;
+  };
+
+  let lp1 = 0;
+  const aLow = poleFor(900);
+  const low = make(1, (x) => {
+    lp1 += aLow * (x - lp1);
+    return lp1;
+  });
+
+  let hpState = 0;
+  let lp2 = 0;
+  const aHp = poleFor(400);
+  const aLp = poleFor(3800);
+  const mid = make(1, (x) => {
+    hpState += aHp * (x - hpState);
+    const hp = x - hpState;
+    lp2 += aLp * (hp - lp2);
+    return lp2;
+  });
+
+  let hp2 = 0;
+  const aHp2 = poleFor(1200);
+  const bright = make(1, (x) => {
+    hp2 += aHp2 * (x - hp2);
+    return x - hp2;
+  });
+
+  const brown = make(2, (() => {
+    let y = 0;
+    return (x) => {
+      y = 0.98 * y + 0.02 * x;
+      return y;
+    };
+  })());
+
+  // Crossfade the brown tail into its head so the loop has no seam.
+  const bd = brown.getChannelData(0);
+  const fade = Math.floor(sr * 0.05);
+  for (let i = 0; i < fade; i++) {
+    const t = i / fade;
+    bd[i] = bd[i] * t + bd[bd.length - fade + i] * (1 - t);
+  }
+
+  const buffers = { low, mid, bright, brown };
+  noiseCache.set(ctx, buffers);
+  return buffers;
+};
+
+/**
+ * @typedef {Object} TickPartial
+ * @property {OscillatorType} type
+ * @property {number} ratio Multiple of the voice's base frequency.
+ * @property {number} gain Level relative to the voice.
+ * @property {number} decayMul Decay relative to the voice.
+ * @property {number} glide End frequency as a fraction of the start; 1 means no glide.
+ */
+
+/**
+ * @typedef {Object} TickVariantSpec
+ * @property {number} f0
+ * @property {number} pitchSemis
+ * @property {number} decay0
+ * @property {number} decayMax
+ * @property {number} overlapAllow Seconds of decay allowed per impact per second.
+ * @property {number} cutoff0
+ * @property {number} ampBase
+ * @property {number} attack
+ * @property {number} detuneCents
+ * @property {TickPartial[]} partials
+ * @property {{band: string, gain: number, decayMul: number}|null} noise
+ */
+
+/**
+ * Timbre definitions for the four selectable tick sounds. The frequency ratios are
+ * carried over from the original hand-written variants so each keeps its character;
+ * what changes is that force and speed now drive the envelope rather than constants.
+ * @type {Object<string, TickVariantSpec>}
+ */
+export const TICK_VARIANT_SPECS = /** @type {Object<string, TickVariantSpec>} */ ({
+  [TICK_SOUNDS.DEFAULT]: {
+    f0: 560,
+    pitchSemis: 10,
+    decay0: 0.045,
+    decayMax: 0.07,
+    overlapAllow: 0.9,
+    cutoff0: 3200,
+    ampBase: 0.95,
+    attack: 0.0006,
+    detuneCents: 15,
+    partials: [{ type: "square", ratio: 1, gain: 1, decayMul: 1, glide: 0.18 }],
+    noise: { band: "bright", gain: 0.1, decayMul: 0.25 },
+  },
+  [TICK_SOUNDS.CRISP]: {
+    f0: 285,
+    pitchSemis: 8,
+    decay0: 0.075,
+    decayMax: 0.11,
+    overlapAllow: 0.9,
+    cutoff0: 4000,
+    ampBase: 1.1,
+    attack: 0.0008,
+    detuneCents: 20,
+    partials: [
+      { type: "sine", ratio: 1, gain: 1, decayMul: 1, glide: 0.78 },
+      { type: "triangle", ratio: 1.96, gain: 0.75, decayMul: 0.75, glide: 0.78 },
+      { type: "sine", ratio: 4.2, gain: 0.35, decayMul: 0.55, glide: 0.8 },
+    ],
+    noise: { band: "mid", gain: 0.5, decayMul: 0.22 },
+  },
+  [TICK_SOUNDS.METALLIC]: {
+    f0: 155,
+    pitchSemis: 6,
+    decay0: 0.1,
+    decayMax: 0.16,
+    overlapAllow: 0.9,
+    cutoff0: 5000,
+    ampBase: 1,
+    attack: 0.0006,
+    detuneCents: 25,
+    partials: [
+      { type: "square", ratio: 1, gain: 1, decayMul: 1, glide: 0.28 },
+      { type: "sawtooth", ratio: 5.2, gain: 0.42, decayMul: 0.6, glide: 0.5 },
+      { type: "sine", ratio: 15.5, gain: 0.28, decayMul: 1.5, glide: 1 },
+    ],
+    noise: { band: "bright", gain: 0.3, decayMul: 0.4 },
+  },
+  [TICK_SOUNDS.CRYSTAL]: {
+    f0: 1800,
+    // Real glass has fixed modal frequencies: striking it harder changes how loud and
+    // how noisy it is, not what note it is. A crystal that pitch-bends reads as a synth.
+    pitchSemis: 3,
+    decay0: 0.42,
+    decayMax: 0.6,
+    // A long decay is the point of this variant, but twenty overlapping identical sines
+    // sum coherently into a siren, so it is allowed more overlap and given real detune.
+    overlapAllow: 2.2,
+    cutoff0: 9000,
+    ampBase: 0.85,
+    attack: 0.0015,
+    detuneCents: 60,
+    partials: [
+      { type: "sine", ratio: 1, gain: 1, decayMul: 1, glide: 1 },
+      { type: "sine", ratio: 1.78, gain: 0.33, decayMul: 0.72, glide: 1 },
+      { type: "triangle", ratio: 1.11, gain: 0.3, decayMul: 0.06, glide: 0.5 },
+    ],
+    noise: { band: "bright", gain: 0.08, decayMul: 0.06 },
+  },
+});
+
+/**
+ * Turns one impact into voice parameters.
+ *
+ * Loudness follows impact speed and brightness follows contact force, which is how
+ * struck objects actually behave. Both are passed through tanh so that a mis-set
+ * reference shifts the timbre slightly instead of falling off a loudness cliff: a
+ * 4x error in FORCE_REF moves the level by under 2dB.
+ *
+ * @param {Object} ev Impact event from the physics solver.
+ * @param {TickVariantSpec} spec Variant timbre spec.
+ * @param {number} rateHz Current impact rate.
+ * @param {number} merged How many impacts were folded into this grain.
+ * @returns {{amp: number, freq: number, cutoff: number, decay: number}}
+ */
+const mapImpact = (ev, spec, rateHz, merged) => {
+  const T = IMPACT_TUNING;
+  const reverse = ev.omega < 0;
+  const isEngage = ev.kind === "engage";
+
+  const drive = Math.tanh(clampAudio(ev.force / T.FORCE_REF, 0, 6));
+  const punch = Math.tanh(clampAudio((ev.vImpact || ev.force) / T.V_REF, 0, 6));
+  const speed = clampAudio(Math.abs(ev.omega) / T.OMEGA_REF, 0, 1.5);
+
+  // Without this the wheel simply gets louder the faster it turns, purely because more
+  // voices overlap. Ducking with density keeps the level roughly steady.
+  const rateDuck = Math.min(1, Math.pow(T.RATE_REF / Math.max(rateHz, T.RATE_REF), 0.4));
+  const boundary = ev.isBoundary ? 1 + 0.25 * (1 - smoothstep(2, 10, rateHz)) : 1;
+
+  const amp = clampAudio(
+    T.AMP_BASE *
+      Math.pow(punch, 0.6) *
+      (isEngage ? 0.38 : 1) *
+      (reverse ? 0.55 : 1) *
+      boundary *
+      rateDuck *
+      Math.min(Math.sqrt(merged), 1.8) *
+      spec.ampBase,
+    0,
+    0.5
+  );
+
+  const freq = clampAudio(
+    spec.f0 *
+      Math.pow(2, (spec.pitchSemis * (drive - 0.5)) / 12) *
+      (isEngage ? 0.7 : 1) *
+      (reverse ? 0.72 : 1) *
+      (1 + 0.06 * (Math.random() - 0.5)) *
+      (ev.isBoundary && rateHz < 10 ? 1.035 : 1),
+    45,
+    5000
+  );
+
+  const cutoff = clampAudio(
+    spec.cutoff0 * (0.45 + 1.35 * drive) * (1 + 0.25 * speed) * (isEngage ? 0.5 : 1) * (reverse ? 0.5 : 1),
+    250,
+    14000
+  );
+
+  // Capping decay against the impact rate is load-bearing: without it a long-tailed
+  // variant stacks dozens of simultaneous voices into a drone at speed.
+  const decay = clampAudio(
+    spec.decay0 * (0.55 + 0.75 * drive) * (isEngage ? 0.45 : 1) * (reverse ? 1.25 : 1) * Math.min(1.6, 1 + 0.15 * (merged - 1)),
+    0.008,
+    Math.min(spec.decayMax, spec.overlapAllow / Math.max(rateHz, 1))
+  );
+
+  return { amp, freq, cutoff, decay };
+};
+
+/**
+ * Builds and schedules one impact voice.
+ *
+ * @param {AudioContext} ctx
+ * @param {AudioNode} dest
+ * @param {TickVariantSpec} spec
+ * @param {{amp: number, freq: number, cutoff: number, decay: number}} p
+ * @param {number} t0 Audio-clock start time.
+ * @returns {number} The time at which the voice finishes.
+ */
+const buildImpactVoice = (ctx, dest, spec, p, t0) => {
+  const voice = ctx.createGain();
+  const end = t0 + p.decay + 0.004;
+
+  // The old ticks jumped straight to full gain and stopped their node at -40dBFS, so
+  // every click carried a click at each end. A sub-millisecond ramp in and a short
+  // linear ramp to true zero remove both.
+  voice.gain.setValueAtTime(0, t0);
+  voice.gain.linearRampToValueAtTime(p.amp, t0 + spec.attack);
+  voice.gain.exponentialRampToValueAtTime(Math.max(p.amp * 0.0015, 1e-5), t0 + p.decay);
+  voice.gain.linearRampToValueAtTime(0, end);
+
+  let tail = voice;
+  if (p.cutoff < 8000) {
+    const lp = ctx.createBiquadFilter();
+    lp.type = "lowpass";
+    lp.frequency.value = p.cutoff;
+    voice.connect(lp);
+    lp.connect(dest);
+    tail = lp;
+  } else {
+    voice.connect(dest);
+  }
+
+  for (const part of spec.partials) {
+    const osc = ctx.createOscillator();
+    const g = ctx.createGain();
+    osc.type = part.type;
+    g.gain.value = part.gain;
+
+    const f = p.freq * part.ratio;
+    osc.frequency.setValueAtTime(f, t0);
+    if (part.glide !== 1) {
+      osc.frequency.exponentialRampToValueAtTime(
+        Math.max(f * part.glide, 20),
+        t0 + p.decay * part.decayMul * 0.9
+      );
+    }
+    osc.detune.value = (Math.random() * 2 - 1) * spec.detuneCents;
+
+    osc.connect(g);
+    g.connect(voice);
+    osc.start(t0);
+    osc.stop(t0 + p.decay * part.decayMul + 0.006);
+  }
+
+  if (spec.noise) {
+    const buffers = getNoiseBuffers(ctx);
+    const src = ctx.createBufferSource();
+    const g = ctx.createGain();
+    src.buffer = buffers[spec.noise.band];
+    src.playbackRate.value = 0.8 + Math.random() * 0.45;
+    g.gain.value = spec.noise.gain;
+    src.connect(g);
+    g.connect(voice);
+    const offset = Math.random() * Math.max(src.buffer.duration - 0.2, 0.01);
+    src.start(t0, offset, p.decay * spec.noise.decayMul + 0.01);
+  }
+
+  return end;
+};
+
+/**
+ * Plays the heavy wooden settle when the flapper drops into its final valley.
+ *
+ * This is not a loud release: it is the wheel's last energy going into the mount, so
+ * it is lower, slower, duller and stripped of the bright partials. It also has a floor,
+ * because "the wheel has stopped" has to be audible even after a feeble spin.
+ *
+ * @param {AudioContext} ctx
+ * @param {AudioNode} dest
+ * @param {number} force
+ * @param {number} t0
+ * @returns {void}
+ */
+export const playSeatThunk = (ctx, dest, force, t0) => {
+  const base = 105;
+  const amp = clampAudio(0.3 * Math.pow(Math.tanh(force / IMPACT_TUNING.FORCE_REF), 0.5), 0.1, 0.34);
+
+  const voice = ctx.createGain();
+  voice.gain.setValueAtTime(0, t0);
+  voice.gain.linearRampToValueAtTime(amp, t0 + 0.003);
+  voice.gain.exponentialRampToValueAtTime(amp * 0.0015, t0 + 0.26);
+  voice.gain.linearRampToValueAtTime(0, t0 + 0.3);
+
+  const lp = ctx.createBiquadFilter();
+  lp.type = "lowpass";
+  lp.frequency.value = 1100;
+  lp.Q.value = 0.7;
+  voice.connect(lp);
+  lp.connect(dest);
+
+  const layers = /** @type {{type: OscillatorType, f: number, glide: number, gain: number, decay: number}[]} */ ([
+    { type: "sine", f: base, glide: 0.72, gain: 1, decay: 0.26 },
+    { type: "triangle", f: base * 2.02, glide: 1, gain: 0.45, decay: 0.13 },
+    { type: "sawtooth", f: base * 4.5, glide: 0.44, gain: 0.3, decay: 0.022 },
+  ]);
+  for (const l of layers) {
+    const osc = ctx.createOscillator();
+    const g = ctx.createGain();
+    osc.type = l.type;
+    g.gain.value = l.gain;
+    osc.frequency.setValueAtTime(l.f, t0);
+    if (l.glide !== 1) osc.frequency.exponentialRampToValueAtTime(l.f * l.glide, t0 + l.decay * 0.9);
+    osc.connect(g);
+    g.connect(voice);
+    osc.start(t0);
+    osc.stop(t0 + l.decay + 0.01);
+  }
+
+  const src = ctx.createBufferSource();
+  const ng = ctx.createGain();
+  src.buffer = getNoiseBuffers(ctx).low;
+  ng.gain.value = 0.35;
+  src.connect(ng);
+  ng.connect(voice);
+  src.start(t0, Math.random() * 0.5, 0.055);
+};
+
+/**
+ * The continuous bed under a spin: bearing rumble, air whoosh, and the ripple buzz
+ * that takes over once individual ticks stop being distinguishable.
+ *
+ * The low band only really exists on headphones and desktop speakers; phone speakers
+ * are effectively dead below 200Hz. The impression of mass on a phone comes from the
+ * mid-band whoosh, so that is a separate band rather than one wideband rumble.
+ */
+export class WheelRumble {
+  /**
+   * @param {AudioContext} ctx
+   * @param {AudioNode} dest
+   */
+  constructor(ctx, dest) {
+    this.ctx = ctx;
+    this.dest = dest;
+    this.running = false;
+    this.disposed = false;
+    /** @type {AudioBufferSourceNode|null} */
+    this.noise = null;
+    /** @type {OscillatorNode|null} */
+    this.motor = null;
+    /** @type {GainNode|null} */
+    this.sum = null;
+  }
+
+  /** Idempotent: starting an already-running bed must not stack a second one. @returns {void} */
+  start() {
+    if (this.running || this.disposed) return;
+    const ctx = this.ctx;
+    const now = ctx.currentTime;
+
+    this.sum = ctx.createGain();
+    this.sum.gain.setValueAtTime(0, now);
+    this.sum.gain.linearRampToValueAtTime(1, now + 0.12);
+    this.sum.connect(this.dest);
+
+    this.noise = ctx.createBufferSource();
+    this.noise.buffer = getNoiseBuffers(ctx).brown;
+    this.noise.loop = true;
+
+    this.bearingBP = ctx.createBiquadFilter();
+    this.bearingBP.type = "bandpass";
+    this.bearingBP.Q.value = 1.2;
+    this.bearingGain = ctx.createGain();
+    this.bearingGain.gain.value = 0;
+
+    this.airBP = ctx.createBiquadFilter();
+    this.airBP.type = "bandpass";
+    this.airGain = ctx.createGain();
+    this.airGain.gain.value = 0;
+
+    this.noise.connect(this.bearingBP);
+    this.bearingBP.connect(this.bearingGain);
+    this.bearingGain.connect(this.sum);
+    this.noise.connect(this.airBP);
+    this.airBP.connect(this.airGain);
+    this.airGain.connect(this.sum);
+
+    this.motor = ctx.createOscillator();
+    this.motor.type = "sawtooth";
+    this.motorLP = ctx.createBiquadFilter();
+    this.motorLP.type = "lowpass";
+    this.motorGain = ctx.createGain();
+    this.motorGain.gain.value = 0;
+    this.motor.connect(this.motorLP);
+    this.motorLP.connect(this.motorGain);
+    this.motorGain.connect(this.sum);
+
+    // Start at a random point in the loop so consecutive spins do not sound identical.
+    this.noise.start(now, Math.random() * 1.5);
+    this.motor.start(now);
+    this.running = true;
+  }
+
+  /**
+   * @param {number} omega Signed wheel speed, rad/s.
+   * @param {number} rateHz Current impact rate.
+   * @returns {void}
+   */
+  update(omega, rateHz) {
+    if (!this.running || this.disposed) return;
+    const now = this.ctx.currentTime;
+    const s = clampAudio(Math.abs(omega) / 8, 0, 1.25);
+
+    // Every parameter is ramped rather than assigned: a direct write steps at the render
+    // quantum boundary, which is audible as zipper noise on a continuous bed.
+    const set = (param, value, tau) => param.setTargetAtTime(value, now, tau);
+
+    set(this.bearingBP.frequency, 60 + 90 * s, 0.12);
+    // The bearing hum is there from the start (mass); the air whoosh only arrives at real
+    // speed. That asymmetry is most of the "heavy object winding up" impression.
+    set(this.bearingGain.gain, 0.075 * Math.pow(s, 0.8), 0.08);
+    set(this.airBP.frequency, 420 + 1800 * Math.pow(s, 1.15), 0.12);
+    this.airBP.Q.value = 0.6 + 0.5 * s;
+    set(this.airGain.gain, 0.05 * Math.pow(s, 1.6), 0.08);
+
+    set(this.motor.frequency, clampAudio(rateHz, 20, 400), 0.05);
+    set(this.motorLP.frequency, clampAudio(rateHz * 8, 400, 6000), 0.12);
+    set(this.motorGain.gain, 0.055 * smoothstep(38, 70, rateHz) * Math.min(1, s), 0.08);
+  }
+
+  /**
+   * @param {number} [release=0.35] Fade-out length in seconds.
+   * @returns {void}
+   */
+  stop(release = 0.35) {
+    if (!this.running || this.disposed) return;
+    const now = this.ctx.currentTime;
+    this.sum.gain.cancelScheduledValues(now);
+    this.sum.gain.setValueAtTime(this.sum.gain.value, now);
+    this.sum.gain.linearRampToValueAtTime(0, now + release);
+
+    // Teardown is driven by the audio clock, not a wall-clock timer: a setTimeout fires
+    // while a suspended context is frozen mid-fade and tears down a node still ramping.
+    this.noise.onended = () => this._teardown();
+    this.noise.stop(now + release + 0.02);
+    this.motor.stop(now + release + 0.02);
+    this.running = false;
+  }
+
+  /** @returns {void} */
+  _teardown() {
+    for (const node of [this.noise, this.motor, this.bearingBP, this.bearingGain, this.airBP, this.airGain, this.motorLP, this.motorGain, this.sum]) {
+      try {
+        if (node) node.disconnect();
+      } catch (e) {
+        /* already detached */
+      }
+    }
+    this.noise = null;
+    this.motor = null;
+    this.sum = null;
+  }
+
+  /** @returns {void} */
+  dispose() {
+    if (this.running) this.stop(0.02);
+    this.disposed = true;
+  }
+}
+
+/**
+ * Schedules impact events onto the audio clock.
+ *
+ * Two problems it exists to solve. Fine detail: physics reports impacts with sub-frame
+ * timing, so they must be placed with `start(t)` rather than fired when the frame
+ * happens to run, or a fast spin degenerates into one tick per frame. Coarse volume: a
+ * dense wheel at speed asks for well over a hundred voices a second, which no phone
+ * will survive, so near-simultaneous strikes are merged into single louder grains and
+ * a token bucket bounds the rest.
+ */
+export class ImpactScheduler {
+  /**
+   * @param {AudioContext} ctx
+   * @param {AudioNode} dest
+   * @param {() => boolean} isEnabled Read live, so muting mid-spin takes effect at once.
+   * @param {() => string} getVariant
+   */
+  constructor(ctx, dest, isEnabled, getVariant) {
+    this.ctx = ctx;
+    this.dest = dest;
+    this.isEnabled = isEnabled;
+    this.getVariant = getVariant;
+
+    this.lookahead = 0.035;
+    this.t0 = 0;
+    this.tokens = 12;
+    this.lastRefill = 0;
+    this.mergeWindow = 0.012;
+    this.pending = null;
+    /** @type {number[]} */
+    this.endTimes = [];
+    this.seatCount = 0;
+    this.late = 0;
+    this.dropped = 0;
+    this.rateHz = 0;
+  }
+
+  /**
+   * Anchors the spin's timeline. This is the only conversion between the frame clock and
+   * the audio clock: every event time afterwards is this anchor plus the solver's own
+   * accumulated time, which is drift-free and immune to frame jitter.
+   * @returns {void}
+   */
+  beginSpin() {
+    this.t0 = this.ctx.currentTime + this.lookahead;
+    this.tokens = 12;
+    this.lastRefill = this.ctx.currentTime;
+    this.mergeWindow = 0.012;
+    this.pending = null;
+    this.endTimes.length = 0;
+    this.seatCount = 0;
+    this.late = 0;
+    this.dropped = 0;
+  }
+
+  /**
+   * Re-anchors after the context was suspended. `ctx.currentTime` stops while suspended
+   * but the solver's clock does not, so without this every queued event fires at once on
+   * resume.
+   * @param {number} tSimNow
+   * @returns {void}
+   */
+  reanchor(tSimNow) {
+    this.t0 = this.ctx.currentTime + this.lookahead - tSimNow;
+  }
+
+  /**
+   * @param {Array<Object>} impacts
+   * @param {number} rateHz
+   * @returns {void}
+   */
+  schedule(impacts, rateHz) {
+    this.rateHz = rateHz;
+    if (!impacts.length) return;
+    if (!this.isEnabled()) return;
+
+    const now = this.ctx.currentTime;
+    this.tokens = Math.min(12, this.tokens + (now - this.lastRefill) * 60);
+    this.lastRefill = now;
+    this.endTimes = this.endTimes.filter((t) => t > now);
+
+    for (const ev of impacts) {
+      if (ev.kind === "seat") {
+        this._flush();
+        this._scheduleSeat(ev);
+        continue;
+      }
+
+      // Above roughly 18 impacts a second the engage and its release are inside the
+      // perceptual fusion window, so the softer one is pure cost.
+      if (ev.kind === "engage" && rateHz > 18) continue;
+
+      const tA = this.t0 + ev.tSim;
+      if (tA > now + 0.3) break;
+
+      const p = this.pending;
+      if (p && p.kind === ev.kind && tA - p.tA < this.mergeWindow) {
+        p.n++;
+        p.force = Math.max(p.force, ev.force);
+        p.vImpact = Math.max(p.vImpact, ev.vImpact || 0);
+        p.isBoundary = p.isBoundary || ev.isBoundary;
+        continue;
+      }
+
+      this._flush();
+      this.pending = {
+        tA,
+        kind: ev.kind,
+        force: ev.force,
+        vImpact: ev.vImpact || 0,
+        omega: ev.omega,
+        isBoundary: ev.isBoundary,
+        n: 1,
+      };
+    }
+
+    this._flush();
+
+    if (this.mergeWindow > 0.012) this.mergeWindow = Math.max(0.012, this.mergeWindow * 0.92);
+  }
+
+  /** @returns {void} */
+  _flush() {
+    const p = this.pending;
+    this.pending = null;
+    if (!p) return;
+
+    const now = this.ctx.currentTime;
+    if (this.tokens < 1 || this.endTimes.length >= 24) {
+      // Out of budget: widen the merge window instead of dropping on a cliff. This can
+      // only happen well above the rate at which individual ticks are distinguishable,
+      // where the rumble's ripple buzz is already carrying the rhythm.
+      this.mergeWindow = Math.min(0.04, this.mergeWindow * 1.6);
+      this.dropped++;
+      return;
+    }
+
+    let t = p.tA;
+    const lateBy = now - t;
+    if (lateBy > 0.04) {
+      this.late++;
+      this.dropped++;
+      return;
+    }
+    if (lateBy > 0) t = now + 0.002;
+
+    const spec = TICK_VARIANT_SPECS[this.getVariant()] || TICK_VARIANT_SPECS[TICK_SOUNDS.DEFAULT];
+    const params = mapImpact(p, spec, Math.max(this.rateHz, 1), p.n);
+    this.tokens -= 1;
+    this.endTimes.push(buildImpactVoice(this.ctx, this.dest, spec, params, t));
+  }
+
+  /**
+   * @param {Object} ev
+   * @returns {void}
+   */
+  _scheduleSeat(ev) {
+    // The flapper can bounce once as it drops in; anything past that is chatter.
+    if (this.seatCount >= 2) return;
+    this.seatCount++;
+    const t = Math.max(this.ctx.currentTime + 0.005, this.t0 + ev.tSim);
+    playSeatThunk(this.ctx, this.dest, ev.force, t);
+  }
+
+  /**
+   * Adapts the lookahead between spins rather than during one: changing it mid-spin
+   * shifts every later event and is audible as a tempo hiccup.
+   * @returns {void}
+   */
+  endSpin() {
+    this.lookahead =
+      this.late > 0
+        ? Math.min(0.09, this.lookahead + 0.015)
+        : Math.max(0.03, this.lookahead - 0.005);
+    this._flush();
+  }
+}
+
+// Expose to window (needed for Babel Standalone).
+// This block lives at the end of the file on purpose: const and class bindings are in
+// their temporal dead zone until evaluated, so exporting from the middle would throw for
+// anything declared below it.
 if (typeof window !== "undefined") {
   window.playWinSound = playWinSound;
   window.playJingleBells = playJingleBells;
@@ -780,5 +1380,11 @@ if (typeof window !== "undefined") {
   window.playBigPurchaseSound = playBigPurchaseSound;
   window.base64ToWavBlob = base64ToWavBlob;
   window.ChargeSound = ChargeSound;
+  window.getBuses = getBuses;
+  window.getWheelBus = getWheelBus;
+  window.getSfxBus = getSfxBus;
+  window.playSeatThunk = playSeatThunk;
+  window.WheelRumble = WheelRumble;
+  window.ImpactScheduler = ImpactScheduler;
+  window.IMPACT_TUNING = IMPACT_TUNING;
 }
-
