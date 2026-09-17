@@ -29,9 +29,9 @@ Screenshot:
   - **Weighted Probabilities**: Support for weighted items using `Item:Weight` syntax
     (e.g., `Pizza:10`) to increase winning chances.
   - **Flapper Escapement**: The pointer is a spring-loaded cam follower, not decoration. Every
-    pin it climbs takes energy out of the wheel, and near the end it can stall or reverse it
-    outright. One pin sits on each segment boundary, so when the wheel dies on one of those the
-    winner really does change at the last moment.
+    pin it climbs takes energy out of the wheel, and the spin ends when it meets a pin it can no
+    longer get over. One pin sits on each segment boundary, so which pin stops it is what picks
+    the winner -- a little more energy and the wheel would have carried into the next slice.
   - **Coasts to a Stop**: Drag is dominated by air resistance rather than bearing friction, so
     speed decays exponentially instead of ramping down at a fixed rate into a halt. The wheel
     creeps through its last second, turning roughly a quarter of a degree before it settles.
