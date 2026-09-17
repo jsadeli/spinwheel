@@ -45,21 +45,35 @@ export const PHYSICS = {
   /**
    * Flapper torsion spring constant at nominal tension.
    *
-   * Deliberately weak. A stiff spring always beats bearing stiction on the way down, so the
-   * wheel is dragged to the floor of a valley on essentially every spin and comes to rest
-   * dead between two pins. At this value the restoring torque is comparable to stiction, so
-   * the wheel often stops wherever it died -- including partway up a pin, with the flapper
-   * visibly leaning against it. It also means the last seconds are decided by much finer
-   * energy margins: roughly four times as many crests are crossed in the closing three
-   * seconds as with a stiff spring.
+   * Deliberately very weak, for two reasons.
+   *
+   * The spring sets the energy barrier at a pin crest, and therefore the speed at which the
+   * escapement catches the wheel: omega = amp * sqrt(k / I). A stiff spring grabs a wheel
+   * that is still visibly turning and halts it, which is what made the stop feel abrupt. At
+   * this value capture happens slowly enough to read as coasting to rest.
+   *
+   * It costs nothing in how the wheel comes to rest off-centre, because the flapper's grip
+   * on the pin scales with the same contact force the spring is pulling with: the ratio that
+   * decides where it stops depends on CONTACT_GRIP, not on k.
    */
-  SPRING_K: 4,
+  SPRING_K: 0.5,
   /** Flapper moment of inertia. */
   FLAPPER_J: 0.00003,
-  /** Flapper viscous damping; this is what turns crest climbs into net energy loss. */
-  FLAPPER_C: 0.004,
-  /** Wheel viscous drag coefficient. */
-  VISCOUS_B: 0.02,
+  /**
+   * Flapper viscous damping. Scaled to the spring: too much of it relative to k and the
+   * damping force alone drives the contact force negative as a pin drops away, so the
+   * flapper tears off the cam on most pin passes instead of riding it down.
+   */
+  FLAPPER_C: 0.001,
+  /**
+   * Wheel viscous drag coefficient.
+   *
+   * Drag is deliberately dominated by this rather than by Coulomb bearing friction. A
+   * constant friction torque decelerates the wheel at a constant rate, so it arrives at
+   * zero still visibly moving and simply halts; drag proportional to speed decays
+   * exponentially instead, which is what makes a heavy wheel creep to a stop.
+   */
+  VISCOUS_B: 0.46,
   /** Seconds over which launch torque is applied, so the wheel visibly winds up. */
   WIND_UP: 0.18,
   /** Angular velocity reached at full charge, rad/s. */
@@ -81,18 +95,28 @@ export const PHYSICS = {
    * friction exceeds kinetic in any real bearing; modelling them as equal is the
    * simplification, not the other way round.
    *
-   * This is the knob that decides whether the wheel snaps to the floor of a valley or
-   * stays where it died. The spring wants to drag it to dead centre, and raising only the
-   * holding force resists that without weakening the spring itself -- which matters,
-   * because the same spring force is what shoves the wheel backwards after a failed crest,
-   * and because a spring weak enough to give the same spread makes the flapper chatter off
-   * the pins roughly three times as often.
+   * Applies to bearing drag only; most of the holding comes from CONTACT_GRIP.
    */
   STATIC_FRICTION: 1.7,
-  /** Below this speed the wheel is a candidate for settling. */
-  OMEGA_EPS: 0.02,
+  /**
+   * Holding torque from the flapper tip pressing on a pin, as a multiple of the contact
+   * normal force.
+   *
+   * This is what stops the spring dragging a stopped wheel down to the floor of a valley.
+   * It scales with the contact force rather than being a flat amount, which is both more
+   * honest -- the flapper grips hardest exactly where it is pressed hardest -- and what
+   * lets bearing drag be made small enough for a gentle coast-down without the wheel
+   * snapping to centre the moment it stops.
+   */
+  CONTACT_GRIP: 2.5,
+  /**
+   * Below this speed the wheel is a candidate for settling. Low on purpose: a coasting
+   * wheel spends its last second creeping, and cutting that off early is what turns a
+   * coast-down into a halt.
+   */
+  OMEGA_EPS: 0.008,
   /** How long the wheel must stay below OMEGA_EPS before it counts as settled. */
-  SETTLE_TIME: 0.12,
+  SETTLE_TIME: 0.4,
   /** Hard cap on simulated spin length, so a spin can never fail to terminate. */
   MAX_SPIN_TIME: 90,
   /** Multiplier from physical flapper deflection to rendered deflection. */
@@ -102,7 +126,7 @@ export const PHYSICS = {
    * many times on the same pin, which is physically real but produces hundreds of
    * inaudible events per second. These bound what reaches the audio layer.
    */
-  MIN_EVENT_FORCE: 0.12,
+  MIN_EVENT_FORCE: 0.035,
   MIN_EVENT_SPEED: 6,
   EVENT_DEBOUNCE: 0.04,
   MAX_EVENTS_PER_STEP: 8,
@@ -119,9 +143,9 @@ export const PHYSICS = {
  * @type {Object<number, {key: number, label: string, inertia: number, coulomb: number}>}
  */
 export const WHEEL_PRESETS = {
-  5000: { key: 5000, label: "light", inertia: 0.55, coulomb: 1.1 },
-  10000: { key: 10000, label: "normal", inertia: 1.0, coulomb: 1.0 },
-  20000: { key: 20000, label: "heavy", inertia: 2.1, coulomb: 0.95 },
+  5000: { key: 5000, label: "light", inertia: 0.55, coulomb: 0.012 },
+  10000: { key: 10000, label: "normal", inertia: 1.0, coulomb: 0.011 },
+  20000: { key: 20000, label: "heavy", inertia: 2.1, coulomb: 0.010 },
 };
 
 /**
@@ -712,7 +736,7 @@ export class WheelPhysics {
         tauLaunch -
         this.b * this.omega -
         Ld * (this.k * L + this.c * Ld * this.omega + this.J * Ldd * this.omega * this.omega);
-      alpha = this._withFriction(drive, den);
+      alpha = this._withFriction(drive, den, this.k * L);
       N = this.k * L + this.c * Ld * this.omega + this.J * (Ldd * this.omega * this.omega + Ld * alpha);
 
       if (N < 0) {
@@ -725,7 +749,7 @@ export class WheelPhysics {
     }
 
     if (!this.contact) {
-      alpha = this._withFriction(tauLaunch - this.b * this.omega, this.I);
+      alpha = this._withFriction(tauLaunch - this.b * this.omega, this.I, 0);
       const phiAcc = (-this.k * this.phi - this.c * this.phiDot) / this.J;
       this.phiDot += phiAcc * h;
       this.phi += this.phiDot * h;
@@ -765,16 +789,18 @@ export class WheelPhysics {
    * not jitter around zero and does not get dragged to dead centre.
    * @param {number} drive Net torque before friction.
    * @param {number} den Effective inertia.
+   * @param {number} contactForce Normal force at the flapper tip; zero when separated.
    * @returns {number} Angular acceleration.
    */
-  _withFriction(drive, den) {
+  _withFriction(drive, den, contactForce) {
     if (Math.abs(this.omega) > PHYSICS.OMEGA_EPS) {
       return (drive - this.coulomb * Math.sign(this.omega)) / den;
     }
 
-    // Stationary: the bearing holds harder than it drags, so the wheel can sit part-way up
-    // a pin instead of being pulled down to the valley floor.
-    const hold = this.coulomb * PHYSICS.STATIC_FRICTION;
+    // Stationary: the bearing holds a little harder than it drags, and the flapper tip grips
+    // the pin it is pressed against. Together they can resist the spring's pull toward the
+    // valley floor, so the wheel stays part-way up a pin instead of being dragged to centre.
+    const hold = this.coulomb * PHYSICS.STATIC_FRICTION + PHYSICS.CONTACT_GRIP * contactForce;
     if (Math.abs(drive) <= hold) {
       this.omega = 0;
       return 0;

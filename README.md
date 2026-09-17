@@ -32,12 +32,12 @@ Screenshot:
     pin it climbs takes energy out of the wheel, and near the end it can stall or reverse it
     outright. One pin sits on each segment boundary, so when the wheel dies on one of those the
     winner really does change at the last moment.
-  - **No Two Endings Alike**: The bearing holds a stopped wheel harder than it drags a turning
-    one, as a real one does, so the wheel stays roughly where it ran out of energy instead of
-    being pulled down to dead centre. The pointer usually comes to rest leaning against a pin --
-    median lean is about 30 degrees and only 2% of spins end looking centred -- while about one
-    spin in six still shows the backward roll. The closing three seconds carry several times
-    more pin crossings than a stiff flapper would allow.
+  - **Coasts to a Stop**: Drag is dominated by air resistance rather than bearing friction, so
+    speed decays exponentially instead of ramping down at a fixed rate into a halt. The wheel
+    creeps through its last second, turning roughly a quarter of a degree before it settles.
+  - **Never Dead Centre**: The flapper grips the pin it is pressed against in proportion to how
+    hard it is pressed, so a stopped wheel is not dragged down to the floor of a valley. The
+    pointer comes to rest leaning against a pin rather than sitting straight.
   - **Impact-Driven Sound**: Every strike is synthesized from its own contact force and speed
     and placed on the audio clock with sub-frame timing, under a bearing rumble that tracks
     wheel speed. Reverse strikes sound different from forward ones.

@@ -555,9 +555,9 @@ export const ChargeSound = class {
  */
 export const IMPACT_TUNING = {
   /** Median contact force of a mid-spin crest release. */
-  FORCE_REF: 3.3,
+  FORCE_REF: 1.0,
   /** Median flapper approach speed, rad/s. */
-  V_REF: 100,
+  V_REF: 35,
   /** Wheel speed treated as "fast", rad/s. */
   OMEGA_REF: 10,
   /** Impact rate at which density ducking starts, per second. */
