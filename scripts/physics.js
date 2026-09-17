@@ -101,10 +101,10 @@ export const PHYSICS = {
    * Capture speed is `amp * sqrt(k / I)`, so shrinking the amplitude by 2.5x and raising k by
    * 6.25x leaves the speed at which the escapement catches the wheel exactly where it was.
    *
-   * No wheel runs at this value: it is what a tension setting multiplies. It is 3.125 over the
-   * default setting's 0.8 precisely so that the default still lands on 3.125 and keeps the
-   * capture speed above, leaving {@link TENSION_MULTIPLIERS} free to spread its ladder without
-   * dragging the wheel everyone gets along with it.
+   * No wheel runs at this value: it is the base a tension setting multiplies, and every setting
+   * is below 1. The capture speed quoted above is what the amplitude retune was built to
+   * preserve, but no setting sits on it any more -- the default is 0.4 of this, deliberately
+   * slacker. See {@link TENSION_MULTIPLIERS}.
    */
   SPRING_K: 3.90625,
   /**
@@ -264,17 +264,22 @@ export const WHEEL_PRESETS = {
  * range -- under 2% -- and the number of pins struck does not move at all, so a spread that
  * cannot be seen in the rollback rate cannot be seen anywhere.
  *
- * The bottom of the ladder used to sit at 0.7 and 1, which put light and normal at 30% and 50%
- * rollback -- close enough together that the two settings were hard to tell apart. SPRING_K is
- * scaled to this table rather than the other way round, so `normal` still resolves to the same
- * spring the wheel was tuned around and only the spread moved.
+ * Measured over 700 spins on six items, the ladder runs 3% / 23% / 56% / 85%, in steps of 20,
+ * 33 and 29 points. The steps matter more than the endpoints: an earlier ladder of 0.7 / 1 /
+ * 1.5 / 2.2 put light and normal at 30% and 50%, close enough to be hard to tell apart, and any
+ * value much above 2 runs into the ceiling -- rollback saturates near 100%, so the top of the
+ * dial cannot separate however hard it is pushed.
+ *
+ * `normal` is deliberately slack, at what used to be the light setting. It resolves to well
+ * under the spring {@link PHYSICS}.SPRING_K was sized around, which is a choice about how the
+ * default wheel should feel rather than a consequence of anything.
  * @type {Object<string, number>}
  */
 export const TENSION_MULTIPLIERS = {
-  light: 0.4,
-  normal: 0.8,
-  strong: 1.5,
-  brutal: 2.2,
+  light: 0.2,
+  normal: 0.4,
+  strong: 0.9,
+  brutal: 1.8,
 };
 
 /**

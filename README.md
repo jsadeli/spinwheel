@@ -25,8 +25,9 @@ Screenshot:
   - **Lightweight**: Built with vanilla HTML, CSS, and JavaScript.
   - **Physics-Based Wheel**: The wheel is a disc with real inertia, bearing friction and air
     drag; it winds up under torque rather than jumping to speed, and nothing imposes a stop
-    time. Spins end the way a real wheel does: on most of them the wheel stalls part-way up a
-    pin and is pushed back down into the valley it came from.
+    time. Spins end the way a real wheel does, often by stalling part-way up a pin and being
+    pushed back down into the valley it came from -- how often is what the flapper tension
+    setting controls, from almost never on light to most spins on brutal.
   - **Weighted Probabilities**: Support for weighted items using `Item:Weight` syntax
     (e.g., `Pizza:10`) to increase winning chances.
   - **Flapper Escapement**: The pointer is a spring-loaded cam follower, not decoration. Every
