@@ -32,6 +32,10 @@ Screenshot:
     pin it climbs takes energy out of the wheel, and near the end it can stall or reverse it
     outright. One pin sits on each segment boundary, so when the wheel dies on one of those the
     winner really does change at the last moment.
+  - **No Two Endings Alike**: The spring is deliberately weak enough that bearing friction can
+    hold the wheel wherever it ran out of energy, so it does not snap to dead centre every
+    time. Roughly one spin in five ends with the pointer resting against a pin, and the closing
+    three seconds carry several times more pin crossings than a stiff flapper would allow.
   - **Impact-Driven Sound**: Every strike is synthesized from its own contact force and speed
     and placed on the audio clock with sub-frame timing, under a bearing rumble that tracks
     wheel speed. Reverse strikes sound different from forward ones.

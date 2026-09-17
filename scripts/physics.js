@@ -42,10 +42,20 @@ export const PHYSICS = {
    * spins for about as long as a sparse one instead of stopping dead or coasting forever.
    */
   DENSITY_EXPONENT: 1.25,
-  /** Flapper torsion spring constant at nominal tension. */
-  SPRING_K: 22,
+  /**
+   * Flapper torsion spring constant at nominal tension.
+   *
+   * Deliberately weak. A stiff spring always beats bearing stiction on the way down, so the
+   * wheel is dragged to the floor of a valley on essentially every spin and comes to rest
+   * dead between two pins. At this value the restoring torque is comparable to stiction, so
+   * the wheel often stops wherever it died -- including partway up a pin, with the flapper
+   * visibly leaning against it. It also means the last seconds are decided by much finer
+   * energy margins: roughly four times as many crests are crossed in the closing three
+   * seconds as with a stiff spring.
+   */
+  SPRING_K: 4,
   /** Flapper moment of inertia. */
-  FLAPPER_J: 0.00007,
+  FLAPPER_J: 0.00003,
   /** Flapper viscous damping; this is what turns crest climbs into net energy loss. */
   FLAPPER_C: 0.004,
   /** Wheel viscous drag coefficient. */
@@ -79,7 +89,7 @@ export const PHYSICS = {
    * many times on the same pin, which is physically real but produces hundreds of
    * inaudible events per second. These bound what reaches the audio layer.
    */
-  MIN_EVENT_FORCE: 0.35,
+  MIN_EVENT_FORCE: 0.12,
   MIN_EVENT_SPEED: 6,
   EVENT_DEBOUNCE: 0.04,
   MAX_EVENTS_PER_STEP: 8,
@@ -106,10 +116,10 @@ export const WHEEL_PRESETS = {
  * @type {Object<string, number>}
  */
 export const TENSION_MULTIPLIERS = {
-  light: 0.55,
+  light: 0.7,
   normal: 1,
-  strong: 1.7,
-  brutal: 2.6,
+  strong: 1.5,
+  brutal: 2.2,
 };
 
 /**
@@ -567,6 +577,26 @@ export class WheelPhysics {
   /** @returns {number} Rendered flapper deflection, radians. */
   flapperAngle() {
     return this.phi * PHYSICS.DISPLAY_GAIN;
+  }
+
+  /**
+   * Where the wheel is sitting between two pins, as a fraction: 0 means the flapper is
+   * right on top of a pin, 1 means it has dropped to the floor of the valley.
+   *
+   * A wheel that always reports 1 has a spring stiff enough to overpower bearing stiction
+   * every time, which looks mechanical -- it snaps to dead centre on every spin. A healthy
+   * spread here is what produces the occasional nerve-wracking stop against a pin.
+   *
+   * @returns {number}
+   */
+  seatOffset() {
+    const cam = this._cam(this.theta);
+    return Math.min(Math.abs(cam.d) / cam.hw, 1);
+  }
+
+  /** @returns {boolean} Whether the pin the flapper is resting against is a segment boundary. */
+  restingOnBoundary() {
+    return this.pins.boundary[this._cam(this.theta).i] === 1;
   }
 
   /**

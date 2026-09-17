@@ -85,6 +85,10 @@ const run = (cfg, spins) => {
   let durMax = 0;
   let revSum = 0;
   let boundaryFinal = 0;
+  const seats = [];
+  let restOnPin = 0;
+  let restOnBoundaryPin = 0;
+  let lateCrests = 0;
   let reversedSpins = 0;
   let noSettle = 0;
   let maxSubsteps = 0;
@@ -116,11 +120,13 @@ const run = (cfg, spins) => {
     let t = 0;
     let steps = 0;
     let sawReverse = false;
+    let crestTimes = [];
     let unwrapped = 0;
     let prev = startTheta;
 
     while (!phys.settled && t < PHYSICS.MAX_SPIN_TIME) {
-      const { settled } = phys.step(1 / 60);
+      const { impacts, settled } = phys.step(1 / 60);
+      for (const e of impacts) if (e.kind === "release") crestTimes.push(t);
       if (phys.omega < -0.05) sawReverse = true;
       let d = phys.theta - prev;
       if (d > Math.PI) d -= TAU;
@@ -141,6 +147,17 @@ const run = (cfg, spins) => {
     revSum += Math.abs(unwrapped) / TAU;
     if (sawReverse) reversedSpins++;
     if (phys.lastCrestWasBoundary) boundaryFinal++;
+
+    // How the wheel came to rest, and how busy its last three seconds were. Both are feel
+    // properties rather than correctness ones, but a regression in either turns the wheel
+    // back into something that snaps to dead centre with a foregone ending.
+    const seat = phys.seatOffset();
+    seats.push(seat);
+    if (seat < 0.2) {
+      restOnPin++;
+      if (phys.restingOnBoundary()) restOnBoundaryPin++;
+    }
+    lateCrests += crestTimes.filter((x) => x > t - 3).length;
 
     counts[winnerOf(phys.theta, weights)]++;
   }
@@ -182,6 +199,9 @@ const run = (cfg, spins) => {
     durRange: durMin.toFixed(1) + "-" + durMax.toFixed(1),
     revs: (revSum / spins).toFixed(1),
     boundaryPct: ((boundaryFinal / spins) * 100).toFixed(1),
+    onPin: ((restOnPin / spins) * 100).toFixed(0),
+    onBnd: ((restOnBoundaryPin / spins) * 100).toFixed(1),
+    crests3s: (lateCrests / spins).toFixed(0),
     reversePct: ((reversedSpins / spins) * 100).toFixed(1),
     chi2: chi2.toFixed(1),
     p: undersampled ? "  n/a " : p.toFixed(4),
@@ -233,7 +253,9 @@ for (const cfg of CONFIGS) {
       "  ratio " + r.ratio.toFixed(3) +
       "  dur " + r.dur.padStart(5) + "s (" + r.durRange + ")" +
       "  revs " + r.revs.padStart(5) +
-      "  bnd " + r.boundaryPct.padStart(5) + "%" +
+      "  onPin " + r.onPin.padStart(3) + "%" +
+      "  onBnd " + r.onBnd.padStart(4) + "%" +
+      "  crests3s " + r.crests3s.padStart(3) +
       "  rev " + r.reversePct.padStart(5) + "%" +
       "  chi2 " + r.chi2.padStart(7) +
       "  p " + r.p + (r.undersampled ? "" : "") +
