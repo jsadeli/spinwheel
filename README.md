@@ -25,22 +25,27 @@ Screenshot:
   - **Lightweight**: Built with vanilla HTML, CSS, and JavaScript.
   - **Physics-Based Wheel**: The wheel is a disc with real inertia, bearing friction and air
     drag; it winds up under torque rather than jumping to speed, and nothing imposes a stop
-    time. Spins end the way a real wheel does, by failing to climb a pin and rolling back.
+    time. Spins end the way a real wheel does: on most of them the wheel stalls part-way up a
+    pin and is pushed back down into the valley it came from.
   - **Weighted Probabilities**: Support for weighted items using `Item:Weight` syntax
     (e.g., `Pizza:10`) to increase winning chances.
   - **Flapper Escapement**: The pointer is a spring-loaded cam follower, not decoration. Every
     pin it climbs takes energy out of the wheel, and the spin ends when it meets a pin it can no
     longer get over. One pin sits on each segment boundary, so which pin stops it is what picks
     the winner -- a little more energy and the wheel would have carried into the next slice.
+    A pin touches the pointer over exactly the arc it is drawn across and no further, so the
+    nose starts moving when the pin reaches it rather than a fifth of a segment early, and it
+    swings as far as that pin could push it rather than five times as far.
   - **Coasts to a Stop**: Drag is dominated by air resistance rather than bearing friction, so
     speed decays exponentially instead of ramping down at a fixed rate into a halt. The wheel
-    creeps through its last second, turning roughly a quarter of a degree before it settles.
+    creeps through its last second, turning about two thirds of a degree before it settles.
   - **Anchored Pointer**: The pointer hangs from a fixed mount and each pin arriving under it
     swings its nose down, riding back up as the pin passes -- driven by the wheel actually
     pushing on it rather than by a position-keyed animation.
-  - **Never Dead Centre**: The flapper grips the pin it is pressed against in proportion to how
-    hard it is pressed, so a stopped wheel is not dragged down to the floor of a valley. The
-    pointer comes to rest leaning against a pin rather than sitting straight.
+  - **Never Dead Centre**: Between pins the pointer is touching nothing, so there is no spring
+    pulling the wheel anywhere once it stops -- it comes to rest where it ran out of energy,
+    which is anywhere across a valley rather than centred in one. When it does stop against a
+    pin, the flapper grips it in proportion to how hard it is pressed and holds it there.
   - **Impact-Driven Sound**: Every strike is synthesized from its own contact force and speed
     and placed on the audio clock with sub-frame timing, under a bearing rumble that tracks
     wheel speed. Reverse strikes sound different from forward ones.
