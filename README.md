@@ -35,10 +35,9 @@ Screenshot:
   - **Coasts to a Stop**: Drag is dominated by air resistance rather than bearing friction, so
     speed decays exponentially instead of ramping down at a fixed rate into a halt. The wheel
     creeps through its last second, turning roughly a quarter of a degree before it settles.
-  - **The Pointer Is the Verdict**: The pointer pivots about its own tip, so the tip sits on the
-    line the winner is read from no matter how far the flapper is deflected or how big the
-    screen is. Whatever it is touching is what wins -- there is no hidden reference line
-    disagreeing with the picture.
+  - **Anchored Pointer**: The pointer hangs from a fixed mount and each pin arriving under it
+    swings its nose down, riding back up as the pin passes -- driven by the wheel actually
+    pushing on it rather than by a position-keyed animation.
   - **Never Dead Centre**: The flapper grips the pin it is pressed against in proportion to how
     hard it is pressed, so a stopped wheel is not dragged down to the floor of a valley. The
     pointer comes to rest leaning against a pin rather than sitting straight.

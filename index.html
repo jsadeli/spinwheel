@@ -1517,11 +1517,7 @@
 
             // --- Pointer Animation Logic ---
             if (pointerRef.current && updatePointer) {
-              updatePointer(
-                pointerRef.current,
-                physics ? physics.flapperAngle() : 0,
-                physics ? physics.flapperLift() : 0
-              );
+              updatePointer(pointerRef.current, physics ? physics.flapperAngle() : 0);
             }
 
             animationFrameId = requestAnimationFrame(render);
@@ -2758,18 +2754,10 @@
 
                 {/* Pointer Triangle */}
                 <div className="absolute z-20 right-0 md:right-auto top-1/2 -translate-y-1/2 translate-x-1/2 md:translate-x-[210px] lg:translate-x-[260px] filter drop-shadow-lg pointer-events-none">
-                  {/*
-                    origin-left is load-bearing, not styling. It puts the transform origin on
-                    the triangle's apex, which is the point the winner is read from, so the tip
-                    stays on the wheel's centre line however far the flapper deflects. Pivoting
-                    about the tail instead swings the tip up to six degrees aside -- half a slice
-                    on a thirty-item wheel -- and the pointer would indicate one slice while
-                    another was announced.
-                  */}
                   <div
                     ref={pointerRef}
                     style={{ borderRightColor: resolveSkin(pointerSkin).color }}
-                    className="w-0 h-0 border-t-[20px] border-t-transparent border-r-[50px] border-b-[20px] border-b-transparent transform origin-left"
+                    className="w-0 h-0 border-t-[20px] border-t-transparent border-r-[50px] border-b-[20px] border-b-transparent transform origin-right"
                   ></div>
                 </div>
 
