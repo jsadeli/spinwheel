@@ -58,7 +58,11 @@ export const PHYSICS = {
   OMEGA_JITTER: 0.12,
   /** Fractional spread applied to spring tension each spin. */
   TENSION_JITTER: 0.06,
-  /** Fixed integration timestep, seconds. */
+  /**
+   * Fixed integration timestep, seconds. Frame-rate independence holds exactly at a given
+   * step, but the system is chaotic: refining the step changes which segment wins, not just
+   * the trajectory. Changing this is a gameplay change, not a performance tweak.
+   */
   SUBSTEP: 0.001,
   /** Largest wall-clock delta fed to the integrator in one frame. */
   MAX_DT: 0.05,
@@ -82,8 +86,13 @@ export const PHYSICS = {
 };
 
 /**
- * Wheel mass presets, keyed by the legacy `spinDuration` values so existing
- * localStorage and the `speed_demon` / `patience_is_a_virtue` achievements keep working.
+ * Wheel mass presets, keyed by the legacy `spinDuration` values so existing localStorage
+ * and the `speed_demon` / `patience_is_a_virtue` achievements keep working.
+ *
+ * Coulomb friction deliberately does *not* scale with inertia. Bearing friction really is
+ * proportional to weight, but making it so leaves the ratio that governs deceleration
+ * unchanged, and the preset would then do nothing at all. It is scaled sub-proportionally
+ * instead, which is what makes a heavy wheel run long.
  * @type {Object<number, {key: number, label: string, inertia: number, coulomb: number}>}
  */
 export const WHEEL_PRESETS = {
@@ -392,11 +401,14 @@ export class WheelPhysics {
 
   /**
    * Rebuilds the pin ring for a new item list without jolting the wheel: `theta` is
-   * preserved, so the wheel re-seats into whichever valley now contains it.
+   * preserved, so the wheel re-seats into whichever valley now contains it. Ignored while
+   * a spin is in flight, since rebuilding the ring under a moving flapper teleports the
+   * cam out from under it.
    * @param {WheelItem[]} items
    * @returns {void}
    */
   setItems(items) {
+    if (this.spinning) return;
     this.pins = buildPins(items);
     this._prevPin = -1;
     if (!this.spinning) {
@@ -477,23 +489,64 @@ export class WheelPhysics {
     this._lastEmit.clear();
     this.lastCrestWasBoundary = false;
 
-    this.estimatedDuration = this._estimate(targetOmega);
+    this.estimatedDuration = this._estimate();
     return this.estimatedDuration;
   }
 
   /**
-   * Closed-form stop-time estimate for a reduced model (no cam, averaged pin drag).
-   * Kept so the `premature_nope` achievement still has a percentage to measure against.
-   * @param {number} omega0
+   * Predicts how long this spin will take, by running the solver forward on a copy of its
+   * own state and seeing where it stops.
+   *
+   * A closed form over a reduced model was tried first and ran 15-53% long, worst on
+   * densely pinned wheels, which made the `premature_nope` achievement (cancel past 80% of
+   * the expected duration) literally unreachable on a 50-item list. Since the solver is
+   * deterministic, simulating it is not an approximation at all, and it costs a couple of
+   * milliseconds once per spin against a spin lasting seconds.
+   *
    * @returns {number} Milliseconds.
    */
-  _estimate(omega0) {
-    const beta = this.b + pinDragCoefficient(this.pins, this.c);
-    const seconds =
-      beta > 1e-9
-        ? (this.I / beta) * Math.log(1 + (beta * omega0) / this.coulomb)
-        : (this.I * omega0) / this.coulomb;
-    return clamp(seconds, 0.4, PHYSICS.MAX_SPIN_TIME) * 1000 + PHYSICS.WIND_UP * 1000;
+  _estimate() {
+    const saved = {
+      theta: this.theta,
+      omega: this.omega,
+      phi: this.phi,
+      phiDot: this.phiDot,
+      contact: this.contact,
+      spinning: this.spinning,
+      settled: this.settled,
+      tSim: this.tSim,
+      launchLeft: this.launchLeft,
+      acc: this._acc,
+      settleTimer: this._settleTimer,
+      seatEmitted: this._seatEmitted,
+      prevPin: this._prevPin,
+      lastCrestWasBoundary: this.lastCrestWasBoundary,
+    };
+
+    const h = PHYSICS.SUBSTEP;
+    const limit = Math.ceil(PHYSICS.MAX_SPIN_TIME / h);
+    let steps = 0;
+    while (!this.settled && steps++ < limit) this._substep(h);
+    const seconds = this.tSim;
+
+    this.theta = saved.theta;
+    this.omega = saved.omega;
+    this.phi = saved.phi;
+    this.phiDot = saved.phiDot;
+    this.contact = saved.contact;
+    this.spinning = saved.spinning;
+    this.settled = saved.settled;
+    this.tSim = saved.tSim;
+    this.launchLeft = saved.launchLeft;
+    this._acc = saved.acc;
+    this._settleTimer = saved.settleTimer;
+    this._seatEmitted = saved.seatEmitted;
+    this._prevPin = saved.prevPin;
+    this.lastCrestWasBoundary = saved.lastCrestWasBoundary;
+    this._lastEmit.clear();
+    this._events.length = 0;
+
+    return clamp(seconds, 0.4, PHYSICS.MAX_SPIN_TIME) * 1000;
   }
 
   /** @returns {number} The estimated duration of the current spin, in milliseconds. */

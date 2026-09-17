@@ -166,6 +166,13 @@ const run = (cfg, spins) => {
     .map((r) => ({ ...r, rel: r.exp > 0 ? (r.obs - r.exp) / r.exp : 0 }))
     .sort((a, b) => Math.abs(b.rel) - Math.abs(a.rel))[0];
 
+  // `worst` is a maximum over many thin buckets, so it looks alarming even on a perfectly
+  // fair wheel: with N buckets the largest of N normal deviates sits around sqrt(2 ln N)
+  // standard deviations out. Printing that floor next to it stops sampling scatter from
+  // being read as bias -- which is a mistake worth making only once.
+  const noiseFloor =
+    minExpected > 0 ? Math.sqrt(2 * Math.log(Math.max(weights.length, 2))) / Math.sqrt(minExpected) : 0;
+
   return {
     name: cfg.name,
     pins: pins.count,
@@ -180,6 +187,7 @@ const run = (cfg, spins) => {
     p: undersampled ? "  n/a " : p.toFixed(4),
     undersampled,
     worstRel: (worst.rel * 100).toFixed(1),
+    noise: (noiseFloor * 100).toFixed(1),
     zeroBuckets,
     noSettle,
   };
@@ -229,7 +237,7 @@ for (const cfg of CONFIGS) {
       "  rev " + r.reversePct.padStart(5) + "%" +
       "  chi2 " + r.chi2.padStart(7) +
       "  p " + r.p + (r.undersampled ? "" : "") +
-      "  worst " + r.worstRel.padStart(6) + "%" +
+      "  worst " + r.worstRel.padStart(6) + "% (noise +/-" + r.noise.padStart(4) + "%)" +
       (r.zeroBuckets ? "  ZERO:" + r.zeroBuckets : "") +
       (r.noSettle ? "  NOSETTLE:" + r.noSettle : "")
   );
