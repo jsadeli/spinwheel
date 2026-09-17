@@ -8,6 +8,12 @@
  * mid-climb stalls and rolls backward into the previous valley. That rollback is what
  * decides the winner, and it is emergent rather than scripted.
  *
+ * A pin only touches the flapper across the arc it is actually drawn across, which is about a
+ * degree either side of a crest rather than the whole way to the next pin. Between pins the
+ * nose hangs at its rest stop and the wheel runs free, so most spins end coasting in a valley
+ * rather than held against a crest -- see {@link WheelPhysics#touchingPin}. Everything the
+ * geometry is derived from lives in {@link GEOMETRY}, which is also what draws the wheel.
+ *
  * This module is deliberately DOM-free so it can be imported by Node for headless
  * Monte Carlo fairness testing (see tools/physics-sim.mjs).
  *
@@ -15,6 +21,32 @@
  */
 
 const TAU = Math.PI * 2;
+
+/**
+ * The drawn geometry of the pin ring and the pointer, in the nominal 500x500 canvas's pixels.
+ *
+ * The solver and `drawWheel` both quote these, so the cam the flapper rides is the shape the
+ * player is actually looking at. They are lengths rather than angles because that is how they
+ * are drawn: the contact window and the crest lift are derived from them in {@link buildPins},
+ * never tuned on their own. Before this existed the cam spanned the whole gap between pins --
+ * five times what a 5 px pin can reach -- so the pointer started swinging a quarter of a segment
+ * before anything touched it.
+ *
+ * Only their ratios matter, so a canvas rendered at any size scales all of them together.
+ * @type {Object<string, number>}
+ */
+export const GEOMETRY = {
+  /** Wheel face radius: half the canvas, less the margin the pin ring sits in. */
+  WHEEL_RADIUS: 230,
+  /** Radius of the circle the pin centres sit on. */
+  PIN_RING_RADIUS: 240,
+  /** Drawn radius of a pin sitting on a segment boundary. */
+  PIN_RADIUS_BOUNDARY: 5,
+  /** Drawn radius of a filler pin between two boundaries. */
+  PIN_RADIUS_FILLER: 3.5,
+  /** Distance from the pointer's nose to the mount it pivots about. */
+  POINTER_ARM: 50,
+};
 
 /**
  * Global physics tuning. Units are radians and seconds throughout; inertia and torque
@@ -26,8 +58,14 @@ export const PHYSICS = {
   TARGET_PITCH: (12 * Math.PI) / 180,
   /** Hard ceiling on total pins, so a heavily skewed list cannot produce a solid ring. */
   MAX_TOTAL_PINS: 120,
-  /** Flapper deflection at a pin crest, for a nominal-pitch gap. */
-  CAM_AMPLITUDE: 0.25,
+  /**
+   * Flapper deflection at a pin crest, for a nominal-pitch gap.
+   *
+   * Not a free parameter: it is `asin(PIN_RADIUS_BOUNDARY / POINTER_ARM)`, the angle a pin of the
+   * drawn size can swing an arm of the drawn length before the nose passes the pin's centre.
+   * Raising it past that models a pin bigger than the one on screen.
+   */
+  CAM_AMPLITUDE: 0.1,
   /**
    * Cam amplitude scales as (gap / TARGET_PITCH) ** GAP_EXPONENT. The exponent controls
    * how a crest's energy barrier grows with its gap, which is what keeps wide segments
@@ -55,16 +93,22 @@ export const PHYSICS = {
    * It costs nothing in how the wheel comes to rest off-centre, because the flapper's grip
    * on the pin scales with the same contact force the spring is pulling with: the ratio that
    * decides where it stops depends on CONTACT_GRIP, not on k.
+   *
+   * It is stiff in absolute terms only because CAM_AMPLITUDE is pinned to the drawn pin size.
+   * Capture speed is `amp * sqrt(k / I)`, so shrinking the amplitude by 2.5x and raising k by
+   * 6.25x leaves the speed at which the escapement catches the wheel exactly where it was.
    */
-  SPRING_K: 0.5,
+  SPRING_K: 3.125,
   /** Flapper moment of inertia. */
   FLAPPER_J: 0.00003,
   /**
    * Flapper viscous damping. Scaled to the spring: too much of it relative to k and the
    * damping force alone drives the contact force negative as a pin drops away, so the
    * flapper tears off the cam on most pin passes instead of riding it down.
+   *
+   * Scaled with SPRING_K to hold the damping ratio `c / (2 * sqrt(k * J))` at 0.13.
    */
-  FLAPPER_C: 0.001,
+  FLAPPER_C: 0.0025,
   /**
    * Wheel viscous drag coefficient.
    *
@@ -72,8 +116,12 @@ export const PHYSICS = {
    * constant friction torque decelerates the wheel at a constant rate, so it arrives at
    * zero still visibly moving and simply halts; drag proportional to speed decays
    * exponentially instead, which is what makes a heavy wheel creep to a stop.
+   *
+   * Carries more of the load than it used to. A cam that spans the whole gap brakes the wheel
+   * continuously; a contact window the width of a pin leaves the wheel free between pins, so
+   * without this the same spin ran about 20% longer.
    */
-  VISCOUS_B: 0.46,
+  VISCOUS_B: 0.6,
   /** Seconds over which launch torque is applied, so the wheel visibly winds up. */
   WIND_UP: 0.18,
   /** Angular velocity reached at full charge, rad/s. */
@@ -127,10 +175,14 @@ export const PHYSICS = {
    */
   LIFT_LIMIT: 1.3,
   /**
-   * Multiplier from physical flapper deflection to rendered rotation. Cosmetic only; it
-   * never feeds back into the solver.
+   * Multiplier from physical flapper deflection to rendered rotation.
+   *
+   * Kept at 1, which is the only value that is not a lie: the nose is drawn travelling exactly
+   * as far as the pin under it pushed it. It was 2.4, which swung the nose 28 px off a pin
+   * drawn 5 px across -- a pointer that visibly over-reacted to what hit it. Cosmetic either
+   * way; it never feeds back into the solver.
    */
-  DISPLAY_GAIN: 2.4,
+  DISPLAY_GAIN: 1,
   /**
    * Event gating. A settling wheel rocks across a valley floor and the flapper re-seats
    * many times on the same pin, which is physically real but produces hundreds of
@@ -197,6 +249,7 @@ export const TENSION_MULTIPLIERS = {
  * @property {Uint8Array} boundary 1 where the pin sits on a segment boundary.
  * @property {Float64Array} gapAfter Angular gap from each pin to the next.
  * @property {Float64Array} amp Cam amplitude for the bump centered on each pin.
+ * @property {Float64Array} contactHalf Half-width of each pin's contact window, radians.
  * @property {number} count
  * @property {number} pitchRatio Widest valley divided by narrowest; 1 means perfectly even.
  */
@@ -258,12 +311,44 @@ const median = (values) => {
   return sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
 };
 
+/**
+ * How far either side of a pin the pointer's nose is actually touching it.
+ *
+ * The nose dips `dip` pixels below the line the pin crests reach, and a pin is a circle of
+ * radius `pinRadius` whose centre rides {@link GEOMETRY}.PIN_RING_RADIUS out. Contact starts
+ * where that circle first reaches the resting nose, which is a chord of the ring:
+ *
+ *     hw = sqrt(dip * (2 * pinRadius - dip)) / PIN_RING_RADIUS
+ *
+ * At the deepest useful dip -- the nose level with the pin's centre -- this is just
+ * `pinRadius / PIN_RING_RADIUS`, about 1.2 degrees for a boundary pin. The cam used to span
+ * half the gap to the next pin instead, 6 degrees at nominal pitch, which is why the pointer
+ * moved well before anything reached it.
+ *
+ * @param {number} amp Flapper deflection at the crest, radians.
+ * @param {number} pinRadius Drawn pin radius, in {@link GEOMETRY}'s pixels.
+ * @returns {{amp: number, half: number}} The deflection the pin can really deliver, and the
+ *   half-width of the window over which it delivers it.
+ */
+const contactWindow = (amp, pinRadius) => {
+  // A round pin cannot push the nose past its own centre: beyond that the nose is sliding under
+  // the pin rather than being lifted by it, so the dip is capped there and the amplitude with it.
+  const dip = Math.min(amp * GEOMETRY.POINTER_ARM, pinRadius);
+  return {
+    amp: dip / GEOMETRY.POINTER_ARM,
+    half: Math.sqrt(dip * (2 * pinRadius - dip)) / GEOMETRY.PIN_RING_RADIUS,
+  };
+};
+
 /** @returns {PinArray} A single-pin ring, used for empty or degenerate item lists. */
 const singlePin = () => ({
   angles: new Float64Array([0]),
   boundary: new Uint8Array([1]),
   gapAfter: new Float64Array([TAU]),
   amp: new Float64Array([PHYSICS.CAM_AMPLITUDE]),
+  contactHalf: new Float64Array([
+    contactWindow(PHYSICS.CAM_AMPLITUDE, GEOMETRY.PIN_RADIUS_BOUNDARY).half,
+  ]),
   count: 1,
   pitchRatio: 1,
 });
@@ -335,6 +420,7 @@ export const buildPins = (items) => {
     boundary: Uint8Array.from(boundary),
     gapAfter: new Float64Array(count),
     amp: new Float64Array(count),
+    contactHalf: new Float64Array(count),
     count,
     pitchRatio: ratio,
   };
@@ -359,31 +445,19 @@ export const buildPins = (items) => {
   for (let i = 0; i < count; i++) {
     const meanGap = (out.gapAfter[i] + out.gapAfter[(i - 1 + count) % count]) / 2;
     const scale = clamp(meanGap / mid, PHYSICS.GAP_SCALE_FLOOR, 1 / PHYSICS.GAP_SCALE_FLOOR);
-    out.amp[i] = PHYSICS.CAM_AMPLITUDE * density * Math.pow(scale, PHYSICS.GAP_EXPONENT);
+    const wanted = PHYSICS.CAM_AMPLITUDE * density * Math.pow(scale, PHYSICS.GAP_EXPONENT);
+
+    // What the ring asks for, passed through what the drawn pin can actually deliver. A filler
+    // pin is drawn smaller than a boundary pin, so it bites less -- which is what the player is
+    // already being shown, and which the fairness harness gates.
+    const pinRadius =
+      out.boundary[i] === 1 ? GEOMETRY.PIN_RADIUS_BOUNDARY : GEOMETRY.PIN_RADIUS_FILLER;
+    const contact = contactWindow(wanted, pinRadius);
+    out.amp[i] = contact.amp;
+    out.contactHalf[i] = contact.half;
   }
 
   return out;
-};
-
-/**
- * Mean viscous drag the pin ring adds to the wheel, used for the closed-form
- * duration estimate. Derived from the integral of the squared cam slope over each
- * pin's window, divided by that window's width.
- *
- * @param {PinArray} pins
- * @param {number} flapperC
- * @returns {number}
- */
-const pinDragCoefficient = (pins, flapperC) => {
-  let sum = 0;
-  for (let i = 0; i < pins.count; i++) {
-    const hwL = pins.gapAfter[i] / 2;
-    const hwR = pins.gapAfter[(i - 1 + pins.count) % pins.count] / 2;
-    const a2 = pins.amp[i] * pins.amp[i];
-    const integral = ((4 * a2) / 3) * (1 / hwL + 1 / hwR);
-    sum += integral / (hwL + hwR);
-  }
-  return (flapperC * sum) / pins.count;
 };
 
 /**
@@ -531,7 +605,7 @@ export class WheelPhysics {
     const cam = this._cam(this.theta);
     this.phi = cam.L;
     this.phiDot = 0;
-    this.contact = true;
+    this.contact = Math.abs(cam.d) < cam.hwC;
   }
 
   /**
@@ -644,9 +718,11 @@ export class WheelPhysics {
    * Where the wheel is sitting between two pins, as a fraction: 0 means the flapper is
    * right on top of a pin, 1 means it has dropped to the floor of the valley.
    *
-   * A wheel that always reports 1 has a spring stiff enough to overpower bearing stiction
-   * every time, which looks mechanical -- it snaps to dead centre on every spin. A healthy
-   * spread here is what produces the occasional nerve-wracking stop against a pin.
+   * A position, not a contact -- the flapper is only against the pin over the first tenth or so
+   * of this range, and {@link touchingPin} is what answers that. A wheel that always reports 1
+   * has a spring stiff enough to overpower bearing stiction every time, which looks mechanical:
+   * it snaps to dead centre on every spin. A healthy spread here is what produces the
+   * occasional nerve-wracking stop against a pin.
    *
    * @returns {number}
    */
@@ -655,19 +731,43 @@ export class WheelPhysics {
     return Math.min(Math.abs(cam.d) / cam.hw, 1);
   }
 
-  /** @returns {boolean} Whether the pin the flapper is resting against is a segment boundary. */
+  /** @returns {boolean} Whether the pin nearest the flapper is a segment boundary. */
   restingOnBoundary() {
     return this.pins.boundary[this._cam(this.theta).i] === 1;
   }
 
   /**
-   * Locates the pin currently under the flapper and evaluates the cam there.
+   * Whether the nose is against a pin right now, as opposed to hanging free between two.
+   *
+   * Distinct from {@link seatOffset}, which says where the wheel sits in its valley whether or
+   * not anything is touching. Once the contact window shrank to the drawn pin, most spins end
+   * free, so this is the honest measure of whether the escapement is still holding the wheel.
+   *
+   * @returns {boolean}
+   */
+  touchingPin() {
+    const cam = this._cam(this.theta);
+    return Math.abs(cam.d) < cam.hwC;
+  }
+
+  /**
+   * Locates the pin nearest the flapper and evaluates the cam there.
+   *
+   * The pin owning each half of a gap is found first, then the flapper is only *on* that pin
+   * while it is within the pin's contact window -- the arc over which the drawn circle actually
+   * reaches the nose. Between windows the cam is flat and the wheel runs free, which is the
+   * whole point: the cam used to span the entire gap, so the pointer began climbing a pin a
+   * quarter-segment before it arrived.
+   *
+   * `hw` stays half the gap regardless, because {@link seatOffset} reads it as "how far across
+   * the valley", not "how close to touching".
+   *
    * @param {number} theta
-   * @returns {{i: number, d: number, hw: number, L: number, Ld: number, Ldd: number}}
+   * @returns {{i: number, d: number, hw: number, hwC: number, L: number, Ld: number, Ldd: number}}
    */
   _cam(theta) {
     const pins = this.pins;
-    const { angles, gapAfter, amp, count } = pins;
+    const { angles, gapAfter, amp, contactHalf, count } = pins;
     const q = wrapTau(-theta);
 
     // Largest index whose angle is <= q; wraps to the last pin when q precedes all of them.
@@ -689,8 +789,8 @@ export class WheelPhysics {
     let f = q - angles[j];
     if (f < 0) f += TAU;
 
-    // Windows tile the gap exactly: the near half belongs to pin j (approaching, d < 0),
-    // the far half to pin j+1 (already passed, d > 0).
+    // The gap's near half is attributed to pin j (approaching, d < 0), its far half to pin j+1
+    // (already passed, d > 0). Attribution is not contact: it only says which pin is nearest.
     let i;
     let d;
     const hw = gap / 2;
@@ -702,12 +802,17 @@ export class WheelPhysics {
       d = gap - f;
     }
 
+    // On a ring pinned tightly enough that the windows would overlap, the gap wins -- two pins
+    // cannot both be touching the one nose.
+    const hwC = Math.min(hw, contactHalf[i]);
+    if (d <= -hwC || d >= hwC) return { i, d, hw, hwC, L: 0, Ld: 0, Ldd: 0 };
+
     const a = amp[i];
-    const ratio = d / hw;
+    const ratio = d / hwC;
     const L = a * (1 - ratio * ratio);
-    const Ld = (-2 * a * d) / (hw * hw);
-    const Ldd = (-2 * a) / (hw * hw);
-    return { i, d, hw, L, Ld, Ldd };
+    const Ld = (-2 * a * d) / (hwC * hwC);
+    const Ldd = (-2 * a) / (hwC * hwC);
+    return { i, d, hw, hwC, L, Ld, Ldd };
   }
 
   /**
@@ -740,7 +845,7 @@ export class WheelPhysics {
    */
   _substep(h) {
     const cam = this._cam(this.theta);
-    const { i, d, L, Ld, Ldd } = cam;
+    const { i, d, hwC, L, Ld, Ldd } = cam;
     const isBoundary = this.pins.boundary[i] === 1;
 
     let tauLaunch = 0;
@@ -748,6 +853,12 @@ export class WheelPhysics {
       tauLaunch = this.launchTorque;
       this.launchLeft -= h;
     }
+
+    // Past the edge of the pin's contact window there is nothing under the nose at all, so the
+    // flapper is not a cam follower there -- it is hanging on its mount. Saying otherwise makes
+    // the next window entry teleport phiDot from 0 to Ld * omega with no impulse to pay for it,
+    // which quietly hands the wheel energy at every pin.
+    if (this.contact && Math.abs(d) >= hwC) this.contact = false;
 
     let alpha;
     let N = 0;
@@ -783,6 +894,13 @@ export class WheelPhysics {
         this.phi = this.maxLift;
         if (this.phiDot > 0) this.phiDot = 0;
       }
+
+      // ...and catches it at the bottom. Between pins the spring pulls the nose down onto its
+      // rest stop, which is where it waits for the next pin rather than swinging past.
+      if (this.phi < 0) {
+        this.phi = 0;
+        if (this.phiDot < 0) this.phiDot = 0;
+      }
     }
 
     this.omega += alpha * h;
@@ -790,8 +908,11 @@ export class WheelPhysics {
 
     if (!this.contact) {
       const camNext = this._cam(thetaNext);
-      if (this.phi <= camNext.L) {
-        // Re-seat: an inelastic collision along the cam constraint.
+      if (Math.abs(camNext.d) < camNext.hwC && this.phi <= camNext.L) {
+        // Re-seat: an inelastic collision along the cam constraint. The nose was dropped by the
+        // pin it had been riding and is landing on the next one, which is the loud half of an
+        // escapement's cycle and by far the most common event now that the nose is airborne
+        // between pins rather than in contact the whole way round.
         const vRel = Math.abs(camNext.Ld * this.omega - this.phiDot);
         const den = this.I + this.J * camNext.Ld * camNext.Ld;
         const omegaAfter = (this.I * this.omega + this.J * camNext.Ld * this.phiDot) / den;
@@ -839,10 +960,17 @@ export class WheelPhysics {
   }
 
   /**
-   * Emits `engage` when the flapper crosses a valley bottom onto a new pin, and
-   * `release` when it tips over a crest.
+   * Emits `engage` when a pin arrives under a resting nose and starts lifting it, and
+   * `release` when the nose tips over a crest.
+   *
+   * Engagement is entering the pin's contact window, not crossing the valley bottom between two
+   * pins. Those were the same instant while the cam ran wall to wall; now the valley bottom is
+   * a stretch of nothing, and an engage keyed to it would fire where nothing is touching and be
+   * filtered out every time. It only fires at low speed, since a nose still moving quickly is
+   * airborne when the next pin arrives and lands on it instead -- that is a `release`.
+   *
    * @param {number} h
-   * @param {{i: number, d: number, Ld: number}} cam
+   * @param {{i: number, d: number, hwC: number, Ld: number}} cam
    * @param {number} N
    * @param {boolean} isBoundary
    * @returns {void}
@@ -850,7 +978,9 @@ export class WheelPhysics {
   _detectCrossings(h, cam, N, isBoundary) {
     const after = this._cam(this.theta);
 
-    if (this._prevPin !== -1 && after.i !== this._prevPin) {
+    const wasTouching = Math.abs(cam.d) < cam.hwC;
+    const isTouching = Math.abs(after.d) < after.hwC;
+    if (isTouching && (!wasTouching || after.i !== this._prevPin)) {
       const vImpact = Math.abs(after.Ld * this.omega);
       this._emit("engage", N, vImpact, after.i, this.pins.boundary[after.i] === 1, h * 0.5);
     }
@@ -934,6 +1064,7 @@ if (typeof window !== "undefined") {
   window.WheelPhysics = WheelPhysics;
   window.buildPins = buildPins;
   window.PHYSICS = PHYSICS;
+  window.GEOMETRY = GEOMETRY;
   window.WHEEL_PRESETS = WHEEL_PRESETS;
   window.TENSION_MULTIPLIERS = TENSION_MULTIPLIERS;
 }

@@ -137,6 +137,7 @@ import {
   WheelPhysics,
   buildPins,
   PHYSICS,
+  GEOMETRY,
   WHEEL_PRESETS,
   TENSION_MULTIPLIERS,
 } from "../scripts/physics.js";
@@ -310,6 +311,7 @@ declare global {
     WheelPhysics: typeof WheelPhysics;
     buildPins: typeof buildPins;
     PHYSICS: typeof PHYSICS;
+    GEOMETRY: typeof GEOMETRY;
     WHEEL_PRESETS: typeof WHEEL_PRESETS;
     TENSION_MULTIPLIERS: typeof TENSION_MULTIPLIERS;
   }

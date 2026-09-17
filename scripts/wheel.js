@@ -2,6 +2,7 @@ import { calculateLevel } from "./levels.js";
 import { drawWheelTrail } from "./animations.js";
 import { getItemColor } from "./colors.js";
 import { COLOR_ASSIGNMENT_MODE } from "./configs.js";
+import { GEOMETRY } from "./physics.js";
 
 /**
  * Applies the removal animation to a item list, easing the outgoing item's weight to zero.
@@ -64,6 +65,8 @@ export const drawWheel = (
 ) => {
   const centerX = width / 2;
   const centerY = height / 2;
+  // GEOMETRY.WHEEL_RADIUS is this same quantity at the nominal 500px canvas; everything drawn
+  // on the pin ring is scaled by the ratio between them.
   const radius = Math.min(width, height) / 2 - 20; // Leave room for pins
 
   // --- Drawing ---
@@ -160,10 +163,12 @@ export const drawWheel = (
     }
 
     // Draw Pins
-    // Pin positions come from the physics ring so what the flapper collides with is
-    // exactly what is drawn. Boundary pins are the ones that can flip the outcome, so
-    // they are drawn heavier than the fillers between them.
-    const pinRadius = radius + 10; // Pins sit outside the main wheel
+    // Both the positions and the sizes come from the physics layer: the ring is the one
+    // buildPins() laid out, and the radii are the ones its contact windows were derived from,
+    // so a pin is touching the pointer exactly when it looks like it is. Boundary pins are the
+    // ones that can flip the outcome, so they are drawn heavier than the fillers between them.
+    const scale = radius / GEOMETRY.WHEEL_RADIUS;
+    const pinRingRadius = GEOMETRY.PIN_RING_RADIUS * scale;
     const count = pins && pins.count ? pins.count : 30;
     const dense = count > 48;
 
@@ -173,11 +178,17 @@ export const drawWheel = (
       if (dense && !isBoundary && i % 2 === 1) continue; // thin the fillers when crowded
 
       const angle = local + rotation;
-      const px = centerX + Math.cos(angle) * pinRadius;
-      const py = centerY + Math.sin(angle) * pinRadius;
+      const px = centerX + Math.cos(angle) * pinRingRadius;
+      const py = centerY + Math.sin(angle) * pinRingRadius;
 
       ctx.beginPath();
-      ctx.arc(px, py, isBoundary ? 5 : 3.5, 0, 2 * Math.PI);
+      ctx.arc(
+        px,
+        py,
+        (isBoundary ? GEOMETRY.PIN_RADIUS_BOUNDARY : GEOMETRY.PIN_RADIUS_FILLER) * scale,
+        0,
+        2 * Math.PI
+      );
       ctx.fillStyle = isBoundary ? "#E2E8F0" : "#C0C0C0";
       ctx.fill();
       ctx.strokeStyle = isBoundary ? "#1f2937" : "#666";
@@ -200,8 +211,10 @@ export const drawWheel = (
  * instead of letting them push it down.
  *
  * @param {HTMLElement|null} pointerElement - The DOM element for the pointer.
- * @param {number} flapperAngle - Deflection in radians, from WheelPhysics#flapperAngle().
- *   Always non-negative: a pin lifts the flapper the same way whichever way the wheel turns.
+ * @param {number} flapperAngle - Deflection in radians, from WheelPhysics#flapperAngle(). This
+ *   is the solver's own figure, not an exaggeration of it, so the nose swings exactly as far as
+ *   the pin beneath it could push an arm of GEOMETRY.POINTER_ARM. Always non-negative: a pin
+ *   lifts the flapper the same way whichever way the wheel turns.
  * @returns {void}
  */
 export const updatePointer = (pointerElement, flapperAngle) => {
