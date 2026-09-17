@@ -190,18 +190,27 @@ export const drawWheel = (
 /**
  * Renders the flapper at the deflection the physics solver actually computed.
  *
- * The previous implementation derived the angle from `rotation % pinSpacing` and a
- * damped cosine parameterized on position rather than time, so it deflected the wrong
- * way on the push phase and froze mid-wiggle at rest. The angle is now simply read off
- * the simulation, which is also what makes the flapper's fight with the wheel visible.
+ * The previous implementation derived the angle from `rotation % pinSpacing` and a damped
+ * cosine parameterized on position rather than time, so it froze mid-wiggle at rest. The
+ * angle is now read straight off the simulation, which is what makes the flapper's fight
+ * with the wheel visible.
+ *
+ * The rendered angle is negated, and that is not arbitrary. The pointer is a CSS border
+ * triangle whose apex sits about 50px to the *left* of its `origin-right` pivot, so in
+ * screen coordinates a positive `rotate()` swings the tip upward. Wheel rotation increases
+ * clockwise, so at the three o'clock flapper the pins sweep downward and have to push the
+ * tip down with them. Rendering the deflection unnegated makes the flapper jump away from
+ * each pin as it arrives, which reads as the animation running backwards.
  *
  * @param {HTMLElement|null} pointerElement - The DOM element for the pointer.
  * @param {number} flapperAngle - Deflection in radians, from WheelPhysics#flapperAngle().
+ *   Always non-negative: the pin lifts the flapper the same way whichever direction the
+ *   wheel is turning, since reversing simply retraces the lift.
  * @returns {void}
  */
 export const updatePointer = (pointerElement, flapperAngle) => {
   if (!pointerElement) return;
-  const deg = (flapperAngle * 180) / Math.PI;
+  const deg = (-flapperAngle * 180) / Math.PI;
   pointerElement.style.transform = `rotate(${deg.toFixed(2)}deg)`;
 };
 
