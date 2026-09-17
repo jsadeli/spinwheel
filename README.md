@@ -23,11 +23,21 @@ Screenshot:
   - **Easy to Use**: Simple and intuitive interface.
   - **Single Page Application**: No server required, runs entirely in your browser.
   - **Lightweight**: Built with vanilla HTML, CSS, and JavaScript.
-  - **Physics-Based Wheel**: Realistic deceleration with a Damped Harmonic Oscillator physics.
+  - **Physics-Based Wheel**: The wheel is a disc with real inertia, bearing friction and air
+    drag; it winds up under torque rather than jumping to speed, and nothing imposes a stop
+    time. Spins end the way a real wheel does, by failing to climb a pin and rolling back.
   - **Weighted Probabilities**: Support for weighted items using `Item:Weight` syntax
     (e.g., `Pizza:10`) to increase winning chances.
-  - **Interactive Pins**: 30 physical "pins" on the wheel edge that interact with the pointer
-    (visual snapping and audio ticks).
+  - **Flapper Escapement**: The pointer is a spring-loaded cam follower, not decoration. Every
+    pin it climbs takes energy out of the wheel, and near the end it can stall or reverse it
+    outright. One pin sits on each segment boundary, so when the wheel dies on one of those the
+    winner really does change at the last moment.
+  - **Impact-Driven Sound**: Every strike is synthesized from its own contact force and speed
+    and placed on the audio clock with sub-frame timing, under a bearing rumble that tracks
+    wheel speed. Reverse strikes sound different from forward ones.
+  - **Provably Fair**: `npm test` runs a headless Monte Carlo that chi-square tests the landing
+    distribution against the item weights, across item counts, weightings, every tension setting
+    and every pointer.
   - **List Management**: Create, rename, delete, and auto save multiple distinct lists
     (e.g., "Lunch Options", "Daily Standup", "Movie Night").
   - **Progress**: Track your XP progress, levels, and achievements. Earn XP points and unlock various
@@ -157,7 +167,10 @@ You can customize:
 
 - Theme (auto, light-mode, or dark-mode)
 - Sound effects (on or off, classic, wooden, metallic, crystal)
-- Spin duration (quick 5s, normal 10s, or long 20s)
+- Wheel weight (light, normal, or heavy — roughly 5s, 10s, or 20s, though duration is
+  emergent rather than fixed)
+- Flapper tension (light, normal, strong, or brutal — how hard the pointer fights the wheel)
+- Pointer (classic, sword, feather, or laser — each with its own mass and spring)
 - Spin trail effects (on or off)
 - Spin labels visibility (set it to hidden for a little bit of a "mystery" spin)
 
