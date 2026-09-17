@@ -177,6 +177,14 @@ GitHub.sublime-settings
 /node_modules/
 
 # ------------------------------------------------------------------------------
+# AI agent tooling
+# ------------------------------------------------------------------------------
+
+# Antigravity CLI workspace state: a symlink to a per-machine
+# ~/.gemini/config/projects/<uuid>.json (absolute paths, write-permission grant)
+.antigravitycli/
+
+# ------------------------------------------------------------------------------
 # Other
 # ------------------------------------------------------------------------------
 
