@@ -124,6 +124,13 @@ import {
   parseWinnerString,
 } from "../scripts/utils.js";
 import { drawWheel, updatePointer } from "../scripts/wheel.js";
+import {
+  WheelPhysics,
+  buildPins,
+  PHYSICS,
+  WHEEL_PRESETS,
+  TENSION_MULTIPLIERS,
+} from "../scripts/physics.js";
 
 declare global {
   interface Window {
@@ -280,5 +287,11 @@ declare global {
     // Wheel (wheel.js)
     drawWheel: typeof drawWheel;
     updatePointer: typeof updatePointer;
+    // Physics (physics.js)
+    WheelPhysics: typeof WheelPhysics;
+    buildPins: typeof buildPins;
+    PHYSICS: typeof PHYSICS;
+    WHEEL_PRESETS: typeof WHEEL_PRESETS;
+    TENSION_MULTIPLIERS: typeof TENSION_MULTIPLIERS;
   }
 }
