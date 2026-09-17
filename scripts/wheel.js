@@ -4,6 +4,12 @@ import { getItemColor } from "./colors.js";
 import { COLOR_ASSIGNMENT_MODE } from "./configs.js";
 
 /**
+ * How far, in canvas pixels, a pin shoves the flapper outward at full lift. Matches the
+ * drawn pin: the tip rests just inside the pin circle and rides over the top of one.
+ */
+const PIN_LIFT_PX = 10;
+
+/**
  * Applies the removal animation to a item list, easing the outgoing item's weight to zero.
  * Shared with the physics layer so the pin ring follows the same geometry that is drawn.
  *
@@ -188,30 +194,37 @@ export const drawWheel = (
 };
 
 /**
- * Renders the flapper at the deflection the physics solver actually computed.
+ * Renders the flapper.
  *
- * The previous implementation derived the angle from `rotation % pinSpacing` and a damped
- * cosine parameterized on position rather than time, so it froze mid-wiggle at rest. The
- * angle is now read straight off the simulation, which is what makes the flapper's fight
- * with the wheel visible.
+ * The tip is the part that decides the result, so it has to stay on the reference line the
+ * winner is read from -- the horizontal through the wheel's centre. A pointer that pivots
+ * about its tail does not: its tip swings sideways as it deflects, by up to six degrees,
+ * which on a thirty-item wheel is half a slice. It cannot be fixed by reading the winner
+ * from wherever the tip has swung to either, because the pointer is positioned in fixed
+ * pixels while the wheel scales, so the tip's offset changes with the viewport and the same
+ * wheel angle would pick different slices on a phone and a desktop.
  *
- * The rendered angle is negated, and that is not arbitrary. The pointer is a CSS border
- * triangle whose apex sits about 50px to the *left* of its `origin-right` pivot, so in
- * screen coordinates a positive `rotate()` swings the tip upward. Wheel rotation increases
- * clockwise, so at the three o'clock flapper the pins sweep downward and have to push the
- * tip down with them. Rendering the deflection unnegated makes the flapper jump away from
- * each pin as it arrives, which reads as the animation running backwards.
+ * So the pointer pivots about its tip instead (`origin-left` on the element), and the lift
+ * is drawn as the radial push it physically is: the pin shoves the flapper outward, away
+ * from the wheel, while the arm rocks. The tip stays exactly where the winner is read, at
+ * every screen size, and the winner logic needs no knowledge of the layout.
+ *
+ * The rendered rotation is negated because the tip sits left of the pivot in screen
+ * coordinates, so a positive CSS rotation would swing the flapper against the oncoming pins
+ * rather than with them.
  *
  * @param {HTMLElement|null} pointerElement - The DOM element for the pointer.
  * @param {number} flapperAngle - Deflection in radians, from WheelPhysics#flapperAngle().
- *   Always non-negative: the pin lifts the flapper the same way whichever direction the
- *   wheel is turning, since reversing simply retraces the lift.
+ *   Always non-negative: a pin lifts the flapper the same way whichever way the wheel turns.
+ * @param {number} [lift=0] - Seat-to-crest lift, 0..1, from WheelPhysics#flapperLift().
  * @returns {void}
  */
-export const updatePointer = (pointerElement, flapperAngle) => {
+export const updatePointer = (pointerElement, flapperAngle, lift = 0) => {
   if (!pointerElement) return;
+
   const deg = (-flapperAngle * 180) / Math.PI;
-  pointerElement.style.transform = `rotate(${deg.toFixed(2)}deg)`;
+  const push = lift * PIN_LIFT_PX;
+  pointerElement.style.transform = `translateX(${push.toFixed(1)}px) rotate(${deg.toFixed(2)}deg)`;
 };
 
 // Expose to window (needed for Babel Standalone)

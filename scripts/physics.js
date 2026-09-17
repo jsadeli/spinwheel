@@ -138,14 +138,13 @@ export const PHYSICS = {
  *
  * Coulomb friction deliberately does *not* scale with inertia. Bearing friction really is
  * proportional to weight, but making it so leaves the ratio that governs deceleration
- * unchanged, and the preset would then do nothing at all. It is scaled sub-proportionally
- * instead, which is what makes a heavy wheel run long.
+ * unchanged, and the preset would then do nothing at all.
  * @type {Object<number, {key: number, label: string, inertia: number, coulomb: number}>}
  */
 export const WHEEL_PRESETS = {
   5000: { key: 5000, label: "light", inertia: 0.55, coulomb: 0.012 },
   10000: { key: 10000, label: "normal", inertia: 1.0, coulomb: 0.011 },
-  20000: { key: 20000, label: "heavy", inertia: 2.1, coulomb: 0.010 },
+  20000: { key: 20000, label: "heavy", inertia: 2.1, coulomb: 0.01 },
 };
 
 /**
@@ -614,6 +613,15 @@ export class WheelPhysics {
   /** @returns {number} Rendered flapper deflection, radians. */
   flapperAngle() {
     return this.phi * PHYSICS.DISPLAY_GAIN;
+  }
+
+  /**
+   * How far the flapper is currently lifted off its seat, 0 at a valley floor and 1 on top
+   * of a pin. Drives the radial part of the pointer's animation.
+   * @returns {number}
+   */
+  flapperLift() {
+    return clamp(this.phi / PHYSICS.CAM_AMPLITUDE, 0, 1);
   }
 
   /**
