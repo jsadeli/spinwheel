@@ -76,6 +76,19 @@ export const PHYSICS = {
   SUBSTEP: 0.001,
   /** Largest wall-clock delta fed to the integrator in one frame. */
   MAX_DT: 0.05,
+  /**
+   * How much harder the bearing holds a stationary wheel than a turning one. Static
+   * friction exceeds kinetic in any real bearing; modelling them as equal is the
+   * simplification, not the other way round.
+   *
+   * This is the knob that decides whether the wheel snaps to the floor of a valley or
+   * stays where it died. The spring wants to drag it to dead centre, and raising only the
+   * holding force resists that without weakening the spring itself -- which matters,
+   * because the same spring force is what shoves the wheel backwards after a failed crest,
+   * and because a spring weak enough to give the same spread makes the flapper chatter off
+   * the pins roughly three times as often.
+   */
+  STATIC_FRICTION: 1.7,
   /** Below this speed the wheel is a candidate for settling. */
   OMEGA_EPS: 0.02,
   /** How long the wheel must stay below OMEGA_EPS before it counts as settled. */
@@ -748,8 +761,8 @@ export class WheelPhysics {
   }
 
   /**
-   * Applies Coulomb bearing friction, including stiction so the wheel does not
-   * jitter around zero.
+   * Applies bearing friction, with a higher holding force once stopped so the wheel does
+   * not jitter around zero and does not get dragged to dead centre.
    * @param {number} drive Net torque before friction.
    * @param {number} den Effective inertia.
    * @returns {number} Angular acceleration.
@@ -758,11 +771,15 @@ export class WheelPhysics {
     if (Math.abs(this.omega) > PHYSICS.OMEGA_EPS) {
       return (drive - this.coulomb * Math.sign(this.omega)) / den;
     }
-    if (Math.abs(drive) <= this.coulomb) {
+
+    // Stationary: the bearing holds harder than it drags, so the wheel can sit part-way up
+    // a pin instead of being pulled down to the valley floor.
+    const hold = this.coulomb * PHYSICS.STATIC_FRICTION;
+    if (Math.abs(drive) <= hold) {
       this.omega = 0;
       return 0;
     }
-    return (drive - this.coulomb * Math.sign(drive)) / den;
+    return (drive - hold * Math.sign(drive)) / den;
   }
 
   /**
