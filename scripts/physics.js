@@ -119,6 +119,13 @@ export const PHYSICS = {
   SETTLE_TIME: 0.4,
   /** Hard cap on simulated spin length, so a spin can never fail to terminate. */
   MAX_SPIN_TIME: 90,
+  /**
+   * How far above a pin's crest the flapper may fly before its mounting stops it, as a
+   * multiple of the cam amplitude. Without a backstop a weak spring cannot reel the flapper
+   * back in after it tears off a pin, and it sails to three times the deflection any pin
+   * could have pushed it to, which reads as the pointer flailing loose.
+   */
+  LIFT_LIMIT: 1.3,
   /** Multiplier from physical flapper deflection to rendered deflection. */
   DISPLAY_GAIN: 2.4,
   /**
@@ -136,15 +143,21 @@ export const PHYSICS = {
  * Wheel mass presets, keyed by the legacy `spinDuration` values so existing localStorage
  * and the `speed_demon` / `patience_is_a_virtue` achievements keep working.
  *
- * Coulomb friction deliberately does *not* scale with inertia. Bearing friction really is
- * proportional to weight, but making it so leaves the ratio that governs deceleration
- * unchanged, and the preset would then do nothing at all.
- * @type {Object<number, {key: number, label: string, inertia: number, coulomb: number}>}
+ * A heavier wheel is harder to get turning and loads its bearing harder, so here it both
+ * starts slower and sheds energy faster: heavy is the short spin and light is the long,
+ * free-running one. Drag therefore scales faster than inertia across the presets rather
+ * than in step with it -- were the two proportional, the ratio governing deceleration would
+ * be identical for all three and the setting would do nothing at all.
+ *
+ * The keys stay 5000/10000/20000 because they are what localStorage holds and what the
+ * speed_demon and patience_is_a_virtue achievements compare against; 5000 must stay the
+ * short spin.
+ * @type {Object<number, {key: number, label: string, inertia: number, coulomb: number, drag: number}>}
  */
 export const WHEEL_PRESETS = {
-  5000: { key: 5000, label: "light", inertia: 0.55, coulomb: 0.012 },
-  10000: { key: 10000, label: "normal", inertia: 1.0, coulomb: 0.011 },
-  20000: { key: 20000, label: "heavy", inertia: 2.1, coulomb: 0.01 },
+  5000: { key: 5000, label: "heavy", inertia: 2.1, coulomb: 0.012, drag: 6.4 },
+  10000: { key: 10000, label: "normal", inertia: 1.0, coulomb: 0.011, drag: 1 },
+  20000: { key: 20000, label: "light", inertia: 0.55, coulomb: 0.01, drag: 0.245 },
 };
 
 /**
@@ -395,6 +408,7 @@ export class WheelPhysics {
     this.rng = opts.rng || Math.random;
     /** @type {PinArray} */
     this.pins = buildPins(opts.items || []);
+    this.maxLift = this._maxLift();
 
     this.preset = WHEEL_PRESETS[opts.preset] || WHEEL_PRESETS[10000];
     this.tensionKey = opts.tension || "normal";
@@ -442,7 +456,7 @@ export class WheelPhysics {
     this.k = PHYSICS.SPRING_K * tensionMul * this.skinTensionMul * (this._tensionJitter || 1);
     this.J = PHYSICS.FLAPPER_J * this.skinMassMul;
     this.c = PHYSICS.FLAPPER_C * this.skinDampingMul;
-    this.b = PHYSICS.VISCOUS_B;
+    this.b = PHYSICS.VISCOUS_B * (this.preset.drag || 1);
   }
 
   /**
@@ -456,12 +470,20 @@ export class WheelPhysics {
   setItems(items) {
     if (this.spinning) return;
     this.pins = buildPins(items);
+    this.maxLift = this._maxLift();
     this._prevPin = -1;
     if (!this.spinning) {
       this.phi = 0;
       this.phiDot = 0;
       this.contact = true;
     }
+  }
+
+  /** @returns {number} The flapper's mechanical lift limit for the current pin ring. */
+  _maxLift() {
+    let peak = 0;
+    for (let i = 0; i < this.pins.count; i++) if (this.pins.amp[i] > peak) peak = this.pins.amp[i];
+    return peak * PHYSICS.LIFT_LIMIT;
   }
 
   /**
@@ -761,6 +783,12 @@ export class WheelPhysics {
       const phiAcc = (-this.k * this.phi - this.c * this.phiDot) / this.J;
       this.phiDot += phiAcc * h;
       this.phi += this.phiDot * h;
+
+      // The flapper's mounting stops it travelling any further out.
+      if (this.phi > this.maxLift) {
+        this.phi = this.maxLift;
+        if (this.phiDot > 0) this.phiDot = 0;
+      }
     }
 
     this.omega += alpha * h;
