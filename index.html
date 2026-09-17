@@ -1311,6 +1311,17 @@
         };
 
         /**
+         * Flapper tension choices, in stiffness order. The hints describe what the setting
+         * actually does to the wheel rather than naming the spring constant.
+         */
+        const TENSION_OPTIONS = [
+          { id: FLAPPER_TENSIONS.LIGHT, label: "Light", Icon: TrailIcon, hint: "Barely notices the pins" },
+          { id: FLAPPER_TENSIONS.NORMAL, label: "Normal", Icon: SlidersIcon, hint: "Balanced" },
+          { id: FLAPPER_TENSIONS.STRONG, label: "Strong", Icon: BoltIcon, hint: "Audible chatter, long hold at the last pin" },
+          { id: FLAPPER_TENSIONS.BRUTAL, label: "Brutal", Icon: FlameIcon, hint: "Frequent stalls and rollbacks" },
+        ];
+
+        /**
          * Resolves a stored pointer-skin id to its physical parameters.
          * @param {string} id
          * @returns {{id: string, label: string, color: string, tensionMul: number, massMul: number, dampingMul: number}}
@@ -2243,7 +2254,7 @@
                       )}
                       <div className="p-2 border-b border-gray-100 dark:border-gray-700">
                         <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                          Spin Mode
+                          Wheel Weight
                         </span>
                       </div>
                       <div className="py-1 border-b border-gray-100 dark:border-gray-700">
@@ -2261,7 +2272,7 @@
                           <span className="mr-3">
                             <ZapIcon size={16} />
                           </span>
-                          Quick (5s)
+                          Light (~5s)
                           {spinDuration === 5000 && (
                             <span className="ml-auto">
                               <CheckIcon size={16} />
@@ -2282,7 +2293,7 @@
                           <span className="mr-3">
                             <ClockIcon size={16} />
                           </span>
-                          Normal (10s)
+                          Normal (~10s)
                           {spinDuration === 10000 && (
                             <span className="ml-auto">
                               <CheckIcon size={16} />
@@ -2303,7 +2314,7 @@
                           <span className="mr-3">
                             <HourglassIcon size={16} />
                           </span>
-                          Long (20s)
+                          Heavy (~20s)
                           {spinDuration === 20000 && (
                             <span className="ml-auto">
                               <CheckIcon size={16} />
@@ -2420,7 +2431,74 @@
                         </button>
                       </div>
 
+                                            <div className="p-2 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/30">
+                        <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                          Flapper Tension
+                        </span>
+                      </div>
+                      <div className="py-1 border-b border-gray-100 dark:border-gray-700">
+                        {TENSION_OPTIONS.map((opt) => (
+                          <button
+                            key={opt.id}
+                            onClick={() => {
+                              setFlapperTension(opt.id);
+                              if (flapperTension === opt.id) setShowSettingsMenu(false);
+                            }}
+                            className={`flex items-center w-full px-4 py-2 text-sm text-left ${
+                              flapperTension === opt.id
+                                ? "bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300"
+                                : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                            }`}
+                            title={opt.hint}
+                          >
+                            <span className="mr-3">
+                              <opt.Icon size={16} />
+                            </span>
+                            {opt.label}
+                            {flapperTension === opt.id && (
+                              <span className="ml-auto">
+                                <CheckIcon size={16} />
+                              </span>
+                            )}
+                          </button>
+                        ))}
+                      </div>
+
                       <div className="p-2 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/30">
+                        <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                          Pointer
+                        </span>
+                      </div>
+                      <div className="py-1 border-b border-gray-100 dark:border-gray-700">
+                        {Object.values(POINTER_SKINS).map((skin) => (
+                          <button
+                            key={skin.id}
+                            onClick={() => {
+                              setPointerSkin(skin.id);
+                              if (pointerSkin === skin.id) setShowSettingsMenu(false);
+                            }}
+                            className={`flex items-center w-full px-4 py-2 text-sm text-left ${
+                              pointerSkin === skin.id
+                                ? "bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300"
+                                : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                            }`}
+                            title={`Tension x${skin.tensionMul}, mass x${skin.massMul}`}
+                          >
+                            <span
+                              className="mr-3 inline-block w-0 h-0 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent border-r-[12px]"
+                              style={{ borderRightColor: skin.color }}
+                            ></span>
+                            {skin.label}
+                            {pointerSkin === skin.id && (
+                              <span className="ml-auto">
+                                <CheckIcon size={16} />
+                              </span>
+                            )}
+                          </button>
+                        ))}
+                      </div>
+
+<div className="p-2 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/30">
                         <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                           Themes
                         </span>
