@@ -137,11 +137,17 @@ export const PHYSICS = {
    * zero still visibly moving and simply halts; drag proportional to speed decays
    * exponentially instead, which is what makes a heavy wheel creep to a stop.
    *
-   * Carries more of the load than it used to. A cam that spans the whole gap brakes the wheel
-   * continuously; a contact window the width of a pin leaves the wheel free between pins, so
-   * without this the same spin ran about 20% longer.
+   * This is what sets how long the wheel is *visibly* turning, since it is what decays the
+   * speed: the visible part of a spin scales as 1/b almost exactly.
+   *
+   * It was briefly raised to 0.6 to pull a spin's total length back after the contact window
+   * narrowed. That was the wrong knob. The narrow window had lengthened the near-motionless
+   * creep at the end, not the spinning, and shortening the spinning to compensate cut the
+   * visible spin by a quarter -- from 7.0 s to 5.3 s on a full-power Normal spin -- while
+   * leaving the total near 12 s. A spin that reads as half as long as it used to be. The creep
+   * is OMEGA_EPS's business; this stays where it was tuned for the spin itself.
    */
-  VISCOUS_B: 0.6,
+  VISCOUS_B: 0.46,
   /** Seconds over which launch torque is applied, so the wheel visibly winds up. */
   WIND_UP: 0.18,
   /** Angular velocity reached at full charge, rad/s. */
@@ -181,6 +187,12 @@ export const PHYSICS = {
    * Below this speed the wheel is a candidate for settling. Low on purpose: a coasting
    * wheel spends its last second creeping, and cutting that off early is what turns a
    * coast-down into a halt.
+   *
+   * It is also the only knob on the dead stretch at the end of a spin, and it is not free.
+   * Raising it to 0.04 takes 1.8 s off the total without touching the visible spin at all --
+   * but a stall and rollback happen down in exactly the speeds it truncates, and the tension
+   * ladder collapses from 3/27/63/84% to 0/8/50/71%. Not worth it: the wheel stopping against
+   * a pin is the point of the escapement.
    */
   OMEGA_EPS: 0.008,
   /** How long the wheel must stay below OMEGA_EPS before it counts as settled. */

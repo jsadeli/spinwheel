@@ -90,6 +90,7 @@ const run = (cfg, spins) => {
   let restOnBoundaryPin = 0;
   let restTouching = 0;
   let lateCrests = 0;
+  let visibleTime = 0;
   let reversedSpins = 0;
   let noSettle = 0;
   let maxSubsteps = 0;
@@ -129,6 +130,10 @@ const run = (cfg, spins) => {
       const { impacts, settled } = phys.step(1 / 60);
       for (const e of impacts) if (e.kind === "release") crestTimes.push(t);
       if (phys.omega < -0.05) sawReverse = true;
+      // Time the wheel is turning fast enough to read as spinning. `dur` alone hides the
+      // difference between a spin and the near-motionless creep that follows it, which is how a
+      // drag change that cut the visible spin by a quarter once passed this harness unnoticed.
+      if (Math.abs(phys.omega) > 1) visibleTime += 1 / 60;
       let d = phys.theta - prev;
       if (d > Math.PI) d -= TAU;
       if (d < -Math.PI) d += TAU;
@@ -201,6 +206,7 @@ const run = (cfg, spins) => {
     ratio: pins.pitchRatio,
     perSeg: (pins.count / weights.length).toFixed(1),
     dur: (durSum / spins).toFixed(2),
+    vis: (visibleTime / spins).toFixed(2),
     durRange: durMin.toFixed(1) + "-" + durMax.toFixed(1),
     revs: (revSum / spins).toFixed(1),
     boundaryPct: ((boundaryFinal / spins) * 100).toFixed(1),
@@ -258,6 +264,7 @@ for (const cfg of CONFIGS) {
       "pins " + String(r.pins).padStart(3) +
       "  ratio " + r.ratio.toFixed(3) +
       "  dur " + r.dur.padStart(5) + "s (" + r.durRange + ")" +
+      "  vis " + r.vis.padStart(5) + "s" +
       "  revs " + r.revs.padStart(5) +
       "  onPin " + r.onPin.padStart(3) + "%" +
       "  touch " + r.touching.padStart(3) + "%" +
