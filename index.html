@@ -2495,7 +2495,7 @@
                             key={opt.id}
                             onClick={() => {
                               setFlapperTension(opt.id);
-                              if (flapperTension === opt.id) setShowSettingsMenu(false);
+                              setShowSettingsMenu(false);
                             }}
                             className={`flex items-center w-full px-4 py-2 text-sm text-left ${
                               flapperTension === opt.id
