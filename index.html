@@ -1367,9 +1367,32 @@
             prev.includes(id) ? prev.filter((section) => section !== id) : [...prev, id],
           );
 
-        // Labels for the collapsed section headers. Wheel weight and tick sound are bare
-        // values with no label attached, unlike TENSION_OPTIONS and POINTER_SKINS.
-        const WHEEL_WEIGHT_LABELS = { 5000: "Heavy", 10000: "Normal", 20000: "Light" };
+        /**
+         * Wheel weight choices, read off WHEEL_PRESETS rather than listed here.
+         *
+         * Both the key and the name are the solver's, so a button cannot come to point at a
+         * wheel that does not exist -- setPreset answers a key it does not know by silently
+         * keeping the current wheel, which looks exactly like a setting that does not stick.
+         * Only the icon and the duration are the UI's own, and a preset with neither still
+         * renders as a plain named button.
+         *
+         * Durations are measured at full power over 200 spins, not derived from the key: the
+         * keys are the millisecond values of the fixed-duration animation this replaced, and
+         * the wheel stopped taking its time from them when the physics started deciding it.
+         */
+        const WHEEL_WEIGHT_TRIM = {
+          heavy: { Icon: ZapIcon, hint: "~6s" },
+          normal: { Icon: ClockIcon, hint: "~14s" },
+          light: { Icon: HourglassIcon, hint: "~22s" },
+        };
+        const WHEEL_WEIGHT_OPTIONS = Object.values(WHEEL_PRESETS).map((preset) => ({
+          key: preset.key,
+          label: preset.label.charAt(0).toUpperCase() + preset.label.slice(1),
+          ...WHEEL_WEIGHT_TRIM[preset.label],
+        }));
+
+        // Tick sound is still a bare value with no label attached, unlike WHEEL_WEIGHT_OPTIONS,
+        // TENSION_OPTIONS and POINTER_SKINS.
         const TICK_SOUND_LABELS = {
           [TICK_SOUNDS.DEFAULT]: "Electric",
           [TICK_SOUNDS.CRISP]: "Wooden",
@@ -2357,70 +2380,37 @@
                       <SettingsSection
                         id="wheelWeight"
                         title="Wheel Weight"
-                        summary={WHEEL_WEIGHT_LABELS[spinDuration]}
+                        summary={
+                          WHEEL_WEIGHT_OPTIONS.find((opt) => opt.key === spinDuration)?.label
+                        }
                         isOpen={openSettingsSections.includes("wheelWeight")}
                         onToggle={() => toggleSettingsSection("wheelWeight")}
                       >
-                        <button
-                          onClick={() => {
-                            setSpinDuration(5000);
-                          }}
-                          className={`flex items-center w-full px-4 py-2 text-sm text-left ${
-                            spinDuration === 5000
-                              ? "bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300"
-                              : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                          }`}
-                        >
-                          <span className="mr-3">
-                            <ZapIcon size={16} />
-                          </span>
-                          Heavy (~5s)
-                          {spinDuration === 5000 && (
-                            <span className="ml-auto">
-                              <CheckIcon size={16} />
-                            </span>
-                          )}
-                        </button>
-                        <button
-                          onClick={() => {
-                            setSpinDuration(10000);
-                          }}
-                          className={`flex items-center w-full px-4 py-2 text-sm text-left ${
-                            spinDuration === 10000
-                              ? "bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300"
-                              : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                          }`}
-                        >
-                          <span className="mr-3">
-                            <ClockIcon size={16} />
-                          </span>
-                          Normal (~10s)
-                          {spinDuration === 10000 && (
-                            <span className="ml-auto">
-                              <CheckIcon size={16} />
-                            </span>
-                          )}
-                        </button>
-                        <button
-                          onClick={() => {
-                            setSpinDuration(20000);
-                          }}
-                          className={`flex items-center w-full px-4 py-2 text-sm text-left ${
-                            spinDuration === 20000
-                              ? "bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300"
-                              : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                          }`}
-                        >
-                          <span className="mr-3">
-                            <HourglassIcon size={16} />
-                          </span>
-                          Light (~20s)
-                          {spinDuration === 20000 && (
-                            <span className="ml-auto">
-                              <CheckIcon size={16} />
-                            </span>
-                          )}
-                        </button>
+                        {WHEEL_WEIGHT_OPTIONS.map((opt) => (
+                          <button
+                            key={opt.key}
+                            onClick={() => {
+                              setSpinDuration(opt.key);
+                            }}
+                            className={`flex items-center w-full px-4 py-2 text-sm text-left ${
+                              spinDuration === opt.key
+                                ? "bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300"
+                                : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                            }`}
+                          >
+                            {opt.Icon && (
+                              <span className="mr-3">
+                                <opt.Icon size={16} />
+                              </span>
+                            )}
+                            {opt.hint ? `${opt.label} (${opt.hint})` : opt.label}
+                            {spinDuration === opt.key && (
+                              <span className="ml-auto">
+                                <CheckIcon size={16} />
+                              </span>
+                            )}
+                          </button>
+                        ))}
                       </SettingsSection>
 
                       <SettingsSection
