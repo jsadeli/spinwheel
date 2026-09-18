@@ -359,6 +359,24 @@
 
       const apiKey = ""; // Provided by environment
 
+      /**
+       * Resolves a stored flapper-tension id to one the solver has a spring for.
+       *
+       * A tension that has been renamed or dropped from the dial survives in localStorage --
+       * loadState only substitutes its default when the key is absent, never when it holds a
+       * stale value -- and reaches TENSION_MULTIPLIERS as an unknown key, where the `|| 1`
+       * fallback quietly invents a spring stiffer than every setting the dial offers and that no
+       * row of the fairness gate covers. The settings panel shows this as a blank section summary
+       * with no option marked, so nothing self-corrects until the player picks a setting.
+       *
+       * Lives above App rather than beside resolveSkin because the flapperTension useState
+       * initializer runs long before anything declared in the component body has left its TDZ.
+       * @param {string} id
+       * @returns {string} A tension id present in FLAPPER_TENSIONS.
+       */
+      const resolveTension = (id) =>
+        Object.values(FLAPPER_TENSIONS).includes(id) ? id : FLAPPER_TENSIONS.NORMAL;
+
       const App = () => {
         // --- STATE MANAGEMENT ---
 
@@ -432,7 +450,7 @@
           loadState(STORAGE_KEYS.TICK_SOUND, TICK_SOUNDS.DEFAULT),
         );
         const [flapperTension, setFlapperTension] = useState(() =>
-          loadState(STORAGE_KEYS.FLAPPER_TENSION, FLAPPER_TENSIONS.NORMAL),
+          resolveTension(loadState(STORAGE_KEYS.FLAPPER_TENSION, FLAPPER_TENSIONS.NORMAL)),
         );
         const [pointerSkin, setPointerSkin] = useState(() =>
           loadState(STORAGE_KEYS.POINTER_SKIN, POINTER_SKINS.CLASSIC.id),
@@ -1358,10 +1376,6 @@
           }
         };
 
-        /**
-         * Flapper tension choices, in stiffness order. The hints describe what the setting
-         * actually does to the wheel rather than naming the spring constant.
-         */
         const toggleSettingsSection = (id) =>
           setOpenSettingsSections((prev) =>
             prev.includes(id) ? prev.filter((section) => section !== id) : [...prev, id],
@@ -1400,25 +1414,28 @@
           [TICK_SOUNDS.CRYSTAL]: "Crystal",
         };
 
+        /**
+         * Flapper tension choices, in stiffness order. The hints describe what the setting
+         * actually does to the wheel rather than naming the spring constant.
+         */
         const TENSION_OPTIONS = [
           {
-            id: FLAPPER_TENSIONS.LIGHT,
-            label: "Light",
-            Icon: TrailIcon,
-            hint: "Barely notices the pins",
+            id: FLAPPER_TENSIONS.NORMAL,
+            label: "Normal",
+            Icon: SlidersIcon,
+            hint: "Glides over the pins; rarely stalls",
           },
-          { id: FLAPPER_TENSIONS.NORMAL, label: "Normal", Icon: SlidersIcon, hint: "Balanced" },
+          {
+            id: FLAPPER_TENSIONS.FIRM,
+            label: "Firm",
+            Icon: BoltIcon,
+            hint: "Stalls and rolls back now and then",
+          },
           {
             id: FLAPPER_TENSIONS.STRONG,
             label: "Strong",
-            Icon: BoltIcon,
-            hint: "Audible chatter, long hold at the last pin",
-          },
-          {
-            id: FLAPPER_TENSIONS.BRUTAL,
-            label: "Brutal",
             Icon: FlameIcon,
-            hint: "Frequent stalls and rollbacks",
+            hint: "Audible chatter, long hold at the last pin",
           },
         ];
 

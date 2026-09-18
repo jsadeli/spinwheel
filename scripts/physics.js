@@ -103,7 +103,7 @@ export const PHYSICS = {
    *
    * No wheel runs at this value: it is the base a tension setting multiplies, and every setting
    * is below 1. The capture speed quoted above is what the amplitude retune was built to
-   * preserve, but no setting sits on it any more -- the default is 0.4 of this, deliberately
+   * preserve, but no setting sits on it any more -- the default is 0.2 of this, deliberately
    * slacker. See {@link TENSION_MULTIPLIERS}.
    */
   SPRING_K: 3.90625,
@@ -211,22 +211,25 @@ export const PHYSICS = {
    * measured from the furthest-forward point the spin reached.
    *
    * The escapement is normally its own backstop: a stall rolls back across the valley it
-   * stalled in and the pin behind catches it, which measures 0.96 valleys at worst over the
-   * wheels, springs and flappers a player can select. It does not always hold. On the
-   * freest-running wheel -- the `light` preset -- the two stiffest springs drive the wheel back
-   * *through* that pin and into the valley before it, 1.95 valleys: `brutal` on 5% to 15% of
-   * spins depending on the flapper, and `strong` on 0.6% of them with `sword`. The rollback is
-   * bimodal, so there is nothing in between -- a spin gives back either the valley it stalled
-   * in or that valley and the one behind it. Nothing in the solver bounded the second case; it
-   * was bounded by tuning, and on the other 43 of the 48 settings only by accident.
+   * stalled in and the pin behind catches it. Rollback is bimodal, so there is nothing in
+   * between -- a spin gives back either that valley, at most 0.96 of one, or it gives back
+   * that valley and the one behind it, 1.95, having driven the wheel back *through* the pin
+   * that should have caught it. Nothing in the solver bounds the second case; it was bounded
+   * by tuning.
+   *
+   * No setting now on the dial reaches it. Every row of tools/physics-sim.mjs reports `stop
+   * 0.0%`, and `back` peaks at 0.96 on the freest-running wheel carrying the stiffest spring
+   * -- the `light` preset on `strong`, the corner the gate carries a row for precisely because
+   * the tension ladder is otherwise gated on the normal wheel. The 1.95 branch was reached
+   * through the `brutal` tension, which the dial no longer offers.
    *
    * So this is a mechanical stop in the sense {@link PHYSICS}.LIFT_LIMIT is one for the
-   * flapper, not a tuning knob: at 1 it is slack on every setting whose escapement is doing
-   * its job, and catches only a wheel that has already given back more than the valley it
-   * stalled in. There is no headroom to be bought above it, since 1.95 is the only figure the
-   * solver reaches past 0.96. Below 0.96 the stop lands in the healthy mode instead of past it
-   * and the intervention rate jumps from 7% of spins to 74%, taking 3.5s off the `light` wheel:
-   * that is a change to how the wheel stops and to the odds, and has to be gated as one.
+   * flapper, not a tuning knob, and it stays despite never firing: at 1 it is slack on every
+   * setting whose escapement is doing its job, and catches only a wheel that has already given
+   * back more than the valley it stalled in. What it is slack by is 4% of a valley, so a ladder
+   * stiffened at the top or a wheel freed further walks back into the case it bounds. Below
+   * 0.96 it lands inside the healthy mode instead of past it: that is a change to how the wheel
+   * stops and to the odds, and has to be gated as one.
    */
   REVERSE_LIMIT: 1,
   /**
@@ -299,22 +302,26 @@ export const WHEEL_PRESETS = {
  * range -- under 2% -- and the number of pins struck does not move at all, so a spread that
  * cannot be seen in the rollback rate cannot be seen anywhere.
  *
- * Measured over 700 spins on six items, the ladder runs 3% / 23% / 56% / 85%, in steps of 20,
- * 33 and 29 points. The steps matter more than the endpoints: an earlier ladder of 0.7 / 1 /
- * 1.5 / 2.2 put light and normal at 30% and 50%, close enough to be hard to tell apart, and any
- * value much above 2 runs into the ceiling -- rollback saturates near 100%, so the top of the
- * dial cannot separate however hard it is pushed.
+ * The gate's tension rows run the ladder at 3.8% / 25.9% / 61.8% over 6000 spins on six items,
+ * in steps of 22 and 36 points. The steps matter more than the endpoints: an earlier ladder of
+ * 0.7 / 1 / 1.5 put the bottom two rungs at 30% and 50%, close enough to be hard to tell apart.
  *
- * `normal` is deliberately slack, at what used to be the light setting. It resolves to well
- * under the spring {@link PHYSICS}.SPRING_K was sized around, which is a choice about how the
- * default wheel should feel rather than a consequence of anything.
+ * Both ends of the dial are walled in, which is why there are three rungs and not five. Above,
+ * any value much past 2 runs into the ceiling -- rollback saturates near 100%, so the top cannot
+ * separate however hard it is pushed. Below, `normal` already sits under 4% against a floor of
+ * 0, so a slacker rung has almost nothing to distinguish itself with and would be a dial
+ * position nobody can feel.
+ *
+ * `normal` is deliberately slack -- the second time the default has been walked down onto what
+ * the rung below it used to be. It resolves to well under the spring {@link PHYSICS}.SPRING_K
+ * was sized around, which is a choice about how the default wheel should feel rather than a
+ * consequence of anything.
  * @type {Object<string, number>}
  */
 export const TENSION_MULTIPLIERS = {
-  light: 0.2,
-  normal: 0.4,
+  normal: 0.2,
+  firm: 0.4,
   strong: 0.9,
-  brutal: 1.8,
 };
 
 /**

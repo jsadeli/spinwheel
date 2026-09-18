@@ -27,7 +27,7 @@ Screenshot:
     drag; it winds up under torque rather than jumping to speed, and nothing imposes a stop
     time. Spins end the way a real wheel does, often by stalling part-way up a pin and being
     pushed back down into the valley it came from -- how often is what the flapper tension
-    setting controls, from almost never on light to most spins on brutal.
+    setting controls, from a few spins in a hundred on normal to most of them on strong.
   - **Weighted Probabilities**: Support for weighted items using `Item:Weight` syntax
     (e.g., `Pizza:10`) to increase winning chances.
   - **Flapper Escapement**: The pointer is a spring-loaded cam follower, not decoration. Every
@@ -194,7 +194,7 @@ You can customize:
 - Wheel weight (heavy, normal, or light — roughly 6s, 14s, or 22s at full power, though
   duration is emergent rather than fixed). Heavy is the *short* spin: it carries more drag as
   well as more inertia, so it sheds its energy sooner.
-- Flapper tension (light, normal, strong, or brutal — how hard the pointer fights the wheel)
+- Flapper tension (normal, firm, or strong — how hard the pointer fights the wheel)
 - Pointer (classic, sword, feather, or laser — each with its own mass and spring)
 - Spin trail effects (on or off)
 - Spin labels visibility (set it to hidden for a little bit of a "mystery" spin)

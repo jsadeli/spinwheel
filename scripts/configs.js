@@ -126,14 +126,12 @@ export const TICK_SOUNDS = {
  * @type {Object<string, string>}
  */
 export const FLAPPER_TENSIONS = {
-  /** Barely notices the pins; the wheel glides. */
-  LIGHT: "light",
-  /** Balanced default. */
+  /** Balanced default; glides over the pins and rarely stalls. */
   NORMAL: "normal",
+  /** Noticeable bite: stalls and rolls back on roughly a quarter of spins. */
+  FIRM: "firm",
   /** Audible chatter and a long hold at the final crest. */
   STRONG: "strong",
-  /** Slams the wheel around; frequent stalls and rollbacks. */
-  BRUTAL: "brutal",
 };
 
 /**

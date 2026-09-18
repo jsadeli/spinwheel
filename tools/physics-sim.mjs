@@ -288,9 +288,9 @@ const STIFFEST_TENSION = Object.values(FLAPPER_TENSIONS).reduce((a, b) =>
 
 // The tension names live in the settings and their multipliers live in the solver, so the two
 // can drift apart. A name the solver does not know resolves to a multiplier of 1 rather than
-// failing -- stiffer than every setting on the dial but brutal -- which would ship a spring
-// nobody chose and read as a working dial position. Running the row proves nothing about that:
-// a wheel on an unintended spring is still a fair wheel, so it has to be checked outright.
+// failing -- stiffer than every setting on the dial -- which would ship a spring nobody chose
+// and read as a working dial position. Running the row proves nothing about that: a wheel on an
+// unintended spring is still a fair wheel, so it has to be checked outright.
 const UNKNOWN_TENSIONS = Object.values(FLAPPER_TENSIONS).filter(
   (t) => !(t in TENSION_MULTIPLIERS)
 );
