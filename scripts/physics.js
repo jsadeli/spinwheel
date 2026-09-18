@@ -207,6 +207,29 @@ export const PHYSICS = {
    */
   LIFT_LIMIT: 1.3,
   /**
+   * How far the flapper may drive the wheel backwards after a stall, in valley widths,
+   * measured from the furthest-forward point the spin reached.
+   *
+   * The escapement is normally its own backstop: a stall rolls back across the valley it
+   * stalled in and the pin behind catches it, which measures 0.96 valleys at worst over the
+   * wheels, springs and flappers a player can select. It does not always hold. On the
+   * freest-running wheel -- the `light` preset -- the two stiffest springs drive the wheel back
+   * *through* that pin and into the valley before it, 1.95 valleys: `brutal` on 5% to 15% of
+   * spins depending on the flapper, and `strong` on 0.6% of them with `sword`. The rollback is
+   * bimodal, so there is nothing in between -- a spin gives back either the valley it stalled
+   * in or that valley and the one behind it. Nothing in the solver bounded the second case; it
+   * was bounded by tuning, and on the other 43 of the 48 settings only by accident.
+   *
+   * So this is a mechanical stop in the sense {@link PHYSICS}.LIFT_LIMIT is one for the
+   * flapper, not a tuning knob: at 1 it is slack on every setting whose escapement is doing
+   * its job, and catches only a wheel that has already given back more than the valley it
+   * stalled in. There is no headroom to be bought above it, since 1.95 is the only figure the
+   * solver reaches past 0.96. Below 0.96 the stop lands in the healthy mode instead of past it
+   * and the intervention rate jumps from 7% of spins to 74%, taking 3.5s off the `light` wheel:
+   * that is a change to how the wheel stops and to the odds, and has to be gated as one.
+   */
+  REVERSE_LIMIT: 1,
+  /**
    * Multiplier from physical flapper deflection to rendered rotation.
    *
    * At 1 the nose travels exactly as far as the pin under it pushed it, which is 5 px and about
@@ -572,6 +595,11 @@ export class WheelPhysics {
     /** False while the flapper is airborne between pins. */
     this.contact = true;
 
+    /** Rotation given back since the wheel was last making forward progress, radians. */
+    this._backTravel = 0;
+    /** Whether the anti-reverse stop ended this spin's rollback, rather than the escapement. */
+    this.reverseStopped = false;
+
     /** Rendered arm angle, radians: `phi` seen through the arm's own flex. Output only. */
     this._flexPhi = 0;
     /** Rate of change of the rendered arm angle, rad/s. */
@@ -622,6 +650,7 @@ export class WheelPhysics {
     this.pins = buildPins(items);
     this.maxLift = this._maxLift();
     this._prevPin = -1;
+    this._backTravel = 0;
     if (!this.spinning) {
       this.phi = 0;
       this.phiDot = 0;
@@ -675,6 +704,7 @@ export class WheelPhysics {
   drift(deltaAngle) {
     if (this.spinning) return;
     this.theta = wrapTau(this.theta + deltaAngle);
+    this._backTravel = 0;
     const cam = this._cam(this.theta);
     this.phi = cam.L;
     this.phiDot = 0;
@@ -706,6 +736,8 @@ export class WheelPhysics {
     this._prevPin = -1;
     this._lastEmit.clear();
     this.lastCrestWasBoundary = false;
+    this._backTravel = 0;
+    this.reverseStopped = false;
 
     this.estimatedDuration = this._estimate();
     return this.estimatedDuration;
@@ -739,6 +771,8 @@ export class WheelPhysics {
       seatEmitted: this._seatEmitted,
       prevPin: this._prevPin,
       lastCrestWasBoundary: this.lastCrestWasBoundary,
+      backTravel: this._backTravel,
+      reverseStopped: this.reverseStopped,
     };
 
     const h = PHYSICS.SUBSTEP;
@@ -761,6 +795,8 @@ export class WheelPhysics {
     this._seatEmitted = saved.seatEmitted;
     this._prevPin = saved.prevPin;
     this.lastCrestWasBoundary = saved.lastCrestWasBoundary;
+    this._backTravel = saved.backTravel;
+    this.reverseStopped = saved.reverseStopped;
     this._lastEmit.clear();
     this._events.length = 0;
 
@@ -779,6 +815,7 @@ export class WheelPhysics {
     this.omega = 0;
     this.phiDot = 0;
     this.launchLeft = 0;
+    this._backTravel = 0;
     this._events.length = 0;
   }
 
@@ -828,6 +865,19 @@ export class WheelPhysics {
   seatOffset() {
     const cam = this._cam(this.theta);
     return Math.min(Math.abs(cam.d) / cam.hw, 1);
+  }
+
+  /**
+   * Width of the valley the flapper is sitting in, radians.
+   *
+   * Equal across the ring by construction -- that equality is the fairness guarantee -- but not
+   * equal to `2PI / count` on a wheel whose segments round to different pin counts, so a
+   * rollback is measured against this rather than against the ring's mean pitch.
+   *
+   * @returns {number}
+   */
+  valleyWidth() {
+    return 2 * this._cam(this.theta).hw;
   }
 
   /** @returns {boolean} Whether the pin nearest the flapper is a segment boundary. */
@@ -1004,7 +1054,28 @@ export class WheelPhysics {
     }
 
     this.omega += alpha * h;
-    const thetaNext = this.theta + this.omega * h;
+
+    // Anti-reverse stop. Everything above lets the flapper push the wheel backwards without
+    // bound; what normally ends a rollback is the pin behind catching it, and on the freest
+    // wheel with the stiffest spring that pin does not. Blocking the travel rather than damping
+    // it is what a pawl does, and it leaves the escapement in charge wherever it still works --
+    // see {@link PHYSICS}.REVERSE_LIMIT for why one valley is slack on every shipping setting.
+    let dTheta = this.omega * h;
+    if (dTheta < 0) {
+      const room = PHYSICS.REVERSE_LIMIT * cam.hw * 2 - this._backTravel;
+      if (-dTheta >= room) {
+        dTheta = room > 0 ? -room : 0;
+        this.omega = 0;
+        this.reverseStopped = true;
+      }
+      this._backTravel -= dTheta;
+    } else {
+      // Forward travel re-arms the stop the way a ratchet's pawl drops into the next tooth: the
+      // budget is measured from wherever the wheel last got to, not from the launch.
+      this._backTravel = this._backTravel > dTheta ? this._backTravel - dTheta : 0;
+    }
+
+    const thetaNext = this.theta + dTheta;
 
     if (!this.contact) {
       const camNext = this._cam(thetaNext);
