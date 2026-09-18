@@ -53,14 +53,16 @@ Screenshot:
     and placed on the audio clock with sub-frame timing, under a bearing rumble that tracks
     wheel speed. Reverse strikes sound different from forward ones.
   - **Provably Fair**: `npm test` runs a headless Monte Carlo that chi-square tests the landing
-    distribution against the item weights, across item counts, weightings, every tension setting
-    and every pointer.
+    distribution against the item weights, across item counts, weightings, and every wheel
+    weight, tension setting and pointer the app offers. The gate reads that list off the
+    settings themselves, so a new one cannot ship ungated.
   - **List Management**: Create, rename, delete, and auto save multiple distinct lists
     (e.g., "Lunch Options", "Daily Standup", "Movie Night").
   - **Progress**: Track your XP progress, levels, and achievements. Earn XP points and unlock various
     achievements on every spin!
-  - **SpinCoin**: Earn coins by spinning the wheel! Use them to buy items from the shop or unlock
-    new customizations (eventually... shop features are not yet implemented).
+  - **SpinCoin**: Earn a coin on every spin and trade them for XP in the store, from a 10-coin
+    starter pack up to 1000 coins for 3000 XP. Cosmetics are not on sale -- every pointer and
+    tick sound is already free.
 - 🎨 Visuals & UI
   - **3D Confetti**: Physics-based confetti engine with wind resistance, tumbling, and
     semi-transparent paper effects.
@@ -174,18 +176,24 @@ spin to obtain them, they unlock brief informational panels.
 
 ## How It Works
 
-The spin wheel uses HTML5 Canvas or CSS animations to create a smooth spinning effect.
-Each segment of the wheel represents a different option, and the selection is made using a
-randomization algorithm for fair results.
+The wheel is drawn on an HTML5 Canvas and turned by a rigid-body solver rather than an
+animation. A spin is an impulse; from there the wheel's inertia, its bearing friction and the
+air drag on it decide how far it travels, and a spring-loaded flapper riding the pins on the
+rim takes a little energy out of it at every crest.
+
+Nothing picks a winner and steers the wheel to it. The result is whichever segment the pointer
+is resting in once the wheel runs out of energy, which is why the landing distribution has to
+be measured rather than asserted -- that is what `npm test` is for.
 
 ## Customization
 
 You can customize:
 
 - Theme (auto, light-mode, or dark-mode)
-- Sound effects (on or off, classic, wooden, metallic, crystal)
-- Wheel weight (light, normal, or heavy — roughly 5s, 10s, or 20s, though duration is
-  emergent rather than fixed)
+- Sound effects (on or off, electric, wooden, metallic, or crystal)
+- Wheel weight (heavy, normal, or light — roughly 6s, 14s, or 22s at full power, though
+  duration is emergent rather than fixed). Heavy is the *short* spin: it carries more drag as
+  well as more inertia, so it sheds its energy sooner.
 - Flapper tension (light, normal, strong, or brutal — how hard the pointer fights the wheel)
 - Pointer (classic, sword, feather, or laser — each with its own mass and spring)
 - Spin trail effects (on or off)

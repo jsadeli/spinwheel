@@ -41,8 +41,13 @@ one shared symbol means five edits, and skipping any of them fails silently at r
 4. Destructure it in the `= window` block at the top of the inline script in `index.html`.
 5. New file only: add its `<script>` tag in `index.html` — `type="module"` for plain JS, and
    `type="text/babel" data-type="module"` for anything containing JSX — then add its path to `ASSETS`
-   in `sw.js` and bump `CACHE_NAME`. A stale `CACHE_NAME` serves the old bundle to every returning
-   visitor.
+   in `sw.js`.
+
+Bump `CACHE_NAME` in `sw.js` for any change to a file listed in `ASSETS`, not just a new one.
+The fetch handler is cache-first with no revalidation, so a returning visitor with the worker
+installed keeps the old `index.html` until the name changes and `activate` drops the old cache.
+Several commits have shipped without the bump, which is why the history jumps only when files
+are added.
 
 Tag order in `index.html` matters: `scripts/core/` and plain modules load before the Babel-compiled
 `scripts/icons.js` and `scripts/components/`, which read icons as globals.
