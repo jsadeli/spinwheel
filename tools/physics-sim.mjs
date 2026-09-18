@@ -9,7 +9,14 @@
  * Usage: node tools/physics-sim.mjs [--spins N] [--only NAME]
  */
 
-import { WheelPhysics, buildPins, PHYSICS } from "../scripts/physics.js";
+import {
+  WheelPhysics,
+  buildPins,
+  PHYSICS,
+  WHEEL_PRESETS,
+  TENSION_MULTIPLIERS,
+} from "../scripts/physics.js";
+import { FLAPPER_TENSIONS, POINTER_SKINS } from "../scripts/configs.js";
 
 const TAU = Math.PI * 2;
 
@@ -72,7 +79,8 @@ const erfc = (x) => {
 };
 
 /**
- * @param {{name: string, weights: number[], preset?: number, tension?: string}} cfg
+ * @param {{name: string, weights: number[], preset?: number, tension?: string,
+ *   skin?: {tensionMul?: number, massMul?: number, dampingMul?: number}}} cfg
  * @param {number} spins
  */
 const run = (cfg, spins) => {
@@ -225,6 +233,47 @@ const run = (cfg, spins) => {
   };
 };
 
+/**
+ * Every wheel, spring and flapper a player can select, read off the settings themselves.
+ *
+ * Nothing here restates a tuning value, and the rows are generated rather than listed, so a
+ * setting that is added or retuned is gated without anyone remembering to come back. Both
+ * halves of that mattered: copies of the skin multipliers sat here through the retune that
+ * changed them and the gate went on certifying three flappers no player could select, and the
+ * preset rows were each named for the opposite wheel to the one they ran.
+ */
+const SKIN_CONFIGS = Object.values(POINTER_SKINS).map((skin) => ({
+  name: "skin-" + skin.id + "-7",
+  weights: Array(7).fill(1),
+  skin,
+}));
+const TENSION_CONFIGS = Object.values(FLAPPER_TENSIONS).map((tension) => ({
+  name: "tension-" + tension + "-6",
+  weights: Array(6).fill(1),
+  tension,
+}));
+const PRESET_CONFIGS = Object.values(WHEEL_PRESETS).map((preset) => ({
+  name: "preset-" + preset.label + "-6",
+  weights: Array(6).fill(1),
+  preset: preset.key,
+}));
+
+const STIFFEST_SKIN = Object.values(POINTER_SKINS).reduce((a, b) =>
+  b.tensionMul > a.tensionMul ? b : a
+);
+const STIFFEST_TENSION = Object.values(FLAPPER_TENSIONS).reduce((a, b) =>
+  (TENSION_MULTIPLIERS[b] || 0) > (TENSION_MULTIPLIERS[a] || 0) ? b : a
+);
+
+// The tension names live in the settings and their multipliers live in the solver, so the two
+// can drift apart. A name the solver does not know resolves to a multiplier of 1 rather than
+// failing -- stiffer than every setting on the dial but brutal -- which would ship a spring
+// nobody chose and read as a working dial position. Running the row proves nothing about that:
+// a wheel on an unintended spring is still a fair wheel, so it has to be checked outright.
+const UNKNOWN_TENSIONS = Object.values(FLAPPER_TENSIONS).filter(
+  (t) => !(t in TENSION_MULTIPLIERS)
+);
+
 const CONFIGS = [
   { name: "uniform-1", weights: [1] },
   { name: "uniform-2", weights: [1, 1] },
@@ -239,17 +288,17 @@ const CONFIGS = [
   { name: "zero-weight", weights: [1, 1, 0] },
   { name: "skew-100-1-1", weights: [100, 1, 1] },
   { name: "skew-50-50-1", weights: [50, 50, 1] },
-  { name: "heavy-preset-6", weights: Array(6).fill(1), preset: 20000 },
-  { name: "light-preset-6", weights: Array(6).fill(1), preset: 5000 },
-  { name: "tension-light-6", weights: Array(6).fill(1), tension: "light" },
-  { name: "tension-strong-6", weights: Array(6).fill(1), tension: "strong" },
-  { name: "tension-brutal-6", weights: Array(6).fill(1), tension: "brutal" },
-  // A cosmetic the player picks must not move their odds, so every skin is gated here
-  // rather than asserted in a docstring.
-  { name: "skin-sword-7", weights: Array(7).fill(1), skin: { tensionMul: 1.45, massMul: 2.2, dampingMul: 0.8 } },
-  { name: "skin-feather-7", weights: Array(7).fill(1), skin: { tensionMul: 0.6, massMul: 0.4, dampingMul: 1.3 } },
-  { name: "skin-laser-7", weights: Array(7).fill(1), skin: { tensionMul: 0.35, massMul: 0.15, dampingMul: 2.2 } },
-  { name: "skin-sword-brutal-7", weights: Array(7).fill(1), tension: "brutal", skin: { tensionMul: 1.45, massMul: 2.2, dampingMul: 0.8 } },
+  ...PRESET_CONFIGS,
+  ...TENSION_CONFIGS,
+  ...SKIN_CONFIGS,
+  // The stiffest flapper on the stiffest spring stalls most often, so it is the combination
+  // with the most chances to put its thumb on where the wheel stops.
+  {
+    name: "skin-" + STIFFEST_SKIN.id + "-" + STIFFEST_TENSION + "-7",
+    weights: Array(7).fill(1),
+    tension: STIFFEST_TENSION,
+    skin: STIFFEST_SKIN,
+  },
 ];
 
 const rows = [];
@@ -313,6 +362,8 @@ const fails = rows.filter(
     r.ratio > 1.02 ||
     (!r.undersampled && (r.zeroBuckets > 0 || Number(r.p) < 0.01))
 );
-if (!deterministic) console.log("FAIL: frame pacing changed the outcome");
-console.log("\n" + (fails.length === 0 && deterministic ? "PASS" : "FAIL: " + fails.map((f) => f.name).join(", ")));
-process.exit(fails.length === 0 && deterministic ? 0 : 1);
+const reasons = fails.map((f) => f.name);
+if (!deterministic) reasons.push("frame pacing changed the outcome");
+if (UNKNOWN_TENSIONS.length) reasons.push("no spring for tension " + UNKNOWN_TENSIONS.join("/"));
+console.log("\n" + (reasons.length === 0 ? "PASS" : "FAIL: " + reasons.join(", ")));
+process.exit(reasons.length === 0 ? 0 : 1);
