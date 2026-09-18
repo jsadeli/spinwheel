@@ -6,6 +6,7 @@ import { CoinStoreModal } from "../scripts/components/CoinStoreModal.js";
 import { LevelCard } from "../scripts/components/LevelCard.js";
 import { Modal } from "../scripts/components/Modal.js";
 import { OutOfOrderOverlay } from "../scripts/components/OutOfOrderOverlay.js";
+import { SettingsSection } from "../scripts/components/SettingsSection.js";
 import { ThemeIcon } from "../scripts/components/ThemeIcon.js";
 import { Toast } from "../scripts/components/Toast.js";
 import { WinnerModal } from "../scripts/components/WinnerModal.js";
@@ -158,6 +159,8 @@ declare global {
     Modal: typeof Modal;
     // OutOfOrderOverlay (OutOfOrderOverlay.js)
     OutOfOrderOverlay: typeof OutOfOrderOverlay;
+    // SettingsSection (SettingsSection.js)
+    SettingsSection: typeof SettingsSection;
     // ThemeIcon (ThemeIcon.js)
     ThemeIcon: typeof ThemeIcon;
     // Toast (Toast.js)
