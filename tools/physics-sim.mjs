@@ -102,6 +102,8 @@ const run = (cfg, spins) => {
   let reversedSpins = 0;
   let noSettle = 0;
   let maxSubsteps = 0;
+  let maxBackValleys = 0;
+  let stoppedSpins = 0;
 
   const rng = mulberry32(0xc0ffee);
   const skin = cfg.skin || {};
@@ -133,6 +135,8 @@ const run = (cfg, spins) => {
     let crestTimes = [];
     let unwrapped = 0;
     let prev = startTheta;
+    let maxFwd = 0;
+    let backValleys = 0;
 
     while (!phys.settled && t < PHYSICS.MAX_SPIN_TIME) {
       const { impacts, settled } = phys.step(1 / 60);
@@ -147,6 +151,13 @@ const run = (cfg, spins) => {
       if (d < -Math.PI) d += TAU;
       unwrapped += d;
       prev = phys.theta;
+      // How far the flapper drove the wheel back from the furthest point the spin reached, in
+      // valley widths. The escapement is meant to be what ends a rollback, so a figure at or
+      // above 1 means the wheel went back through the pin that should have caught it and the
+      // anti-reverse stop is the only thing that ended the spin.
+      if (unwrapped > maxFwd) maxFwd = unwrapped;
+      const back = (maxFwd - unwrapped) / phys.valleyWidth();
+      if (back > backValleys) backValleys = back;
       t += 1 / 60;
       steps++;
       if (settled) break;
@@ -154,6 +165,8 @@ const run = (cfg, spins) => {
 
     if (!phys.settled) noSettle++;
     maxSubsteps = Math.max(maxSubsteps, steps);
+    maxBackValleys = Math.max(maxBackValleys, backValleys);
+    if (phys.reverseStopped) stoppedSpins++;
 
     durSum += t;
     durMin = Math.min(durMin, t);
@@ -223,6 +236,8 @@ const run = (cfg, spins) => {
     touching: ((restTouching / spins) * 100).toFixed(0),
     crests3s: (lateCrests / spins).toFixed(0),
     reversePct: ((reversedSpins / spins) * 100).toFixed(1),
+    backMax: maxBackValleys.toFixed(2),
+    stopPct: ((stoppedSpins / spins) * 100).toFixed(1),
     chi2: chi2.toFixed(1),
     p: undersampled ? "  n/a " : p.toFixed(4),
     undersampled,
@@ -261,6 +276,12 @@ const PRESET_CONFIGS = Object.values(WHEEL_PRESETS).map((preset) => ({
 const STIFFEST_SKIN = Object.values(POINTER_SKINS).reduce((a, b) =>
   b.tensionMul > a.tensionMul ? b : a
 );
+// The freest-running wheel: least drag, so it arrives at the escapement with the most left to
+// give back. Paired with the stiffest spring below, because the tension ladder is gated on the
+// normal wheel and the preset ladder on the normal spring -- the corners of that grid go
+// untested, and it is a corner where the flapper drives the wheel back through a pin rather
+// than within its valley.
+const FREEST_PRESET = Object.values(WHEEL_PRESETS).reduce((a, b) => (b.drag < a.drag ? b : a));
 const STIFFEST_TENSION = Object.values(FLAPPER_TENSIONS).reduce((a, b) =>
   (TENSION_MULTIPLIERS[b] || 0) > (TENSION_MULTIPLIERS[a] || 0) ? b : a
 );
@@ -299,6 +320,12 @@ const CONFIGS = [
     tension: STIFFEST_TENSION,
     skin: STIFFEST_SKIN,
   },
+  {
+    name: "preset-" + FREEST_PRESET.label + "-" + STIFFEST_TENSION + "-6",
+    weights: Array(6).fill(1),
+    preset: FREEST_PRESET.key,
+    tension: STIFFEST_TENSION,
+  },
 ];
 
 const rows = [];
@@ -309,7 +336,7 @@ for (const cfg of CONFIGS) {
   r.ms = Date.now() - t0;
   rows.push(r);
   console.log(
-    r.name.padEnd(18) +
+    r.name.padEnd(26) +
       "pins " + String(r.pins).padStart(3) +
       "  ratio " + r.ratio.toFixed(3) +
       "  dur " + r.dur.padStart(5) + "s (" + r.durRange + ")" +
@@ -320,6 +347,8 @@ for (const cfg of CONFIGS) {
       "  onBnd " + r.onBnd.padStart(4) + "%" +
       "  crests3s " + r.crests3s.padStart(3) +
       "  rev " + r.reversePct.padStart(5) + "%" +
+      "  back " + r.backMax.padStart(4) +
+      "  stop " + r.stopPct.padStart(5) + "%" +
       "  chi2 " + r.chi2.padStart(7) +
       "  p " + r.p + (r.undersampled ? "" : "") +
       "  worst " + r.worstRel.padStart(6) + "% (noise +/-" + r.noise.padStart(4) + "%)" +
