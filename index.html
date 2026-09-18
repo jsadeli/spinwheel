@@ -2814,7 +2814,13 @@
 
             <main className="flex-grow flex flex-col md:flex-row overflow-hidden">
               {/* Left Panel: The Wheel */}
-              <div className="flex-1 flex-col flex items-center justify-center p-4 relative min-h-[50vh]">
+              {/*
+                The extra right padding at md is the pointer's allowance: its nose sits on the rim but
+                its arm hangs GEOMETRY.POINTER_ARM beyond it, and without that reserve the wheel grows
+                to fill the panel and pushes the arm onto the controls. Dropped again at lg, where the
+                wheel is already capped at its native 500px and the panel is wide enough on its own.
+              */}
+              <div className="flex-1 min-w-0 flex-col flex items-center justify-center p-4 md:pr-[66px] lg:pr-4 relative min-h-[50vh]">
                 {/* Cosmic Background for Wheel Panel */}
                 {isCosmic && (
                   <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -2831,22 +2837,34 @@
                   <CoinChip balance={coins} onClick={() => setShowCoinStoreModal(true)} />
                 </div>
 
-                {/* Pointer Triangle */}
-                <div className="absolute z-20 right-0 md:right-auto top-1/2 -translate-y-1/2 translate-x-1/2 md:translate-x-[210px] lg:translate-x-[260px] filter drop-shadow-lg pointer-events-none">
-                  <div
-                    ref={pointerRef}
-                    style={{ borderRightColor: resolveSkin(pointerSkin).color }}
-                    className="w-0 h-0 border-t-[20px] border-t-transparent border-r-[50px] border-b-[20px] border-b-transparent transform origin-right"
-                  ></div>
-                </div>
-
-                <div className="relative">
+                {/*
+                  A square box that is exactly the drawn wheel, so every percentage below is a
+                  percentage of the wheel itself. The canvas used to be sized by max-h alone, which
+                  let a short viewport letterbox the drawing inside a wider box -- anything anchored
+                  to that box then drifted off the wheel without the width changing at all.
+                */}
+                <div className="relative w-full aspect-square max-w-[min(500px,60vh)] md:max-w-[min(500px,80vh)]">
                   <canvas
                     ref={canvasRef}
                     width={500}
                     height={500}
-                    className="max-w-full h-auto max-h-[60vh] md:max-h-[80vh] w-full object-contain filter drop-shadow-xl"
+                    className="w-full h-full block object-contain filter drop-shadow-xl"
                   />
+
+                  {/*
+                    Pointer Triangle. left-[97%] is the pin ring's inner edge read off the nominal
+                    500px canvas: GEOMETRY.PIN_RING_RADIUS - PIN_RADIUS_BOUNDARY = 235 from a centre
+                    at 250, so (250 + 235) / 500. The triangle points left, so its nose is its own
+                    left edge and no x-translate is wanted. This replaced three hand-tuned pixel
+                    offsets that only agreed with the rim at the two widths they were eyeballed at.
+                  */}
+                  <div className="absolute z-20 top-1/2 left-[97%] -translate-y-1/2 filter drop-shadow-lg pointer-events-none">
+                    <div
+                      ref={pointerRef}
+                      style={{ borderRightColor: resolveSkin(pointerSkin).color }}
+                      className="w-0 h-0 border-t-[20px] border-t-transparent border-r-[50px] border-b-[20px] border-b-transparent transform origin-right"
+                    ></div>
+                  </div>
 
                   {/* Work-in-Progress Feature Toggle Button (Bottom Left) */}
                   {/*
@@ -3076,7 +3094,7 @@
               </div>
 
               {/* Right Panel: Controls */}
-              <div className="w-full md:w-[450px] bg-white dark:bg-gray-800 border-l border-gray-200 dark:border-gray-700 flex flex-col h-[50vh] md:h-full z-10 shadow-xl md:shadow-none transition-colors duration-300">
+              <div className="w-full md:w-[340px] lg:w-[450px] bg-white dark:bg-gray-800 border-l border-gray-200 dark:border-gray-700 flex flex-col h-[50vh] md:h-full z-10 shadow-xl md:shadow-none transition-colors duration-300">
                 {/* Tabs */}
                 <div className="flex border-b border-gray-200 dark:border-gray-700 relative">
                   <button
