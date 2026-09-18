@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -113,7 +113,7 @@
             "animate-pulse",
             "text-blue-900",
             "tracking-[0.3em]",
-            "uppercase"
+            "uppercase",
           );
           heading.classList.add("text-red-600", "font-mono", "text-sm", "px-4", "normal-case");
 
@@ -140,7 +140,7 @@
               // Start top-left (ish), Big arc around bottom, curve into center for dent
               clipShape.setAttribute(
                 "d",
-                "M 60 140 A 240 240 0 1 0 450 140 C 350 260, 160 260, 60 140 Z"
+                "M 60 140 A 240 240 0 1 0 450 140 C 350 260, 160 260, 60 140 Z",
               );
               clipPath.appendChild(clipShape);
               defs.appendChild(clipPath);
@@ -167,7 +167,7 @@
               // Curve matching the dent in the clip path, plus some inner fold details
               crease.setAttribute(
                 "d",
-                "M 60 140 C 160 260, 350 260, 450 140 C 380 200, 150 200, 60 140 Z"
+                "M 60 140 C 160 260, 350 260, 450 140 C 380 200, 150 200, 60 140 Z",
               );
               crease.setAttribute("fill", "#000"); // Shadow color
               crease.setAttribute("opacity", "0.3");
@@ -206,7 +206,7 @@
             }
             updateLoadingText(msg || "Unknown Error; check Console");
           },
-          true
+          true,
         );
 
         window.addEventListener("unhandledrejection", (event) => {
@@ -221,8 +221,8 @@
               arg instanceof Error
                 ? arg.message
                 : typeof arg === "object"
-                ? JSON.stringify(arg)
-                : String(arg)
+                  ? JSON.stringify(arg)
+                  : String(arg),
             )
             .join(" ");
           updateLoadingText(msg);
@@ -257,12 +257,28 @@
     <script type="text/babel" data-type="module" src="scripts/components/Modal.js"></script>
     <script type="text/babel" data-type="module" src="scripts/components/WinnerModal.js"></script>
     <script type="text/babel" data-type="module" src="scripts/components/LevelCard.js"></script>
-    <script type="text/babel" data-type="module" src="scripts/components/AchievementsList.js"></script>
-    <script type="text/babel" data-type="module" src="scripts/components/ChallengesList.js"></script>
+    <script
+      type="text/babel"
+      data-type="module"
+      src="scripts/components/AchievementsList.js"
+    ></script>
+    <script
+      type="text/babel"
+      data-type="module"
+      src="scripts/components/ChallengesList.js"
+    ></script>
     <script type="text/babel" data-type="module" src="scripts/components/Toast.js"></script>
-    <script type="text/babel" data-type="module" src="scripts/components/OutOfOrderOverlay.js"></script>
+    <script
+      type="text/babel"
+      data-type="module"
+      src="scripts/components/OutOfOrderOverlay.js"
+    ></script>
     <script type="text/babel" data-type="module" src="scripts/components/CoinChip.js"></script>
-    <script type="text/babel" data-type="module" src="scripts/components/CoinStoreModal.js"></script>
+    <script
+      type="text/babel"
+      data-type="module"
+      src="scripts/components/CoinStoreModal.js"
+    ></script>
 
     <!-- Load App -->
     <script type="text/babel" data-type="module">
@@ -362,7 +378,7 @@
         });
 
         const [activeListId, setActiveListId] = useState(() =>
-          loadState(STORAGE_KEYS.ACTIVE_LIST_ID, "default")
+          loadState(STORAGE_KEYS.ACTIVE_LIST_ID, "default"),
         );
 
         // Helper to get content safely
@@ -386,37 +402,35 @@
           }));
         });
         const [soundEnabled, setSoundEnabled] = useState(() =>
-          loadState(STORAGE_KEYS.SOUND_ENABLED, true)
+          loadState(STORAGE_KEYS.SOUND_ENABLED, true),
         );
-        const [theme, setTheme] = useState(() =>
-          loadState(STORAGE_KEYS.THEME, THEMES.AUTO)
-        );
+        const [theme, setTheme] = useState(() => loadState(STORAGE_KEYS.THEME, THEMES.AUTO));
         const [spinDuration, setSpinDuration] = useState(() =>
-          loadState(STORAGE_KEYS.SPIN_DURATION, 10000)
+          loadState(STORAGE_KEYS.SPIN_DURATION, 10000),
         );
         const [hideLabels, setHideLabels] = useState(() =>
-          loadState(STORAGE_KEYS.HIDE_LABELS, false)
+          loadState(STORAGE_KEYS.HIDE_LABELS, false),
         );
         const [aiVoiceEnabled, setAiVoiceEnabled] = useState(() =>
-          loadState(STORAGE_KEYS.AI_VOICE_ENABLED, false)
+          loadState(STORAGE_KEYS.AI_VOICE_ENABLED, false),
         );
         const [trailEnabled, setTrailEnabled] = useState(() =>
-          loadState(STORAGE_KEYS.TRAIL_ENABLED, false)
+          loadState(STORAGE_KEYS.TRAIL_ENABLED, false),
         );
         const [geminiApiKey, setGeminiApiKey] = useState(() =>
-          loadState(STORAGE_KEYS.GEMINI_API_KEY, "")
+          loadState(STORAGE_KEYS.GEMINI_API_KEY, ""),
         );
         const [aiVoiceSelection, setAiVoiceSelection] = useState(() =>
-          loadState(STORAGE_KEYS.AI_VOICE_SELECTION, AI_VOICES.AOEDE)
+          loadState(STORAGE_KEYS.AI_VOICE_SELECTION, AI_VOICES.AOEDE),
         );
         const [tickSound, setTickSound] = useState(() =>
-          loadState(STORAGE_KEYS.TICK_SOUND, TICK_SOUNDS.DEFAULT)
+          loadState(STORAGE_KEYS.TICK_SOUND, TICK_SOUNDS.DEFAULT),
         );
         const [flapperTension, setFlapperTension] = useState(() =>
-          loadState(STORAGE_KEYS.FLAPPER_TENSION, FLAPPER_TENSIONS.NORMAL)
+          loadState(STORAGE_KEYS.FLAPPER_TENSION, FLAPPER_TENSIONS.NORMAL),
         );
         const [pointerSkin, setPointerSkin] = useState(() =>
-          loadState(STORAGE_KEYS.POINTER_SKIN, POINTER_SKINS.CLASSIC.id)
+          loadState(STORAGE_KEYS.POINTER_SKIN, POINTER_SKINS.CLASSIC.id),
         );
 
         // Color Settings
@@ -424,12 +438,12 @@
           loadState(STORAGE_KEYS.COLOR_SETTINGS, {
             type: "default",
             customColors: "#FF6B6B, #4ECDC4, #45B7D1",
-          })
+          }),
         );
 
         // Color Assignment Mode (Dynamic vs Deterministic)
         const [colorAssignment, setColorAssignment] = useState(() =>
-          loadState(STORAGE_KEYS.COLOR_ASSIGNMENT, COLOR_ASSIGNMENT_MODE.DYNAMIC)
+          loadState(STORAGE_KEYS.COLOR_ASSIGNMENT, COLOR_ASSIGNMENT_MODE.DYNAMIC),
         );
 
         const [activeColors, setActiveColors] = useState(defaultColors);
@@ -462,7 +476,7 @@
         const [overchargeState, setOverchargeState] = useState(0); // State for overcharge animation
         const [isOutOfOrder, setIsOutOfOrder] = useState(false); // Broken state
         const [isCorrupted, setIsCorrupted] = useState(() =>
-          loadState(STORAGE_KEYS.IS_CORRUPTED, false)
+          loadState(STORAGE_KEYS.IS_CORRUPTED, false),
         ); // Corrupted state
         const [deferredPrompt, setDeferredPrompt] = useState(null);
 
@@ -473,7 +487,7 @@
           message,
           title = "Notification",
           icon = null,
-          duration = TOAST_DURATION
+          duration = TOAST_DURATION,
         ) => {
           setToastQueue((prev) => [
             ...prev,
@@ -488,22 +502,20 @@
         // XP System State
         const [xp, setXp] = useState(() => loadState(STORAGE_KEYS.XP, 0));
         const [sessionSpin, setSessionSpin] = useState(0); // Track spins in this session (not persisted)
-        const [totalSpins, setTotalSpins] = useState(() =>
-          loadState(STORAGE_KEYS.TOTAL_SPINS, 0)
-        ); // Track total spins
+        const [totalSpins, setTotalSpins] = useState(() => loadState(STORAGE_KEYS.TOTAL_SPINS, 0)); // Track total spins
         const [cancelledSpins, setCancelledSpins] = useState(() =>
-          loadState(STORAGE_KEYS.CANCELLED_SPINS, 0)
+          loadState(STORAGE_KEYS.CANCELLED_SPINS, 0),
         ); // Track total cancelled spins
 
         // Track Tab Views for "Lorekeeper's Review"
         const [inputsTabViews, setInputsTabViews] = useState(() =>
-          loadState(STORAGE_KEYS.INPUTS_TAB_VIEWS, 0)
+          loadState(STORAGE_KEYS.INPUTS_TAB_VIEWS, 0),
         );
         const [historyTabViews, setHistoryTabViews] = useState(() =>
-          loadState(STORAGE_KEYS.HISTORY_TAB_VIEWS, 0)
+          loadState(STORAGE_KEYS.HISTORY_TAB_VIEWS, 0),
         );
         const [progressTabViews, setProgressTabViews] = useState(() =>
-          loadState(STORAGE_KEYS.PROGRESS_TAB_VIEWS, 0)
+          loadState(STORAGE_KEYS.PROGRESS_TAB_VIEWS, 0),
         );
 
         // SpinCoin State
@@ -633,7 +645,7 @@
               `You are now ${getLevelTitle(levelInfo.level)}!`,
               "Level Up!",
               null,
-              TOAST_DURATION
+              TOAST_DURATION,
             );
             // Optional: Trigger confetti if not already triggered by something else
             // fireConfetti();
@@ -792,7 +804,7 @@
         // Auto-save content to current list when typing
         useEffect(() => {
           setSavedLists((prev) =>
-            prev.map((list) => (list.id === activeListId ? { ...list, content: inputText } : list))
+            prev.map((list) => (list.id === activeListId ? { ...list, content: inputText } : list)),
           );
         }, [inputText]);
 
@@ -996,7 +1008,7 @@
           const now = Date.now();
           // Filter toggles within last 10 seconds
           themeToggleTimestampsRef.current = [...themeToggleTimestampsRef.current, now].filter(
-            (t) => now - t < 10000
+            (t) => now - t < 10000,
           );
 
           if (themeToggleTimestampsRef.current.length >= 10) {
@@ -1125,7 +1137,9 @@
 
           if (
             isEmptyList ||
-            confirm(`The list '${currentListName}' is not empty. Are you sure you want to delete it?`)
+            confirm(
+              `The list '${currentListName}' is not empty. Are you sure you want to delete it?`,
+            )
           ) {
             // Delete the list
             const newLists = savedLists.filter((l) => l.id !== activeListId);
@@ -1142,7 +1156,7 @@
 
         const handleRenameList = (newName) => {
           setSavedLists((prev) =>
-            prev.map((list) => (list.id === activeListId ? { ...list, name: newName } : list))
+            prev.map((list) => (list.id === activeListId ? { ...list, name: newName } : list)),
           );
         };
 
@@ -1221,7 +1235,7 @@
             const audioContent = await generateSpeechFromGemini(
               geminiApiKey,
               `The winner is... ${winnerText}!`,
-              aiVoiceSelection
+              aiVoiceSelection,
             );
             if (audioContent) {
               const blob = base64ToWavBlob(audioContent);
@@ -1315,10 +1329,25 @@
          * actually does to the wheel rather than naming the spring constant.
          */
         const TENSION_OPTIONS = [
-          { id: FLAPPER_TENSIONS.LIGHT, label: "Light", Icon: TrailIcon, hint: "Barely notices the pins" },
+          {
+            id: FLAPPER_TENSIONS.LIGHT,
+            label: "Light",
+            Icon: TrailIcon,
+            hint: "Barely notices the pins",
+          },
           { id: FLAPPER_TENSIONS.NORMAL, label: "Normal", Icon: SlidersIcon, hint: "Balanced" },
-          { id: FLAPPER_TENSIONS.STRONG, label: "Strong", Icon: BoltIcon, hint: "Audible chatter, long hold at the last pin" },
-          { id: FLAPPER_TENSIONS.BRUTAL, label: "Brutal", Icon: FlameIcon, hint: "Frequent stalls and rollbacks" },
+          {
+            id: FLAPPER_TENSIONS.STRONG,
+            label: "Strong",
+            Icon: BoltIcon,
+            hint: "Audible chatter, long hold at the last pin",
+          },
+          {
+            id: FLAPPER_TENSIONS.BRUTAL,
+            label: "Brutal",
+            Icon: FlameIcon,
+            hint: "Frequent stalls and rollbacks",
+          },
         ];
 
         /**
@@ -1411,10 +1440,13 @@
           return () => document.removeEventListener("visibilitychange", onVisibility);
         }, []);
 
-        useEffect(() => () => {
-          if (settleTimerRef.current) clearTimeout(settleTimerRef.current);
-          if (rumbleRef.current) rumbleRef.current.dispose();
-        }, []);
+        useEffect(
+          () => () => {
+            if (settleTimerRef.current) clearTimeout(settleTimerRef.current);
+            if (rumbleRef.current) rumbleRef.current.dispose();
+          },
+          [],
+        );
 
         // MAIN RENDER LOOP
         useEffect(() => {
@@ -1477,7 +1509,7 @@
               const acceleration = 0.036; // rad/s^2
               idleVelocityRef.current = Math.min(
                 idleVelocityRef.current + acceleration * dt,
-                targetIdleSpeed
+                targetIdleSpeed,
               );
 
               if (physics) {
@@ -1527,7 +1559,7 @@
                 removingItemRef.current,
                 colorAssignmentRef.current,
                 xpRef.current,
-                physics ? physics.pins : null
+                physics ? physics.pins : null,
               );
             }
 
@@ -1604,7 +1636,7 @@
                 overchargeRef.current += 16; // Add ~16ms per frame
                 setOverchargeState(overchargeRef.current); // Trigger re-render for heat animation
                 spawnSmoke(smokeContainerRef, overchargeRef, () =>
-                  playFireCrackle(audioCtxRef, soundEnabled, isOutOfOrder)
+                  playFireCrackle(audioCtxRef, soundEnabled, isOutOfOrder),
                 );
 
                 // Track Overheats for "This Is Fine"
@@ -1802,7 +1834,7 @@
 
           // Track Spin Timestamp for "Analysis Paralysis" and "Button Masher"
           spinTimestampsRef.current = [...spinTimestampsRef.current, now].filter(
-            (t) => now - t < 3600000
+            (t) => now - t < 3600000,
           ); // Keep last hour
 
           // Hand the spin to the solver. Duration is no longer imposed: it falls out of the
@@ -1830,7 +1862,7 @@
                 ctx,
                 getWheelBus(ctx),
                 () => soundEnabledRef.current && !isOutOfOrderRef.current,
-                () => tickSoundRef.current
+                () => tickSoundRef.current,
               );
             }
             schedulerRef.current.beginSpin();
@@ -1981,7 +2013,12 @@
             consecutiveWins: consecutiveWins,
             hasSpun: true,
             itemCount: currentItems.length,
-            spinsInLastMinute: spinTimestampsRef.current.filter((t) => (spinTimestampsRef.current[spinTimestampsRef.current.length - 1] || Date.now()) - t < 60000).length,
+            spinsInLastMinute: spinTimestampsRef.current.filter(
+              (t) =>
+                (spinTimestampsRef.current[spinTimestampsRef.current.length - 1] || Date.now()) -
+                  t <
+                60000,
+            ).length,
             spinsInLastHour: spinTimestampsRef.current.length,
             winnerWeight: winnerWeight,
             maxWeight: maxWeight,
@@ -2088,7 +2125,7 @@
         if (overchargeTime > heatThreshold) {
           heatProgress = Math.min(
             (overchargeTime - heatThreshold) / (maxHeatTime - heatThreshold),
-            1
+            1,
           );
         }
 
@@ -2447,7 +2484,7 @@
                         </button>
                       </div>
 
-                                            <div className="p-2 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/30">
+                      <div className="p-2 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/30">
                         <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                           Flapper Tension
                         </span>
@@ -2514,7 +2551,7 @@
                         ))}
                       </div>
 
-<div className="p-2 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/30">
+                      <div className="p-2 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/30">
                         <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                           Themes
                         </span>
@@ -2539,7 +2576,7 @@
                             setColorAssignment((prev) =>
                               prev === COLOR_ASSIGNMENT_MODE.DYNAMIC
                                 ? COLOR_ASSIGNMENT_MODE.DETERMINISTIC
-                                : COLOR_ASSIGNMENT_MODE.DYNAMIC
+                                : COLOR_ASSIGNMENT_MODE.DYNAMIC,
                             );
                           }}
                           className="flex items-center w-full px-4 py-2 text-sm text-left text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -2619,8 +2656,8 @@
                             !geminiApiKey
                               ? "Requires API Key"
                               : !soundEnabled
-                              ? "Sound is Muted"
-                              : ""
+                                ? "Sound is Muted"
+                                : ""
                           }
                         >
                           <span className="mr-3">
@@ -2650,8 +2687,8 @@
                             !soundEnabled
                               ? "Sound is Muted"
                               : !aiVoiceEnabled
-                              ? "Announce Winner is Disabled"
-                              : ""
+                                ? "Announce Winner is Disabled"
+                                : ""
                           }
                         >
                           <span className="mr-3">
@@ -2681,8 +2718,8 @@
                             !soundEnabled
                               ? "Sound is Muted"
                               : !aiVoiceEnabled
-                              ? "Announce Winner is Disabled"
-                              : ""
+                                ? "Announce Winner is Disabled"
+                                : ""
                           }
                         >
                           <span className="mr-3">
@@ -2840,10 +2877,10 @@
                                     heatProgress > 0
                                       ? lerpColor("#ef4444", "#ff0000", heatProgress)
                                       : chargePower > 0.8
-                                      ? "#ef4444"
-                                      : isCosmic
-                                      ? "#d946ef"
-                                      : tierColors.mid
+                                        ? "#ef4444"
+                                        : isCosmic
+                                          ? "#d946ef"
+                                          : tierColors.mid
                                   }`
                                 : "0 0 0px transparent"
                             })`,
@@ -2961,8 +2998,8 @@
                                 heatProgress > 0
                                   ? lerpColor("#ef4444", "#ff0000", heatProgress)
                                   : chargePower > 0.8
-                                  ? "#ef4444"
-                                  : "#6366f1"
+                                    ? "#ef4444"
+                                    : "#6366f1"
                               }`
                             : "",
                         }}
@@ -3648,7 +3685,8 @@
                   autoFocus
                 />
                 <p className="text-xs text-gray-400 mt-1">
-                  ⚠️️ Your key is stored locally in your browser. Do not use in a shared or public device.
+                  ⚠️️ Your key is stored locally in your browser. Do not use in a shared or public
+                  device.
                 </p>
               </div>
             </Modal>
