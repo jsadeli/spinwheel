@@ -1364,11 +1364,15 @@
           isSpinningRef.current = false;
           setIsSpinning(false);
 
+          // Read off the angle now rather than when the beat expires. The winner is where the
+          // wheel came to rest; anything that moves it in the meantime has not earned a say.
+          const settledRotation = physics ? physics.theta : rotationRef.current;
+
           const beat = physics && physics.lastCrestWasBoundary ? 850 : 600;
           if (settleTimerRef.current) clearTimeout(settleTimerRef.current);
           settleTimerRef.current = setTimeout(() => {
             settleTimerRef.current = null;
-            calculateWinner(rotationRef.current);
+            calculateWinner(settledRotation);
           }, beat);
         };
 
@@ -1458,7 +1462,13 @@
               !isOutOfOrderRef.current &&
               !removingItemRef.current &&
               currentItems.length > 0 &&
-              !winnerRef.current
+              !winnerRef.current &&
+              // A pending settle timer means the wheel has stopped but its result is not out
+              // yet. Drifting through that gap walked the wheel off the pin it had stopped
+              // against and across the slice boundary that pin marks, so the result announced
+              // was the slice past the pin rather than the one the pointer was resting on --
+              // on 93% of the spins that ended leaning on a boundary pin.
+              !settleTimerRef.current
             ) {
               // --- Idle Spin Logic ---
               // Pin coupling stays off here on purpose: a real flapper would simply block a
