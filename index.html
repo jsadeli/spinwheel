@@ -458,8 +458,12 @@
         const [showThemeMenu, setShowThemeMenu] = useState(false);
         const [showShareMenu, setShowShareMenu] = useState(false);
         const [showSettingsMenu, setShowSettingsMenu] = useState(false);
-        // Which settings sections are expanded. Reset to collapsed each time the menu opens.
-        const [openSettingsSections, setOpenSettingsSections] = useState([]);
+        // Which settings sections are expanded, remembered across sessions. The guard matters
+        // because this is read during render: a corrupt value would break .includes().
+        const [openSettingsSections, setOpenSettingsSections] = useState(() => {
+          const stored = loadState(STORAGE_KEYS.OPEN_SETTINGS_SECTIONS, []);
+          return Array.isArray(stored) ? stored : [];
+        });
         const [showListDropdown, setShowListDropdown] = useState(false);
         const [showColorModal, setShowColorModal] = useState(false);
         const [showCoinStoreModal, setShowCoinStoreModal] = useState(false);
@@ -881,6 +885,13 @@
           pointerSkinRef.current = pointerSkin;
           if (physicsRef.current) physicsRef.current.setSkin(resolveSkin(pointerSkin));
         }, [pointerSkin]);
+
+        useEffect(() => {
+          localStorage.setItem(
+            STORAGE_KEYS.OPEN_SETTINGS_SECTIONS,
+            JSON.stringify(openSettingsSections),
+          );
+        }, [openSettingsSections]);
 
         useEffect(() => {
           localStorage.setItem(STORAGE_KEYS.COLOR_SETTINGS, JSON.stringify(colorSettings));
@@ -2318,11 +2329,7 @@
                 {/* Settings Menu */}
                 <div className="relative" ref={settingsMenuRef}>
                   <button
-                    onClick={() => {
-                      // Every visit starts collapsed, not just the first.
-                      if (!showSettingsMenu) setOpenSettingsSections([]);
-                      setShowSettingsMenu(!showSettingsMenu);
-                    }}
+                    onClick={() => setShowSettingsMenu(!showSettingsMenu)}
                     className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition text-gray-600 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400"
                     title="Spin Settings"
                   >

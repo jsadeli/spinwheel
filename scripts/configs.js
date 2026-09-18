@@ -84,6 +84,8 @@ export const STORAGE_KEYS = {
   FLAPPER_TENSION: "spinWheel_flapperTension",
   /** Selected pointer skin */
   POINTER_SKIN: "spinWheel_pointerSkin",
+  /** Ids of the settings sections left expanded */
+  OPEN_SETTINGS_SECTIONS: "spinWheel_openSettingsSections",
 };
 
 /**
