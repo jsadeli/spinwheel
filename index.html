@@ -2341,7 +2341,6 @@
                         <button
                           onClick={() => {
                             setSpinDuration(5000);
-                            setShowSettingsMenu(false);
                           }}
                           className={`flex items-center w-full px-4 py-2 text-sm text-left ${
                             spinDuration === 5000
@@ -2362,7 +2361,6 @@
                         <button
                           onClick={() => {
                             setSpinDuration(10000);
-                            setShowSettingsMenu(false);
                           }}
                           className={`flex items-center w-full px-4 py-2 text-sm text-left ${
                             spinDuration === 10000
@@ -2383,7 +2381,6 @@
                         <button
                           onClick={() => {
                             setSpinDuration(20000);
-                            setShowSettingsMenu(false);
                           }}
                           className={`flex items-center w-full px-4 py-2 text-sm text-left ${
                             spinDuration === 20000
@@ -2413,9 +2410,6 @@
                         <button
                           onClick={() => {
                             setTickSound(TICK_SOUNDS.DEFAULT);
-                            if (tickSound === TICK_SOUNDS.DEFAULT) {
-                              setShowSettingsMenu(false);
-                            }
                           }}
                           disabled={!soundEnabled}
                           className={`flex items-center w-full px-4 py-2 text-sm text-left ${
@@ -2438,9 +2432,6 @@
                         <button
                           onClick={() => {
                             setTickSound(TICK_SOUNDS.CRISP);
-                            if (tickSound === TICK_SOUNDS.CRISP) {
-                              setShowSettingsMenu(false);
-                            }
                           }}
                           disabled={!soundEnabled}
                           className={`flex items-center w-full px-4 py-2 text-sm text-left ${
@@ -2463,9 +2454,6 @@
                         <button
                           onClick={() => {
                             setTickSound(TICK_SOUNDS.METALLIC);
-                            if (tickSound === TICK_SOUNDS.METALLIC) {
-                              setShowSettingsMenu(false);
-                            }
                           }}
                           disabled={!soundEnabled}
                           className={`flex items-center w-full px-4 py-2 text-sm text-left ${
@@ -2488,9 +2476,6 @@
                         <button
                           onClick={() => {
                             setTickSound(TICK_SOUNDS.CRYSTAL);
-                            if (tickSound === TICK_SOUNDS.CRYSTAL) {
-                              setShowSettingsMenu(false);
-                            }
                           }}
                           disabled={!soundEnabled}
                           className={`flex items-center w-full px-4 py-2 text-sm text-left ${
@@ -2524,7 +2509,6 @@
                             key={opt.id}
                             onClick={() => {
                               setFlapperTension(opt.id);
-                              setShowSettingsMenu(false);
                             }}
                             className={`flex items-center w-full px-4 py-2 text-sm text-left ${
                               flapperTension === opt.id
@@ -2558,7 +2542,6 @@
                             key={skin.id}
                             onClick={() => {
                               setPointerSkin(skin.id);
-                              if (pointerSkin === skin.id) setShowSettingsMenu(false);
                             }}
                             className={`flex items-center w-full px-4 py-2 text-sm text-left ${
                               pointerSkin === skin.id
@@ -2705,7 +2688,6 @@
                         <button
                           onClick={() => {
                             setAiVoiceSelection(AI_VOICES.AOEDE);
-                            setShowSettingsMenu(false);
                           }}
                           disabled={!aiVoiceEnabled || !soundEnabled}
                           className={`flex items-center w-full px-4 py-2 text-sm text-left ${
@@ -2736,7 +2718,6 @@
                         <button
                           onClick={() => {
                             setAiVoiceSelection(AI_VOICES.IAPETUS);
-                            setShowSettingsMenu(false);
                           }}
                           disabled={!aiVoiceEnabled || !soundEnabled}
                           className={`flex items-center w-full px-4 py-2 text-sm text-left ${
