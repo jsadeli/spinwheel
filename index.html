@@ -458,6 +458,8 @@
         const [showThemeMenu, setShowThemeMenu] = useState(false);
         const [showShareMenu, setShowShareMenu] = useState(false);
         const [showSettingsMenu, setShowSettingsMenu] = useState(false);
+        // Which settings sections are expanded. Reset to collapsed each time the menu opens.
+        const [openSettingsSections, setOpenSettingsSections] = useState([]);
         const [showListDropdown, setShowListDropdown] = useState(false);
         const [showColorModal, setShowColorModal] = useState(false);
         const [showCoinStoreModal, setShowCoinStoreModal] = useState(false);
@@ -1333,6 +1335,21 @@
          * Flapper tension choices, in stiffness order. The hints describe what the setting
          * actually does to the wheel rather than naming the spring constant.
          */
+        const toggleSettingsSection = (id) =>
+          setOpenSettingsSections((prev) =>
+            prev.includes(id) ? prev.filter((section) => section !== id) : [...prev, id],
+          );
+
+        // Labels for the collapsed section headers. Wheel weight and tick sound are bare
+        // values with no label attached, unlike TENSION_OPTIONS and POINTER_SKINS.
+        const WHEEL_WEIGHT_LABELS = { 5000: "Heavy", 10000: "Normal", 20000: "Light" };
+        const TICK_SOUND_LABELS = {
+          [TICK_SOUNDS.DEFAULT]: "Electric",
+          [TICK_SOUNDS.CRISP]: "Wooden",
+          [TICK_SOUNDS.METALLIC]: "Metallic",
+          [TICK_SOUNDS.CRYSTAL]: "Crystal",
+        };
+
         const TENSION_OPTIONS = [
           {
             id: FLAPPER_TENSIONS.LIGHT,
@@ -2285,7 +2302,11 @@
                 {/* Settings Menu */}
                 <div className="relative" ref={settingsMenuRef}>
                   <button
-                    onClick={() => setShowSettingsMenu(!showSettingsMenu)}
+                    onClick={() => {
+                      // Every visit starts collapsed, not just the first.
+                      if (!showSettingsMenu) setOpenSettingsSections([]);
+                      setShowSettingsMenu(!showSettingsMenu);
+                    }}
                     className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition text-gray-600 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400"
                     title="Spin Settings"
                   >
@@ -2293,7 +2314,7 @@
                   </button>
 
                   {showSettingsMenu && (
-                    <div className="absolute right-0 mt-2 w-64 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 z-50 overflow-hidden animate-[fade-in_0.2s_ease-out]">
+                    <div className="absolute right-0 mt-2 w-64 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 z-50 max-h-[70vh] overflow-y-auto overflow-x-hidden overscroll-contain animate-[fade-in_0.2s_ease-out]">
                       {deferredPrompt && (
                         <div className="py-1 border-b border-gray-100 dark:border-gray-700">
                           <button
@@ -2310,12 +2331,13 @@
                           </button>
                         </div>
                       )}
-                      <div className="p-2 border-b border-gray-100 dark:border-gray-700">
-                        <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                          Wheel Weight
-                        </span>
-                      </div>
-                      <div className="py-1 border-b border-gray-100 dark:border-gray-700">
+                      <SettingsSection
+                        id="wheelWeight"
+                        title="Wheel Weight"
+                        summary={WHEEL_WEIGHT_LABELS[spinDuration]}
+                        isOpen={openSettingsSections.includes("wheelWeight")}
+                        onToggle={() => toggleSettingsSection("wheelWeight")}
+                      >
                         <button
                           onClick={() => {
                             setSpinDuration(5000);
@@ -2379,14 +2401,15 @@
                             </span>
                           )}
                         </button>
-                      </div>
+                      </SettingsSection>
 
-                      <div className="p-2 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/30">
-                        <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                          Tick Sound
-                        </span>
-                      </div>
-                      <div className="py-1 border-b border-gray-100 dark:border-gray-700">
+                      <SettingsSection
+                        id="tickSound"
+                        title="Tick Sound"
+                        summary={TICK_SOUND_LABELS[tickSound]}
+                        isOpen={openSettingsSections.includes("tickSound")}
+                        onToggle={() => toggleSettingsSection("tickSound")}
+                      >
                         <button
                           onClick={() => {
                             setTickSound(TICK_SOUNDS.DEFAULT);
@@ -2487,14 +2510,15 @@
                             </span>
                           )}
                         </button>
-                      </div>
+                      </SettingsSection>
 
-                      <div className="p-2 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/30">
-                        <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                          Flapper Tension
-                        </span>
-                      </div>
-                      <div className="py-1 border-b border-gray-100 dark:border-gray-700">
+                      <SettingsSection
+                        id="flapperTension"
+                        title="Flapper Tension"
+                        summary={TENSION_OPTIONS.find((opt) => opt.id === flapperTension)?.label}
+                        isOpen={openSettingsSections.includes("flapperTension")}
+                        onToggle={() => toggleSettingsSection("flapperTension")}
+                      >
                         {TENSION_OPTIONS.map((opt) => (
                           <button
                             key={opt.id}
@@ -2520,14 +2544,15 @@
                             )}
                           </button>
                         ))}
-                      </div>
+                      </SettingsSection>
 
-                      <div className="p-2 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/30">
-                        <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                          Pointer
-                        </span>
-                      </div>
-                      <div className="py-1 border-b border-gray-100 dark:border-gray-700">
+                      <SettingsSection
+                        id="pointer"
+                        title="Pointer"
+                        summary={Object.values(POINTER_SKINS).find((skin) => skin.id === pointerSkin)?.label}
+                        isOpen={openSettingsSections.includes("pointer")}
+                        onToggle={() => toggleSettingsSection("pointer")}
+                      >
                         {Object.values(POINTER_SKINS).map((skin) => (
                           <button
                             key={skin.id}
@@ -2554,14 +2579,15 @@
                             )}
                           </button>
                         ))}
-                      </div>
+                      </SettingsSection>
 
-                      <div className="p-2 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/30">
-                        <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                          Themes
-                        </span>
-                      </div>
-                      <div className="py-1 border-b border-gray-100 dark:border-gray-700">
+                      <SettingsSection
+                        id="themes"
+                        title="Themes"
+                        summary={colorAssignment === COLOR_ASSIGNMENT_MODE.DYNAMIC ? "Dynamic" : "Fixed"}
+                        isOpen={openSettingsSections.includes("themes")}
+                        onToggle={() => toggleSettingsSection("themes")}
+                      >
                         <button
                           onClick={() => {
                             setTempColorType(colorSettings.type);
@@ -2614,14 +2640,15 @@
                             </span>
                           )}
                         </button>
-                      </div>
+                      </SettingsSection>
 
-                      <div className="p-2 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/30">
-                        <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                          Gemini AI
-                        </span>
-                      </div>
-                      <div className="py-1">
+                      <SettingsSection
+                        id="geminiAi"
+                        title="Gemini AI"
+                        summary={!geminiApiKey ? "No key" : aiVoiceEnabled ? "On" : "Off"}
+                        isOpen={openSettingsSections.includes("geminiAi")}
+                        onToggle={() => toggleSettingsSection("geminiAi")}
+                      >
                         <button
                           onClick={() => {
                             setTempApiKey(geminiApiKey);
@@ -2737,7 +2764,7 @@
                             </span>
                           )}
                         </button>
-                      </div>
+                      </SettingsSection>
                     </div>
                   )}
                 </div>
